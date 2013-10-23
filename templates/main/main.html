@@ -1,0 +1,95 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+{% load social_auth_widget %}
+		<div class="main-container container-fluid">
+			<div class="noise-wrapper"></div>
+			<section class="leaderboard leaderboard-style-one">
+			    <div class="container">
+			      <h1 class="animated fadeInDown">Переводим вместе</h1>
+			      <h2 class="animated fadeInDown">Лучше, чем когда-либо!</h2>
+			      <div class="relative-w">
+			        <div class="frame-browser animated bounceInUp">
+			          <div class="frame-buttons">
+			            <div class="frame-button-close"></div>
+			            <div class="frame-button-max"></div>
+			            <div class="frame-button-min"></div>
+			          </div>
+			          <div class="frame-browser-image">
+			          	<div class="container" style="width:100%;display:block;height:700px;background-image: url(/media/images/index_background.png)">
+			          	    <form class="form-signin" style="width:35%;margin-left:60%;">
+						        <h2 class="form-signin-heading" style="margin-top:15px">Регистрация/Вход</h2>
+{% social_auth_widget %}
+<!--								<br>
+								<br>
+							    <span class="label label-light arrowed-in-right arrowed-in" style="margin-bottom:15px">или</span>
+						        <input type="text" class="form-control" placeholder="Логин">
+						        <input type="text" class="form-control" placeholder="Адрес эл.почты">
+						        <input type="password" class="form-control" placeholder="Пароль">
+						        <label class="checkbox">
+							        <input type="checkbox" value="remember-me"> Запомнить меня
+						        </label>
+						        <button class="btn btn-lg btn-success btn-block" type="submit">Зарегистрироваться</button>
+-->
+						    </form>
+						</div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			</section>
+			<div class="separator-shadow-top above-screenshot-shadow">
+    <img alt="" src="http://cdn.pins.ms/earth_html/shadow-separator-wide-top.png">
+  </div>
+		</div>
+		<div class="area-content">
+	    <div class="container">
+	        <div class="separator-shadow-top sub-screenshot-shadow">
+	        	<img alt="" src="media/images/shadow-separator-wide-top.png">
+	    	</div>
+		    <div class="iconed-features lift-on-hover style-1">
+		      <div class="row">
+		        <div class="col-md-4">
+		          <div class="iconed-feature" href="#">
+		            <div class="feature-icon-w">
+		              <i class="icon-eye-open"></i>
+		            </div>
+		            <h4>Responsive Layout</h4>
+		            <p>Works perfectly on everything from desktops to mobile devices.</p>
+		            <div class="btn-show-on-parent-hover">
+		              <a class="read-more-link" href="#">Read More</a>
+		            </div>
+		          </div>
+		        </div>
+		        <div class="col-md-4">
+		          <div class="iconed-feature" href="#">
+		            <div class="feature-icon-w">
+		              <i class="icon-cog"></i>
+		            </div>
+		            <h4>Unlimited Colors</h4>
+		            <p>Theme comes with multiple predefined colors.</p>
+		            <div class="btn-show-on-parent-hover">
+		              <a class="read-more-link" href="#">Read More</a>
+		            </div>
+		          </div>
+		        </div>
+		        <div class="col-md-4">
+		          <div class="iconed-feature" href="#">
+		            <div class="feature-icon-w">
+		              <i class="icon-leaf"></i>
+		            </div>
+		            <h4>Modern Look</h4>
+		            <p>Clean and simple design is what people want nowadays.</p>
+		            <div class="btn-show-on-parent-hover">
+		              <a class="read-more-link" href="#">Read More</a>
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+	    	<div class="separator-shadow-bottom bottom-margin">
+	    		<img alt="" src="media/images/shadow-separator-wide-bottom.png">
+	    	</div>
+		</div>	
+		</div>	
+{% endblock %}
