@@ -1,0 +1,16 @@
+		<div class="navbar navbar-default" id="navbar">
+			<script type="text/javascript">
+				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="navbar-container" id="navbar-container">
+				<div class="navbar-header pull-left">
+                                        <a href="/">
+                                                <img src="/media/tolma.ch.ru_small_white.png" style="margin-top:3px">
+                                        </a><!-- /.brand -->
+				</div><!-- /.navbar-header -->
+{% if user.is_authenticated %}
+{% include "main/navbar-logged-in.html" %}
+{% endif %}
+			</div><!-- /.container -->
+		</div>

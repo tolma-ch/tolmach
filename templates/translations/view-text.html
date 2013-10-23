@@ -1,0 +1,40 @@
+{% extends "main/base-logged-in.html" %}
+{% block innercontent %}
+<script src="/media/js/jquery.js"></script>
+
+    <script type="text/javascript">
+        $(document).on("click", ".add-text", function() {
+                var prId = $(this).data('id');
+                var prName = $(this).data('name');
+                $(".prId").val( prId );
+                $(".prName").html( prName );
+        });
+        $(document).on("click", ".add-user", function() {
+                var prId = $(this).data('id');
+                var prName = $(this).data('name');
+                $(".prId").val( prId );
+                $(".prName").html( prName );
+                });
+
+        $(document).on("click", "#textFormSubmit", function () {
+                $("#textForm").submit();
+                });
+
+    </script>
+
+    <div class="row">
+        <div class="col-md-6">
+        {% for entry in entries %}
+            <div class="well well-sm">
+                {{ entry.body }}
+            </div>
+        {% endfor %}
+        </div>
+        <div class="col-md-6">
+            <div class="well well-lg">
+                <h4 class="blue">{{ text.title }}</h4>
+                {{ text.body | linebreaksbr }}
+            </div>
+        </div>
+      </div>
+{% endblock %}
