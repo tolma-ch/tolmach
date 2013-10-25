@@ -29,6 +29,8 @@ urlpatterns = patterns('',
 
     # translations
     url(r'^projects/$', trans_views.projects),
+    url(r'^projects/add/$', trans_views.project_add, name='add_project'),
+    url(r'^projects/(?P<id>\d+)/delete/$', trans_views.project_delete, name='delete_project'),
     url(r'^projects/add-text/$', trans_views.add_text_to_project),
     url(r'^text/(?P<text_id>\d+)/$', trans_views.view_text),
 )
