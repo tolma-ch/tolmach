@@ -9,7 +9,7 @@ class Project(models.Model):
     is_private = models.BooleanField(default=True)
     who_allowed = models.TextField(default="")
 
-    def __str__(self):
+    def __unicode__(self):
         return self.name
 
     def is_user_manager(self, user_id):
@@ -25,7 +25,7 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     target_lang = models.ForeignKey('entries.Language', related_name='target_lang')
 
-    def __str__(self):
+    def __unicode__(self):
         return self.title
 
     def is_user_allowed(user_id):

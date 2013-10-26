@@ -53,7 +53,11 @@
               <tr>
                 <td><h4>{% if pr.is_private %}<i class="icon-lock"></i></h4>{% endif %} <a href="{% url 'delete_project' pr.id %}"><i class="icon-trash"></i></a></h4></td>
                 <td>{{ pr.name }}</td>
-                <td>{{ pr.who_allowed }}</td>
+                <td>
+                    {% for usr in pr.users %}
+                        <span class="label">{{ usr.1 }} <i class="icon-remove"></i></span>
+                    {% endfor %}
+                </td>
                 <td>
                   <div class="progress active progress-info">
                     <div class="progress-bar" style="width: 85%;" rel="tooltip" title="85%" data-placement="top"></div>

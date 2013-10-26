@@ -17,6 +17,12 @@ import split
 def projects(request):
     user = User.objects.get(username=request.user)
     projects_list = Project.objects.filter(manager=user)
+    for project in projects_list:
+        project.users = []
+        if not project.who_allowed == '':
+            project_users = User.objects.filter(id__in=project.who_allowed.split(','))
+            for i in project_users:
+                project.users.append([i.id, i.username])
     lang_list = Language.objects.all()
     subj_list = Subject.objects.all()
     add_project_form = ProjectForm(None)
@@ -49,9 +55,9 @@ def project_add(request):
 
 
 @login_required
-def project_delete(request, id=0):
-    if not id == 0:
-        pr = Project.objects.get(id=id)
+def project_delete(request, proj_id=0):
+    if not proj_id == 0:
+        pr = Project.objects.get(id=proj_id)
         if pr.is_user_manager(request.user):
             pr.delete()
             messages.add_message(request, messages.INFO, 'Project successfully deleted!')
@@ -88,6 +94,30 @@ def add_text_to_project(request):
                 txt_entry.save()
             return redirect('/projects/')
         return redirect('/profile/')
+
+
+def add_user_to_project(request, proj_id, us_id):
+    project = Project.objects.get(id=proj_id)
+    if project.is_user_manager(request.user):
+        if project.is_private:
+            try:
+                user = User.objects.get(id=us_id)
+            except User.DoesNotExist:
+                messages.add_message(request, messages.ERROR, 'There\'s no such user, sorry.')
+                return HttpResponseRedirect('/projects/')
+            allowed = project.who_allowed.split(',') if not project.who_allowed == '' else []
+            allowed.append(str(user.id))
+            project.who_allowed = ','.join(allowed)
+            project.save()
+            messages.add_message(request, messages.SUCCESS, 'User %s added to project %s.' % (user.username, project.name))
+            return HttpResponseRedirect('/projects/')
+        else:
+            messages.add_message(request, messages.ERROR, 'Your project is public. No need to add users.')
+            return HttpResponseRedirect('/projects/')
+    else:
+        messages.add_message(request, messages.ERROR, 'You are not allowed to delete this project!')
+        return HttpResponseRedirect('/projects/')
+    pass
 
 
 def view_text(request, text_id):
