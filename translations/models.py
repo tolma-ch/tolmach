@@ -12,8 +12,8 @@ class Project(models.Model):
     def __unicode__(self):
         return self.name
 
-    def is_user_manager(self, user_id):
-        return self.manager == user_id
+    def is_user_manager(self, user):
+        return self.manager == user
 
 
 class Text(models.Model):
@@ -28,9 +28,14 @@ class Text(models.Model):
     def __unicode__(self):
         return self.title
 
-    def is_user_allowed(user_id):
-        #TODO: Add checking if user is in the list of allowed
-        pass
+    def is_user_allowed(self, user):
+        if self.project.is_private is False:
+            return True
+        else:
+            if str(user.id) in self.project.who_allowed.split(','):
+                return True
+            else:
+                return False
 
 
 class TextEntry(models.Model):
@@ -38,9 +43,10 @@ class TextEntry(models.Model):
     parent_entry = models.ForeignKey('translations.TextEntry', default=1)
     text = models.ForeignKey('translations.Text', related_name='parent_text')
     id_in_text = models.IntegerField(default=0)
+    author = models.ForeignKey('auth.User')
     vote = models.IntegerField(default=0)
 
-    def __str__(self):
+    def __unicode__(self):
         return self.text
 
 

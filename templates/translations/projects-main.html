@@ -64,26 +64,26 @@
                   </div>
                     <table class="table">
                         <colgroup>
-                          <col span="1" style="width: 50%;">
-                          <col span="1" style="width: 50%;">
+                          <col span="1" style="width: 45%;">
+                          <col span="1" style="width: 40%;">
+                          <col span="1" style="width: 15%;">
                         </colgroup>
                         <tbody>
+                        {% for text in pr.texts %}
                             <tr>
-                                <td>test</td>
+                                <td><a href="{% url 'view_text' text.id %}">{{ text.title }}</a></td>
                                 <td>
                                   <div class="progress active progress-info">
                                     <div class="progress-bar" style="width: 85%;" rel="tooltip" title="85%" data-placement="top"></div>
                                   </div>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>test</td>
                                 <td>
-                                  <div class="progress active progress-info">
-                                    <div class="progress-bar" style="width: 85%;" rel="tooltip" title="85%" data-placement="top"></div>
-                                  </div>
+                                    <a href=""><i class="icon-chevron-down"></i></a>
+                                    |
+                                    <a href="{% url 'delete_text' text.id %}"><i class="icon-trash"></i></a>
                                 </td>
                             </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </td>
