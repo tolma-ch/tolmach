@@ -18,6 +18,7 @@ def projects(request):
     user = User.objects.get(username=request.user)
     projects_list = Project.objects.filter(manager=user)
     for project in projects_list:
+        project.texts = Text.objects.filter(project=project)
         project.users = []
         if not project.who_allowed == '':
             project_users = User.objects.filter(id__in=project.who_allowed.split(','))
@@ -116,13 +117,16 @@ def add_user_to_project(request, proj_id, us_id):
             return HttpResponseRedirect('/projects/')
     else:
         messages.add_message(request, messages.ERROR, 'You are not allowed to delete this project!')
-        return HttpResponseRedirect('/projects/')
+        return HttpResponseRedirect('/')
     pass
 
 
 def view_text(request, text_id):
     text = Text.objects.get(id=text_id)
-    entries = TextEntry.objects.filter(text=text).order_by('id_in_text')
+    entries = TextEntry.objects.filter(text=text,parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+
+    for entry in entries:
+        entry.translations = TextEntry.objects.filter(parent_entry=entry)
 
     data = {'username': request.user,
             'page_title': text.title,
@@ -134,3 +138,39 @@ def view_text(request, text_id):
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
+
+
+def delete_text(request, text_id):
+    text = Text.objects.get(id=text_id)
+    project = text.project
+    if project.is_user_manager(request.user):
+        text.delete()
+        messages.add_message(request, messages.INFO, 'Text "%s" from project "%s" successfully deleted!' % (text.title, project.name))
+        return HttpResponseRedirect('/projects/')
+    else:
+        messages.add_message(request, messages.ERROR, 'You are not allowed to edit this project!')
+        return HttpResponseRedirect('/')
+
+
+def translate_entry(request, ent_id):
+    entry = TextEntry.objects.get(id=ent_id)
+    text = entry.text
+    if text.is_user_allowed(request.user):
+        trans_entry = TextEntry(body=request.POST['body'],
+                                parent_entry=entry,
+                                text=text,
+                                author=request.user,
+                                )
+        trans_entry.save()
+        return HttpResponseRedirect('/text/%d/' % text.id)
+    else:
+        messages.add_message(request, messages.ERROR, 'You are not allowed to translate this text')
+        return HttpResponseRedirect('/')
+
+
+def entry_voteup(request, ent_id):
+    pass
+
+
+def entry_votedown(request, ent_id):
+    pass

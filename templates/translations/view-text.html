@@ -25,9 +25,38 @@
     <div class="row">
         <div class="col-md-6">
         {% for entry in entries %}
-            <div class="well well-sm">
+            <div class="well well-sm" style="margin-bottom:2px; margin-top:10px;">
                 {{ entry.body }}
             </div>
+            {% for translation in entry.translations %}
+            <div class="itemdiv dialogdiv">
+                <div class="user">
+                    <img alt="Alexa's Avatar" src="/media/avatars/avatar1.png">
+                </div>
+
+                <div class="body">
+                    <!--<div class="name">-->
+                        <!--<a href="#">{{ translation.author.username }}</a>-->
+                    <!--</div>-->
+                    <div class="text">{{ translation.body }}</div>
+
+                    <div class="tools">
+                        <i class="icon-plus"></i>
+                        1
+                        <i class="icon-minus"></i>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <form action="{% url 'translate_entry' entry.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" class="form-control" value="{{ entry.id }}">
+                <textarea name="body" class="autosize-transition form-control" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 52px;"></textarea>
+                <button type="submit" class="btn btn-minier">
+                    <i class="icon-pencil align-top"></i>
+                    Translate
+                </button>
+            </form>
         {% endfor %}
         </div>
         <div class="col-md-6">

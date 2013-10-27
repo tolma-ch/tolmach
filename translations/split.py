@@ -1,19 +1,23 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 
-import re, sys
+import re
+
 
 def repl(matchobj):
     return matchobj.group(0) + '†'
 
-# открываем текст на чтение, делим по предложениям и выносим эти предложения в список out_list
-def split_text(text):
+
+def split_text(line_to_translate):
+    text = re.sub("\n{2,}", "\n", line_to_translate)
     out_list = []
-    new_text = ''.join(text.split('\n')) # убираем лишние пробелы
-    new_text = re.sub("。|\\. \\. \\.|! |\\. |\\? ", repl, new_text) # добавляем после конца предложения спец.символ для разделения
-    new_text = re.split('†', new_text) # делим по заданному спец.символу
-    for i in new_text:
-        if not i == '':
-            out_list.append(i.strip("　     "))
+    for new_line in text.split("\n"):
+        #new_line = ''.join(line_to_translate.split('\n\n')) # убираем лишние пробелы
+        new_line = new_line.strip()
+        new_line = re.sub("。”|。|\\. \\. \\.|! |\\. |\\? ", repl, new_line) # добавляем после конца предложения спец.символ для разделения
+        new_line = re.split('†', new_line) # делим по заданному спец.символу
+        for i in new_line:
+            if not i == '':
+                out_list.append(i.strip("　     "))
 
     return out_list
