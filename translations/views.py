@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
@@ -27,10 +28,11 @@ def projects(request):
     lang_list = Language.objects.all()
     subj_list = Subject.objects.all()
     add_project_form = ProjectForm(None)
+    page_title = _('Projects')
 
     data = {'username': request.user,
-            'page_title': 'Projects',
-            'breadcrumbs': [['Projects', '/projects/'], ],
+            'page_title': page_title,
+            'breadcrumbs': [[page_title, '/projects/'], ],
             'projects': projects_list,
             'langs': lang_list,
             'subjs': subj_list,
@@ -49,7 +51,8 @@ def project_add(request):
     if request.method == "POST":
         if add_project_form.is_valid():
             add_project_form.save(request.user)
-            messages.add_message(request, messages.INFO, 'Project successfully created!')
+            messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully created!') %
+                                                           {'project_name': add_project_form.cleaned_data['name']})
             return HttpResponseRedirect('/projects/')
     else:
         return redirect('/projects/')
@@ -61,7 +64,8 @@ def project_delete(request, proj_id=0):
         pr = Project.objects.get(id=proj_id)
         if pr.is_user_manager(request.user):
             pr.delete()
-            messages.add_message(request, messages.INFO, 'Project successfully deleted!')
+            messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully deleted!') %
+                                                            {'project_name': pr.name})
             return HttpResponseRedirect('/projects/')
         else:
             messages.add_message(request, messages.ERROR, 'You are not allowed to delete this project!')
@@ -107,16 +111,19 @@ def add_user_to_project(request, proj_id, us_id):
                 messages.add_message(request, messages.ERROR, 'There\'s no such user, sorry.')
                 return HttpResponseRedirect('/projects/')
             allowed = project.who_allowed.split(',') if not project.who_allowed == '' else []
+            # TODO: add checking that there's no such user here
             allowed.append(str(user.id))
             project.who_allowed = ','.join(allowed)
             project.save()
-            messages.add_message(request, messages.SUCCESS, 'User %s added to project %s.' % (user.username, project.name))
+            messages.add_message(request, messages.SUCCESS, _('User %(user_name)s added to project "%(project_name)s".') %
+                                                              {'user_name': user.username,
+                                                               'project_name': project.name})
             return HttpResponseRedirect('/projects/')
         else:
-            messages.add_message(request, messages.ERROR, 'Your project is public. No need to add users.')
+            messages.add_message(request, messages.ERROR, _('Your project is public. No need to add users.'))
             return HttpResponseRedirect('/projects/')
     else:
-        messages.add_message(request, messages.ERROR, 'You are not allowed to delete this project!')
+        messages.add_message(request, messages.ERROR, _('You are not allowed to delete this project!'))
         return HttpResponseRedirect('/')
     pass
 
@@ -145,7 +152,9 @@ def delete_text(request, text_id):
     project = text.project
     if project.is_user_manager(request.user):
         text.delete()
-        messages.add_message(request, messages.INFO, 'Text "%s" from project "%s" successfully deleted!' % (text.title, project.name))
+        messages.add_message(request, messages.INFO, _('Text "%(text_title)s" from project "%(project_name)s" successfully deleted!') %
+                                                       {'text_title': text.title,
+                                                        'project_name': project.name})
         return HttpResponseRedirect('/projects/')
     else:
         messages.add_message(request, messages.ERROR, 'You are not allowed to edit this project!')

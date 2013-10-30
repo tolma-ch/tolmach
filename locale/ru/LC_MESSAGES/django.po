@@ -1,0 +1,150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-30 14:33+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: templates/main/navbar-logged-in.html:216
+msgid "Hi,"
+msgstr "Привет,"
+
+#: templates/main/navbar-logged-in.html:227
+msgid "Settings"
+msgstr "Настройки"
+
+#: templates/main/navbar-logged-in.html:234
+msgid "Profile"
+msgstr "Профиль"
+
+#: templates/main/navbar-logged-in.html:243
+msgid "Logout"
+msgstr "Выход"
+
+#: templates/translations/projects-main.html:47
+msgid "Project Name"
+msgstr "Название проекта"
+
+#: templates/translations/projects-main.html:48
+msgid "Translators"
+msgstr "Переводчики"
+
+#: templates/translations/projects-main.html:49
+msgid "Progress"
+msgstr "Прогресс"
+
+#: templates/translations/projects-main.html:95
+#: templates/translations/projects-main.html:131
+msgid "Add"
+msgstr "Добавить"
+
+#: templates/translations/projects-main.html:100
+msgid "Text"
+msgstr "Текст"
+
+#: templates/translations/projects-main.html:103
+msgid "User"
+msgstr "Пользователя"
+
+#: templates/translations/projects-main.html:111
+msgid "Sorry, you haven't created any projects yet"
+msgstr "Вы пока не создали ни одного проекта"
+
+#: templates/translations/projects-main.html:122
+msgid "Add new Project"
+msgstr "Добавить проект"
+
+#: templates/translations/projects-main.html:128
+msgid "Private?"
+msgstr "Приватный?"
+
+#: templates/translations/projects-main.html:156
+#: templates/translations/projects-main.html:212
+msgid "Project name"
+msgstr "Название проекта"
+
+#: templates/translations/projects-main.html:156
+#: templates/translations/projects-main.html:197
+msgid "Add text"
+msgstr "Добавить текст"
+
+#: templates/translations/projects-main.html:162
+msgid "Title:"
+msgstr "Название:"
+
+#: templates/translations/projects-main.html:164
+msgid "Subject:"
+msgstr "Тематика:"
+
+#: templates/translations/projects-main.html:173
+msgid "Source lang:"
+msgstr "Язык оригинала:"
+
+#: templates/translations/projects-main.html:181
+msgid "Target lang:"
+msgstr "Язык перевода:"
+
+#: templates/translations/projects-main.html:192
+msgid "Text body:"
+msgstr "Текст:"
+
+#: templates/translations/projects-main.html:212
+#: templates/translations/projects-main.html:222
+msgid "Add user"
+msgstr "Добавить пользователя"
+
+#: templates/translations/projects-main.html:217
+msgid "Username:"
+msgstr "Имя пользователя:"
+
+#: templates/translations/view-text.html:59
+msgid "Translate"
+msgstr "Перевести"
+
+#: translations/views.py:31
+msgid "Projects"
+msgstr "Проекты"
+
+#: translations/views.py:54
+#, python-format
+msgid "Project \"%(project_name)s\" successfully created!"
+msgstr "Проект \"%(project_name)s\" успешно создан!"
+
+#: translations/views.py:67
+#, python-format
+msgid "Project \"%(project_name)s\" successfully deleted!"
+msgstr "Проект \"%(project_name)s\" успешно удалён!"
+
+#: translations/views.py:118
+#, python-format
+msgid "User %(user_name)s added to project \"%(project_name)s\"."
+msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
+
+#: translations/views.py:123
+msgid "Your project is public. No need to add users."
+msgstr ""
+
+#: translations/views.py:126
+msgid "You are not allowed to delete this project!"
+msgstr ""
+
+#: translations/views.py:155
+#, python-format
+msgid ""
+"Text \"%(text_title)s\" from project \"%(project_name)s\" successfully "
+"deleted!"
+msgstr ""

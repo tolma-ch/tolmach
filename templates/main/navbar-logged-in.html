@@ -1,3 +1,4 @@
+{% load i18n %}
 					<ul class="nav ace-nav pull-right">
 						<li class="grey">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -212,7 +213,7 @@
 							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 								<img class="nav-user-photo" src="/media/avatars/user.jpg" alt="Jason's Photo">
 								<span class="user-info">
-									<small>Привет,</small>
+									<small>{% trans "Hi," %}</small>
 									{{ username }}
 								</span>
 
@@ -223,14 +224,14 @@
 								<li>
 									<a href="#">
 										<i class="icon-cog"></i>
-										Settings
+										{% trans "Settings" %}
 									</a>
 								</li>
 
 								<li>
 									<a href="/profile/">
 										<i class="icon-user"></i>
-										Profile
+										{% trans "Profile" %}
 									</a>
 								</li>
 
@@ -239,7 +240,7 @@
 								<li>
 									<a href="/logout/">
 										<i class="icon-off"></i>
-										Logout
+										{% trans "Logout" %}
 									</a>
 								</li>
 							</ul>
