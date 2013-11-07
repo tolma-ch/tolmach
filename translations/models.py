@@ -32,7 +32,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if str(user.id) in self.project.who_allowed.split(','):
+            if self.project.manager == user or str(user.id) in self.project.who_allowed.split(','):
                 return True
             else:
                 return False
@@ -45,6 +45,8 @@ class TextEntry(models.Model):
     id_in_text = models.IntegerField(default=0)
     author = models.ForeignKey('auth.User')
     vote = models.IntegerField(default=0)
+    voters = models.TextField(default="")
+    is_approved = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.text

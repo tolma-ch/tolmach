@@ -43,9 +43,9 @@
                     <div class="text">{{ translation.body }}</div>
 
                     <div class="tools">
-                        <i class="icon-plus"></i>
+                        <a href="{% url 'entry_voteup' translation.id %}"><i class="icon-plus"></i></a>
                         {{ translation.vote }}
-                        <i class="icon-minus"></i>
+                        <a href="{% url 'entry_votedown' translation.id %}"><i class="icon-minus"></i></a>
                     </div>
                 </div>
             </div>

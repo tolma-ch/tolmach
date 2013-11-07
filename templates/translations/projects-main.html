@@ -57,7 +57,7 @@
                 <td>{{ pr.name }}</td>
                 <td>
                     {% for usr in pr.users %}
-                        <span class="label">{{ usr.1 }} <i class="icon-remove"></i></span>
+                        <span class="label">{{ usr.username }} <a href="{% url 'remove_user_from_project' pr.id usr.id %}"> <i class="icon-remove"></i></a></span>
                     {% endfor %}
                 </td>
                 <td>
