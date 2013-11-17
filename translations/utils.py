@@ -25,3 +25,4 @@ def split_text(line_to_translate):
                 out_list.append(i.strip("　     "))  # removing extra spaces/tabs from beginning/end of the line
 
     return out_list
+

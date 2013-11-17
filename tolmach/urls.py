@@ -5,7 +5,9 @@ import translations.views as trans_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 admin.autodiscover()
+dajaxice_autodiscover()
 
 PATH = getattr(settings, 'URL_PATH', '')
 
@@ -24,11 +26,17 @@ urlpatterns = patterns('',
     url(r'%s' % PATH, include('social.apps.django_app.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+
+    # ajax
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+
+    # main
     url(r'^$', main_views.index, name='index'),
     url(r'^profile/$', 'tolmach.views.profile', name='profile'),
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
     # translations
+    url(r'^parse-tmx/$', trans_views.parse_tmx),
     url(r'^projects/$', trans_views.projects),
     url(r'^projects/add/$', trans_views.project_add, name='add_project'),
     url(r'^projects/(?P<proj_id>\d+)/delete/$', trans_views.project_delete, name='delete_project'),

@@ -5,25 +5,13 @@
 <script src="/media/js/jquery.js"></script>
 
     <script type="text/javascript">
-        $(document).on("click", ".add-text", function() {
-                var prId = $(this).data('id');
-                var prName = $(this).data('name');
-                $(".prId").val( prId );
-                $(".prName").html( prName );
-        });
-        $(document).on("click", ".add-user", function() {
-                var prId = $(this).data('id');
-                var prName = $(this).data('name');
-                $(".prId").val( prId );
-                $(".prName").html( prName );
-                });
-
-        $(document).on("click", "#textFormSubmit", function () {
-                $("#textForm").submit();
-                });
-
+function my_js_callback(data){
+    alert("Hi, " + data.name + "!");
+}
     </script>
-
+              <label class="form-label">Test alert name:</label>
+                <input type="text" id="test_alert_name" class="form-control" value="">
+              <button class="btn pull-right btn-primary" onclick="Dajaxice.translations.say_hello(my_js_callback, {'name':$('#test_alert_name').val()});">Test!</button>
     <div class="row">
         <div class="col-md-6">
         {% for entry in entries %}

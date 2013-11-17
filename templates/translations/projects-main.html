@@ -51,7 +51,7 @@
               </tr>
             </thead>
             <tbody>
-    {% for pr in projects %}
+    {% for pr in user_projects %}
               <tr>
                 <td><h4>{% if pr.is_private %}<i class="icon-lock"></i></h4>{% endif %} <a href="{% url 'delete_project' pr.id %}"><i class="icon-trash"></i></a></h4></td>
                 <td>{{ pr.name }}</td>
@@ -62,7 +62,7 @@
                 </td>
                 <td>
                   <div class="progress active progress-info">
-                    <div class="progress-bar" style="width: 85%;" rel="tooltip" title="85%" data-placement="top"></div>
+                    <div class="progress-bar" style="width: {{ pr.progress }}%;" rel="tooltip" title="{{ pr.progress }}%" data-placement="top"></div>
                   </div>
                     <table class="table">
                         <colgroup>

@@ -90,6 +90,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'dajaxice.finders.DajaxiceFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
@@ -100,13 +101,15 @@ SECRET_KEY = 's_dy&p!*l8-(c4*pbxrfwsf&n5*o55=j_2g166w&p=i#r66j8u'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+     'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'social.apps.django_app.context_processors.backends',
     'social.apps.django_app.context_processors.login_redirect',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -133,8 +136,10 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'south',
+    'tolmach',
     'translations',
     'entries',
+    'dajaxice',
     'social_auth_widget',
     'social.apps.django_app.default',
     'django.contrib.auth',

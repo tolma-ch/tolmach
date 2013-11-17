@@ -8,12 +8,35 @@ class Project(models.Model):
     manager = models.ForeignKey('auth.User')
     is_private = models.BooleanField(default=True)
     who_allowed = models.TextField(default="")
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return self.name
 
     def is_user_manager(self, user):
+        """
+        Check whether provided user is manager of the project and return Boolean
+        """
         return self.manager == user
+
+    def get_progress(self):
+        """
+        Get progress percentage of the current project and return Int from 0 to 100
+
+        entries_approved/(entries_total/100.0)
+        """
+        entries_total = 0
+        entries_approved = 0
+        texts = Text.objects.filter(project=self)
+        for text in texts:
+            entries_total += TextEntry.objects.filter(text=text,id_in_text=0).count()
+            entries_approved += TextEntry.objects.filter(text=text, id_in_text=0, is_approved=True).count()
+
+        if not entries_total == 0:
+            return int(entries_approved/(entries_total/100.0))
+        else:
+            return 0
 
 
 class Text(models.Model):
@@ -29,6 +52,9 @@ class Text(models.Model):
         return self.title
 
     def is_user_allowed(self, user):
+        """
+        Check whether provided user is allowed to act within the current text and return Boolean
+        """
         if self.project.is_private is False:
             return True
         else:
@@ -47,6 +73,8 @@ class TextEntry(models.Model):
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
+    time_created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.text
