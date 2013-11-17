@@ -1,14 +1,16 @@
 #-*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
+from tolmach.models import UserMeta
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
 import utils
@@ -16,10 +18,28 @@ import utils
 
 @login_required
 def projects(request):
+    """
+    /projects/ page. List of user's own projects, user participating projects, last open projects
+
+    Data to return:
+    user_projects_list - list of user's own projects
+    user_particip_list - list of projects, user participating in
+    last_open_projects - list of all other recently active projects (maybe later will be more
+                         personal-oriented - by language, for example, or by the texts' subject)
+    """
+
     user = User.objects.get(username=request.user)
-    projects_list = Project.objects.filter(manager=user)
-    for project in projects_list:
+#    meta = UserMeta.objects.get(user=user)
+
+    user_projects_list = None
+    user_particip_list = None
+    last_public_projects = None
+
+    # Getting data about user's projects
+    user_projects_list = Project.objects.filter(manager=user)
+    for project in user_projects_list:
         project.texts = Text.objects.filter(project=project)
+        project.progress = project.get_progress()
         project.users = []
         if not project.who_allowed == '':
             project_users = User.objects.filter(id__in=project.who_allowed.split(','))
@@ -28,6 +48,12 @@ def projects(request):
                     'id': i.id,
                     'username': i.username,
                 })
+
+    # Getting data about projects, user participating in
+#    if not meta.projects_particip == "":
+#        user_particip_list = Project.objects.filter(id__in=meta.projects_particip.split(','))
+        # TODO: add project progress percentage
+
     lang_list = Language.objects.all()
     subj_list = Subject.objects.all()
     add_project_form = ProjectForm(None)
@@ -36,7 +62,7 @@ def projects(request):
     data = {'username': request.user,
             'page_title': page_title,
             'breadcrumbs': [[page_title, '/projects/'], ],
-            'projects': projects_list,
+            'user_projects': user_projects_list,
             'langs': lang_list,
             'subjs': subj_list,
             'addProjectForm': add_project_form,
@@ -222,6 +248,7 @@ def delete_text(request, text_id):
 def translate_entry(request, ent_id):
     entry = TextEntry.objects.get(id=ent_id)
     text = entry.text
+    project = text.project
     if text.is_user_allowed(request.user):
         trans_entry = TextEntry(body=request.POST['body'],
                                 parent_entry=entry,
@@ -229,6 +256,11 @@ def translate_entry(request, ent_id):
                                 author=request.user,
         )
         trans_entry.save()
+
+        from django.utils import timezone
+        project.last_modified = timezone.now()
+        project.save()
+
         return HttpResponseRedirect('/text/%d/' % text.id)
     else:
         messages.add_message(request, messages.ERROR, _('You are not allowed to translate this text'))
@@ -286,3 +318,20 @@ def entry_approve(request, ent_id):
     else:
         messages.add_message(request, messages.ERROR, _('You need to be project manager to approve translation entries'))
         return HttpResponseRedirect('/')
+
+
+def parse_tmx(request):
+    import xml.etree.ElementTree as ET
+    import json
+
+    source = request.FILES['gloss']
+    return_dict = {}
+
+    context = iter(ET.iterparse(source, events=('start', 'end')))
+    _, root = next(context)
+    for event, elem in context:
+        if event == 'end' and elem.tag == 'tu':
+            return_dict[elem[0][0].text] = elem[1][0].text
+            root.clear()
+
+    return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
