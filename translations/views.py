@@ -23,17 +23,73 @@ def projects(request):
 
     Data to return:
     user_projects_list - list of user's own projects
+
+    user_projects_list =
+        [
+            {
+                'id': 3,
+                'name': 'test',
+                'progress': 35,
+                'manager':
+                        {
+                            'id': 3,
+                            'username': 'olorin'
+                        },
+                'users':
+                        [
+                            {
+                                'id': 3,
+                                'username': 'Olorin'
+                            },
+                        ],
+                'texts':
+                        [
+                            {
+                                'id': 5,
+                                'title': 'New beginning'
+                            },
+                        ],
+            }
+        ]
+
     user_particip_list - list of projects, user participating in
-    last_open_projects - list of all other recently active projects (maybe later will be more
+        [
+            {
+                'id': 3,
+                'name': 'test',
+                'progress': 35,
+                'manager':
+                    {
+                        'id': 3,
+                        'username': 'test'
+                    }
+            }
+        ]
+
+    last_public_projects - list of all other recently active projects (maybe later will be more
                          personal-oriented - by language, for example, or by the texts' subject)
+        [
+            {
+                'id': 3,
+                'name': 'test',
+                'progress': 35,
+                'manager':
+                    {
+                        'id': 3,
+                        'username': 'test'
+                    }
+            }
+        ]
     """
 
     user = User.objects.get(username=request.user)
-#    meta = UserMeta.objects.get(user=user)
 
-    user_projects_list = None
-    user_particip_list = None
-    last_public_projects = None
+    try:
+        meta = UserMeta.objects.get(user=user)
+    except UserMeta.DoesNotExist:
+        new_meta = UserMeta(user=user)
+        new_meta.save()
+        meta = UserMeta.objects.get(user=user)
 
     # Getting data about user's projects
     user_projects_list = Project.objects.filter(manager=user)
@@ -48,11 +104,39 @@ def projects(request):
                     'id': i.id,
                     'username': i.username,
                 })
+        project.entries_details = []
+        entries = TextEntry.objects.filter(text__in=project.texts,id_in_text=0).order_by('-time_created')
+        for ent in entries:
+            if len(project.entries) > 0:
+                if not project.entries[-1]['author'].username == ent.author.username:
+                    project.entries += [{
+                        'author': ent.author,
+                        'number_of_sent': 1,
+                        'time_created': ent.time_created,
+                    }]
+                else:
+                    project.entries[-1]['number_of_sent'] += 1
+            else:
+                project.entries += [{
+                    'author': ent.author,
+                    'number_of_sent': 1,
+                    'time_created': ent.time_created,
+                }]
+
 
     # Getting data about projects, user participating in
-#    if not meta.projects_particip == "":
-#        user_particip_list = Project.objects.filter(id__in=meta.projects_particip.split(','))
-        # TODO: add project progress percentage
+    if not meta.projects_particip == "":
+        user_particip_list = Project.objects.filter(id__in=meta.projects_particip.split(','))
+        for pr in user_particip_list:
+            pr.progress = pr.get_progress()
+    else:
+        user_particip_list = []
+
+
+    # Getting data about last public projects
+    last_public_projects = Project.objects.filter(is_private=False).order_by('-last_modified')[:10]
+    for pr in last_public_projects:
+        pr.progress = pr.get_progress()
 
     lang_list = Language.objects.all()
     subj_list = Subject.objects.all()
@@ -63,6 +147,8 @@ def projects(request):
             'page_title': page_title,
             'breadcrumbs': [[page_title, '/projects/'], ],
             'user_projects': user_projects_list,
+            'user_particip_list': user_particip_list,
+            'last_public_projects': last_public_projects,
             'langs': lang_list,
             'subjs': subj_list,
             'addProjectForm': add_project_form,
