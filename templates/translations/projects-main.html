@@ -54,7 +54,12 @@
     {% for pr in user_projects %}
               <tr>
                 <td><h4>{% if pr.is_private %}<i class="icon-lock"></i></h4>{% endif %} <a href="{% url 'delete_project' pr.id %}"><i class="icon-trash"></i></a></h4></td>
-                <td>{{ pr.name }}</td>
+                <td>{{ pr.name }}<br>
+                    {% for entry in pr.entries_details %}
+                        {{ entry.number_of_sent }} | {{ entry.author }} | {{ entry.time_created }}<hr>
+                        <!--{{ entry.body }} | {{ entry.author }} | {{ entry.time_created }}<hr>-->
+                    {% endfor %}
+                </td>
                 <td>
                     {% for usr in pr.users %}
                         <span class="label">{{ usr.username }} <a href="{% url 'remove_user_from_project' pr.id usr.id %}"> <i class="icon-remove"></i></a></span>
