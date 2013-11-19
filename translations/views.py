@@ -107,17 +107,17 @@ def projects(request):
         project.entries_details = []
         entries = TextEntry.objects.filter(text__in=project.texts,id_in_text=0).order_by('-time_created')
         for ent in entries:
-            if len(project.entries) > 0:
-                if not project.entries[-1]['author'].username == ent.author.username:
-                    project.entries += [{
+            if len(project.entries_details) > 0:
+                if not project.entries_details[-1]['author'].username == ent.author.username:
+                    project.entries_details += [{
                         'author': ent.author,
                         'number_of_sent': 1,
                         'time_created': ent.time_created,
                     }]
                 else:
-                    project.entries[-1]['number_of_sent'] += 1
+                    project.entries_details[-1]['number_of_sent'] += 1
             else:
-                project.entries += [{
+                project.entries_details += [{
                     'author': ent.author,
                     'number_of_sent': 1,
                     'time_created': ent.time_created,
