@@ -4,11 +4,28 @@ from entries.models import Subject, Language
 
 
 class Project(models.Model):
+    """
+    Model for users created projects.
+
+    :param name: Title of the project
+    :type name: CharField, 256 signs max
+    :param manager: User created the project
+    :type manager: ForeignKey 'auth.User'
+    :param BooleanField is_private: Flag, describing whether the project is accessible to non-members or not
+    :param TextField members: List of ids of users who are members of the project, comma-separated
+    :param TextField users_invited: List of ids of users who was invited to the project, but still haven't respond
+    :param TextField users_requested: List of ids of users who requested access to the project and still waiting for the answer
+    :param DateTimeField time_created: The time when project was created
+    :param DateTimeField last_modified: The time when the last translations was made within the project
+
+    """
     name = models.CharField(max_length=256)
     manager = models.ForeignKey('auth.User')
     is_private = models.BooleanField(default=True)
-    who_allowed = models.TextField(default="")
-    date_created = models.DateTimeField(auto_now_add=True)
+    members = models.TextField(default="")
+    users_invited = models.TextField(default="")
+    users_requested = models.TextField(default="")
+    time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

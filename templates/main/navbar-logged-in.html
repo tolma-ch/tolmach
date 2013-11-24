@@ -85,48 +85,71 @@
 									8 Notifications
 								</li>
 
-								<li>
-									<a href="#">
-										<div class="clearfix">
-											<span class="pull-left">
-												<i class="btn btn-mini no-hover btn-pink icon-comment"></i>
-												New Comments
-											</span>
-											<span class="pull-right badge badge-info">+12</span>
-										</div>
-									</a>
-								</li>
+								<!--<li>-->
+									<!--<a href="#">-->
+										<!--<div class="clearfix">-->
+											<!--<span class="pull-left">-->
+												<!--<i class="btn btn-mini no-hover btn-pink icon-comment"></i>-->
+												<!--New Comments-->
+											<!--</span>-->
+											<!--<span class="pull-right badge badge-info">+12</span>-->
+										<!--</div>-->
+									<!--</a>-->
+								<!--</li>-->
 
-								<li>
+								<!--<li>-->
+									<!--<a href="#">-->
+										<!--<i class="btn btn-mini btn-primary icon-user"></i>-->
+										<!--Bob just signed up as an editor ...-->
+									<!--</a>-->
+								<!--</li>-->
+
+                                {% for note in invites %}
+                                <li>
 									<a href="#">
 										<i class="btn btn-mini btn-primary icon-user"></i>
-										Bob just signed up as an editor ...
+										You were invited to the project Project.name
 									</a>
 								</li>
+                                {% empty %}
+                                <li>
+										<i class="btn btn-mini btn-primary icon-user"></i>
+										You were invited to the project "Tolma.ch"
+                                        <br>
+                                        <button type="submit" class="btn btn-minier">
+                                            <i class="icon-pencil align-top"></i>
+                                            Accept
+                                        </button>
+                                        <button type="submit" class="btn btn-minier">
+                                            <i class="icon-pencil align-top"></i>
+                                            Decline
+                                        </button>
+								</li>
+                                {% endfor %}
 
-								<li>
-									<a href="#">
-										<div class="clearfix">
-											<span class="pull-left">
-												<i class="btn btn-mini no-hover btn-success icon-shopping-cart"></i>
-												New Orders
-											</span>
-											<span class="pull-right badge badge-success">+8</span>
-										</div>
-									</a>
-								</li>
+								<!--<li>-->
+									<!--<a href="#">-->
+										<!--<div class="clearfix">-->
+											<!--<span class="pull-left">-->
+												<!--<i class="btn btn-mini no-hover btn-success icon-shopping-cart"></i>-->
+												<!--New Orders-->
+											<!--</span>-->
+											<!--<span class="pull-right badge badge-success">+8</span>-->
+										<!--</div>-->
+									<!--</a>-->
+								<!--</li>-->
 
-								<li>
-									<a href="#">
-										<div class="clearfix">
-											<span class="pull-left">
-												<i class="btn btn-mini no-hover btn-info icon-twitter"></i>
-												Followers
-											</span>
-											<span class="pull-right badge badge-info">+11</span>
-										</div>
-									</a>
-								</li>
+								<!--<li>-->
+									<!--<a href="#">-->
+										<!--<div class="clearfix">-->
+											<!--<span class="pull-left">-->
+												<!--<i class="btn btn-mini no-hover btn-info icon-twitter"></i>-->
+												<!--Followers-->
+											<!--</span>-->
+											<!--<span class="pull-right badge badge-info">+11</span>-->
+										<!--</div>-->
+									<!--</a>-->
+								<!--</li>-->
 
 								<li>
 									<a href="#">
