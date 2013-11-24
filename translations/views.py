@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
+from tolmach.utils import send_message
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
 import utils
@@ -24,62 +25,82 @@ def projects(request):
     Data to return:
     user_projects_list - list of user's own projects
 
-    user_projects_list =
-        [
-            {
-                'id': 3,
-                'name': 'test',
-                'progress': 35,
-                'manager':
-                        {
-                            'id': 3,
-                            'username': 'olorin'
-                        },
-                'users':
-                        [
+
+    .. code-block:: python
+
+        user_projects_list =
+            [
+                {
+                    'id': 3,
+                    'name': 'test',
+                    'progress': 35,
+                    'manager':
                             {
                                 'id': 3,
-                                'username': 'Olorin'
+                                'username': 'olorin'
                             },
-                        ],
-                'texts':
-                        [
-                            {
-                                'id': 5,
-                                'title': 'New beginning'
-                            },
-                        ],
-            }
-        ]
+                    'users':
+                            [
+                                {
+                                    'id': 3,
+                                    'username': 'Olorin'
+                                },
+                            ],
+                    'texts':
+                            [
+                                {
+                                    'id': 5,
+                                    'title': 'New beginning'
+                                },
+                            ],
+                    'entries_details':
+                            [
+                                {
+                                    'num_of_sent': 3,
+                                    'author': {'id', 'username'},
+                                    'time_created': '18 ноября 2013 г. 23:13:39',
+                                },
+                            ],
+                }
+            ]
+
 
     user_particip_list - list of projects, user participating in
-        [
-            {
-                'id': 3,
-                'name': 'test',
-                'progress': 35,
-                'manager':
-                    {
-                        'id': 3,
-                        'username': 'test'
-                    }
-            }
-        ]
+
+    .. code-block:: python
+
+        user_user_particip_list =
+            [
+                {
+                    'id': 3,
+                    'name': 'test',
+                    'progress': 35,
+                    'manager':
+                        {
+                            'id': 3,
+                            'username': 'test'
+                        }
+                }
+            ]
 
     last_public_projects - list of all other recently active projects (maybe later will be more
                          personal-oriented - by language, for example, or by the texts' subject)
-        [
-            {
-                'id': 3,
-                'name': 'test',
-                'progress': 35,
-                'manager':
-                    {
-                        'id': 3,
-                        'username': 'test'
-                    }
-            }
-        ]
+
+    .. code-block:: python
+
+        last_public_projects =
+            [
+                {
+                    'id': 3,
+                    'name': 'test',
+                    'progress': 35,
+                    'manager':
+                        {
+                            'id': 3,
+                            'username': 'test'
+                        }
+                }
+            ]
     """
 
     user = User.objects.get(username=request.user)
@@ -97,8 +118,8 @@ def projects(request):
         project.texts = Text.objects.filter(project=project)
         project.progress = project.get_progress()
         project.users = []
-        if not project.who_allowed == '':
-            project_users = User.objects.filter(id__in=project.who_allowed.split(','))
+        if not project.members == '':
+            project_users = User.objects.filter(id__in=project.members.split(','))
             for i in project_users:
                 project.users.append({
                     'id': i.id,
@@ -125,8 +146,8 @@ def projects(request):
 
 
     # Getting data about projects, user participating in
-    if not meta.projects_particip == "":
-        user_particip_list = Project.objects.filter(id__in=meta.projects_particip.split(','))
+    if not meta.member_of == "":
+        user_particip_list = Project.objects.filter(id__in=meta.member_of.split(','))
         for pr in user_particip_list:
             pr.progress = pr.get_progress()
     else:
@@ -143,8 +164,7 @@ def projects(request):
     add_project_form = ProjectForm(None)
     page_title = _('Projects')
 
-    data = {'username': request.user,
-            'page_title': page_title,
+    data = {'page_title': page_title,
             'breadcrumbs': [[page_title, '/projects/'], ],
             'user_projects': user_projects_list,
             'user_particip_list': user_particip_list,
@@ -220,40 +240,76 @@ def add_text_to_project(request):
 
 
 @login_required
-def add_user_to_project(request, proj_id, us_id):
+def invite_user_to_project(request, proj_id, us_id):
     project = Project.objects.get(id=proj_id)
     if project.is_user_manager(request.user):
-        if project.is_private:
-            try:
-                user = User.objects.get(id=us_id)
-            except User.DoesNotExist:
-                messages.add_message(request, messages.ERROR, _('There\'s no such user, sorry.'))
-                return HttpResponseRedirect('/projects/')
-            allowed = project.who_allowed.split(',') if not project.who_allowed == '' else []
-            if not str(user.id) in allowed:
-                allowed.append(str(user.id))
+        try:
+            user = User.objects.get(id=us_id)
+        except User.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such user, sorry.'))
+            return HttpResponseRedirect('/projects/')
+        members = project.members.split(',') if not project.members == '' else []
+        invited = project.users_invited.split(',') if not project.users_invited == '' else []
+        requested = project.users_requested.split(',') if not project.users_requested == '' else []
+
+        try:
+            meta = UserMeta.objects.get(user=user)
+        except UserMeta.DoesNotExist:
+            new_meta = UserMeta(user=user)
+            new_meta.save()
+            meta = UserMeta.objects.get(user=user)
+
+        if not str(user.id) in members:
+            if not str(user.id) in invited:
+                if not str(user.id) in requested:
+                    # Adding user id to list of invited users in project
+                    invited.append(str(usr.id))
+
+                    # Adding project id to the user's list of invitations
+                    user_invited_to = meta.invited_to.split(',') if not meta.invited_to == '' else []
+                    user_invited_to.append(str(proj_id))
+                else:
+                    # Adding user to project's members list
+                    members.append(str(user.id))
+                    # ...and deleting request info from user's and project's lists
+                    requested.remove(str(user.id))
+                    user_requests = meta.requested_to.split(',') if not meta.requested_to == "" else []
+                    user_requests.remove(str(proj_id))
+
             else:
                 messages.add_message(request, messages.ERROR,
-                                     _('User %(user_name)s is already participating in the project %(project_name)s') %
+                                     _('User %(user_name)s is already invited to the project %(project_name)s') %
                                      {
                                          'user_name': user.username,
                                          'project_name': project.name
                                      })
                 return HttpResponseRedirect('/projects/')
-            project.who_allowed = ','.join(allowed)
-            project.save()
-            messages.add_message(request, messages.SUCCESS,
-                                 _('User %(user_name)s added to project "%(project_name)s".') %
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 _('User %(user_name)s is already participating in the project %(project_name)s') %
                                  {
                                      'user_name': user.username,
                                      'project_name': project.name
                                  })
             return HttpResponseRedirect('/projects/')
-        else:
-            messages.add_message(request, messages.ERROR, _('Your project is public. No need to add users.'))
-            return HttpResponseRedirect('/projects/')
+
+        project.members = ','.join(members)
+        project.users_invited = ','.join(invited)
+        project.users_requested = ','.join(requested)
+        project.save()
+
+        meta.invited_to = ','.join(user_invited_to)
+        meta.requested_to = ','.join(user_requests)
+        meta.save()
+        messages.add_message(request, messages.SUCCESS,
+                             _('User %(user_name)s added to project "%(project_name)s".') %
+                             {
+                                 'user_name': user.username,
+                                 'project_name': project.name
+                             })
+        return HttpResponseRedirect('/projects/')
     else:
-        messages.add_message(request, messages.ERROR, _('You are not allowed to delete this project!'))
+        messages.add_message(request, messages.ERROR, _('You are not members to delete this project!'))
         return HttpResponseRedirect('/')
 
 
@@ -262,10 +318,10 @@ def remove_user_from_project(request, proj_id, us_id):
     project = Project.objects.get(id=proj_id)
     user = User.objects.get(id=us_id)
     if project.is_user_manager(request.user) or user == request.user:
-        allowed = project.who_allowed.split(',') if not project.who_allowed == '' else []
+        allowed = project.members.split(',') if not project.members == '' else []
         if str(user.id) in allowed:
             allowed.remove(str(user.id))
-            project.who_allowed = ','.join(allowed)
+            project.members = ','.join(allowed)
             project.save()
             if user == request.user:
                 messages.add_message(request, messages.SUCCESS, _('You successfully left project "%(project_name)s"') %

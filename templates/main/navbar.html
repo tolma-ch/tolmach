@@ -6,11 +6,13 @@
 			<div class="navbar-container" id="navbar-container">
 				<div class="navbar-header pull-left">
                                         <a href="/">
-                                                <img src="/media/tolma.ch.ru_small_white.png" style="margin-top:3px">
+                                                <!--<img src="/media/tolma.ch.ru_small_white.png" style="margin-top:3px">-->
+                                                <img src="/media/img/tolmach_1-02_mini.png" style="margin-top:7px">
                                         </a><!-- /.brand -->
 				</div><!-- /.navbar-header -->
 {% if user.is_authenticated %}
-{% include "main/navbar-logged-in.html" %}
+                {% load tolmach_tags %}
+                {% login_navbar %}
 {% endif %}
 			</div><!-- /.container -->
 		</div>
