@@ -4,3 +4,5 @@
 *.mo
 .idea
 local_settings.py
+
+venv
