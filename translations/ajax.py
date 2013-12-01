@@ -12,7 +12,7 @@ def say_hello(request, name):
 
 @dajaxice_register
 def accept_invitation(request, proj_id):
-    project = Project.object.get(id=proj_id)
+    project = Project.objects.get(id=proj_id)
     user = request.user
     meta = UserMeta.objects.get(user=user)
     user_invites_list = meta.invited_to.split(',') if not meta.invited_to == "" else []
@@ -23,7 +23,7 @@ def accept_invitation(request, proj_id):
         proj_members.append(str(user.id))
 
         # Removing user from project's invites list
-        proj_invites = project.users_invited(',') if not project.users_invited == "" else []
+        proj_invites = project.users_invited.split(',') if not project.users_invited == "" else []
         proj_invites.remove(str(user.id))
 
         # Removing project from user's invites list
@@ -39,20 +39,20 @@ def accept_invitation(request, proj_id):
         meta.member_of = ','.join(user_member_of)
         meta.save()
 
-        return json.dumps({'status': 'SUCCESS', 'message': ''})
+        return json.dumps({'status': 'SUCCESS', 'message': 'You accepted the invitation successfully'})
     else:
         return json.dumps({'status': 'ERROR', 'message': 'You haven\'t been invited to this project'})
 
 
 @dajaxice_register
 def refuse_invitation(request, proj_id):
-    project = Project.object.get(id=proj_id)
+    project = Project.objects.get(id=proj_id)
     user = request.user
     meta = UserMeta.objects.get(user=user)
     user_invites_list = meta.invited_to.split(',') if not meta.invited_to == "" else []
     if str(proj_id) in user_invites_list:
         # Removing user from project's invites list
-        proj_invites = project.users_invited(',') if not project.users_invited == "" else []
+        proj_invites = project.users_invited.split(',') if not project.users_invited == "" else []
         proj_invites.remove(str(user.id))
 
         # Removing project from user's invites list
@@ -64,14 +64,14 @@ def refuse_invitation(request, proj_id):
         meta.invited_to = ','.join(user_invites_list)
         meta.save()
 
-        return json.dumps({'status': 'SUCCESS', 'message': ''})
+        return json.dumps({'status': 'SUCCESS', 'message': 'You refused the invitation successfully'})
     else:
         return json.dumps({'status': 'ERROR', 'message': 'You haven\'t been invited to this project'})
 
 
 @dajaxice_register
 def request_access(request, proj_id):
-    project = Project.object.get(id=proj_id)
+    project = Project.objects.get(id=proj_id)
     user = request.user
     meta = UserMeta.objects.get(user=user)
     user_invites_list = meta.invited_to.split(',') if not meta.invited_to == "" else []
@@ -83,7 +83,7 @@ def request_access(request, proj_id):
         proj_members.append(str(user.id))
 
         # Removing user from project's invites list
-        proj_invites = project.users_invited(',') if not project.users_invited == "" else []
+        proj_invites = project.users_invited.split(',') if not project.users_invited == "" else []
         proj_invites.remove(str(user.id))
 
         # Removing project from user's invites list
