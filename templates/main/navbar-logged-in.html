@@ -1,4 +1,14 @@
 {% load i18n %}
+{% load dajaxice_templatetags %}{% dajaxice_js_import %}
+<script type="text/javascript">
+function invite(data){
+    if(data!=Dajaxice.EXCEPTION){
+        alert(data.message);
+    }else{
+        alert('Error');
+    }
+}
+</script>
 					<ul class="nav ace-nav pull-right">
 						<li class="grey">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -75,15 +85,21 @@
 
 						<li class="purple">
 							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                {% if invites_num > 0 %}
 								<i class="icon-bell-alt icon-animated-bell"></i>
-								<span class="badge badge-important">8</span>
+								<span class="badge badge-important">{{ invites_num }}</span>
+                                {% else %}
+                                <i class="icon-bell-alt"></i>
+                                {% endif %}
 							</a>
 
 							<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
+                                {% if invites_num > 0 %}
 								<li class="nav-header">
 									<i class="icon-warning-sign"></i>
-									8 Notifications
+									{{ invites_num }} Notifications
 								</li>
+                                {% endif %}
 
 								<!--<li>-->
 									<!--<a href="#">-->
@@ -106,24 +122,24 @@
 
                                 {% for note in invites %}
                                 <li>
-									<a href="#">
-										<i class="btn btn-mini btn-primary icon-user"></i>
-										You were invited to the project Project.name
-									</a>
+                                        <i class="btn btn-mini btn-primary icon-user"></i>
+                                        You were invited to the project "{{ note.name }}".
+                                        <br>
+                                        <button class="btn btn-minier"
+                                                onclick="Dajaxice.translations.accept_invitation('invite',{'proj_id': {{ note.id }}});">
+                                            <i class="icon-pencil align-top"></i>
+                                            Accept
+                                        </button>
+                                        <button class="btn btn-minier"
+                                                onclick="Dajaxice.translations.refuse_invitation('invite',{'proj_id': {{ note.id }}});">
+                                            <i class="icon-pencil align-top"></i>
+                                            Decline
+                                        </button>
 								</li>
                                 {% empty %}
                                 <li>
 										<i class="btn btn-mini btn-primary icon-user"></i>
-										You were invited to the project "Tolma.ch"
-                                        <br>
-                                        <button type="submit" class="btn btn-minier">
-                                            <i class="icon-pencil align-top"></i>
-                                            Accept
-                                        </button>
-                                        <button type="submit" class="btn btn-minier">
-                                            <i class="icon-pencil align-top"></i>
-                                            Decline
-                                        </button>
+										You have no active invites
 								</li>
                                 {% endfor %}
 

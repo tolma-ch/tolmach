@@ -11,7 +11,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from tolmach.utils import send_message
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
 import utils
@@ -126,24 +125,23 @@ def projects(request):
                     'username': i.username,
                 })
         project.entries_details = []
-        entries = TextEntry.objects.filter(text__in=project.texts,id_in_text=0).order_by('-time_created')
+        entries = TextEntry.objects.filter(text__in=project.texts, id_in_text=0).order_by('-time_created')
         for ent in entries:
             if len(project.entries_details) > 0:
                 if not project.entries_details[-1]['author'].username == ent.author.username:
                     project.entries_details += [{
-                        'author': ent.author,
-                        'number_of_sent': 1,
-                        'time_created': ent.time_created,
-                    }]
+                                                    'author': ent.author,
+                                                    'number_of_sent': 1,
+                                                    'time_created': ent.time_created,
+                                                }]
                 else:
                     project.entries_details[-1]['number_of_sent'] += 1
             else:
                 project.entries_details += [{
-                    'author': ent.author,
-                    'number_of_sent': 1,
-                    'time_created': ent.time_created,
-                }]
-
+                                                'author': ent.author,
+                                                'number_of_sent': 1,
+                                                'time_created': ent.time_created,
+                                            }]
 
     # Getting data about projects, user participating in
     if not meta.member_of == "":
@@ -152,7 +150,6 @@ def projects(request):
             pr.progress = pr.get_progress()
     else:
         user_particip_list = []
-
 
     # Getting data about last public projects
     last_public_projects = Project.objects.filter(is_private=False).order_by('-last_modified')[:10]
@@ -259,21 +256,22 @@ def invite_user_to_project(request, proj_id, us_id):
             new_meta.save()
             meta = UserMeta.objects.get(user=user)
 
+        user_invited_to = meta.invited_to.split(',') if not meta.invited_to == '' else []
+        user_requests = meta.requested_to.split(',') if not meta.requested_to == "" else []
+
         if not str(user.id) in members:
             if not str(user.id) in invited:
                 if not str(user.id) in requested:
                     # Adding user id to list of invited users in project
-                    invited.append(str(usr.id))
+                    invited.append(str(user.id))
 
                     # Adding project id to the user's list of invitations
-                    user_invited_to = meta.invited_to.split(',') if not meta.invited_to == '' else []
                     user_invited_to.append(str(proj_id))
                 else:
                     # Adding user to project's members list
                     members.append(str(user.id))
                     # ...and deleting request info from user's and project's lists
                     requested.remove(str(user.id))
-                    user_requests = meta.requested_to.split(',') if not meta.requested_to == "" else []
                     user_requests.remove(str(proj_id))
 
             else:
@@ -317,12 +315,18 @@ def invite_user_to_project(request, proj_id, us_id):
 def remove_user_from_project(request, proj_id, us_id):
     project = Project.objects.get(id=proj_id)
     user = User.objects.get(id=us_id)
+    meta = UserMeta.objects.get(user=user)
     if project.is_user_manager(request.user) or user == request.user:
-        allowed = project.members.split(',') if not project.members == '' else []
-        if str(user.id) in allowed:
-            allowed.remove(str(user.id))
-            project.members = ','.join(allowed)
+        project_members = project.members.split(',') if not project.members == '' else []
+        users_projects = meta.member_of.split(',') if not meta.member_of == "" else []
+        if str(user.id) in project_members:
+            project_members.remove(str(user.id))
+            project.members = ','.join(project_members)
             project.save()
+
+            users_projects.remove(str(proj_id))
+            meta.member_of = ','.join(users_projects)
+            meta.save()
             if user == request.user:
                 messages.add_message(request, messages.SUCCESS, _('You successfully left project "%(project_name)s"') %
                                                                 {
@@ -331,18 +335,20 @@ def remove_user_from_project(request, proj_id, us_id):
                 )
                 return HttpResponseRedirect('/')
             else:
-                messages.add_message(request, messages.SUCCESS, _('User %(user_name)s was successfully removed from project "%(project_name)s"') %
-                                                                {
-                                                                    'user_name': user.username,
-                                                                    'project_name': project.name,
-                                                                })
+                messages.add_message(request, messages.SUCCESS,
+                                     _('User %(user_name)s was successfully removed from project "%(project_name)s"') %
+                                     {
+                                         'user_name': user.username,
+                                         'project_name': project.name,
+                                     })
                 return HttpResponseRedirect('/projects/')
         else:
-            messages.add_message(request, messages.ERROR, _('Sorry, user %(user_name)s doesn\'t participate in project "%(project_name)s"') %
-                                                          {
-                                                              'user_name': user.username,
-                                                              'project_name': project.name,
-                                                          })
+            messages.add_message(request, messages.ERROR,
+                                 _('Sorry, user %(user_name)s doesn\'t participate in project "%(project_name)s"') %
+                                 {
+                                     'user_name': user.username,
+                                     'project_name': project.name,
+                                 })
             return HttpResponseRedirect('/projects/')
     else:
         messages.add_message(request, messages.ERROR, _('You are not allowed to edit this project!'))
@@ -400,6 +406,7 @@ def translate_entry(request, ent_id):
         trans_entry.save()
 
         from django.utils import timezone
+
         project.last_modified = timezone.now()
         project.save()
 
@@ -458,7 +465,8 @@ def entry_approve(request, ent_id):
         entry.is_approved = not entry.is_approved
         entry.save()
     else:
-        messages.add_message(request, messages.ERROR, _('You need to be project manager to approve translation entries'))
+        messages.add_message(request, messages.ERROR,
+                             _('You need to be project manager to approve translation entries'))
         return HttpResponseRedirect('/')
 
 
