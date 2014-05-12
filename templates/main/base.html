@@ -22,15 +22,16 @@
 		<!--page specific plugin styles-->
 
 		<!--fonts-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700,400italic,500italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
-		<link rel="stylesheet" href="/media/css/ace-fonts.css">
+		<!-- <link rel="stylesheet" href="/media/css/ace-fonts.css"> -->
 
 		<!--ace styles-->
 
-		<link rel="stylesheet" href="/media/css/app.css">
-		<link rel="stylesheet" href="/media/css/ace.min.css">
+		<!-- <link rel="stylesheet" href="/media/css/app.css"> -->
+		<!-- <link rel="stylesheet" href="/media/css/uncompressed/ace.css">
 		<link rel="stylesheet" href="/media/css/ace-responsive.min.css">
-		<link rel="stylesheet" href="/media/css/ace-skins.min.css">
+		<link rel="stylesheet" href="/media/css/ace-skins.min.css"> -->
 
                 <link rel="stylesheet" href="/media/css/jquery-ui-1.10.3.custom.min.css" />
                 <link rel="stylesheet" href="/media/css/jquery.gritter.css" />
@@ -38,6 +39,9 @@
                 <link rel="stylesheet" href="/media/css/bootstrap-editable.css" />
 
         <link rel="stylesheet" href="/media/css/stylus/projects.css">
+
+
+		
 
 
 		<!--[if lte IE 8]>
@@ -50,10 +54,12 @@
 
 		<script src="/media/js/ace-extra.min.js"></script>
         {% dajaxice_js_import %}
+
+        {% include "main/scripts.html" %}
 	</head>
 
 	<body>
-{% include "main/navbar.html" %}
+{% include "components/header/header.html" %}
 {% block content %}
 {% endblock %}
 	<footer id="main-footer">
@@ -117,6 +123,7 @@
 
 		<script src="/media/js/ace-elements.min.js"></script>
 		<script src="/media/js/ace.min.js"></script>
+
 
 		<!--inline scripts related to this page-->
 	

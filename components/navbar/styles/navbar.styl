@@ -1,0 +1,87 @@
+.navbar 
+	border none
+	-webkit-box-shadow none
+	box-shadow none
+	border-radius 0
+	margin 0
+	padding-left 0
+	padding-right 0
+	min-height 50px
+	position relative
+	background #438eb9
+
+	& > .container 
+		padding-left 0
+		padding-right 0
+
+	.navbar
+		&-text,
+		&-link 
+			color #ffffff
+
+		&-brand 
+			color #ffffff
+			font-size 24px
+			text-shadow none
+			padding-top 10px
+			padding-bottom 10px
+
+			&:hover,
+			&:focus 
+				color #ffffff
+
+		&-header 
+			margin 0 !important
+			height 100%
+
+			a 
+				display block
+				height 100%
+
+				img 
+					margin 11px 0 10px
+ 
+	&-nav
+		&__button 
+			display block
+			list-style-type none
+			height 50px
+			padding 0 17px
+
+			&.button_green 
+				background #51ce00
+
+			&.button_blue 
+				background #53b0e5
+
+			& > a 
+				display block
+				font-weight bold
+				height 100%
+				line-height 50px
+				padding 0
+
+		& > li > a
+			&,
+			&hover,
+			&:focus 
+				font-size 13px
+				text-shadow none
+				color #ffffff !important
+
+	&-fixed
+		&-top,
+		&-bottom 
+			position fixed
+
+	&-container 
+		padding-left 10px
+		padding-right 20px
+		height 50px
+		max-width 1024px
+		margin 0 auto
+
+		.container 
+			padding-left 0
+			padding-right 0
+

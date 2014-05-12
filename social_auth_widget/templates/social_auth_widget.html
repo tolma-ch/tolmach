@@ -1,27 +1,10 @@
 {% load i18n static %}
 {% spaceless %}
-<ul class="nav ace-nav vertical">
+<ul class="nav ace-nav">
     {% for provider in providers %}
-<li>
-<a href="{% url 'social:begin' backend=provider.id %}" class="btn btn-sm btn-purple">
-{{ provider.name }}
-<i class="{{ provider.icon }} bigger-150"></i>
-</a>
-</li>
+        <li class="social-provider">
+            <a href="{% url 'social:begin' backend=provider.id %}" class="icon custom-{{ provider.icon }} "></a>
+        </li>
     {% endfor %}
 </ul>
-    <div style="clear:both"></div>
-    <style type="text/css">
-        .social-auth-backend {
-            margin: 0px 10px 0px 0px;
-            background-image: url('{% static "/static/social_auth.png" %}');
-            background-repeat: no-repeat;
-            display: block;
-            float: left;
-        }
-        .social-auth-backend > img {
-            width: 32px;
-            height: 32px;
-        }
-    </style>
 {% endspaceless %}
