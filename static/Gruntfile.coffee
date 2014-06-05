@@ -50,7 +50,12 @@ module.exports = (grunt) ->
       components:
         files: 
           "../media/js/all.js": [ "../components/**/scripts/*.js" ]
-          "../media/css/all.styl": [ "../components/main/mixins.styl", "../components/main/styles/main.styl", "../components/**/styles/*.styl" ]
+          "../media/css/all.styl": [ 
+            "../components/main/mixins.styl", 
+            "../components/main/predefines.styl", 
+            "../components/main/styles/main.styl", 
+            "../components/**/styles/*.styl" 
+          ]
 
     uglify:
       all:
