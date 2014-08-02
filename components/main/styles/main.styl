@@ -1,3 +1,11 @@
+html, body 
+	height 100%
+
+body > .main 
+	min-height 100%
+	padding-bottom 72px
+	height auto
+
 .stripy-heading
 	text-align center
 	display table
@@ -61,3 +69,18 @@
 	&__text
 		color #4d4d4d
 		text-align left
+
+.btn-scroll-up
+	display none
+	position fixed
+	left 10%
+	top 60px
+	background rgba(67, 142, 185, 0.15)
+	color #fff
+	font-size 2em
+
+	&:hover
+		color #fff
+		background rgba(67, 142, 185, 0.25)
+		text-shadow 0 0 4px #fff
+		
