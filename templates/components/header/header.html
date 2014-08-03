@@ -1,31 +1,23 @@
 {% include "components/navbar/navbar.html" %}
 
-<section class="slogan-zone">
-{% load social_auth_widget %}
-	<div class="main-container container-fluid">
-		<div class="noise-wrapper"></div>
-		<section class="leaderboard leaderboard-style-one">
-		    <div class="container">
-		        <h1 class="animated fadeInDown">Переводим вместе</h1>
-		        <h2 class="animated fadeInDown">Лучше, чем когда-либо!</h2>
-		        <div class="relative-w">
-	          	    <form class="form-signin">
-				        <h2 class="form-signin-heading">Войти с помощью</h2>
-{% social_auth_widget %}
-<!--								<br>
-						<br>
-					    <span class="label label-light arrowed-in-right arrowed-in" style="margin-bottom:15px">или</span>
-				        <input type="text" class="form-control" placeholder="Логин">
-				        <input type="text" class="form-control" placeholder="Адрес эл.почты">
-				        <input type="password" class="form-control" placeholder="Пароль">
-				        <label class="checkbox">
-					        <input type="checkbox" value="remember-me"> Запомнить меня
-				        </label>
-				        <button class="btn btn-lg btn-success btn-block" type="submit">Зарегистрироваться</button>
--->
-				    </form>
-		        </div>
-		    </div>
-		</section>
-	</div>
-</section>
+{% if user.is_authenticated %}
+{% else %}
+	<section class="slogan-zone">
+	{% load social_auth_widget %}
+		<div class="main-container container-fluid">
+			<div class="noise-wrapper"></div>
+			<section class="leaderboard leaderboard-style-one">
+			    <div class="container">
+			        <h1 class="animated fadeInDown">Переводим вместе</h1>
+			        <h2 class="animated fadeInDown">Лучше, чем когда-либо!</h2>
+			        <div class="relative-w">
+		          	    <form class="form-signin">
+					        <h2 class="form-signin-heading">Войти с помощью</h2>
+							{% social_auth_widget %}
+					    </form>
+			        </div>
+			    </div>
+			</section>
+		</div>
+	</section>
+{% endif %}

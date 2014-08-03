@@ -8,3 +8,5 @@ local_settings.py
 venv
 
 static/node_modules
+local.tolma.ch.conf
+local.tolmach.ini
