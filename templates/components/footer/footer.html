@@ -1,0 +1,37 @@
+{% load i18n %}
+
+{% trans 'Мы ВКонтакте' as vk_title %}
+{% trans 'Tolma.ch на Google+' as gp_title %}
+{% trans 'Наш Twitter' as tw_title %}
+{% trans 'Tolma.ch в Facebook' as fb_title %}
+
+{% if user.is_authenticated %}
+
+{% else %}
+	<footer class="footer footer-default" id="footer">
+		<div class="footer-container" id="footer-container">
+			<div class="footer-logo pull-left">
+                <a href="/">
+                    <!--<img src="/media/tolma.ch.ru_small_white.png" style="margin-top:3px">-->
+                    <img src="/media/img/tolmach_1-02_mini.png">
+                </a><!-- /.brand -->
+			</div><!-- /.navbar-header -->
+
+			<ul class="footer-social pull-right">
+				<li class="footer-social__item">
+					<a href="#" target="_blank" title="{{ vk_title }}" class="footer-social__icon footer-social__item_vk"></a>
+				</li><!--
+		     --><li class="footer-social__item">
+					<a href="#" target="_blank" title="{{ gp_title }}" class="footer-social__icon footer-social__item_gp"></a>
+				</li><!--
+			 --><li class="footer-social__item">
+					<a href="#" target="_blank" title="{{ tw_title }}" class="footer-social__icon footer-social__item_tw"></a>
+				</li><!--
+			 --><li class="footer-social__item">
+					<a href="#" target="_blank" title="{{ fb_title }}" class="footer-social__icon footer-social__item_fb"></a>
+				</li>
+			</ul>
+
+		</div><!-- /.container -->
+	</footer>	
+{% endif %}
