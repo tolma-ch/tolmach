@@ -77,7 +77,7 @@ body > .main
 .iconed-features
 	text-align center
 	max-width 1024px
-	padding 0 58px
+	padding 0 58px 100px
 	margin 0
 	box-sizing content-box	
 
@@ -148,18 +148,18 @@ body > .main
 		margin 0
 		vertical-align middle
 
+		&__icon 
+			display block
+			width 100%
+			height 100%
+			background url('/components/footer/images/social.png') no-repeat
+
 		&__item 
 			display inline-block
 			list-style-type none
 			height 24px
 			width 24px
 			margin-left 10px
-
-			& > a 
-				display block
-				width 100%
-				height 100%
-				background url('/components/footer/images/social.png') center no-repeat
 
 			&_vk
 				background-position 0 0
@@ -261,12 +261,14 @@ body > .main
 							background-position 0 0
 
 							&:hover
+								background-color transparent
 								background-position 0 -1*iconSize
 
 						&-twitter
 							background-position -2*iconSize 0
 
 							&:hover
+								background-color transparent
 								background-position -2*iconSize -1*iconSize
 
 
