@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
-import utils
+import translations.utils
 
 
 @login_required
@@ -104,12 +104,13 @@ def projects(request):
 
     user = User.objects.get(username=request.user)
 
-    try:
-        meta = UserMeta.objects.get(user=user)
-    except UserMeta.DoesNotExist:
-        new_meta = UserMeta(user=user)
-        new_meta.save()
-        meta = UserMeta.objects.get(user=user)
+    meta, p = UserMeta.objects.get_or_create(user=user)
+    #try:
+    #    meta = UserMeta.objects.get(user=user)
+    #except UserMeta.DoesNotExist:
+    #    new_meta = UserMeta(user=user)
+    #    new_meta.save()
+    #    meta = UserMeta.objects.get(user=user)
 
     # Getting data about user's projects
     user_projects_list = Project.objects.filter(manager=user)
@@ -249,12 +250,13 @@ def invite_user_to_project(request, proj_id, us_id):
         invited = project.users_invited.split(',') if not project.users_invited == '' else []
         requested = project.users_requested.split(',') if not project.users_requested == '' else []
 
-        try:
-            meta = UserMeta.objects.get(user=user)
-        except UserMeta.DoesNotExist:
-            new_meta = UserMeta(user=user)
-            new_meta.save()
-            meta = UserMeta.objects.get(user=user)
+        meta, p = UserMeta.objects.get_or_create(user=user)
+        #try:
+        #    meta = UserMeta.objects.get(user=user)
+        #except UserMeta.DoesNotExist:
+        #    new_meta = UserMeta(user=user)
+        #    new_meta.save()
+        #    meta = UserMeta.objects.get(user=user)
 
         user_invited_to = meta.invited_to.split(',') if not meta.invited_to == '' else []
         user_requests = meta.requested_to.split(',') if not meta.requested_to == "" else []
