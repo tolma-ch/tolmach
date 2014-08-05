@@ -211,6 +211,6 @@ LOGGING = {
 }
 
 try:
-    from local_settings import *
+    from tolmach.local_settings import *
 except ImportError:
     pass

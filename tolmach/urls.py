@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
-import views as main_views
+import tolmach.views as main_views
 import translations.views as trans_views
 
 # Uncomment the next two lines to enable the admin:
