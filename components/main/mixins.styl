@@ -2,6 +2,11 @@ $headerColor = #2b7cb5
 $annotation = #989898
 $entryColor = #77cb49
 
+$grayBorder = #e8e8e8
+$darkBlue = #115770
+
+$grayText = #868686
+
 box-shadow()
 	-webkit-box-shadow arguments
 	-moz-box-shadow arguments
@@ -11,4 +16,15 @@ border-radius()
 	-webkit-border-radius arguments
 	-moz-border-radius arguments
 	border-radius arguments
+
+clearfix()
+	*zoom 1
+
+	&:after,
+	&:before
+		content " "
+		display table
+
+	&:after
+		clear both
 	

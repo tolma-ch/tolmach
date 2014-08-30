@@ -1,17 +1,21 @@
 html, body 
 	height 100%
+	font-family 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif
+
 
 body > .main 
 	min-height 100%
 	padding-bottom 72px
 	height auto
 
+	&.auth
+		padding-bottom 200px
+
 .stripy-heading
 	text-align center
 	display table
 	width 100%
 	box-sizing border-box
-	padding 0 58px
 
 	&__before,
 	&__after
@@ -21,7 +25,7 @@ body > .main
 		&:before
 			display block
 			content ""	
-			border-bottom 1px solid #e8e8e8
+			border-bottom 1px solid $grayBorder
 			height 50%
 			width 100%
 			position relative
@@ -39,13 +43,13 @@ body > .main
 .iconed-features
 	text-align center
 	max-width 1024px
-	padding 0 58px 100px
+	padding 0 0 100px
 	margin 0
 	box-sizing content-box	
 
 	&__list
 		text-align center
-		margin 0 -80px
+		margin 0 -90px
 		padding 0
 		
 		list-style-type none
@@ -83,4 +87,57 @@ body > .main
 		color #fff
 		background rgba(67, 142, 185, 0.25)
 		text-shadow 0 0 4px #fff
-		
+	
+.container
+	max-width 1024px
+	padding 0 10px
+	box-sizing border-box
+
+.sidebar
+	width 240px
+	margin-right 20px
+	float left
+
+.main-content
+	clearfix()
+
+.content
+	width 744px
+	float right
+
+.button
+	display inline-block
+	padding 5px 20px
+
+	&_gray
+		background #d9d9d9
+		color #fff
+		font-weight 300
+
+@media (max-width: 1049px)
+	.container
+		width 725px
+
+	.footer-container
+		width 705px
+
+	.footer-data
+		width 505px
+
+		&__list
+			width 215px
+
+			&:last-child
+				display none
+	.content
+		float left
+		width 444px
+
+@media (max-width:979px)
+	.content
+		width 444px
+
+
+@media (max-width: 767px)
+	body
+		padding 0

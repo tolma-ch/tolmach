@@ -1,6 +1,34 @@
 {% extends "main/base.html" %}
 {% block content %}
-<div class="main-container-inner">
+<div class="container">
+	
+	<section class="main-content">
+		<aside class="sidebar">
+			{% include "components/sidebar/sidebar.html" %}
+		</aside>
+
+		<section class="content">
+			{% include "components/profile-data/profile-data.html" %}
+			{% block innercontent %}
+			{% endblock %}
+		</section>
+
+	</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!--
 				<a class="menu-toggler" id="menu-toggler" href="#">
 					<span class="menu-text"></span>
 				</a>
@@ -38,7 +66,7 @@
 
 							<span class="btn btn-danger"></span>
 						</div>
-					</div><!-- #sidebar-shortcuts -->
+					</div><!-- #sidebar-shortcuts
 
 					<ul class="nav nav-list">
 						<li {% if projects_page_active %} class="active open" {% endif %}>
@@ -150,7 +178,7 @@
 								</li>
 							</ul>
 						</li>
-					</ul><!-- /.nav-list -->
+					</ul><!-- /.nav-list 
 
 					<div class="sidebar-collapse" id="sidebar-collapse">
 						<i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
@@ -181,8 +209,8 @@
                             </li>
                             {% endif %}
                             {% endfor %}
-							<!--<li class="active">User Profile</li>-->
-						</ul><!-- .breadcrumb -->
+							<!--<li class="active">User Profile</li>-
+						</ul><!-- .breadcrumb 
 
 						<div class="nav-search" id="nav-search">
 							<form class="form-search">
@@ -191,7 +219,7 @@
 									<i class="icon-search nav-search-icon"></i>
 								</span>
 							</form>
-						</div><!-- #nav-search -->
+						</div><!-- #nav-search -
 					</div>
 
 					<div class="page-content">
@@ -203,18 +231,17 @@
 									3 styles with inline editable feature
 								</small>
 							</h1>
-						</div><!-- /.page-header -->
+						</div><!-- /.page-header -
 
 						<div class="row">
 							<div class="col-xs-12">
 								<!-- PAGE CONTENT BEGINS -->
-{% block innercontent %}
-{% endblock %}
-								<!-- PAGE CONTENT ENDS -->
-							</div><!-- /.col -->
+
+								<!-- PAGE CONTENT ENDS -
+							</div><!-- /.col -
 						</div><!-- /.row -->
-					</div><!-- /.page-content -->
-				</div><!-- /.main-content -->
+					</div><!-- /.page-content -
+				</div><!-- /.main-content -
 
 				<div class="ace-settings-container" id="ace-settings-container">
 					<div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
@@ -263,5 +290,5 @@
 						</div>
 					</div>
 				</div><!-- /#ace-settings-container -->
-			</div>
+</div>
 {% endblock %}
