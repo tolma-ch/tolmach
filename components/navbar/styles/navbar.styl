@@ -42,17 +42,34 @@
 					margin 11px 0 10px
  
 	&-nav
+		margin 0
+
 		&__button 
 			display block
 			list-style-type none
 			height 50px
 			padding 0 17px
+			text-decoration none
+			position relative
 
-			&.button_green 
-				background #51ce00
+			&.button
+				&_green 
+					background #51ce00
 
-			&.button_blue 
-				background #53b0e5
+				&_blue 
+					background #53b0e5
+
+				&_gray
+					background #6b6b6b
+
+				&_purple
+					background #a069c3
+
+				&_light-blue
+					background #589dc7
+
+				&_dark-green
+					background #69aa46
 
 			& > a 
 				display block
@@ -61,13 +78,43 @@
 				line-height 50px
 				padding 0
 
+		& > li
+			float left
+
 		& > li > a
 			&,
-			&hover,
+			&:hover,
 			&:focus 
+				padding-top 15px
+				padding-bottom 15px
 				font-size 13px
 				text-shadow none
+				text-decoration none
 				color #ffffff !important
+				vertical-align middle
+
+		&__user
+			line-height 48px
+
+			& > a
+				display inline-block
+				height auto
+				padding 0 !important
+				vertical-align middle
+
+
+			&-photo
+				width 40px
+				height 40px
+				border-radius 50%
+				border 1px solid #fff
+				display block
+				position absolute
+				top 5px
+				left 10px
+
+			&-info
+				margin-left 40px
 
 	&-fixed
 		&-top,
