@@ -1,6 +1,8 @@
-{#% extends "main/base-logged-in.html" %#}
+{% extends "main/base-logged-in.html" %}
 
-{#% block innercontent %#}
+{% include "components/sidebar/sidebar.html" %}
+
+{% block innercontent %}
 <div class="user-statistics">
 	<div class="user-statistics__title">User statistics</div>
 	<div class="user-statistics__translations">
@@ -158,4 +160,4 @@
 
 	<a href="#" class="button button_gray user-statistics__recent-progress-new">Start New</a>
 </div>
-{#% endblock %#}
+{% endblock %}
