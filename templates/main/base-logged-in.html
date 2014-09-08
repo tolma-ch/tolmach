@@ -4,11 +4,12 @@
 	
 	<section class="main-content">
 		<aside class="sidebar">
-			{% include "components/sidebar/sidebar.html" %}
+			{% block sidebar %}
+			{% endblock %}
 		</aside>
 
 		<section class="content">
-			{% include "components/profile-data/profile-data.html" %}
+			{# {% include "components/profile-data/profile-data.html" %} #}
 			{% block innercontent %}
 			{% endblock %}
 		</section>

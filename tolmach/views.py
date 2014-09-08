@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 def index(request):
     if request.user.is_authenticated():
-        template = 'main/base-logged-in.html'
+        template = 'components/profile-data/profile-data.html'
     else:
         template = 'main/main.html'
     return render(request, template, {'request': request})
