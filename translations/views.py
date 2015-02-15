@@ -487,3 +487,23 @@ def parse_tmx(request):
             root.clear()
 
     return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
+
+
+
+### Translation stub
+
+def translate(request):
+    data = {
+        # 'username': request.user,
+        # 'page_title': text.title,
+        # 'breadcrumbs': [
+        #     ['Projects', '/projects/'],
+        #     [text.project.name, '/projects/'],
+        #     [text.title, ''],
+        # ],
+        # 'text': text,
+        # 'entries': entries,
+    }
+
+    template = 'components/translation/translation.html'
+    return render_to_response(template, data, RequestContext(request))

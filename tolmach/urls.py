@@ -49,4 +49,7 @@ urlpatterns = patterns('',
     url(r'^entry/(?P<ent_id>\d+)/voteup/$', trans_views.entry_voteup, name='entry_voteup'),
     url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
+
+    # temporarily added url for translations
+    url(r'^translate/$', trans_views.translate, name='translate'),
 )

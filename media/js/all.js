@@ -10,7 +10,7 @@
 
 (function() {
   window.Tolmach = {
-    version: "0.0.2-388"
+    version: "0.0.2-630"
   };
 
 }).call(this);
@@ -19,6 +19,11 @@
 /*
 TODO: make something here
  */
+
+(function() {
+
+
+}).call(this);
 
 (function() {
 

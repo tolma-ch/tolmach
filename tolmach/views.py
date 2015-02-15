@@ -11,7 +11,11 @@ def index(request):
         template = 'components/profile-data/profile-data.html'
     else:
         template = 'main/main.html'
-    return render(request, template, {'request': request})
+
+    data = {
+        'is_index': True
+    }
+    return render_to_response(template, data, RequestContext(request))
 
 
 @login_required

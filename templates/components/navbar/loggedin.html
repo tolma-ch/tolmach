@@ -12,7 +12,7 @@ function invite(data){
 <ul class="navbar-nav pull-right">
 	<li class="navbar-nav__button button_gray">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="icon-tasks"></i>
+			<i class="fa fa-tasks"></i>
 			<span class="badge badge-grey">4</span>
 		</a>
 	</li>
@@ -20,17 +20,17 @@ function invite(data){
 	<li class="navbar-nav__button button_purple">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
             {% if invites_num > 0 %}
-			<i class="icon-bell-alt icon-animated-bell"></i>
+			<i class="fa fa-bell-o fa-animated-bell"></i>
 			<span class="badge badge-important">{{ invites_num }}</span>
             {% else %}
-            <i class="icon-bell-alt"></i>
+            <i class="fa fa-bell-o"></i>
             {% endif %}
 		</a>
 	</li>
 
 	<li class="navbar-nav__button button_dark-green">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="icon-envelope icon-animated-vertical"></i>
+			<i class="fa fa-envelope fa-animated-vertical"></i>
 			<span class="badge badge-success">5</span>
 		</a>
 	</li>
@@ -43,7 +43,7 @@ function invite(data){
 				<span>{{ username }}</span>
 			</span>
 
-			<i class="icon-caret-down"></i>
+			<i class="fa fa-caret-down"></i>
 		</a>
 	</li>
 </ul>
