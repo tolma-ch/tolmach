@@ -12,17 +12,7 @@ dajaxice_autodiscover()
 PATH = getattr(settings, 'URL_PATH', '')
 
 urlpatterns = patterns('',
-    #url(r'^translations/$', include('translations.urls')),
-    # Examples:
-    # url(r'^$', 'tolmach.views.home', name='home'),
-    # url(r'^tolmach/', include('tolmach.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    #url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'%s' % PATH, include('social.apps.django_app.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
@@ -32,7 +22,6 @@ urlpatterns = patterns('',
 
     # main
     url(r'^$', main_views.index, name='index'),
-    url(r'^profile/$', 'tolmach.views.profile', name='profile'),
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
     # translations
