@@ -10,3 +10,7 @@ venv
 static/node_modules
 local.tolma.ch.conf
 local.tolmach.ini
+
+.vagrant
+nginx.conf
+uwsgi.ini

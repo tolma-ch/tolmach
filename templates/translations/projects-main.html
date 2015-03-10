@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block innercontent %}
-<script src="/media/js/jquery.js"></script>
+<script src="/static/js/jquery.js"></script>
 
     <script type="text/javascript">
         $(document).on("click", ".add-text", function() {
@@ -154,7 +154,7 @@
                         {% if forloop.first %}
                         <div class="last-entry">
                           <a href="#" class="avatar">
-                            <img src="/media/avatars/user.jpg">
+                            <img src="/static/avatars/user.jpg">
                           </a>
                           <span class="entry-details">
                             <span class="time">
@@ -181,7 +181,7 @@
                               {{ entry.time_created|date:"H:i" }}
                             </span>
                             <a href="#" class="avatar">
-                              <img src="/media/avatars/user.jpg">
+                              <img src="/static/avatars/user.jpg">
                             </a>
                             <span class="entry-details">
                               <span class="user">
@@ -197,7 +197,7 @@
                       {% empty %}
                         <div class="last-entry">
                           <a href="#" class="avatar">
-                            <img src="/media/avatars/user.jpg">
+                            <img src="/static/avatars/user.jpg">
                           </a>
                           <span class="entry-details">
                             <span class="time">
@@ -222,7 +222,7 @@
                               02:13
                             </span>
                             <a href="#" class="avatar">
-                              <img src="/media/avatars/user.jpg">
+                              <img src="/static/avatars/user.jpg">
                             </a>
                             <span class="entry-details">
                               <span class="user">
@@ -235,7 +235,7 @@
                               02:13
                             </span>
                             <a href="#" class="avatar">
-                              <img src="/media/avatars/user.jpg">
+                              <img src="/static/avatars/user.jpg">
                             </a>
                             <span class="entry-details">
                               <span class="user">
@@ -251,7 +251,7 @@
                               02:13
                             </span>
                             <a href="#" class="avatar">
-                              <img src="/media/avatars/user.jpg">
+                              <img src="/static/avatars/user.jpg">
                             </a>
                             <span class="entry-details">
                               <span class="user">
@@ -400,7 +400,7 @@
               <td>
                 <select name="source_lang" class="form-control">
                 {% for lang in langs %}
-                    <option value="{{ lang.id }}" style="background: url(/media/img/flags/{{ lang.code }}-24.png) no-repeat; padding-left: 27px;">{{lang.name}}</option>
+                    <option value="{{ lang.id }}" style="background: url(/static/img/flags/{{ lang.code }}-24.png) no-repeat; padding-left: 27px;">{{lang.name}}</option>
                 {% endfor %}
                 </select>
               </td>

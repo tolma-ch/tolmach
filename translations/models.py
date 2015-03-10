@@ -66,7 +66,7 @@ class Text(models.Model):
     target_lang = models.ForeignKey('entries.Language', related_name='target_lang')
 
     def __unicode__(self):
-        return self.title
+        return unicode(self.title)
 
     def is_user_allowed(self, user):
         """
@@ -94,7 +94,7 @@ class TextEntry(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.text
+        return unicode(self.text)
 
 
 class ProjectForm(ModelForm):
