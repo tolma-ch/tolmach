@@ -3,7 +3,7 @@
 
 {% block innercontent %}
 <!--
-<script src="/media/js/jquery.js"></script>
+<script src="/static/js/jquery.js"></script>
 
     <script type="text/javascript">
 function my_js_callback(data){
@@ -15,15 +15,49 @@ function my_js_callback(data){
               <button class="btn pull-right btn-primary" onclick="Dajaxice.translations.say_hello(my_js_callback, {'name':$('#test_alert_name').val()});">Test!</button> -->
 
       <!-- ################################################################################################################# -->
-<div class="container">
+<div class="container" ng-controller="transCtrl">
     <div class="translation">
         <h1 class="translation__title">{{ text.title }}</h1>
         <div class="translation__sentences">
             <h2 class="translation__variants-title">Варианты перевода</h2>
 
+
+            <div class="translation__sentence-translation translation__sentence-translation_mode_select"
+                 ng-repeat="entry in entries"
+                 ng-class="{'translation__sentence-translation_state_opened': entry.opened,
+                            'translation__sentence-translation_state_closed': !entry.opened}">
+                <div class="translation__sentence-translation-original"
+                        ng-click="entry.opened = !entry.opened; $parent.activeEntry = entry">
+                    {= entry.body =}
+                </div>
+
+                <div class="translation__sentence-translation-result">
+                    <div class="translation__sentence-translation-switcher">
+                        <span class="translation__text-switcher-button translation__text-switcher-button_state_active">
+                            <i class="fa fa-user translation__button-icon"></i>
+                            <span class="translation__button-content">Переводы пользователей</span>
+                        </span>
+                        <span class="translation__text-switcher-button">
+                            <i class="fa fa-pencil translation__button-icon"></i>
+                            <span class="translation__button-content">Предложить перевод</span>
+                        </span>
+                    </div>
+
+                    <div class="translation__sentence-commitance">abc</div>
+
+                    <div class="translation__sentence-suggestion" ng-repeat="translation in entry.translations">
+                        <span class="translation__sentence-suggestion-text">{= translation.body =}</span>
+                        <i class="fa fa-check-circle translation__sentence-suggestion-approve"></i>
+                        <i class="fa fa-pencil translation__sentence-suggestion-edit"></i>
+                    </div>
+
+                </div>
+            </div>
+
+
 {% for entry in entries %}
             <div class="translation__sentence-translation translation__sentence-translation_state_opened translation__sentence-translation_mode_select">
-                <div class="translation__sentence-translation-original">{{ entry.body }}</div>
+                <div class="translation__sentence-translation-original" onmousedown="$(this).parent().children('.translation__sentence-translation-result').toggle()">{{ entry.body }}</div>
 
                 <div class="translation__sentence-translation-result">
                     <div class="translation__sentence-translation-switcher">
@@ -128,9 +162,15 @@ function my_js_callback(data){
                 <span class="translation__text-switcher-button translation__text-switcher-button_state_active">Оригинал</span>
                 <span class="translation__text-switcher-button">Перевод</span>
             </div>
-
+            <style>
+                .green {
+                    background: lawngreen;
+                }
+            </style>
             <div class="translation__text" contenteditable>
-                {{ text.body | linebreaksbr }}
+                <span ng-repeat="entry in entries"
+                        ng-class="{green: entry === $parent.activeEntry}">{= entry. body =}</span>
+{#                {{ text.body | linebreaksbr }}#}
             </div>
             
         </div>

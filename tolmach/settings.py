@@ -1,5 +1,9 @@
 # Django settings for tolmach project.
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -37,12 +41,12 @@ TIME_ZONE = 'America/Chicago'
 LANGUAGE_CODE = 'ru'
 
 LANGUAGES = (
-	('ru', 'Russian'),
-	('en', 'English'),
+    ('ru', 'Russian'),
+    ('en', 'English'),
 )
 
 LOCALE_PATHS = (
-    '/home/olorin/src/django/tolmach/locale/',
+    os.path.join(BASE_DIR, 'locale'),
 )
 
 SITE_ID = 1
@@ -71,15 +75,14 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/media/'
+STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    '/home/ec2-user/tolmach/media',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -101,7 +104,7 @@ SECRET_KEY = '***REMOVED***'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -131,7 +134,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/home/ec2-user/tolmach/templates",
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 INSTALLED_APPS = (

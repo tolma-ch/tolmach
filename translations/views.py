@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
@@ -359,6 +360,25 @@ def remove_user_from_project(request, proj_id, us_id):
 
 def view_text(request, text_id):
     text = Text.objects.get(id=text_id)
+
+    if request.method == 'POST':
+        import json
+        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+        result = []
+        for entry in entries:
+            transtlations = []
+            for translation in TextEntry.objects.filter(parent_entry=entry):
+                transtlations.append({
+                'body': translation.body
+            })
+            result.append({
+                'body': entry.body,
+                'translations': transtlations
+            })
+            # entry.translations = TextEntry.objects.filter(parent_entry=entry)
+        #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
+        return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
+
     entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
 
     for entry in entries:
@@ -458,6 +478,18 @@ def entry_votedown(request, ent_id):
     else:
         messages.add_message(request, messages.ERROR, _('Sorry, you are unable to vote for this entry'))
         return HttpResponseRedirect('/text/%d/' % text.id)
+
+
+def entry_approve(request, ent_id):
+    entry = TextEntry.objects.get(id=ent_id)
+    text = entry.text
+    if text.project.is_user_manager(request.user):
+        entry.is_approved = not entry.is_approved
+        entry.save()
+    else:
+        messages.add_message(request, messages.ERROR,
+                             _('You need to be project manager to approve translation entries'))
+        return HttpResponseRedirect('/')
 
 
 def entry_approve(request, ent_id):
