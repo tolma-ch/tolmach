@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
-import translations.utils
+import translations.utils as utils
 
 
 @login_required
@@ -219,14 +219,14 @@ def add_text_to_project(request):
         data = request.POST
         project = Project.objects.get(id=data['id'])
         if project.is_user_manager(request.user):
+            sentences, marked_text = utils.split_text(data['text_body'].encode('utf8'))
             new_text = Text(title=data['title'],
-                            body=data['text_body'],
+                            body=marked_text,
                             project=Project.objects.get(id=data['id']),
                             subject=Subject.objects.get(id=data['subject']),
                             source_lang=Language.objects.get(id=data['source_lang']),
                             target_lang=Language.objects.get(id=data['target_lang']),
             )
-            sentences = utils.split_text(data['text_body'].encode('utf8'))
             new_text.save()
             for idx, sent in enumerate(sentences, start=1):
                 txt_entry = TextEntry(body=sent,
