@@ -34,7 +34,7 @@ def split_text(line_to_translate, lang="eng", pattern=""):
         If it's not, we should return "matchobj.group(0) + '†'"
         """
         if lang == "eng" or lang == "rus":
-            return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
+            return matchobj.group(0)[:-2] + '†' + matchobj.group(0)[-2:]
         else:
             return matchobj.group(0) + '†'
 
@@ -54,8 +54,8 @@ def split_text(line_to_translate, lang="eng", pattern=""):
                 # берём предложение i, ищем его в marked_text (изначально он выглядит как оригинальный)
                 # находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % i.strip(u"　     ") + "(?!</span>)"
-                marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
+                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % i.strip("　     ") + "(?!</span>)"
+                marked_text = re.sub(re.escape(sent_to_mark), repl_in_text, marked_text, 1)
                 num_in_text += 1
 
     return out_list, marked_text
