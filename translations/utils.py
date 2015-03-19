@@ -6,37 +6,49 @@ import re
 
 RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-FRE_L = u"àâçéèê"
+
+DEU_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+DEU_L = u"abcdefghijklmnopqrstuvwxyzäöüß"
+
+FRA_L = u"àâçéèê"
 
 num_in_text = 1
 
+# +----+----------+------+
+# | id | name     | code |
+# +----+----------+------+
+# |  1 | English  | eng  |
+# |  2 | Russian  | rus  |
+# |  3 | Chinese  | zho  |
+# |  4 | Spanish  | spa  |
+# |  5 | Korean   | kor  |
+# |  6 | Japanese | jpn  |
+# |  7 | French   | fra  |
+# |  8 | German   | deu  |
+# |  9 | Italian  | ita  |
+# +----+----------+------+
+
 SPLIT_PATTERN = {
-        "zho": u"。”|。",
-        "jap": u"。”|。",
-        "eng": u" [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",
-        "rus": u" [%(RU_L)s%(RU_U)s]+! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\? [%(RU_U)s]+" % locals(),
-        "kor": u"\\. |\\! |\\? ",
+        1: u" [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # eng
+        2: u" [%(RU_L)s%(RU_U)s]+! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\? [%(RU_U)s]+" % locals(),  # rus
+        3: u"。”|。",  # zho
+        5: u"\\. |\\! |\\? ",  # kor
+        6: u"。”|。",  # jpn
         }
 
 
-def split_text(line_to_translate, lang="eng", pattern=""):
+def split_text(line_to_translate, lang=1, pattern=""):
     marked_text = line_to_translate
     num_in_text = 1
 
     def repl_in_text(matchobj):
-        return "<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + "</span>"
+        return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
 
     def repl(matchobj):
-        """
-        TODO: We should match " [a-z]\\? [A-Z]" and check whether
-        it is like "e.g.", "etc.", "т.д.", etc.
-        If it is, we should just return matchobj.group(0).
-        If it's not, we should return "matchobj.group(0) + '†'"
-        """
-        if lang == "eng" or lang == "rus":
-            return matchobj.group(0)[:-2] + '†' + matchobj.group(0)[-2:]
+        if lang == 1 or lang == 2:
+            return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
         else:
-            return matchobj.group(0) + '†'
+            return matchobj.group(0) + u'†'
 
     text = re.sub("\n{2,}", "\n", line_to_translate)
     out_list = []
@@ -45,17 +57,18 @@ def split_text(line_to_translate, lang="eng", pattern=""):
 
         # добавляем после конца предложения спец.символ для разделения
         new_line = re.sub(SPLIT_PATTERN[lang], repl, new_line)
+        print new_line
         # делим по заданному спец.символу
-        new_line = re.split('†', new_line)
+        new_line = re.split(u'†', new_line)
         for i in new_line:
             if not i == '':
                 # removing extra spaces/tabs from beginning/end of the line
-                out_list.append(i.strip("　     "))
+                out_list.append(i.strip(u"　     "))
                 # берём предложение i, ищем его в marked_text (изначально он выглядит как оригинальный)
                 # находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % i.strip("　     ") + "(?!</span>)"
-                marked_text = re.sub(re.escape(sent_to_mark), repl_in_text, marked_text, 1)
+                sent_to_mark = u"(?!<span data-entry=\"\d+\">)%s" % i.strip(u"　     ") + u"(?!</span>)"
+                marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                 num_in_text += 1
 
     return out_list, marked_text
