@@ -39,6 +39,7 @@ urlpatterns = patterns('',
     url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
 
-    # temporarily added url for translations
+    # temporarily added urls for developing purpuses
     url(r'^translate/$', trans_views.translate, name='translate'),
+    url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),
 )
