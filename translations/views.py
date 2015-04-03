@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
-import translations.utils
+import translations.utils as utils
 
 
 @login_required
@@ -219,19 +219,21 @@ def add_text_to_project(request):
         data = request.POST
         project = Project.objects.get(id=data['id'])
         if project.is_user_manager(request.user):
+            # TODO: NEED TO PASS LANG TO FUNC
+            sentences, marked_text = utils.split_text(data['text_body'], int(data['source_lang']))
             new_text = Text(title=data['title'],
-                            body=data['text_body'],
+                            body=marked_text,
                             project=Project.objects.get(id=data['id']),
                             subject=Subject.objects.get(id=data['subject']),
                             source_lang=Language.objects.get(id=data['source_lang']),
                             target_lang=Language.objects.get(id=data['target_lang']),
             )
-            sentences = utils.split_text(data['text_body'].encode('utf8'))
             new_text.save()
             for idx, sent in enumerate(sentences, start=1):
                 txt_entry = TextEntry(body=sent,
                                       text=Text.objects.get(id=new_text.id),
                                       id_in_text=idx,
+                                      author=request.user,
                 )
                 txt_entry.save()
             return redirect('/projects/')
@@ -520,9 +522,8 @@ def parse_tmx(request):
 
     return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
 
-
-
 ### Translation stub
+
 
 def translate(request):
     data = {
@@ -538,4 +539,10 @@ def translate(request):
     }
 
     template = 'components/translation/translation.html'
+    return render_to_response(template, data, RequestContext(request))
+
+
+def dev_add_text_to_project(request):
+    data = []
+    template = 'translations/dev_add_text_to_project.html'
     return render_to_response(template, data, RequestContext(request))

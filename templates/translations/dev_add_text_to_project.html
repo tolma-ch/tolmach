@@ -1,0 +1,70 @@
+<!doctype html>
+
+<html>
+  
+  <head>
+    <title>New Page</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <style type="text/css">
+      .form-label {
+          margin-top: 5px;
+        }
+    </style>
+  </head>
+  
+  <body>
+    <div class="container" style="width: 500px">
+      <h3>Michael -> Add text</h3>
+      <form action='/projects/add-text/' method="POST">
+      {% csrf_token %}
+        <label class="form-label">Title:</label>
+        <input type="text" class="form-control" name='title'>
+        <label class="form-label">Project_id:</label>
+        <input type="text" class="form-control" name='id' value='2'>
+        <label class="form-label">Subject:</label>
+        <select class="form-control" name='subject'>
+          <option>5</option>
+        </select>
+        <table class="table" style="margin-bottom: 0px">
+          <tbody>
+            <tr>
+              <td><label class="form-label">Source lang:</label></td>
+              <td>
+                <select class="form-control" name='source_lang'>
+                  <option value='1'>eng</option>
+                  <option value='2'>rus</option>
+                  <option value='3'>zho</option>
+                  <option value='4'>spa</option>
+                  <option value='5'>kor</option>
+                  <option value='6'>jpn</option>
+                  <option value='7'>fra</option>
+                  <option value='8'>deu</option>
+                  <option value='9'>ita</option>
+                </select>
+              </td>
+              <td><label class="form-label">Target lang:</label></td>
+              <td>
+                <select class="form-control" name='target_lang'>
+                  <option value='1'>eng</option>
+                  <option value='2'>rus</option>
+                  <option value='3'>zho</option>
+                  <option value='4'>spa</option>
+                  <option value='5'>kor</option>
+                  <option value='6'>jpn</option>
+                  <option value='7'>fra</option>
+                  <option value='8'>deu</option>
+                  <option value='9'>ita</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <label class="form-label">Text body:</label>
+        <textarea class="form-control" name='text_body'></textarea>
+        <p><input type="submit"></p>
+      </form>
+    </div>
+  </body>
