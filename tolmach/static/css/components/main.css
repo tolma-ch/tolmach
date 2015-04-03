@@ -91,13 +91,21 @@ body > .main.auth {
   padding: 0 10px;
   box-sizing: border-box;
 }
-/*.sidebar*/
-/*width 240px*/
-/*margin-right 20px*/
-/*float left*/
-.content {
+.profile-sidebar {
+  width: 240px;
+  margin-right: 20px;
+  float: left;
+}
+.profile-content {
+  margin-left: 260px;
+  margin-right: 0;
+  margin-top: 0;
+  min-height: 100%;
+  padding: 0;
+}
+.profile-content-inner {
   width: 744px;
-  float: right;
+  margin: 0 auto;
 }
 .button {
   display: inline-block;

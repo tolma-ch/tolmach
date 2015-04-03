@@ -1,10 +1,11 @@
 {% extends "main/base-logged-in.html" %}
 
 {% block innercontent %}
-<aside class="sidebar">
+<aside class="profile-sidebar">
 	{% include "components/profile-data/personal-info.html" %}
 </aside>
-<section class="content">
+<section class="profile-content">
+<div class="profile-content-inner">
 	<div class="user-statistics">
 		<div class="user-statistics__title">User statistics</div>
 		<div class="user-statistics__translations">
@@ -162,5 +163,6 @@
 
 		<a href="#" class="button button_gray user-statistics__recent-progress-new">Start New</a>
 	</div>
+</div>
 </section>
 {% endblock %}
