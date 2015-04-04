@@ -1,4 +1,3 @@
-{% load dajaxice_templatetags %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -10,85 +9,48 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<!--basic styles-->
-
 		<link href="/static/css/bootstrap.min.css" rel="stylesheet">
-		<link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-		
-
-		<!--[if IE 7]>
-		  <link rel="stylesheet" href="/static/css/font-awesome-ie7.min.css" />
-		<![endif]-->
-
-		<!--page specific plugin styles-->
-
-		<!--fonts-->
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,400italic,500italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
-
-		<!-- <link rel="stylesheet" href="/static/css/ace-fonts.css"> -->
-
-		<!--ace styles-->
-
-		<!-- <link rel="stylesheet" href="/static/css/app.css"> -->
-		<!-- <link rel="stylesheet" href="/static/css/uncompressed/ace.css">
-		<link rel="stylesheet" href="/static/css/ace-responsive.min.css">
-		<link rel="stylesheet" href="/static/css/ace-skins.min.css"> -->
-
         <link rel="stylesheet" href="/static/css/jquery-ui-1.10.3.custom.min.css" />
         <link rel="stylesheet" href="/static/css/jquery.gritter.css" />
         <link rel="stylesheet" href="/static/css/select2.css" />
         <link rel="stylesheet" href="/static/css/bootstrap-editable.css" />
 
+		<!--fonts-->
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,400italic,500italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+        <!--[if IE 7]>
+		  <link rel="stylesheet" href="/static/css/font-awesome-ie7.min.css" />
+		<![endif]-->
 
+        <!--ace styles-->
         <link rel="stylesheet" href="/static/css/ace.css">
-        <link rel="stylesheet" href="/static/css/all.css">
-        <link rel="stylesheet" href="/static/css/stylus/projects.css">
 
-        
-		
-
-
-		<!--[if lte IE 8]>
+        <!--[if lte IE 8]>
 		  <link rel="stylesheet" href="/static/css/ace-ie.min.css" />
 		<![endif]-->
 
-		<!--inline styles related to this page-->
+        <!--page specific plugin styles-->
+        <link rel="stylesheet" href="/static/css/all.css">
 
-		<!--ace settings handler-->
-
-		<script src="/static/js/ace-extra.min.js"></script>
-        {% dajaxice_js_import %}
-
-        {% include "main/scripts.html" %}
+        <!--inline styles related to this page-->
 	</head>
 
 	<body>
-<div class="main{% if user.is_authenticated %} auth{% endif %}" ng-app="tolmachApp">
-{% include "components/header/header.html" %}
-{% block content %}
-{% endblock %}
-</div>
-{% include "components/footer/footer.html" %}	
+        <div class="main{% if user.is_authenticated %} auth{% endif %}" ng-app="tolmachApp">
+            {% include "components/header/header.html" %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        {% include "components/footer/footer.html" %}
 
 		<a href="" id="btn-scroll-up" class="btn-scroll-up btn btn-small btn-inverse" title="Наверх">
 			⬆
 		</a>
 
 		<!--basic scripts-->
-
-		<!--[if !IE]>-->
-
-		<script type="text/javascript">
-			window.jQuery || document.write("<script src='/static/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
-		</script><script src="/static/js/jquery-2.0.3.min.js"></script>
-
-		<!--<![endif]-->
-
-		<!--[if IE]>
-<script type="text/javascript">
- window.jQuery || document.write("<script src='media/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
-</script>
-<![endif]-->
+		<script src="/static/js/jquery-2.0.3.min.js"></script>
 
 		<script type="text/javascript">
 			if("ontouchend" in document) document.write("<script src='/static/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
@@ -108,9 +70,6 @@
         </script>
 		<script src="/static/js/app.js"></script>
 
-
 		<!--inline scripts related to this page-->
-
-
-
-</body></html>
+    </body>
+</html>

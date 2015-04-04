@@ -95,7 +95,9 @@ Vagrant.configure(2) do |config|
     pip install -r requirements.txt
     wget http://megavenik.ru/tolmach_dev.sql
     mysql -uroot -p123 -e "CREATE USER 'vagrant'@'localhost' IDENTIFIED BY '';"
-    mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'localhost';"
+    mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'localhost' WITH GRANT OPTION;"
+    mysql -uroot -p123 -e "CREATE USER 'vagrant'@'%' IDENTIFIED BY '';"
+    mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'%' WITH GRANT OPTION;"
     mysql -e "CREATE DATABASE tolmach"
     mysql tolmach < tolmach_dev.sql
   SHELL
