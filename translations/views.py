@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.core import serializers
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
@@ -14,6 +15,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
+import json
 import translations.utils as utils
 
 
@@ -364,18 +366,29 @@ def view_text(request, text_id):
     text = Text.objects.get(id=text_id)
 
     if request.method == 'POST':
-        import json
         entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
         result = []
         for entry in entries:
             transtlations = []
+            approved = False
+            approved_text = ''
             for translation in TextEntry.objects.filter(parent_entry=entry):
                 transtlations.append({
-                'body': translation.body
-            })
+                    'id': translation.id,
+                    'parentId': entry.id,
+                    'body': translation.body,
+                    'isApproved': translation.is_approved,
+                })
+                if translation.is_approved:
+                    approved_text = translation.body
+                approved = approved or translation.is_approved
             result.append({
+                'id': entry.id,
+                'idInText': entry.id_in_text,
                 'body': entry.body,
-                'translations': transtlations
+                'translations': transtlations,
+                'approved': approved,
+                'translation': approved_text or entry.body
             })
             # entry.translations = TextEntry.objects.filter(parent_entry=entry)
         #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
@@ -440,6 +453,40 @@ def translate_entry(request, ent_id):
         return HttpResponseRedirect('/')
 
 
+def translate_entry_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        print post
+        if 'id' not in post:
+            return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
+        entry_id = post['id']
+        try:
+            entry = TextEntry.objects.get(id=entry_id)
+        except TextEntry.DoesNotExist:
+            return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+        text = entry.text
+        project = text.project
+        if text.is_user_allowed(request.user):
+            translation = TextEntry(body=post['text'],
+                                    parent_entry=entry,
+                                    text=text,
+                                    author=request.user,
+            )
+            translation.save()
+            from django.utils import timezone
+            project.last_modified = timezone.now()
+            project.save()
+            return HttpResponse(json.dumps({
+                'id': translation.id,
+                'parentId': entry.id,
+                'body': translation.body,
+                'isApproved': translation.is_approved,
+            }), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps('Not allowed'), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
 def entry_voteup(request, ent_id):
     user = request.user
     entry = TextEntry.objects.get(id=ent_id)
@@ -494,16 +541,29 @@ def entry_approve(request, ent_id):
         return HttpResponseRedirect('/')
 
 
-def entry_approve(request, ent_id):
-    entry = TextEntry.objects.get(id=ent_id)
-    text = entry.text
-    if text.project.is_user_manager(request.user):
-        entry.is_approved = not entry.is_approved
-        entry.save()
-    else:
-        messages.add_message(request, messages.ERROR,
-                             _('You need to be project manager to approve translation entries'))
-        return HttpResponseRedirect('/')
+def entry_approve_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        print post
+        if 'id' not in post:
+            return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
+        entry_id = post['id']
+        try:
+            entry = TextEntry.objects.get(id=entry_id)
+        except TextEntry.DoesNotExist:
+            return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+        text = entry.text
+        if text.project.is_user_manager(request.user):
+            if entry.parent_entry:
+                TextEntry.objects.filter(~Q(id=entry_id),
+                                         parent_entry=entry.parent_entry,
+                                         is_approved=True).update(is_approved=False)
+            entry.is_approved = True
+            entry.save()
+            return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps('User have to be a manager'), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 def parse_tmx(request):

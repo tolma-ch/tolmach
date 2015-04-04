@@ -51,7 +51,7 @@ SPLIT_PATTERN = {
 
 def split_text(line_to_translate, lang=1, pattern=""):
     marked_text = line_to_translate
-    num_in_text = 1
+    num_in_text = 0
 
     def repl_in_text(matchobj):
         print u" === " + matchobj.group(0) + u" === "
