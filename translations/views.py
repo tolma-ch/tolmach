@@ -219,7 +219,6 @@ def add_text_to_project(request):
         data = request.POST
         project = Project.objects.get(id=data['id'])
         if project.is_user_manager(request.user):
-            # TODO: NEED TO PASS LANG TO FUNC
             sentences, marked_text = utils.split_text(data['text_body'], int(data['source_lang']))
             new_text = Text(title=data['title'],
                             body=marked_text,

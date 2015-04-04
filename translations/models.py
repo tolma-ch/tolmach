@@ -113,3 +113,21 @@ class TextForm(ModelForm):
         model = Text
         fields = ['project', 'title', 'subject', 'source_lang', 'target_lang', 'body']
 
+
+class Glossary(models.Model):
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey('auth.User')
+
+
+class GlossaryEntry(models.Model):
+    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries')
+    source_entry = models.CharField(max_length=256)
+    target_entry = models.CharField(max_length=256)
+
+
+class TMDatabase(models.Model):
+    pass
+
+
+class TMDatabaseEntry(models.Model):
+    pass
