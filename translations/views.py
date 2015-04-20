@@ -361,57 +361,63 @@ def remove_user_from_project(request, proj_id, us_id):
         return HttpResponseRedirect('/')
 
 
+@login_required
 def view_text(request, text_id):
+    # TODO: добавить проверку авторизации для пользователя и доступов к тексту
     text = Text.objects.get(id=text_id)
-
-    if request.method == 'POST':
-        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
-        result = []
-        for entry in entries:
-            transtlations = []
-            approved = False
-            approved_text = ''
-            for translation in TextEntry.objects.filter(parent_entry=entry):
-                transtlations.append({
-                    'id': translation.id,
-                    'parentId': entry.id,
-                    'body': translation.body,
-                    'isApproved': translation.is_approved,
+    if text.is_user_allowed(request.user):
+        if request.method == 'POST':
+            entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+            result = []
+            for entry in entries:
+                transtlations = []
+                approved = False
+                approved_text = ''
+                for translation in TextEntry.objects.filter(parent_entry=entry):
+                    transtlations.append({
+                        'id': translation.id,
+                        'parentId': entry.id,
+                        'body': translation.body,
+                        'isApproved': translation.is_approved,
+                        })
+                    if translation.is_approved:
+                        approved_text = translation.body
+                    approved = approved or translation.is_approved
+                result.append({
+                    'id': entry.id,
+                    'idInText': entry.id_in_text,
+                    'body': entry.body,
+                    'translations': transtlations,
+                    'approved': approved,
+                    'translation': approved_text or entry.body
                 })
-                if translation.is_approved:
-                    approved_text = translation.body
-                approved = approved or translation.is_approved
-            result.append({
-                'id': entry.id,
-                'idInText': entry.id_in_text,
-                'body': entry.body,
-                'translations': transtlations,
-                'approved': approved,
-                'translation': approved_text or entry.body
-            })
-            # entry.translations = TextEntry.objects.filter(parent_entry=entry)
-        #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
-        return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
+                # entry.translations = TextEntry.objects.filter(parent_entry=entry)
+            #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
+            return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
 
-    entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
 
-    for entry in entries:
-        entry.translations = TextEntry.objects.filter(parent_entry=entry)
+        for entry in entries:
+            entry.translations = TextEntry.objects.filter(parent_entry=entry)
 
-    data = {'username': request.user,
-            'page_title': text.title,
-            'breadcrumbs': [
-                ['Projects', '/projects/'],
-                [text.project.name, '/projects/'],
-                [text.title, ''],
-            ],
-            'text': text,
-            'entries': entries,
-    }
-    template = 'translations/view-text.html'
-    return render_to_response(template, data, RequestContext(request))
+        data = {'username': request.user,
+                'page_title': text.title,
+                'breadcrumbs': [
+                    ['Projects', '/projects/'],
+                    [text.project.name, '/projects/'],
+                    [text.title, ''],
+                    ],
+                'text': text,
+                'entries': entries,
+                }
+        template = 'translations/view-text.html'
+        return render_to_response(template, data, RequestContext(request))
+    else:
+        messages.add_message(request, messages.ERROR, _('You are not allowed to translate this text'))
+        return HttpResponseRedirect('/')
 
 
+@login_required
 def delete_text(request, text_id):
     text = Text.objects.get(id=text_id)
     project = text.project
@@ -429,6 +435,7 @@ def delete_text(request, text_id):
         return HttpResponseRedirect('/')
 
 
+@login_required
 def translate_entry(request, ent_id):
     entry = TextEntry.objects.get(id=ent_id)
     text = entry.text
@@ -452,6 +459,7 @@ def translate_entry(request, ent_id):
         return HttpResponseRedirect('/')
 
 
+@login_required
 def translate_entry_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
@@ -486,6 +494,7 @@ def translate_entry_ajax(request):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@login_required
 def entry_voteup(request, ent_id):
     user = request.user
     entry = TextEntry.objects.get(id=ent_id)
@@ -507,6 +516,7 @@ def entry_voteup(request, ent_id):
         return HttpResponseRedirect('/text/%d/' % text.id)
 
 
+@login_required
 def entry_votedown(request, ent_id):
     user = request.user
     entry = TextEntry.objects.get(id=ent_id)
@@ -528,6 +538,7 @@ def entry_votedown(request, ent_id):
         return HttpResponseRedirect('/text/%d/' % text.id)
 
 
+@login_required
 def entry_approve(request, ent_id):
     entry = TextEntry.objects.get(id=ent_id)
     text = entry.text
@@ -540,6 +551,7 @@ def entry_approve(request, ent_id):
         return HttpResponseRedirect('/')
 
 
+@login_required
 def entry_approve_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
@@ -565,6 +577,7 @@ def entry_approve_ajax(request):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+# TODO: Подумать, надо ли оно вообще тут в таком виде.
 def parse_tmx(request):
     import xml.etree.ElementTree as ET
     import json

@@ -1,12 +1,11 @@
-Django==1.5.4
+Django==1.8
 MySQL-python
-South==0.8.2
 oauthlib==0.6.0
 python-openid==2.2.5
-python-social-auth==0.1.13
+python-social-auth==0.2.7
 requests==1.2.3
 requests-oauthlib==0.3.3
 six==1.4.1
 uWSGI==1.9.17.1
 wsgiref==0.1.2
-django-dajaxice==0.5.5
+django-dajaxice==0.7
