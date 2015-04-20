@@ -1,109 +1,88 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Project'
-        db.create_table(u'translations_project', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('manager', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('is_private', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('who_allowed', self.gf('django.db.models.fields.TextField')(default='')),
-        ))
-        db.send_create_signal(u'translations', ['Project'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('entries', '0001_initial'),
+    ]
 
-        # Adding model 'Text'
-        db.create_table(u'translations_text', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['translations.Project'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('word_price', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('subject', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['entries.Subject'])),
-            ('source_lang', self.gf('django.db.models.fields.related.ForeignKey')(related_name='source_lang', to=orm['entries.Language'])),
-            ('target_lang', self.gf('django.db.models.fields.related.ForeignKey')(related_name='target_lang', to=orm['entries.Language'])),
-        ))
-        db.send_create_signal(u'translations', ['Text'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Project'
-        db.delete_table(u'translations_project')
-
-        # Deleting model 'Text'
-        db.delete_table(u'translations_text')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'entries.language': {
-            'Meta': {'object_name': 'Language'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '64'})
-        },
-        u'entries.subject': {
-            'Meta': {'object_name': 'Subject'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        u'translations.project': {
-            'Meta': {'object_name': 'Project'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_private': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'manager': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'who_allowed': ('django.db.models.fields.TextField', [], {'default': "''"})
-        },
-        u'translations.text': {
-            'Meta': {'object_name': 'Text'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['translations.Project']"}),
-            'source_lang': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'source_lang'", 'to': u"orm['entries.Language']"}),
-            'subject': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['entries.Subject']"}),
-            'target_lang': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'target_lang'", 'to': u"orm['entries.Language']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
-            'word_price': ('django.db.models.fields.IntegerField', [], {'default': '0'})
-        }
-    }
-
-    complete_apps = ['translations']
+    operations = [
+        migrations.CreateModel(
+            name='Glossary',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=256)),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='GlossaryEntry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('source_entry', models.CharField(max_length=256)),
+                ('target_entry', models.CharField(max_length=256)),
+                ('glossary', models.ForeignKey(related_name='glossary_entries', to='translations.Glossary')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Project',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=256)),
+                ('is_private', models.BooleanField(default=True)),
+                ('members', models.TextField(default=b'')),
+                ('users_invited', models.TextField(default=b'')),
+                ('users_requested', models.TextField(default=b'')),
+                ('time_created', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now_add=True)),
+                ('manager', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Text',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=256)),
+                ('body', models.TextField()),
+                ('word_price', models.IntegerField(default=0)),
+                ('project', models.ForeignKey(to='translations.Project')),
+                ('source_lang', models.ForeignKey(related_name='source_lang', to='entries.Language')),
+                ('subject', models.ForeignKey(to='entries.Subject')),
+                ('target_lang', models.ForeignKey(related_name='target_lang', to='entries.Language')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TextEntry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('body', models.TextField(default=b'')),
+                ('id_in_text', models.IntegerField(default=0)),
+                ('vote', models.IntegerField(default=0)),
+                ('voters', models.TextField(default=b'')),
+                ('is_approved', models.BooleanField(default=False)),
+                ('time_created', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('parent_entry', models.ForeignKey(default=1, to='translations.TextEntry')),
+                ('text', models.ForeignKey(related_name='text_entries', to='translations.Text')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TMDatabase',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TMDatabaseEntry',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+        ),
+    ]

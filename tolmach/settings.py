@@ -138,7 +138,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'south',
+    #'south',
     'tolmach',
     'translations',
     'entries',
