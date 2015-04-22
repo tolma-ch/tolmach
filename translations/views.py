@@ -365,56 +365,59 @@ def remove_user_from_project(request, proj_id, us_id):
 def view_text(request, text_id):
     # TODO: добавить проверку авторизации для пользователя и доступов к тексту
     text = Text.objects.get(id=text_id)
-    if text.is_user_allowed(request.user):
-        if request.method == 'POST':
-            entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
-            result = []
-            for entry in entries:
-                transtlations = []
-                approved = False
-                approved_text = ''
-                for translation in TextEntry.objects.filter(parent_entry=entry):
-                    transtlations.append({
-                        'id': translation.id,
-                        'parentId': entry.id,
-                        'body': translation.body,
-                        'isApproved': translation.is_approved,
-                        })
-                    if translation.is_approved:
-                        approved_text = translation.body
-                    approved = approved or translation.is_approved
-                result.append({
-                    'id': entry.id,
-                    'idInText': entry.id_in_text,
-                    'body': entry.body,
-                    'translations': transtlations,
-                    'approved': approved,
-                    'translation': approved_text or entry.body
-                })
-                # entry.translations = TextEntry.objects.filter(parent_entry=entry)
-            #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
-            return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
-
-        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
-
-        for entry in entries:
-            entry.translations = TextEntry.objects.filter(parent_entry=entry)
-
-        data = {'username': request.user,
-                'page_title': text.title,
-                'breadcrumbs': [
-                    ['Projects', '/projects/'],
-                    [text.project.name, '/projects/'],
-                    [text.title, ''],
-                    ],
-                'text': text,
-                'entries': entries,
-                }
-        template = 'translations/view-text.html'
-        return render_to_response(template, data, RequestContext(request))
-    else:
+    if not text.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('You are not allowed to translate this text'))
         return HttpResponseRedirect('/')
+    if request.method == 'POST':
+        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+        result = []
+        for entry in entries:
+            transtlations = []
+            approved = False
+            approved_text = ''
+            for translation in TextEntry.objects.filter(parent_entry=entry):
+                transtlations.append({
+                    'id': translation.id,
+                    'parentId': entry.id,
+                    'body': translation.body,
+                    'author': translation.author.id,
+                    'isApproved': translation.is_approved,
+                    })
+                if translation.is_approved:
+                    approved_text = translation.body
+                approved = approved or translation.is_approved
+            result.append({
+                'id': entry.id,
+                'idInText': entry.id_in_text,
+                'body': entry.body,
+                'translations': transtlations,
+                'approved': approved,
+                'translation': approved_text or entry.body
+            })
+            # entry.translations = TextEntry.objects.filter(parent_entry=entry)
+        #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
+        return HttpResponse(json.dumps({
+            'user_is_manager': text.project.is_user_manager(request.user),
+            'user': request.user.id,
+            'entries': result}, ensure_ascii=False), content_type="application/json")
+
+    entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+
+    for entry in entries:
+        entry.translations = TextEntry.objects.filter(parent_entry=entry)
+
+    data = {'username': request.user,
+            'page_title': text.title,
+            'breadcrumbs': [
+                ['Projects', '/projects/'],
+                [text.project.name, '/projects/'],
+                [text.title, ''],
+                ],
+            'text': text,
+            'entries': entries,
+            }
+    template = 'translations/view-text.html'
+    return render_to_response(template, data, RequestContext(request))
 
 
 @login_required
@@ -474,17 +477,25 @@ def translate_entry_ajax(request):
         text = entry.text
         project = text.project
         if text.is_user_allowed(request.user):
-            translation = TextEntry(body=post['text'],
-                                    parent_entry=entry,
-                                    text=text,
-                                    author=request.user,
-            )
+            if 'translation_id' in post:
+                try:
+                    translation = TextEntry.objects.get(id=post['translation_id'])
+                except TextEntry.DoesNotExist:
+                    return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+                translation.body = post['text']
+            else:
+                translation = TextEntry(body=post['text'],
+                                        parent_entry=entry,
+                                        text=text,
+                                        author=request.user,
+                )
             translation.save()
             from django.utils import timezone
             project.last_modified = timezone.now()
             project.save()
             return HttpResponse(json.dumps({
                 'id': translation.id,
+                'author': translation.author.id,
                 'parentId': entry.id,
                 'body': translation.body,
                 'isApproved': translation.is_approved,
