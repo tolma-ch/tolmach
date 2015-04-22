@@ -1640,6 +1640,15 @@ body > .main.auth {
     padding: 0;
   }
 }
+.scrollable {
+  height: 600px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-right: -12px;
+  margin-left: -12px;
+  padding-right: 12px;
+  padding-left: 12px;
+}
 .navbar {
   min-height: 50px;
 }
@@ -2553,13 +2562,13 @@ a.user-sidebar__profile-line-data:hover {
 }
 .translation-text__text .active {
   background: #ffefaa;
-  padding: 3px;
-  margin: -3px;
+  padding: 3px 0;
+  margin: -3px 0;
 }
 .translation-text__text .approved {
   background: #94ffa1;
-  padding: 3px;
-  margin: -3px;
+  padding: 3px 0;
+  margin: -3px 0;
 }
 .translation {
   font-weight: 300;
@@ -2625,12 +2634,12 @@ a.user-sidebar__profile-line-data:hover {
   cursor: pointer;
 }
 .translation__sentence-translation-result {
-  padding: 0 15px 5px;
+/*padding 0 15px 5px;*/
   overflow: hidden;
   background: #e8e8e8;
 }
 .translation__sentence-translation-switcher {
-  margin: 15px 0 10px 0;
+  margin: 15px 15px 10px;
 }
 .translation__sentence-translation-switcher .switcher__button {
   width: 150px;
@@ -2643,7 +2652,7 @@ a.user-sidebar__profile-line-data:hover {
 .translation__sentence-suggestion {
   position: relative;
   min-height: 80px;
-  padding: 10px 25px 10px 0;
+  padding: 10px 40px 10px 15px;
   border-bottom: 1px dashed #cacaca;
   color: #1d1d1b;
   font-size: 15px;
@@ -2653,7 +2662,7 @@ a.user-sidebar__profile-line-data:hover {
 }
 .translation__sentence-suggestion-approved {
   position: absolute;
-  right: -5px;
+  right: 10px;
   bottom: 40px;
   color: #02c14f;
   font-size: 1.5em;
@@ -2661,7 +2670,7 @@ a.user-sidebar__profile-line-data:hover {
 }
 .translation__sentence-suggestion-approve {
   position: absolute;
-  right: -5px;
+  right: 10px;
   bottom: 40px;
   color: #9c9b9b;
   font-size: 1.5em;
@@ -2672,7 +2681,7 @@ a.user-sidebar__profile-line-data:hover {
 }
 .translation__sentence-suggestion-edit {
   position: absolute;
-  right: -5px;
+  right: 10px;
   bottom: 5px;
   color: #9c9b9b;
   font-size: 1.5em;
@@ -2703,15 +2712,6 @@ a.user-sidebar__profile-line-data:hover {
   border: none;
   border-top: 1px solid #54e47e;
 }
-.translation__sentence-commitance {
-  display: none;
-}
-.translation__sentence-translation_mode_suggest .translation__sentence-suggestion {
-  display: none;
-}
-.translation__sentence-translation_mode_suggest .translation__sentence-commitance {
-  display: block;
-}
 .translation__sentence-suggestion-input {
   width: 100%;
   height: 130px;
@@ -2739,6 +2739,7 @@ a.user-sidebar__profile-line-data:hover {
   min-height: 30px;
   margin-bottom: 10px;
   padding-right: 40px;
+  cursor: pointer;
 }
 .translation__sentence-machine-suggestions-text {
   display: inline-block;
@@ -2759,7 +2760,7 @@ a.user-sidebar__profile-line-data:hover {
   color: #fff;
   margin-top: -15px;
   position: absolute;
-  right: -5px;
+  right: 0;
   top: 50%;
 }
 .translation__sentence-machine-suggestions-relevance_high {
@@ -2778,4 +2779,8 @@ a.user-sidebar__profile-line-data:hover {
   padding: 0 30px;
   border: none;
   font-size: 13px;
+}
+.translation__sentence-commitance {
+  background: #e8e8e8;
+  padding: 0 15px 8px;
 }

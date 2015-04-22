@@ -75,7 +75,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if self.project.manager == user or str(user.id) in self.project.who_allowed.split(','):
+            if self.project.manager == user or str(user.id) in self.project.members.split(','):
                 return True
             else:
                 return False
