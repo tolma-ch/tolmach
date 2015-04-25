@@ -193,7 +193,7 @@ def project_add(request):
                                                          })
             return HttpResponseRedirect('/projects/')
     else:
-        return redirect('/projects/')
+        return HttpResponseRedirect('/projects/')
 
 
 @login_required
