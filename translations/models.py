@@ -27,6 +27,7 @@ class Project(models.Model):
     users_requested = models.TextField(default="")
     time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
+    glossaries = models.TextField(default="")
 
     def __unicode__(self):
         return self.name
@@ -64,6 +65,7 @@ class Text(models.Model):
     subject = models.ForeignKey('entries.Subject')
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     target_lang = models.ForeignKey('entries.Language', related_name='target_lang')
+    glossaries = models.TextField(default="")
 
     def __unicode__(self):
         return unicode(self.title)
