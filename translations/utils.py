@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
 
 
 RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'\""
@@ -51,7 +52,7 @@ SPLIT_PATTERN = {
 
 def split_text(line_to_translate, lang=1, pattern=""):
     marked_text = line_to_translate
-    num_in_text = 0
+    num_in_text = 1
 
     def repl_in_text(matchobj):
         print u" === " + matchobj.group(0) + u" === "
@@ -91,3 +92,20 @@ def split_text(line_to_translate, lang=1, pattern=""):
                 num_in_text += 1
 
     return out_list, marked_text
+
+
+def parse_glossary(file_on_disk, filetype):
+    array = []
+    with open(file_on_disk, 'r') as file_to_show:
+        # открываем файл
+        for line in file_to_show:
+            if not line == '':
+                if filetype in ['text/plain', 'application/octet-stream']:
+                    # и режем либо по запятым, либо по табам
+                    array.append(line.decode('utf-8').split('\t', 1))
+                elif filetype == "text/csv":
+                    array.append(line.decode('utf-8').split(',', 1))
+
+    os.remove(file_on_disk)
+
+    return array

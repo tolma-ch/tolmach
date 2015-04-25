@@ -45,4 +45,5 @@ urlpatterns = patterns('',
     # temporarily added urls for developing purpuses
     url(r'^translate/$', trans_views.translate, name='translate'),
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),
+    url(r'^dev-add-glossary/$', trans_views.dev_add_glossary_to_project),
 )
