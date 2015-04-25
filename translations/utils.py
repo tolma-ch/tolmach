@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
+from translations.models import Glossary, GlossaryEntry
 
 
 RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'\""
@@ -46,12 +48,14 @@ SPLIT_PATTERN = {
         5: u"\\. |\\! |\\? ",  # kor
         6: u"。”|。",  # jpn
         7: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        8: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        9: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
         }
 
 
 def split_text(line_to_translate, lang=1, pattern=""):
     marked_text = line_to_translate
-    num_in_text = 0
+    num_in_text = 1
 
     def repl_in_text(matchobj):
         print u" === " + matchobj.group(0) + u" === "
@@ -91,3 +95,35 @@ def split_text(line_to_translate, lang=1, pattern=""):
                 num_in_text += 1
 
     return out_list, marked_text
+
+
+def parse_glossary(file_on_disk, filetype):
+    array = []
+    with open(file_on_disk, 'r') as file_to_show:
+        # открываем файл
+        for line in file_to_show:
+            if not line == '':
+                if filetype in ['text/plain', 'application/octet-stream']:
+                    # и режем либо по запятым, либо по табам
+                    array.append(line.decode('utf-8').rstrip().split('\t', 1))
+                elif filetype == "text/csv":
+                    array.append(line.decode('utf-8').rstrip().split(',', 1))
+
+    os.remove(file_on_disk)
+
+    return array
+
+
+def glossary_to_entry(entry_body, glossary_list):
+    def highlight_word(target_word):
+        def repl_in_text(matchobj):
+            return u"<span data-glossary-word=\"%s\">" % target_word + matchobj.group(0) + u"</span>"
+        return repl_in_text
+    body_to_return = entry_body
+
+    for glos in glossary_list:
+        gloss_entries = GlossaryEntry.objects.filter(glossary_id=glos)
+        for pair in gloss_entries:
+            body_to_return = re.sub(pair.source_entry, highlight_word(pair.target_entry), body_to_return)
+
+    return body_to_return
