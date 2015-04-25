@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^projects/add-text/$', trans_views.add_text_to_project),
     url(r'^text/(?P<text_id>\d+)/$', trans_views.view_text, name='view_text'),
     url(r'^text/(?P<text_id>\d+)/delete/$', trans_views.delete_text, name='delete_text'),
+    url(r'^text/(?P<text_id>\d+)/add-glossary/(?P<glos_id>\d+)/$', trans_views.dev_add_glossary_to_text, name='add_glossary_to_text'),
     url(r'^entry/(?P<ent_id>\d+)/translate/$', trans_views.translate_entry, name='translate_entry'),
     url(r'^entry/(?P<ent_id>\d+)/voteup/$', trans_views.entry_voteup, name='entry_voteup'),
     url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
@@ -45,4 +46,5 @@ urlpatterns = patterns('',
     # temporarily added urls for developing purpuses
     url(r'^translate/$', trans_views.translate, name='translate'),
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),
+    url(r'^dev-add-glossary/$', trans_views.dev_add_new_glossary),
 )
