@@ -387,10 +387,16 @@ def view_text(request, text_id):
                 if translation.is_approved:
                     approved_text = translation.body
                 approved = approved or translation.is_approved
+            # каждую entry проверяем на наличие в ней слов из словаря
+            # и оборачиваем нужным тегом
+            entry_body = entry.body
+            if not text.glossaries == '':
+                entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
             result.append({
                 'id': entry.id,
                 'idInText': entry.id_in_text,
-                'body': entry.body,
+                # 'body': entry.body,
+                'body': entry_body,
                 'translations': transtlations,
                 'approved': approved,
                 'translation': approved_text or entry.body
@@ -608,7 +614,32 @@ def parse_tmx(request):
     return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
 
 
-def dev_add_glossary_to_project(request):
+def dev_add_glossary_to_text(request, text_id, glos_id):
+    text = Text.objects.get(id=text_id)
+    project = text.project
+    proj_id = int(project)
+    if not project.is_user_manager(request.user):
+        messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
+        return HttpResponseRedirect('/')
+    else:
+        try:
+            glossary = Glossary.objects.get(id=glos_id)
+        except Glossary.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such glossary, sorry.'))
+            return HttpResponseRedirect('/projects/%d/' % proj_id)
+        text_glossaries = text.glossaries.split(',') if not text.glossaries == '' else []
+        if glos_id in text_glossaries:
+            messages.add_message(request, messages.ERROR, _('Sorry, there\'s such glossary here already'))
+            return HttpResponseRedirect('/projects/%d/' % proj_id)
+        else:
+            text_glossaries.append(str(glos_id))
+        text.glossaries = ','.join(text_glossaries)
+        text.save()
+
+    return HttpResponseRedirect('/projects/%d/' % proj_id)
+
+
+def dev_add_new_glossary(request):
     message = ''
     pairs_array = []
     glossary_name = ''
