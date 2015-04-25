@@ -1584,21 +1584,22 @@ body > .main.auth {
   background: rgba(67,142,185,0.25);
   text-shadow: 0 0 4px #fff;
 }
+.profile-container {
+  width: 1004px;
+  margin: 0 auto;
+}
 .profile-sidebar {
   width: 240px;
   margin-right: 20px;
   float: left;
 }
 .profile-content {
+  width: 744px;
   margin-left: 260px;
   margin-right: 0;
   margin-top: 0;
   min-height: 100%;
   padding: 0;
-}
-.profile-content-inner {
-  width: 744px;
-  margin: 0 auto;
 }
 .button {
   display: inline-block;
@@ -1819,13 +1820,11 @@ body > .main.auth {
 }
 .user-statistics__translations-direction {
   margin: 0 5px;
-}
-.user-statistics__translations-direction:before {
   content: '';
   font-size: 21px;
   vertical-align: 4px;
 }
-.user-statistics__translations-direction_small:before {
+.user-statistics__translations-direction_small {
   font-size: 16px;
   vertical-align: 5px;
   color: #9c9b9b;

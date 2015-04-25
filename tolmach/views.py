@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.http.response import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from translations.models import Project
 
 
 def index(request):
@@ -10,7 +12,10 @@ def index(request):
     else:
         template = 'main/main.html'
 
+    projects = Project.objects.filter(manager=request.user).order_by('last_modified')
+
     data = {
+        'projects': projects,
         'is_index': True
     }
     return render_to_response(template, data, RequestContext(request))

@@ -4,6 +4,7 @@
 
 (function () {
     angular.module('tolmachApp', [
+        'ui.bootstrap'
     ])
         .controller('transCtrl', function ($scope, $http) {
             $scope.activeEntry = null;
@@ -115,6 +116,41 @@
                 entry.suggestionId = false;
             };
         })
+
+        .controller('projectsCtrl', function ($scope, $modal) {
+            $scope.startNewProject = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'newProjectModal.html',
+                    controller: 'NewProjectModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
+        })
+        .controller('NewProjectModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.ok = function () {
+                $scope.busy = true;
+                $http.post('/settings', JSON.stringify($scope.imageCropResult))
+                    .success(function(data, status, headers, config) {
+                        location.reload();
+                    })
+                    .error(function(data, status, headers, config) {
+                        $scope.busy = false;
+                        $modalInstance.close();
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+
         .run(function ($http) {
             $http.defaults.headers.post['X-CSRFToken'] = window['csrfToken'];
         })
