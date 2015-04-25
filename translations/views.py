@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 from django.core import serializers
@@ -13,9 +13,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextEntry
+from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry
 from entries.models import Language, Subject
 import json
+import os
 import translations.utils as utils
 
 
@@ -108,7 +109,7 @@ def projects(request):
     user = User.objects.get(username=request.user)
 
     meta, p = UserMeta.objects.get_or_create(user=user)
-    #try:
+    # try:
     #    meta = UserMeta.objects.get(user=user)
     #except UserMeta.DoesNotExist:
     #    new_meta = UserMeta(user=user)
@@ -175,7 +176,7 @@ def projects(request):
             'addProjectForm': add_project_form,
             'projects_page_active': True,
             'messages': messages.get_messages(request)
-    }
+            }
 
     template = 'translations/projects-main.html'
     return render_to_response(template, data, RequestContext(request))
@@ -188,9 +189,9 @@ def project_add(request):
         if add_project_form.is_valid():
             add_project_form.save(request.user)
             messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully created!') %
-                                                         {
-                                                             'project_name': add_project_form.cleaned_data['name'],
-                                                         })
+                                 {
+                                     'project_name': add_project_form.cleaned_data['name'],
+                                 })
             return HttpResponseRedirect('/projects/')
     else:
         return redirect('/projects/')
@@ -203,9 +204,9 @@ def project_delete(request, proj_id=0):
         if pr.is_user_manager(request.user):
             pr.delete()
             messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully deleted!') %
-                                                         {
-                                                             'project_name': pr.name,
-                                                         })
+                                 {
+                                     'project_name': pr.name,
+                                 })
             return HttpResponseRedirect('/projects/')
         else:
             messages.add_message(request, messages.ERROR, _('You are not allowed to delete this project!'))
@@ -228,14 +229,14 @@ def add_text_to_project(request):
                             subject=Subject.objects.get(id=data['subject']),
                             source_lang=Language.objects.get(id=data['source_lang']),
                             target_lang=Language.objects.get(id=data['target_lang']),
-            )
+                            )
             new_text.save()
             for idx, sent in enumerate(sentences, start=1):
                 txt_entry = TextEntry(body=sent,
                                       text=Text.objects.get(id=new_text.id),
                                       id_in_text=idx,
                                       author=request.user,
-                )
+                                      )
                 txt_entry.save()
             return redirect('/projects/')
         return redirect('/profile/')
@@ -255,7 +256,7 @@ def invite_user_to_project(request, proj_id, us_id):
         requested = project.users_requested.split(',') if not project.users_requested == '' else []
 
         meta, p = UserMeta.objects.get_or_create(user=user)
-        #try:
+        # try:
         #    meta = UserMeta.objects.get(user=user)
         #except UserMeta.DoesNotExist:
         #    new_meta = UserMeta(user=user)
@@ -335,10 +336,10 @@ def remove_user_from_project(request, proj_id, us_id):
             meta.save()
             if user == request.user:
                 messages.add_message(request, messages.SUCCESS, _('You successfully left project "%(project_name)s"') %
-                                                                {
-                                                                    'project_name': project.name,
-                                                                }
-                )
+                                     {
+                                         'project_name': project.name,
+                                     }
+                                     )
                 return HttpResponseRedirect('/')
             else:
                 messages.add_message(request, messages.SUCCESS,
@@ -382,7 +383,7 @@ def view_text(request, text_id):
                     'body': translation.body,
                     'author': translation.author.id,
                     'isApproved': translation.is_approved,
-                    })
+                })
                 if translation.is_approved:
                     approved_text = translation.body
                 approved = approved or translation.is_approved
@@ -395,7 +396,7 @@ def view_text(request, text_id):
                 'translation': approved_text or entry.body
             })
             # entry.translations = TextEntry.objects.filter(parent_entry=entry)
-        #return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
+        # return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
         return HttpResponse(json.dumps({
             'user_is_manager': text.project.is_user_manager(request.user),
             'user': request.user.id,
@@ -412,7 +413,7 @@ def view_text(request, text_id):
                 ['Projects', '/projects/'],
                 [text.project.name, '/projects/'],
                 [text.title, ''],
-                ],
+            ],
             'text': text,
             'entries': entries,
             }
@@ -448,7 +449,7 @@ def translate_entry(request, ent_id):
                                 parent_entry=entry,
                                 text=text,
                                 author=request.user,
-        )
+                                )
         trans_entry.save()
 
         from django.utils import timezone
@@ -488,9 +489,10 @@ def translate_entry_ajax(request):
                                         parent_entry=entry,
                                         text=text,
                                         author=request.user,
-                )
+                                        )
             translation.save()
             from django.utils import timezone
+
             project.last_modified = timezone.now()
             project.save()
             return HttpResponse(json.dumps({
@@ -605,6 +607,49 @@ def parse_tmx(request):
 
     return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
 
+
+def dev_add_glossary_to_project(request):
+    message = ''
+    pairs_array = []
+    glossary_name = ''
+    template = 'translations/dev_add_glossary_to_project.html'
+    if request.method == 'POST':
+        f = request.FILES['f']
+        glossary_name = request.POST['glossary-name']
+        import uuid
+
+        file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
+
+        # TODO: need to pass this filesize variable to database
+        if f.size > 1048576:
+            content = {'message': 'Sorry, bro, file too big!'}
+            return render_to_response(template, content, RequestContext(request))
+        elif f.content_type not in ['text/plain', 'application/octet-stream', 'text/csv']:
+            content = {'message': 'Lol nope! Wrong file type'}
+            return render_to_response(template, content, RequestContext(request))
+
+        with open(file_on_disk, 'w+') as fd:
+            for chunk in f.chunks():
+                fd.write(chunk)
+        pairs_array = utils.parse_glossary(file_on_disk, f.content_type)
+        new_glossary = Glossary(name=glossary_name,
+                                owner=request.user,
+                                )
+        new_glossary.save()
+        for src, trg in pairs_array:
+            # print src
+            glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=new_glossary.id),
+                                           source_entry=src,
+                                           target_entry=trg,
+                                           )
+            glossary_entry.save()
+
+    content = {'dictionary': pairs_array,
+               'message': message,
+               'name': glossary_name}
+    return render_to_response(template, content, RequestContext(request))
+
+
 ### Translation stub
 
 
@@ -613,7 +658,7 @@ def translate(request):
         # 'username': request.user,
         # 'page_title': text.title,
         # 'breadcrumbs': [
-        #     ['Projects', '/projects/'],
+        # ['Projects', '/projects/'],
         #     [text.project.name, '/projects/'],
         #     [text.title, ''],
         # ],

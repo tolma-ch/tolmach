@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from translations.models import Project, Text, TextEntry
+from translations.models import Project, Text, TextEntry, Glossary, GlossaryEntry
 
 
 class EntryInLine(admin.StackedInline):
@@ -15,6 +15,17 @@ class TextAdmin(admin.ModelAdmin):
     inlines = [EntryInLine]
 
 
+class GlossaryInLine(admin.StackedInline):
+    model = GlossaryEntry
+    fields = ('source_entry', 'target_entry')
+
+class GlossaryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    inlines = [GlossaryInLine]
+
+
 admin.site.register(Project)
 admin.site.register(Text, TextAdmin)
 admin.site.register(TextEntry)
+admin.site.register(Glossary, GlossaryAdmin)
+admin.site.register(GlossaryEntry)

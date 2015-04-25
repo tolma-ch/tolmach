@@ -118,6 +118,9 @@ class Glossary(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
 
+    def __unicode__(self):
+        return unicode(self.name)
+
 
 class GlossaryEntry(models.Model):
     glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries')
