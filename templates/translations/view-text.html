@@ -1,13 +1,37 @@
 {% extends "main/base-logged-in.html" %}
 {% load i18n %}
 
+
 {% block innercontent %}
+
+{% trans 'Translation variants' as trans_variants %}
+{% trans 'Users translations' as users_trans %}
+{% trans 'Translate' as make_translation %}
+{% trans 'Your translation' as your_translation %}
+{% trans 'Machine translations' as mtranslations %}
+{% trans 'Add' as add_translation %}
+{% trans 'Cancel' as cancel_translation %}
+{% trans 'Original' as original_text %}
+{% trans 'Translation' as translated_text %}
+
+{% trans 'Change your locale' %}:
+<form action="/i18n/setlang/" method="POST">
+	{% csrf_token %}
+	<!--<input name="next" type="hidden" value="/accounts/profile/" /><br/>-->
+	<select name="language">
+		{% for lang in LANGUAGES %}
+			<option value="{{ lang.0 }}">{{ lang.1 }}</option>
+		{% endfor %}
+	</select><br/>
+	<input type="submit" value="{% trans 'change' %}" />
+</form>
+
     <div class="translation" ng-controller="transCtrl">
         <h1 class="translation__title">{{ text.title }}</h1>
         <div class="row">
             <div class="col-xs-12 col-sm-6">
                 <div class="scrollable" id="translations-container">
-                <h2 class="translation__variants-title">Варианты перевода</h2>
+                <h2 class="translation__variants-title">{{ trans_variants }}</h2>
 
                 <div class="translation__sentence-translation"
                      ng-repeat="entry in entries"
@@ -28,13 +52,13 @@
                                   ng-class="{'switcher__button_state_active': entry.mode !== 1}"
                                   ng-click="cancelEditing(entry)">
                                 <i class="fa fa-user switcher__button-icon"></i>
-                                <span class="switcher__button-content">Переводы пользователей</span>
+                                <span class="switcher__button-content">{{ users_trans }}</span>
                             </span>
                             <span class="switcher__button"
                                   ng-class="{'switcher__button_state_active': entry.mode === 1}"
                                   ng-click="entry.mode = 1">
                                 <i class="fa fa-pencil switcher__button-icon"></i>
-                                <span class="switcher__button-content">Предложить перевод</span>
+                                <span class="switcher__button-content">{{ make_translation }}</span>
                             </span>
                             </div>
                         </div>
@@ -44,11 +68,11 @@
                             <form>
                                 <textarea name="translation-suggestion"
                                           class="translation__sentence-suggestion-input"
-                                          placeholder="Ваш перевод"
+                                          placeholder="{{ your_translation }}"
                                           ng-model="entry.suggestion"></textarea>
 
                                 <div class="translation__sentence-machine-suggestions">
-                                    <h4 class="translation__sentence-suggestions-title">Машинные переводы</h4>
+                                    <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
 
                                     <ul class="translation__sentence-machine-suggestions-list">
                                         <li class="translation__sentence-machine-suggestions-item"
@@ -66,11 +90,11 @@
                                 </div>
 
                                 <button type="submit" class="translation__sentence-commit"
-                                        ng-click="suggestTranslation(entry)">Готово</button>
+                                        ng-click="suggestTranslation(entry)">{{ add_translation }}</button>
 
                                 <button type="submit" class="translation__sentence-commit"
                                         ng-show="entry.translations.length"
-                                        ng-click="cancelEditing(entry)">Отмена</button>
+                                        ng-click="cancelEditing(entry)">{{ cancel_translation }}</button>
                             </form>
                         </div>
 
@@ -106,10 +130,10 @@
                         <div class="switcher">
                         <span class="switcher__button"
                               ng-class="{'switcher__button_state_active': textTab === 0}"
-                              ng-click="textTab = 0">Оригинал</span>
+                              ng-click="textTab = 0">{{ original_text }}</span>
                         <span class="switcher__button"
                               ng-class="{'switcher__button_state_active': textTab === 1}"
-                              ng-click="textTab = 1">Перевод</span>
+                              ng-click="textTab = 1">{{ translated_text }}</span>
                         </div>
                     </div>
                     <div class="translation-text__text">
