@@ -40,7 +40,9 @@ urlpatterns = patterns('',
     url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
     url(r'^api/entry-approve/$', trans_views.entry_approve_ajax, name='entry_approve_ajax'),
+    url(r'^api/entry-disapprove/$', trans_views.entry_disapprove_ajax, name='entry_approve_ajax'),
     url(r'^api/entry-translate/$', trans_views.translate_entry_ajax, name='translate_entry_ajax'),
+    url(r'^api/project-create/$', trans_views.create_project_ajax, name='translate_entry_ajax'),
 
 
     # temporarily added urls for developing purpuses

@@ -85,7 +85,7 @@ class Text(models.Model):
 
 class TextEntry(models.Model):
     body = models.TextField(default="")
-    parent_entry = models.ForeignKey('translations.TextEntry', default=1)
+    parent_entry = models.ForeignKey('translations.TextEntry', default=None)
     text = models.ForeignKey('translations.Text', related_name='text_entries')
     id_in_text = models.IntegerField(default=0)
     author = models.ForeignKey('auth.User')

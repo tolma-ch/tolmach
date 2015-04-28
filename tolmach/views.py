@@ -12,7 +12,7 @@ def index(request):
     else:
         template = 'main/main.html'
 
-    projects = Project.objects.filter(manager=request.user).order_by('last_modified')
+    projects = Project.objects.filter(manager=request.user.id).order_by('last_modified')
 
     data = {
         'projects': projects,

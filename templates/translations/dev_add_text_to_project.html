@@ -26,7 +26,9 @@
         <input type="text" class="form-control" name='id' value='2'>
         <label class="form-label">Subject:</label>
         <select class="form-control" name='subject'>
-          <option>5</option>
+        {% for subject in subjects %}
+          <option value="{{ subject.id }}">{{ subject.name }}</option>
+        {% endfor %}
         </select>
         <table class="table" style="margin-bottom: 0px">
           <tbody>

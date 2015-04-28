@@ -1820,7 +1820,6 @@ body > .main.auth {
 }
 .user-statistics__translations-direction {
   margin: 0 5px;
-  content: '';
   font-size: 21px;
   vertical-align: 4px;
 }
@@ -2577,7 +2576,6 @@ a.user-sidebar__profile-line-data:hover {
   font-weight: normal;
   font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #868686;
-  padding: 50px 0 20px;
 }
 .translation__variants-title {
   height: 32px;
@@ -2782,4 +2780,8 @@ a.user-sidebar__profile-line-data:hover {
 .translation__sentence-commitance {
   background: #e8e8e8;
   padding: 0 15px 8px;
+}
+.glossary-word {
+  background: #e1ffa2;
+  cursor: pointer;
 }
