@@ -314,7 +314,7 @@ def invite_user_to_project(request, proj_id, us_id):
                              })
         return HttpResponseRedirect('/projects/')
     else:
-        messages.add_message(request, messages.ERROR, _('You are not members to delete this project!'))
+        messages.add_message(request, messages.ERROR, _('You have no rights to delete this project!'))
         return HttpResponseRedirect('/')
 
 
