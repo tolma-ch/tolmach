@@ -512,6 +512,21 @@ def translate_entry_ajax(request):
             return HttpResponse(json.dumps('Not allowed'), content_type="application/json", status=400)
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
+@login_required
+def create_project_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        name = post['name']
+        type = post['type']
+        project = Project(name=name,
+                          is_private=type == 'private',
+                          manager=request.user
+        )
+
+        project.save()
+        return HttpResponse(json.dumps(project.id), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
 
 @login_required
 def entry_voteup(request, ent_id):
@@ -595,6 +610,27 @@ def entry_approve_ajax(request):
             return HttpResponse(json.dumps('User have to be a manager'), content_type="application/json", status=400)
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
+@login_required
+def entry_disapprove_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        print post
+        if 'id' not in post:
+            return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
+        entry_id = post['id']
+        try:
+            entry = TextEntry.objects.get(id=entry_id)
+        except TextEntry.DoesNotExist:
+            return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+        text = entry.text
+        if text.project.is_user_manager(request.user):
+            entry.is_approved = False
+            entry.save()
+            return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps('User have to be a manager'), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
 
 # TODO: Подумать, надо ли оно вообще тут в таком виде.
 def parse_tmx(request):
@@ -617,7 +653,7 @@ def parse_tmx(request):
 def dev_add_glossary_to_text(request, text_id, glos_id):
     text = Text.objects.get(id=text_id)
     project = text.project
-    proj_id = int(project)
+    proj_id = int(project.id)
     if not project.is_user_manager(request.user):
         messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
         return HttpResponseRedirect('/')
@@ -702,6 +738,8 @@ def translate(request):
 
 
 def dev_add_text_to_project(request):
-    data = []
+    data = {
+        'subjects': Subject.objects.all()
+    }
     template = 'translations/dev_add_text_to_project.html'
     return render_to_response(template, data, RequestContext(request))

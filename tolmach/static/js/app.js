@@ -6,7 +6,7 @@
     angular.module('tolmachApp', [
         'ui.bootstrap'
     ])
-        .controller('transCtrl', function ($scope, $http) {
+        .controller('transCtrl', function ($rootScope, $scope, $http) {
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.userIsManager = false;
@@ -62,12 +62,27 @@
                     }, 100);
                 }
             };
-            $scope.approveEntry = function (entry, parent) {
-                $http.post('/api/entry-approve/', {id: entry.id}).success(function (data) {
-                    entry.isApproved = true;
-                    parent.approved = true;
-                    parent.translation = entry.body;
+            $scope.approveEntry = function (translation, entry) {
+                $http.post('/api/entry-approve/', {id: translation.id}).success(function (data) {
+                    translation.isApproved = true;
+                    entry.approved = true;
+                    entry.translation = translation.body;
                     $scope.activeEntry = null;
+                    var t;
+                    for (var i = entry.translations.length - 1; i >= 0; i--) {
+                        t = entry.translations[i];
+                        if (t.id !== translation.id) {
+                            t.isApproved = false;
+                        }
+                    }
+                })
+            };
+            $scope.disapproveEntry = function (entry, parent) {
+                $http.post('/api/entry-disapprove/', {id: entry.id}).success(function (data) {
+                    entry.isApproved = false;
+                    parent.approved = false;
+                    parent.translation = parent.body;
+                    $scope.activeEntry = parent;
                 })
             };
             $scope.suggestTranslation = function (entry) {
@@ -88,6 +103,10 @@
                             translation = entry.translations[i];
                             if (translation.id == suggestionId) {
                                 translation.body = data.body;
+                                if (translation.isApproved === true) {
+                                    entry.approved = true;
+                                    entry.translation = translation.body;
+                                }
                                 break;
                             }
                         }
@@ -98,7 +117,11 @@
                 })
             };
             $scope.focusEntry = function (id) {
-                $scope.activeEntry = $scope.entriesById[id];
+                var entry = $scope.entriesById[id];
+                if (entry.approved) {
+                    return;
+                }
+                $scope.activeEntry = entry;
                 setTimeout(function () {
                     var $container = $('#translations-container'),
                         $elem = $('#entry-' + id);
@@ -115,6 +138,17 @@
                 entry.suggestion = '';
                 entry.suggestionId = false;
             };
+            $scope.insertText = function (e, entry, text) {
+                if (entry !== $scope.activeEntry && entry.mode !== 1) {
+                    return;
+                }
+                e.stopPropagation();
+                $rootScope.$broadcast('insertText', {
+                    'id': entry.id,
+                    'text': text
+                });
+                //entry.suggestion += text;
+            }
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {
@@ -135,14 +169,19 @@
         })
         .controller('NewProjectModalCtrl', function ($scope, $modalInstance, $http) {
             $scope.ok = function () {
+                var data = {
+                    'name': $scope.name,
+                    'description': $scope.description,
+                    'type': $scope.type
+                };
                 $scope.busy = true;
-                $http.post('/settings', JSON.stringify($scope.imageCropResult))
+                $http.post('/api/project-create/', data)
                     .success(function(data, status, headers, config) {
                         location.reload();
                     })
                     .error(function(data, status, headers, config) {
                         $scope.busy = false;
-                        $modalInstance.close();
+                        //$modalInstance.close();
                     });
             };
 
@@ -176,6 +215,77 @@
                 link: function (scope, element, attrs) {
 
                 }
+            };
+        })
+        .directive('glossaryWord', function () {
+            return {
+                template: function(elem, attr, scope) {
+                    var word = attr['glossaryWord'];
+
+                    return '<span ng-show="entry !== activeEntry || entry.mode !== 1">'
+                                + elem.html() + '</span>' +
+                           '<span ng-show="entry === activeEntry && entry.mode === 1"' +
+                                 'class="glossary-word" ' +
+                                 'ng-click="insertText($event, entry, \'' + word + '\')" ' +
+                                 'tooltip-append-to-body="true" ' +
+                                 'tooltip="' + word + '">'
+                                + elem.html() + '</span>';
+                },
+                link: function (scope, element, attrs) {
+                }
+            };
+        })
+        .directive('content', function($compile, $parse) {
+            return {
+                link: function(scope, element, attr) {
+                    var content = attr['content'];
+                    element.html($parse(content)(scope));
+                    $compile(element.contents())(scope);
+                }
+            }
+        })
+        .directive('insertText', function($rootScope, $parse) {
+            return {
+                link: function(scope, element, attrs) {
+                    var id =  scope.entry.id;
+                    $rootScope.$on('insertText', function(e, data) {
+                        if (data['id'] !== id) {
+                            return;
+                        }
+                        var domElement = element[0],
+                            val = data['text'],
+                            result = '';
+                        if (document.selection) {
+                            domElement.focus();
+                            var sel = document.selection.createRange();
+                            result = val;
+                            scope.entry.suggestion = result;
+                            scope.$apply();
+                            domElement.focus();
+                        } else if (domElement.selectionStart || domElement.selectionStart === 0) {
+                            var startPos = domElement.selectionStart;
+                            var endPos = domElement.selectionEnd;
+                            var scrollTop = domElement.scrollTop;
+                            result = domElement.value.substring(0, startPos) + val + domElement.value.substring(endPos, domElement.value.length);
+                            scope.entry.suggestion = result;
+                            scope.$apply();
+                            domElement.focus();
+                            domElement.selectionStart = startPos + val.length;
+                            domElement.selectionEnd = startPos + val.length;
+                            domElement.scrollTop = scrollTop;
+                        } else {
+                            result = domElement.value + val;
+                            scope.entry.suggestion = result;
+                            scope.$apply();
+                            domElement.focus();
+                        }
+                    });
+                }
+            }
+        })
+        .filter('trusted', function($sce){
+            return function(text) {
+                return $sce.trustAsHtml(text);
             };
         });
 })();

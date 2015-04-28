@@ -16,8 +16,8 @@
                                 'translation__sentence-translation_state_approved': entry.approved}">
 
                     <div class="translation__sentence-translation-original"
-                         ng-click="toogleEntry(entry)">
-                        {= entry.body =}
+                         ng-click="toogleEntry(entry)"
+                         data-content="entry.body">
                     </div>
 
                     <div class="translation__sentence-translation-result">
@@ -45,6 +45,7 @@
                                 <textarea name="translation-suggestion"
                                           class="translation__sentence-suggestion-input"
                                           placeholder="Ваш перевод"
+                                          data-insert-text=""
                                           ng-model="entry.suggestion"></textarea>
 
                                 <div class="translation__sentence-machine-suggestions">
@@ -87,7 +88,8 @@
                                    ng-click="approveEntry(translation, entry)"></i>
                             </div>
                             <div class="translation__sentence-suggestion-approved">
-                                <i class="fa fa-check"></i>
+                                <i class="fa fa-check"
+                                   ng-click="disapproveEntry(translation, entry)"></i>
                             </div>
                             <div class="translation__sentence-suggestion-edit"
                                  ng-show="user == translation.author"
