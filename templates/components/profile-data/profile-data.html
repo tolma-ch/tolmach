@@ -1,13 +1,26 @@
 {% extends "main/base-logged-in.html" %}
+{% load i18n %}
 
 {% block innercontent %}
+{% trans 'Statistics' as statistics_header %}
+{% trans 'Total' as total_label %}
+{% trans 'sentences translated' as sentences_translated_label %}
+{% trans 'Projects' as projects_label %}
+{% trans 'Start new' as start_new_label %}
+{% trans 'Add project' as add_project_header %}
+{% trans 'Project name' as project_name_label %}
+{% trans 'Short project name' as short_name_label %}
+{% trans 'Short project description' as short_description_name %}
+{% trans 'Public' as public_checkbox %}
+{% trans 'Private' as private_checkbox %}
+{% trans 'Add' as add_button %}
 <div class="profile-container" ng-controller="projectsCtrl">
     <aside class="profile-sidebar">
         {% include "components/profile-data/personal-info.html" %}
     </aside>
     <section class="profile-content">
         <div class="user-statistics">
-            <div class="user-statistics__title">User statistics</div>
+            <div class="user-statistics__title">{{ statistics_header }}</div>
             <div class="user-statistics__translations">
                 <ul class="user-statistics-list">
                     <li class="user-statistics-list__item">
@@ -67,9 +80,9 @@
                 </ul>
 
                 <div class="user-statistics__total">
-                    <div class="user-statistics__total-title">Total:</div>
+                    <div class="user-statistics__total-title">{{ total_label }}:</div>
                     <div class="user-statistics__total-number">5843</div>
-                    <div class="user-statistics__total-sentences">sentences translated</div>
+                    <div class="user-statistics__total-sentences">{{ sentences_translated_label }}</div>
                 </div>
             </div>
 
@@ -79,7 +92,7 @@
         <div class="user-statistics__recent-progress">
             <div class="user-statistics__recent-progress-title stripy-heading">
                 <span class="stripy-heading__before"></span>
-                <span class="stripy-heading__text">Recent progress</span>
+                <span class="stripy-heading__text">{{ projects_label }}</span>
                 <span class="stripy-heading__after"></span>
             </div>
 
@@ -106,7 +119,7 @@
                 </table>
             </div>
 
-            <a href="" class="btn" ng-click="startNewProject()">Start New</a>
+            <a href="" class="btn" ng-click="startNewProject()">{{ start_new_label }}</a>
         </div>
     </section>
 </div>
@@ -116,22 +129,22 @@
         <button type="button"
                 class="bootbox-close-button close"
                 ng-click="cancel()">×</button>
-        <h3 class="modal-title">Add project</h3>
+        <h3 class="modal-title">{{ add_project_header }}</h3>
     </div>
     <div class="modal-body">
         <form>
             <div class="form-group">
-                <label class="control-label no-padding-right" for="form-field-1"> Short project name: </label>
+                <label class="control-label no-padding-right" for="form-field-1"> {{ project_name_label }}: </label>
                 <div class="">
                     <input type="text"
                            id="form-field-1"
-                           placeholder="Short project name"
+                           placeholder="{{ short_name_label }}"
                            class="form-control"
                            ng-model="name">
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label no-padding-right" for="form-field-2"> Short project description: </label>
+                <label class="control-label no-padding-right" for="form-field-2"> {{ short_description_name }}: </label>
                 <div class="">
                     <textarea class="form-control"
                               placeholder=""
@@ -145,7 +158,7 @@
                     <input name="form-field-radio" type="radio" class="ace"
                            value="public"
                            ng-model="type">
-                    <span class="lbl"> Public</span>
+                    <span class="lbl"> {{ public_checkbox }}</span>
                 </label>
             </div>
             <div class="form-group">
@@ -153,7 +166,7 @@
                     <input name="form-field-radio" type="radio" class="ace"
                            value="private"
                            ng-model="type">
-                    <span class="lbl"> Private</span>
+                    <span class="lbl"> {{ private_checkbox }}</span>
                 </label>
             </div>
         </form>
@@ -161,7 +174,7 @@
     <div class="modal-footer">
         <button class="btn btn-success"
                 ng-click="ok()"
-                ng-disabled="busy">Done</button>
+                ng-disabled="busy">{{ add_button }}</button>
     </div>
 </script>
 
