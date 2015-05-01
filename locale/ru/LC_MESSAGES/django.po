@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-26 05:07+0000\n"
+"POT-Creation-Date: 2015-05-01 09:30+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,35 +21,87 @@ msgstr ""
 
 #: templates/components/footer/footer.html:3
 msgid "We're in vk.com"
-msgstr ""
+msgstr "Мы ВКонтакте"
 
 #: templates/components/footer/footer.html:4
 msgid "Tolma.ch on Google+"
-msgstr ""
+msgstr "Tolma.ch в Google+"
 
 #: templates/components/footer/footer.html:5
 msgid "Our Twitter"
-msgstr ""
+msgstr "Наш Twitter"
 
 #: templates/components/footer/footer.html:6
 msgid "Tolma.ch on Facebook"
+msgstr "Tolma.ch на Facebook"
+
+#: templates/components/main/main.html:5
+msgid "How it works?"
 msgstr ""
 
 #: templates/components/navbar/loggedin.html:41
 msgid "Hi,"
 msgstr "Привет,"
 
-#: templates/translations/projects-main.html:64
-#: templates/translations/projects-main.html:97
-#: templates/translations/projects-main.html:322
-msgid "Sorry, you haven't created any projects yet"
-msgstr "Вы пока не создали ни одного проекта"
+#: templates/components/profile-data/profile-data.html:5
+msgid "Statistics"
+msgstr "Статистика"
 
+#: templates/components/profile-data/profile-data.html:6
+msgid "Total"
+msgstr "Всего"
+
+#: templates/components/profile-data/profile-data.html:7
+msgid "sentences translated"
+msgstr "предложений переведено"
+
+#: templates/components/profile-data/profile-data.html:8
+#: translations/views.py:167
+msgid "Projects"
+msgstr "Проекты"
+
+#: templates/components/profile-data/profile-data.html:9
+msgid "Start new"
+msgstr "Начать новый"
+
+#: templates/components/profile-data/profile-data.html:10
+msgid "Add project"
+msgstr "Добавить проект"
+
+#: templates/components/profile-data/profile-data.html:11
+#: templates/translations/projects-main.html:382
+#: templates/translations/projects-main.html:438
+msgid "Project name"
+msgstr "Название проекта"
+
+#: templates/components/profile-data/profile-data.html:12
+msgid "Short project name"
+msgstr "Краткое название проекта"
+
+#: templates/components/profile-data/profile-data.html:13
+msgid "Short project description"
+msgstr "Краткое описание проекта"
+
+#: templates/components/profile-data/profile-data.html:14
+msgid "Public"
+msgstr "Публичный"
+
+#: templates/components/profile-data/profile-data.html:15
+msgid "Private"
+msgstr "Приватный"
+
+#: templates/components/profile-data/profile-data.html:16
 #: templates/translations/projects-main.html:138
 #: templates/translations/projects-main.html:351
 #: templates/translations/view-text.html:12
 msgid "Add"
 msgstr "Добавить"
+
+#: templates/translations/projects-main.html:64
+#: templates/translations/projects-main.html:97
+#: templates/translations/projects-main.html:322
+msgid "Sorry, you haven't created any projects yet"
+msgstr "Вы пока не создали ни одного проекта"
 
 #: templates/translations/projects-main.html:143
 msgid "Text"
@@ -66,11 +118,6 @@ msgstr "Добавить проект"
 #: templates/translations/projects-main.html:355
 msgid "Private?"
 msgstr "Приватный?"
-
-#: templates/translations/projects-main.html:382
-#: templates/translations/projects-main.html:438
-msgid "Project name"
-msgstr "Название проекта"
 
 #: templates/translations/projects-main.html:382
 #: templates/translations/projects-main.html:423
@@ -145,10 +192,6 @@ msgstr "Сменить язык"
 #: templates/translations/view-text.html:26
 msgid "change"
 msgstr "сменить"
-
-#: translations/views.py:167
-msgid "Projects"
-msgstr "Проекты"
 
 #: translations/views.py:191
 #, python-format
@@ -229,33 +272,36 @@ msgid ""
 "deleted!"
 msgstr ""
 
-#: translations/views.py:528 translations/views.py:550
+#: translations/views.py:543 translations/views.py:565
 msgid "Vote accepted"
 msgstr ""
 
-#: translations/views.py:531 translations/views.py:553
+#: translations/views.py:546 translations/views.py:568
 msgid "You have already voted for this entry"
 msgstr ""
 
-#: translations/views.py:534 translations/views.py:556
+#: translations/views.py:549 translations/views.py:571
 msgid "Sorry, you are unable to vote for this entry"
 msgstr ""
 
-#: translations/views.py:569
+#: translations/views.py:584
 msgid "You need to be project manager to approve translation entries"
 msgstr ""
 
-#: translations/views.py:622
+#: translations/views.py:658
 msgid "You are not allowed to edit this text"
 msgstr ""
 
-#: translations/views.py:628
+#: translations/views.py:664
 msgid "There's no such glossary, sorry."
 msgstr ""
 
-#: translations/views.py:632
+#: translations/views.py:668
 msgid "Sorry, there's such glossary here already"
 msgstr ""
+
+#~ msgid "Recent progress"
+#~ msgstr "Прогресс"
 
 #~ msgid "Settings"
 #~ msgstr "Настройки"
@@ -268,6 +314,3 @@ msgstr ""
 
 #~ msgid "Project Name"
 #~ msgstr "Название проекта"
-
-#~ msgid "Progress"
-#~ msgstr "Прогресс"
