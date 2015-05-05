@@ -7,7 +7,7 @@ local_settings.py
 
 venv
 
-static/
+/static/
 static/node_modules
 local.tolma.ch.conf
 local.tolmach.ini

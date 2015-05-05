@@ -41,18 +41,14 @@ class Project(models.Model):
     def get_progress(self):
         """
         Get progress percentage of the current project and return Int from 0 to 100
-
-        entries_approved/(entries_total/100.0)
         """
-        entries_total = 0
-        entries_approved = 0
+        common_progress = 0
         texts = Text.objects.filter(project=self)
         for text in texts:
-            entries_total += TextEntry.objects.filter(text=text,id_in_text=0).count()
-            entries_approved += TextEntry.objects.filter(text=text, id_in_text=0, is_approved=True).count()
+            common_progress += text.get_progress()
 
-        if not entries_total == 0:
-            return int(entries_approved/(entries_total/100.0))
+        if not texts.count() == 0:
+            return common_progress / texts.count()
         else:
             return 0
 
@@ -82,6 +78,19 @@ class Text(models.Model):
             else:
                 return False
 
+    def get_progress(self):
+        """
+        Get progress percentage of the current text and return Int from 0 to 100
+
+        entries_approved/(entries_total/100.0)
+        """
+        entries_total = TextEntry.objects.filter(text=self).count()
+        entries_approved = TextEntry.objects.filter(text=self, is_approved=True).count()
+
+        if not entries_total == 0:
+            return int(entries_approved/(entries_total/100.0))
+        else:
+            return 0
 
 class TextEntry(models.Model):
     body = models.TextField(default="")

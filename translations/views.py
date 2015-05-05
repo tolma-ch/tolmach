@@ -198,6 +198,23 @@ def project_add(request):
 
 
 @login_required
+def project(request, proj_id=0):
+    if proj_id == 0:
+        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
+        return HttpResponseRedirect('/projects/')
+
+    pr = Project.objects.get(id=proj_id)
+    if not pr.is_user_manager(request.user):
+        messages.add_message(request, messages.ERROR, _('Sorry, you are not a manager of this project!'))
+        return HttpResponseRedirect('/projects/')
+    data = {
+        'project': pr
+    }
+    template = 'translations/project.html'
+    return render_to_response(template, data, RequestContext(request))
+
+
+@login_required
 def project_delete(request, proj_id=0):
     if not proj_id == 0:
         pr = Project.objects.get(id=proj_id)
@@ -396,6 +413,7 @@ def view_text(request, text_id):
                 'id': entry.id,
                 'idInText': entry.id_in_text,
                 # 'body': entry.body,
+                'rawBody': entry.body,
                 'body': entry_body,
                 'translations': transtlations,
                 'approved': approved,
@@ -470,65 +488,6 @@ def translate_entry(request, ent_id):
 
 
 @login_required
-def translate_entry_ajax(request):
-    if request.method == 'POST':
-        post = json.loads(request.body)
-        print post
-        if 'id' not in post:
-            return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
-        entry_id = post['id']
-        try:
-            entry = TextEntry.objects.get(id=entry_id)
-        except TextEntry.DoesNotExist:
-            return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
-        text = entry.text
-        project = text.project
-        if text.is_user_allowed(request.user):
-            if 'translation_id' in post:
-                try:
-                    translation = TextEntry.objects.get(id=post['translation_id'])
-                except TextEntry.DoesNotExist:
-                    return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
-                translation.body = post['text']
-            else:
-                translation = TextEntry(body=post['text'],
-                                        parent_entry=entry,
-                                        text=text,
-                                        author=request.user,
-                                        )
-            translation.save()
-            from django.utils import timezone
-
-            project.last_modified = timezone.now()
-            project.save()
-            return HttpResponse(json.dumps({
-                'id': translation.id,
-                'author': translation.author.id,
-                'parentId': entry.id,
-                'body': translation.body,
-                'isApproved': translation.is_approved,
-            }), content_type="application/json")
-        else:
-            return HttpResponse(json.dumps('Not allowed'), content_type="application/json", status=400)
-    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
-
-@login_required
-def create_project_ajax(request):
-    if request.method == 'POST':
-        post = json.loads(request.body)
-        name = post['name']
-        type = post['type']
-        project = Project(name=name,
-                          is_private=type == 'private',
-                          manager=request.user
-        )
-
-        project.save()
-        return HttpResponse(json.dumps(project.id), content_type="application/json")
-    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
-
-
-@login_required
 def entry_voteup(request, ent_id):
     user = request.user
     entry = TextEntry.objects.get(id=ent_id)
@@ -585,6 +544,7 @@ def entry_approve(request, ent_id):
         return HttpResponseRedirect('/')
 
 
+<<<<<<< HEAD
 @login_required
 def entry_approve_ajax(request):
     if request.method == 'POST':
@@ -700,24 +660,6 @@ def dev_add_new_glossary(request):
 
 
 ### Translation stub
-
-
-def translate(request):
-    data = {
-        # 'username': request.user,
-        # 'page_title': text.title,
-        # 'breadcrumbs': [
-        # ['Projects', '/projects/'],
-        #     [text.project.name, '/projects/'],
-        #     [text.title, ''],
-        # ],
-        # 'text': text,
-        # 'entries': entries,
-    }
-
-    template = 'components/translation/translation.html'
-    return render_to_response(template, data, RequestContext(request))
-
 
 def dev_add_text_to_project(request):
     data = {

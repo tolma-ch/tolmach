@@ -314,3 +314,10 @@ msgstr ""
 
 #~ msgid "Project Name"
 #~ msgstr "Название проекта"
+
+#: templates\translations\project.html:59
+msgid "Add participant"
+msgstr ""
+#: templates\translations\project.html:12
+msgid "Participants"
+msgstr ""

@@ -81,7 +81,7 @@
                 $http.post('/api/entry-disapprove/', {id: entry.id}).success(function (data) {
                     entry.isApproved = false;
                     parent.approved = false;
-                    parent.translation = parent.body;
+                    parent.translation = parent.rawBody;
                     $scope.activeEntry = parent;
                 })
             };
@@ -168,7 +168,9 @@
             };
         })
         .controller('NewProjectModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.error = '';
             $scope.ok = function () {
+                $scope.error = '';
                 var data = {
                     'name': $scope.name,
                     'description': $scope.description,
@@ -176,10 +178,11 @@
                 };
                 $scope.busy = true;
                 $http.post('/api/project-create/', data)
-                    .success(function(data, status, headers, config) {
-                        location.reload();
+                    .success(function(data) {
+                        location.href = '/projects/' + data;
                     })
-                    .error(function(data, status, headers, config) {
+                    .error(function(data) {
+                        $scope.error = data;
                         $scope.busy = false;
                         //$modalInstance.close();
                     });
@@ -189,6 +192,161 @@
                 $modalInstance.dismiss('cancel');
             };
         })
+        .controller('projectCtrl', function ($scope, $modal, $http) {
+            $scope.projectId = window['projectId'];
+            $scope.participants = [];
+            $http.get('/api/get-participants', {params: {project: $scope.projectId}})
+                 .then(function(response) {
+                    $scope.participants = response.data;
+                 });
+            $scope.texts = [];
+            $http.get('/api/get-texts', {params: {project: $scope.projectId}})
+                 .then(function(response) {
+                    $scope.texts = response.data;
+                 });
+            $scope.glossaries = [];
+            $http.get('/api/get-glossaries', {params: {project: $scope.projectId}})
+                 .then(function(response) {
+                    $scope.glossaries = response.data;
+                 });
+            $scope.addParticipant = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addParticipantModal.html',
+                    controller: 'AddParticipantModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
+            $scope.addText = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addTextModal.html',
+                    controller: 'AddTextModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
+            $scope.addGlossary = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addGlossaryModal.html',
+                    controller: 'AddGlossaryModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
+        })
+        .controller('AddParticipantModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.getUsers = function (query) {
+                 return $http.get('/api/get-users', {params: {q: query}})
+                     .then(function(response) {
+                         return response.data;
+                     });
+            };
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'user': $scope.user.id
+                };
+                $scope.busy = true;
+                $http.post('/api/add-participant/', data)
+                    .success(function(participant) {
+                        $scope.participants.push(participant);
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+        .controller('AddTextModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId']
+                };
+                $scope.busy = true;
+                $http.post('/api/add-text/', data)
+                    .success(function(text) {
+                        $scope.texts.push(text);
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+        .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.data = {};
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'name': $scope.data.name,
+                    'file': $scope.data.f
+                };
+                $scope.busy = true;
+                $http.post('/api/add-glossary/', data)
+                    .success(function(glossary) {
+                        $scope.glossaries.push(glossary);
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+        .directive("fileread", [function () {
+            return {
+                scope: {
+                    fileread: "="
+                },
+                link: function (scope, element) {
+                    element.bind("change", function (changeEvent) {
+                        var reader = new FileReader();
+                        reader.onload = function (loadEvent) {
+                            scope.$apply(function () {
+                                scope.fileread['file'] = loadEvent.target.result;
+                            });
+                        };
+                        scope.fileread = changeEvent.target.files[0];
+                        reader.readAsDataURL(changeEvent.target.files[0]);
+                    });
+                }
+            }
+        }])
 
         .run(function ($http) {
             $http.defaults.headers.post['X-CSRFToken'] = window['csrfToken'];
@@ -219,7 +377,7 @@
         })
         .directive('glossaryWord', function () {
             return {
-                template: function(elem, attr, scope) {
+                template: function(elem, attr) {
                     var word = attr['glossaryWord'];
 
                     return '<span ng-show="entry !== activeEntry || entry.mode !== 1">'
@@ -246,7 +404,7 @@
         })
         .directive('insertText', function($rootScope, $parse) {
             return {
-                link: function(scope, element, attrs) {
+                link: function(scope, element) {
                     var id =  scope.entry.id;
                     $rootScope.$on('insertText', function(e, data) {
                         if (data['id'] !== id) {

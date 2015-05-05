@@ -101,7 +101,9 @@
                     <tbody>
                         {% for project in projects %}
                         <tr class="user-statistics-table__row">
-                            <td class="user-statistics-table__title">{{ project.name }}</td>
+                            <td class="user-statistics-table__title">
+                                <a href="/projects/{{ project.id }}">{{ project.name }}</a>
+                            </td>
                             <td class="user-statistics-table__progress">
                                 <div class="progress-bar">
                                     <div class="progress-bar__gauge" style="width:{{ project.get_progress }}%;background:#02c14f"></div>
@@ -168,6 +170,9 @@
                            ng-model="type">
                     <span class="lbl"> {{ private_checkbox }}</span>
                 </label>
+            </div>
+            <div class="form-group" ng-show="error">
+                <div class="label label-danger">{= error =}</div>
             </div>
         </form>
     </div>

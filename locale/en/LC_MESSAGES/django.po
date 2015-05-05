@@ -240,3 +240,10 @@ msgstr ""
 #: translations/views.py:632
 msgid "Sorry, there's such glossary here already"
 msgstr ""
+
+#: templates\translations\project.html:59
+msgid "Add participant"
+msgstr ""
+#: templates\translations\project.html:12
+msgid "Participants"
+msgstr ""

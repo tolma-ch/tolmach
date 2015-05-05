@@ -1,0 +1,250 @@
+{% extends "main/base-logged-in.html" %}
+{% load i18n %}
+
+{% block innercontent %}
+    <script>
+        projectId={{ project.id }};
+    </script>
+    <div ng-controller="projectCtrl">
+        <div class="page-header">
+            <h1>
+                {{ project.name }}
+            </h1>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="widget-box">
+                    <div class="widget-header widget-header-flat">
+                        <h5>
+                            {% trans "Participants" %}
+                        </h5>
+                        <div class="widget-toolbar no-border">
+                            <a href=""
+                               ng-click="addParticipant()">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="widget-body" ng-init="activeParticipant = null">
+                        <div class="widget-main">
+                            <div class="project-list-participant"
+                                 ng-repeat="participant in participants"
+                                 ng-click="activeParticipant = participant"
+                                 ng-class="{'project-list-participant_active': activeParticipant === participant}">
+                                <div class="project-list-participant__ava">
+                                    <img src="/static/avatars/user.jpg" alt="Jason's Photo">
+                                </div>
+                                <div class="project-list-participant__name">
+                                    {= participant.name =}
+                                </div>
+                                <div class="project-list-participant__btns">
+                                    <a class="project-list-participant__btn" href=""><i class="fa fa-eye"></i></a>
+                                    <a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-participant__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                </div>
+                                <div class="project-list-participant__menu"
+                                        ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
+                                    <i class="fa fa-bars"></i>
+                                </div>
+                            </div>
+
+
+                        </div><!-- /widget-main -->
+                    </div><!-- /widget-body -->
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="widget-box">
+                    <div class="widget-header widget-header-flat">
+                        <h5>
+                            {% trans "Documents" %}
+                        </h5>
+                        <div class="widget-toolbar no-border">
+                            <a href=""
+                               ng-click="addText()">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="widget-body">
+                        <table class="project-list-texts">
+                            <tr class="project-list-text" ng-repeat="text in texts">
+                                <td class="project-list-text__title">
+                                    <a href="/text/{= text.id =}">
+                                        {= text.title =}
+                                    </a>
+                                </td>
+                                <td class="project-list-text__progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-bar__gauge" style="width:{= text.progress =}%;background:#02c14f"></div>
+                                        <span class="progress-bar__value">{= text.progress =}%</span>
+                                    </div>
+                                </td>
+                                <td class="project-list-text__languages">
+                                    <div class="languages">
+                                        <i class="flag flag-Russia"></i>
+                                        <i class="fa fa-chevron-right"></i>
+                                        <i class="flag flag-China"></i>
+                                    </div>
+                                </td>
+                                <td class="project-list-text__btns">
+                                    <a class="project-list-text__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-text__btn" href=""><i class="fa fa-download"></i></a>
+                                    <a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div><!-- /widget-body -->
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="widget-box">
+                    <div class="widget-header widget-header-flat">
+                        <h5>
+                            {% trans "TMX/Glossaries" %}
+                        </h5>
+                        <div class="widget-toolbar no-border">
+                            <a href=""
+                               ng-click="addGlossary()">
+                                <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="widget-body">
+                        <div class="widget-main">
+                            <div class="project-list-glossary" ng-repeat="glossary in glossaries">
+                                <div class="project-list-glossary__name">
+                                    <i class="fa fa-book"></i>
+                                    {= glossary.name =}
+                                </div>
+                                <div class="project-list-glossary__btns">
+                                    <a class="project-list-glossary__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-glossary__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                </div>
+                            </div>
+                            </div>
+                        </div><!-- /widget-main -->
+                    </div><!-- /widget-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/ng-template" id="addParticipantModal.html">
+        <div class="modal-header">
+            <button type="button"
+                    class="bootbox-close-button close"
+                    ng-click="cancel()">×</button>
+            <h3 class="modal-title">{% trans "Add participant" %}</h3>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <input type="text"
+                           id="form-field-1"
+                           placeholder="{% trans "Enter nick or name" %}"
+                           class="form-control"
+                           ng-model="user"
+                           typeahead="user as user.username for user in getUsers($viewValue)"
+                           typeahead-template-url="userTypeaheadTemplate.html"></div>
+
+                <div class="form-group" ng-show="error">
+                    <div class="label label-danger">{= error =}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success"
+                    ng-click="ok()"
+                    ng-disabled="busy">{% trans "Add" %}</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="userTypeaheadTemplate.html">
+        <a>
+            <span bind-html-unsafe="match.model.username | typeaheadHighlight:query"></span>
+        </a>
+    </script>
+    <script type="text/ng-template" id="addTextModal.html">
+        <div class="modal-header">
+            <button type="button"
+                    class="bootbox-close-button close"
+                    ng-click="cancel()">×</button>
+            <h3 class="modal-title">{% trans "Add text" %}</h3>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <input type="text"
+                           placeholder="{% trans "Title" %}"
+                           class="form-control"
+                           ng-model="title"></div>
+
+                <div class="form-group" ng-show="error">
+                    <div class="label label-danger">{= error =}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success"
+                    ng-click="ok()"
+                    ng-disabled="busy">{% trans "Add" %}</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="addGlossaryModal.html">
+        <div class="modal-header">
+            <button type="button"
+                    class="bootbox-close-button close"
+                    ng-click="cancel()">×</button>
+            <h3 class="modal-title">{% trans "Add glossary" %}</h3>
+        </div>
+        <div class="modal-body">
+            <form ng-init="tab = 0">
+                <div class="form-group">
+                    <div class="switcher">
+                        <a class="switcher__button"
+                           ng-class="{'switcher__button_active': tab === 0}"
+                           ng-click="tab = 0">
+                            <span>{% trans "Upload" %}</span>
+                        </a>
+                        <a class="switcher__button"
+                           ng-class="{'switcher__button_active': tab === 1}"
+                           ng-click="tab = 1">
+                            <span>{% trans "Manual add" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text"
+                           placeholder="{% trans "Glossary name" %}"
+                           class="form-control"
+                           ng-model="data.name">
+                </div>
+                <div class="form-group"
+                     ng-if="tab === 0">
+                    <input type="file"
+                           placeholder="{% trans "Select file" %}"
+                           class="form-control"
+                           fileread="data.f">
+                </div>
+                <div class="form-group"
+                     ng-if="tab === 1">
+                    <textarea placeholder="{% trans "Insert text" %}"
+                              class="form-control"
+                              ng-model="data.text"></textarea>
+                </div>
+
+                <div class="form-group" ng-show="error">
+                    <div class="label label-danger">{= error =}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success"
+                    ng-click="ok()"
+                    ng-disabled="busy">{% trans "Add" %}</button>
+        </div>
+    </script>
+{% endblock %}

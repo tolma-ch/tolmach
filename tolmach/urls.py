@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 import tolmach.views as main_views
 import translations.views as trans_views
+import translations.views_ajax as trans_ajax
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -28,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^parse-tmx/$', trans_views.parse_tmx),
     url(r'^projects/$', trans_views.projects),
     url(r'^projects/add/$', trans_views.project_add, name='add_project'),
+    url(r'^projects/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
     url(r'^projects/(?P<proj_id>\d+)/delete/$', trans_views.project_delete, name='delete_project'),
     url(r'^projects/(?P<proj_id>\d+)/invite-user/(?P<us_id>\d+)/$', trans_views.invite_user_to_project, name='add_user_to_project'),
     url(r'^projects/(?P<proj_id>\d+)/remove-user/(?P<us_id>\d+)/$', trans_views.remove_user_from_project, name='remove_user_from_project'),
@@ -39,14 +41,20 @@ urlpatterns = patterns('',
     url(r'^entry/(?P<ent_id>\d+)/voteup/$', trans_views.entry_voteup, name='entry_voteup'),
     url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
-    url(r'^api/entry-approve/$', trans_views.entry_approve_ajax, name='entry_approve_ajax'),
-    url(r'^api/entry-disapprove/$', trans_views.entry_disapprove_ajax, name='entry_approve_ajax'),
-    url(r'^api/entry-translate/$', trans_views.translate_entry_ajax, name='translate_entry_ajax'),
-    url(r'^api/project-create/$', trans_views.create_project_ajax, name='translate_entry_ajax'),
 
+    # ajax
+    url(r'^api/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),
+    url(r'^api/entry-disapprove/$', trans_ajax.disapprove_entry_ajax, name='entry_approve_ajax'),
+    url(r'^api/entry-translate/$', trans_ajax.translate_entry_ajax, name='translate_entry_ajax'),
+    url(r'^api/get-users/$', trans_ajax.get_users_ajax, name='get_users_ajax'),
+    url(r'^api/get-participants/$', trans_ajax.get_participants_ajax, name='get_participants_ajax'),
+    url(r'^api/add-participant/$', trans_ajax.add_participant_ajax, name='add_participant_ajax'),
+    url(r'^api/get-texts/$', trans_ajax.get_texts_ajax, name='get_texts_ajax'),
+    url(r'^api/add-text/$', trans_ajax.add_text_ajax, name='add_text_ajax'),
+    url(r'^api/get-glossaries/$', trans_ajax.get_glossaries_ajax, name='get_glossaries_ajax'),
+    url(r'^api/add-glossary/$', trans_ajax.add_glossary_ajax, name='add_glossary_ajax'),
 
     # temporarily added urls for developing purpuses
-    url(r'^translate/$', trans_views.translate, name='translate'),
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),
     url(r'^dev-add-glossary/$', trans_views.dev_add_new_glossary),
 )
