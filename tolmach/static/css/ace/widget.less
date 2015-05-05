@@ -5,7 +5,7 @@
  .box-shadow(none);
  margin:3px 0;
  
- border-bottom:1px solid #CCC; 
+// border-bottom:1px solid #CCC;
 }
 
 @media only screen and (max-width: @screen-xs-max) {
@@ -92,8 +92,8 @@
 
 .widget-toolbar {
   display:inline-block;
-  padding:0 10px;
-  line-height:37px;
+  padding:6px 10px 0;
+  line-height:33px;
   float:right;
   position:relative;
 
@@ -143,15 +143,22 @@
   }
   
   /* widget toolbar basic buttons */
-   > a {
-	font-size:14px;
+  > a {
+	font-size:20px;
 	margin:0 1px;
 	display:inline-block;
 	padding:0;
 	line-height:24px;
+    color: #CCC;
 
 	&:hover {
 		text-decoration:none;
+        color: @menu-focus-color;
+	}
+
+	&:active {
+		text-decoration:none;
+        color: @menu-active-color;
 	}
 	
 	.widget-header-large > & {
@@ -243,7 +250,7 @@
 .widget-body {
   border:1px solid #CCC;
   border-top:none;
-  background-color:#FFF;
+  background:#F7F7F7;
 }
 .widget-main {
   padding:12px;

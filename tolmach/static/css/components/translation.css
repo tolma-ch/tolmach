@@ -1,0 +1,238 @@
+.translation-text {
+  background: $grayBg;
+  padding: 15px;
+}
+.translation-text__switcher {
+  margin-bottom: 10px;
+}
+.translation-text__text {
+  padding: 10px;
+  margin-bottom: 20px;
+  background: #fff;
+  border: 1px solid $grayBorder;
+}
+.translation-text__text .active {
+  background: #ffefaa;
+  padding: 3px 0;
+  margin: -3px 0;
+}
+.translation-text__text .approved {
+  background: #94ffa1;
+  padding: 3px 0;
+  margin: -3px 0;
+}
+.translation {
+  font-weight: 300;
+}
+.translation__title {
+  font-size: 28px;
+  font-weight: normal;
+  font-family: $fontFamily;
+  color: $grayText;
+}
+.translation__variants-title {
+  height: 32px;
+  margin: 20px 0 11px;
+  line-height: 32px;
+  font-size: 23px;
+  font-weight: normal;
+  font-family: $fontFamily;
+  color: $grayText;
+}
+.translation__sentence-translation {
+  margin-bottom: 20px;
+  position: relative;
+  background: $grayBg;
+  font-size: 16px;
+}
+.translation__sentence-translation_state_closed .translation__sentence-translation-original {
+  border: none;
+}
+.translation__sentence-translation_state_closed .translation__sentence-translation-original:after {
+  content: '\f138';
+}
+.translation__sentence-translation_state_closed .translation__sentence-translation-switcher {
+  display: none;
+}
+.translation__sentence-translation_state_closed .translation__sentence-translation-result {
+  display: none;
+}
+.translation__sentence-translation_state_approved .translation__sentence-translation-result {
+  display: block;
+  background: transparent;
+}
+.translation__sentence-translation_state_approved {
+  background: #94ffa1;
+}
+.translation__sentence-translation_state_approved .translation__sentence-translation-original:after {
+  content: '';
+}
+.translation__sentence-translation-original {
+  position: relative;
+  padding: 10px 40px 10px 15px;
+  border-bottom: 1px solid rgba(134,134,134,0.5);
+}
+.translation__sentence-translation-original:after {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #9c9b9b;
+  font-size: 1.5em;
+  font-family: FontAwesome;
+  content: '\f13a';
+  cursor: pointer;
+}
+.translation__sentence-translation-result {
+/*padding 0 15px 5px;*/
+  overflow: hidden;
+  background: $grayBorder;
+}
+.translation__sentence-translation-switcher {
+  margin: 15px 15px 10px;
+}
+.translation__sentence-translation-switcher .switcher__button {
+  width: 150px;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 15px;
+  white-space: nowrap;
+  text-decoration: none !important;
+}
+.translation__sentence-suggestion {
+  position: relative;
+  min-height: 80px;
+  padding: 10px 40px 10px 15px;
+  border-bottom: 1px dashed #cacaca;
+  color: #1d1d1b;
+  font-size: 15px;
+}
+.translation__sentence-suggestion:last-child {
+  border-bottom: none;
+}
+.translation__sentence-suggestion-approved {
+  position: absolute;
+  right: 10px;
+  bottom: 40px;
+  color: #02c14f;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.translation__sentence-suggestion-approve {
+  position: absolute;
+  right: 10px;
+  bottom: 40px;
+  color: #9c9b9b;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.translation__sentence-suggestion-approve:hover {
+  color: #02c14f;
+}
+.translation__sentence-suggestion-edit {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  color: #9c9b9b;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.translation__sentence-suggestion-edit:hover {
+  color: $mainBlue;
+}
+.translation__sentence-translation_state_closed .translation__sentence-suggestion {
+  display: none;
+}
+.translation__sentence-translation_state_closed .translation__sentence-suggestion_state_approved {
+  display: block;
+}
+.translation__sentence-suggestion_state_approved .translation__sentence-suggestion-approve {
+  display: none;
+}
+.translation__sentence-suggestion .translation__sentence-suggestion-approved {
+  display: none;
+}
+.translation__sentence-suggestion_state_approved .translation__sentence-suggestion-approved {
+  display: block;
+}
+.translation__sentence-suggestion_state_approved .translation__sentence-suggestion-edit {
+  color: #02c14f;
+}
+.translation__sentence-translation_state_approved .translation__sentence-suggestion {
+  border: none;
+  border-top: 1px solid #54e47e;
+}
+.translation__sentence-suggestion-input {
+  width: 100%;
+  height: 130px;
+  min-height: 80px;
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-size: 13px;
+  border: 1px solid #cacaca;
+}
+.translation__sentence-suggestions-title {
+  font-size: 14px;
+  font-weight: 400;
+  font-family: $fontFamily;
+  color: #6f6f6e;
+}
+.translation__sentence-machine-suggestions-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  color: #9c9b9b;
+}
+.translation__sentence-machine-suggestions-item {
+  position: relative;
+  min-height: 30px;
+  margin-bottom: 10px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+.translation__sentence-machine-suggestions-text {
+  display: inline-block;
+  width: 90%;
+  vertical-align: middle;
+}
+.translation__sentence-machine-suggestions-relevance {
+  display: block;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 50%;
+  text-align: center;
+  font-weight: 600;
+  vertical-align: middle;
+  color: #fff;
+  margin-top: -15px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+}
+.translation__sentence-machine-suggestions-relevance_high {
+  background: #02c14f;
+}
+.translation__sentence-machine-suggestions-relevance_medium {
+  background: #80cc44;
+}
+.translation__sentence-machine-suggestions-relevance_low {
+  background: #ffe41b;
+}
+.translation__sentence-commit {
+  height: 30px;
+  line-height: 30px;
+  min-width: 115px;
+  padding: 0 30px;
+  border: none;
+  font-size: 13px;
+}
+.translation__sentence-commitance {
+  background: #e8e8e8;
+  padding: 0 15px 8px;
+}
+.glossary-word {
+  background: #e1ffa2;
+  cursor: pointer;
+}

@@ -114,6 +114,18 @@ def parse_glossary(file_on_disk, filetype):
     return array
 
 
+def parse_glossary_text(text, filetype):
+    array = []
+    for line in text.split('\n'):
+        if not line == '':
+            if filetype in ['text/plain', 'application/octet-stream']:
+                # и режем либо по запятым, либо по табам
+                array.append(line.decode('utf-8').rstrip().split('\t', 1))
+            elif filetype == "text/csv":
+                array.append(line.decode('utf-8').rstrip().split(',', 1))
+    return array
+
+
 def parse_tmx(request):
     import xml.etree.ElementTree as ET
     import json
@@ -129,6 +141,7 @@ def parse_tmx(request):
             root.clear()
 
     return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
+
 
 
 def glossary_to_entry(entry_body, glossary_list):

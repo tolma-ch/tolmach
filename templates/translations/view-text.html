@@ -130,12 +130,16 @@
                 <div class="translation-text">
                     <div class="translation-text__switcher">
                         <div class="switcher">
-                        <span class="switcher__button"
-                              ng-class="{'switcher__button_state_active': textTab === 0}"
-                              ng-click="textTab = 0">{{ original_text }}</span>
-                        <span class="switcher__button"
-                              ng-class="{'switcher__button_state_active': textTab === 1}"
-                              ng-click="textTab = 1">{{ translated_text }}</span>
+                            <a class="switcher__button"
+                               ng-class="{'switcher__button_active': textTab === 0}"
+                               ng-click="textTab = 0">
+                                <span>{{ original_text }}</span>
+                            </a>
+                            <a class="switcher__button"
+                               ng-class="{'switcher__button_active': textTab === 1}"
+                               ng-click="textTab = 1">
+                                <span>{{ translated_text }}</span>
+                            </a>
                         </div>
                     </div>
                     <div class="translation-text__text">
