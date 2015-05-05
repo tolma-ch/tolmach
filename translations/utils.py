@@ -114,6 +114,23 @@ def parse_glossary(file_on_disk, filetype):
     return array
 
 
+def parse_tmx(request):
+    import xml.etree.ElementTree as ET
+    import json
+
+    source = request.FILES['gloss']
+    return_dict = {}
+
+    context = iter(ET.iterparse(source, events=('start', 'end')))
+    _, root = next(context)
+    for event, elem in context:
+        if event == 'end' and elem.tag == 'tu':
+            return_dict[elem[0][0].text] = elem[1][0].text
+            root.clear()
+
+    return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
+
+
 def glossary_to_entry(entry_body, glossary_list):
     def highlight_word(target_word):
         def repl_in_text(matchobj):
