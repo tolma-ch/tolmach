@@ -127,7 +127,9 @@ def get_texts_ajax(request):
         result.append({
             'id': text.id,
             'title': text.title,
-            'progress': text.get_progress()
+            'progress': text.get_progress(),
+            'source_lang': str(text.source_lang),
+            'target_lang': str(text.target_lang)
         })
     return HttpResponse(json.dumps(result), content_type="application/json")
 

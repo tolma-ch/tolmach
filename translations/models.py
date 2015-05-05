@@ -20,6 +20,7 @@ class Project(models.Model):
 
     """
     name = models.CharField(max_length=256)
+    description = models.TextField(default="")
     manager = models.ForeignKey('auth.User')
     is_private = models.BooleanField(default=True)
     members = models.TextField(default="")

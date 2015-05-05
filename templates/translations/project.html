@@ -10,6 +10,9 @@
             <h1>
                 {{ project.name }}
             </h1>
+            <blockquote>
+                <p>{{ project.description }}</p>
+            </blockquote>
         </div>
 
 
@@ -84,9 +87,9 @@
                                 </td>
                                 <td class="project-list-text__languages">
                                     <div class="languages">
-                                        <i class="flag flag-Russia"></i>
+                                        <i class="flag flag-{= text.source_lang =}"></i>
                                         <i class="fa fa-chevron-right"></i>
-                                        <i class="flag flag-China"></i>
+                                        <i class="flag flag-{= text.target_lang =}"></i>
                                     </div>
                                 </td>
                                 <td class="project-list-text__btns">

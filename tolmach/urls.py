@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
 
     # translations
-    url(r'^parse-tmx/$', trans_views.parse_tmx),
+    # url(r'^parse-tmx/$', trans_views.parse_tmx),
     url(r'^projects/$', trans_views.projects),
     url(r'^projects/add/$', trans_views.project_add, name='add_project'),
     url(r'^projects/(?P<proj_id>\d+)/$', trans_views.project, name='project'),

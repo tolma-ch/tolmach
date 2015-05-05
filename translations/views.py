@@ -204,6 +204,7 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/projects/')
 
     pr = Project.objects.get(id=proj_id)
+    # TODO: тупняк. Проверять ещё и на участие чувака в проекте, а не только на менеджеровость
     if not pr.is_user_manager(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, you are not a manager of this project!'))
         return HttpResponseRedirect('/projects/')
@@ -544,7 +545,6 @@ def entry_approve(request, ent_id):
         return HttpResponseRedirect('/')
 
 
-<<<<<<< HEAD
 @login_required
 def entry_approve_ajax(request):
     if request.method == 'POST':
