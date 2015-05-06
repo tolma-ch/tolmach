@@ -503,6 +503,7 @@ body > .main.auth {
 .languages {
   display: inline-block;
   font-size: 18px;
+  margin-top: -5px;
 }
 .progress-bar {
   position: relative;
@@ -1335,13 +1336,11 @@ body > .main.auth {
 .project-list-texts {
   width: 100%;
 }
-.project-list-texts td {
+.project-list-texts .project-list-text td {
   vertical-align: middle;
-  padding: 0 12px;
+  padding: 5px 0 5px 12px;
 }
 .project-list-text {
-  display: block;
-  position: relative;
   color: #555;
   min-height: 40px;
 }
@@ -1353,6 +1352,12 @@ body > .main.auth {
 }
 .project-list-text__progress {
   min-width: 100px;
+}
+.project-list-text__languages {
+  width: 82px;
+}
+.project-list-text__btns {
+  width: 106px;
 }
 .project-list-text__btn {
   margin-left: 10px;
