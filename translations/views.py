@@ -418,7 +418,8 @@ def view_text(request, text_id):
                 'body': entry_body,
                 'translations': transtlations,
                 'approved': approved,
-                'translation': approved_text or entry.body
+                'translation': approved_text or entry.body,
+                'lang_pair': text.source_lang.code + "-" + text.target_lang.code
             })
             # entry.translations = TextEntry.objects.filter(parent_entry=entry)
         # return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
@@ -592,6 +593,7 @@ def entry_disapprove_ajax(request):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@login_required
 def dev_add_glossary_to_text(request, text_id, glos_id):
     text = Text.objects.get(id=text_id)
     project = text.project
@@ -617,6 +619,7 @@ def dev_add_glossary_to_text(request, text_id, glos_id):
     return HttpResponseRedirect('/projects/%d/' % proj_id)
 
 
+@login_required
 def dev_add_new_glossary(request):
     message = ''
     pairs_array = []

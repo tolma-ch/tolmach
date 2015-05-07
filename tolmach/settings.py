@@ -215,6 +215,8 @@ LOGGING = {
     }
 }
 
+YANDEX_TRANSLATE_KEY = "***REMOVED***"
+
 try:
     from tolmach.local_settings import *
 except ImportError:

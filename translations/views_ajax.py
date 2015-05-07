@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
+from django.conf import settings
 import uuid
 from translations import utils
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry
@@ -316,4 +317,17 @@ def disapprove_entry_ajax(request):
             return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
         else:
             return HttpResponse(json.dumps('User have to be a manager'), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+@login_required
+def yandex_translate_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        print post
+        from yandex_translate import YandexTranslate
+        translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
+        translated_body = translate.translate(post['entry_body'], post['lang_pair'])
+
+        return HttpResponse(json.dumps(translated_body['text'][0]), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
