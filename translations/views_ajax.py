@@ -166,7 +166,7 @@ def get_glossaries_ajax(request):
     if not project.is_user_manager(request.user):
         return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
                             status=400)
-    glossaries = Glossary.objects.filter(owner=request.user).all()
+    glossaries = Glossary.objects.filter(project=project).all()
     result = []
     for glossary in glossaries:
         result.append({
@@ -215,7 +215,8 @@ def add_glossary_ajax(request):
                                 status=400)
         pairs_array = utils.parse_glossary_text(post['text'], 'text/csv')
     glossary = Glossary(name=glossary_name,
-                        owner=request.user)
+                        owner=request.user,
+                        project=project)
     glossary.save()
     for src, trg in pairs_array:
         # print src

@@ -150,9 +150,15 @@
                     <ul class="breadcrumb">
                         <li>
                             <i class="fa fa-home home-icon"></i>
-                            <a href="#">Home</a>
+                            <a href="/">Home</a>
                         </li>
-                        <li class="active">Dashboard</li>
+                        {% for link in breadcrumbs %}
+                        <li class="active">
+                            {% if link.1 %}<a href="{{ link.1 }}">{{ link.0 }}</a>
+                            {% else %}{{ link.0 }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
                     </ul><!-- .breadcrumb -->
 
                     <div class="nav-search" id="nav-search">
