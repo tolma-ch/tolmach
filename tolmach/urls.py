@@ -53,6 +53,7 @@ urlpatterns = patterns('',
     url(r'^api/add-text/$', trans_ajax.add_text_ajax, name='add_text_ajax'),
     url(r'^api/get-glossaries/$', trans_ajax.get_glossaries_ajax, name='get_glossaries_ajax'),
     url(r'^api/add-glossary/$', trans_ajax.add_glossary_ajax, name='add_glossary_ajax'),
+    url(r'^api/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
 
     # temporarily added urls for developing purpuses
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),

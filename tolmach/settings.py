@@ -215,6 +215,8 @@ LOGGING = {
     }
 }
 
+YANDEX_TRANSLATE_KEY = "trnsl.1.1.20150506T163916Z.b5e779fa488bccef.d7f2375e783e4caa10bca8a317cff1bdb1621a01"
+
 try:
     from tolmach.local_settings import *
 except ImportError:
