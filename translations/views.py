@@ -209,7 +209,11 @@ def project(request, proj_id=0):
         messages.add_message(request, messages.ERROR, _('Sorry, you are not a manager of this project!'))
         return HttpResponseRedirect('/projects/')
     data = {
-        'project': pr
+        'project': pr,
+        'breadcrumbs': [
+                [_('Projects'), '/projects/'],
+                [pr.name, ''],
+            ],
     }
     template = 'translations/project.html'
     return render_to_response(template, data, RequestContext(request))
@@ -436,8 +440,8 @@ def view_text(request, text_id):
     data = {'username': request.user,
             'page_title': text.title,
             'breadcrumbs': [
-                ['Projects', '/projects/'],
-                [text.project.name, '/projects/'],
+                [_('Projects'), '/projects/'],
+                [text.project.name, '/projects/%d/' % text.project.id],
                 [text.title, ''],
             ],
             'text': text,

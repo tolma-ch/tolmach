@@ -28,7 +28,6 @@ class Project(models.Model):
     users_requested = models.TextField(default="")
     time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
-    glossaries = models.TextField(default="")
 
     def __unicode__(self):
         return self.name
@@ -129,6 +128,7 @@ class TextForm(ModelForm):
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
+    project = models.ForeignKey('translations.Project', related_name='glossaries')
 
     def __unicode__(self):
         return unicode(self.name)
