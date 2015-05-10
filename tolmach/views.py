@@ -16,7 +16,8 @@ def index(request):
 
     data = {
         'projects': projects,
-        'is_index': True
+        'is_index': True,
+        'username': request.user.username
     }
     return render_to_response(template, data, RequestContext(request))
 
