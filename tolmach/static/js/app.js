@@ -7,19 +7,31 @@
         'ui.bootstrap'
     ])
         .controller('transCtrl', function ($rootScope, $scope, $http) {
+            var textId = window['textId'],
+                getMachines = function (entry) {
+                    $http.post('/api/ya-translate/', {lang_pair: $scope.langPair, entry_body: entry['rawBody']}).success(function (data) {
+                        entry.machines = [{
+                            text: data,
+                            percent: 53
+                        }];
+                    }).error(function (a) {
+                        console.error(a);
+                    });
+                };
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.userIsManager = false;
-            $http.post('.', {}).success(function (data) {
+            $http.post('/api/get-entries/', {text: textId}).success(function (data) {
                 var entries = data['entries'];
                 $scope.userIsManager = !!data['user_is_manager'];
+                $scope.langPair = data['lang_pair'];
                 $scope.user = data['user'];
                 var entriesById = {},
                     i, entry;
                 for(i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
-                    entry.mode = !!entry.translations.length ? 0 : 1;
-                    entriesById[entry.idInText] = entry;
+                    entry.mode = angular.isArray(entry['translations']) && !!entry['translations'].length ? 0 : 1;
+                    entriesById[entry['idInText']] = entry;
                 }
                 $scope.entries = entries;
                 $scope.entriesById = entriesById;
@@ -47,30 +59,60 @@
                     entry.suggestion = machine.text;
                 }
             };
-            $scope.toogleEntry = function (entry) {
-                if (entry.approved) {
-                    return;
+            var expandEntry = function (entry) {
+                if (!entry.approved) {
+                    if (typeof entry['machines'] === 'undefined') {
+                        getMachines(entry);
+                    }
+                    $scope.activeEntry = entry;
                 }
+                setTimeout(function () {
+                    var $body = $('body'),
+                        $container = $('#translations-container'),
+                        $elem = $('#entry-' + entry.id),
+                        $resElem = $('#res-entry-' + entry.id),
+                        bodyTop = $body.scrollTop(),
+                        containerShift = $container.scrollTop() + $elem.offset()['top'] - Math.max($container.offset()['top'], bodyTop),
+                        resTop = $resElem.offset()['top'] - bodyTop,
+                        minTop = 10,
+                        maxTop = Math.max(0, $(window).height() - $resElem.height()) - 20,
+                        bodyShift = 0;
+                    if (resTop < minTop) {
+                        bodyShift = resTop - minTop;
+                    }
+                    if (resTop > maxTop) {
+                        bodyShift = resTop - maxTop;
+                    }
+                    if (bodyShift) {
+                        $('html, body').stop().animate({
+                            scrollTop: bodyTop + bodyShift
+                        }, 500);
+                    }
+                    $container.stop().animate({
+                        scrollTop: containerShift - bodyShift
+                    }, 500);
+                }, 100);
+            };
+            $scope.toggleEntry = function (entry) {
                 if ($scope.activeEntry === entry) {
                     $scope.activeEntry = null;
                 } else {
-                    $scope.activeEntry = entry;
-                    setTimeout(function () {
-                        var $container = $('#translations-container'),
-                            $elem = $('#entry-' + entry.id);
-                        $container.scrollTop($container.scrollTop() + $elem.offset()['top'] - $container.offset()['top']);
-                    }, 100);
+                    expandEntry(entry);
                 }
             };
+            $scope.focusEntry = function (id) {
+                var entry = $scope.entriesById[id];
+                expandEntry(entry);
+            };
             $scope.approveEntry = function (translation, entry) {
-                $http.post('/api/entry-approve/', {id: translation.id}).success(function (data) {
+                $http.post('/api/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
                     entry.approved = true;
                     entry.translation = translation.body;
                     $scope.activeEntry = null;
                     var t;
-                    for (var i = entry.translations.length - 1; i >= 0; i--) {
-                        t = entry.translations[i];
+                    for (var i = entry['translations'].length - 1; i >= 0; i--) {
+                        t = entry['translations'][i];
                         if (t.id !== translation.id) {
                             t.isApproved = false;
                         }
@@ -78,10 +120,10 @@
                 })
             };
             $scope.disapproveEntry = function (entry, parent) {
-                $http.post('/api/entry-disapprove/', {id: entry.id}).success(function (data) {
+                $http.post('/api/entry-disapprove/', {id: entry.id}).success(function () {
                     entry.isApproved = false;
                     parent.approved = false;
-                    parent.translation = parent.rawBody;
+                    parent.translation = parent['rawBody'];
                     $scope.activeEntry = parent;
                 })
             };
@@ -99,8 +141,8 @@
                     if (suggestionId) {
                         var i,
                             translation;
-                        for (i = entry.translations.length - 1; i >= 0; i--) {
-                            translation = entry.translations[i];
+                        for (i = entry['translations'].length - 1; i >= 0; i--) {
+                            translation = entry['translations'][i];
                             if (translation.id == suggestionId) {
                                 translation.body = data.body;
                                 if (translation.isApproved === true) {
@@ -111,22 +153,10 @@
                             }
                         }
                     } else {
-                        entry.translations.push(data);
+                        entry['translations'].push(data);
                     }
                     entry.mode = 0;
                 })
-            };
-            $scope.focusEntry = function (id) {
-                var entry = $scope.entriesById[id];
-                if (entry.approved) {
-                    return;
-                }
-                $scope.activeEntry = entry;
-                setTimeout(function () {
-                    var $container = $('#translations-container'),
-                        $elem = $('#entry-' + id);
-                    $container.scrollTop($container.scrollTop() + $elem.offset()['top'] - $container.offset()['top']);
-                }, 100);
             };
             $scope.editTranslation = function (entry, translation) {
                 entry.mode = 1;
@@ -195,7 +225,7 @@
         .controller('projectCtrl', function ($scope, $modal, $http) {
             $scope.projectId = window['projectId'];
             $scope.participants = [];
-            $http.get('/api/get-participants', {params: {project: $scope.projectId}})
+            $http.get('/api/participant', {params: {project: $scope.projectId}})
                  .then(function(response) {
                     $scope.participants = response.data;
                  });
@@ -205,7 +235,7 @@
                     $scope.texts = response.data;
                  });
             $scope.glossaries = [];
-            $http.get('/api/get-glossaries', {params: {project: $scope.projectId}})
+            $http.get('/api/glossary', {params: {project: $scope.projectId}})
                  .then(function(response) {
                     $scope.glossaries = response.data;
                  });
@@ -219,9 +249,29 @@
                     }
                 });
 
-                modalInstance.result.then(function () {
+                modalInstance.result.then(function (participant) {
+                    $scope.participants.push(participant);
                 }, function () {
                 });
+            };
+            $scope.removeParticipant = function (participant) {
+                var data = {
+                    'project': window['projectId'],
+                    'user': participant.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/participant/', {params: data})
+                    .success(function() {
+                        var i = $scope.participants.indexOf(participant);
+                        if (i > -1) {
+                            delete $scope.participants.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
             };
             $scope.addText = function () {
                 var modalInstance = $modal.open({
@@ -233,7 +283,8 @@
                     }
                 });
 
-                modalInstance.result.then(function () {
+                modalInstance.result.then(function (text) {
+                        $scope.texts.push(text);
                 }, function () {
                 });
             };
@@ -247,9 +298,30 @@
                     }
                 });
 
-                modalInstance.result.then(function () {
-                }, function () {
+                modalInstance.result.then(function (glossary) {
+                    $scope.glossaries.push(glossary);
+                }, function (data) {
+                    alert(data);
                 });
+            };
+            $scope.removeGlossary = function (glossary) {
+                var data = {
+                    'project': window['projectId'],
+                    'glossary': glossary.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/glossary/', {params: data})
+                    .success(function() {
+                        var i = $scope.glossaries.indexOf(glossary);
+                        if (i > -1) {
+                            delete $scope.glossaries.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
             };
         })
         .controller('AddParticipantModalCtrl', function ($scope, $modalInstance, $http) {
@@ -266,9 +338,9 @@
                     'user': $scope.user.id
                 };
                 $scope.busy = true;
-                $http.post('/api/add-participant/', data)
+                $http.post('/api/participant/', data)
                     .success(function(participant) {
-                        $scope.participants.push(participant);
+                        $modalInstance.close(participant);
                         $scope.busy = false;
                     })
                     .error(function(data) {
@@ -290,7 +362,7 @@
                 $scope.busy = true;
                 $http.post('/api/add-text/', data)
                     .success(function(text) {
-                        $scope.texts.push(text);
+                        $modalInstance.close(text);
                         $scope.busy = false;
                     })
                     .error(function(data) {
@@ -313,9 +385,9 @@
                     'file': $scope.data.f
                 };
                 $scope.busy = true;
-                $http.post('/api/add-glossary/', data)
+                $http.post('/api/glossary/', data)
                     .success(function(glossary) {
-                        $scope.glossaries.push(glossary);
+                        $modalInstance.close(glossary);
                         $scope.busy = false;
                     })
                     .error(function(data) {
@@ -351,18 +423,21 @@
         .run(function ($http) {
             $http.defaults.headers.post['X-CSRFToken'] = window['csrfToken'];
         })
-        .config(function ($interpolateProvider) {
+        .config(function ($interpolateProvider, $httpProvider) {
             // replace {{ by {=
             $interpolateProvider.startSymbol('{=');
             // replace }} by =}
             $interpolateProvider.endSymbol('=}');
+            $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+            $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
         })
         .directive('entry', function () {
             return {
                 template: function(elem, attr) {
                     var id = attr['entry'];
 
-                    return '<span ng-click="focusEntry(' + id + ')"' +
+                    return '<span ng-click="focusEntry(' + id + ')" ' +
+                                 'id="res-entry-' + id + '" ' +
                                  'ng-class="{active: activeEntry.idInText === ' + id + ',' +
                                             'approved: entriesById[' + id + '].approved}">' +
                                '<span ng-show="textTab === 0">' + elem.html() + '</span>' +
@@ -386,7 +461,7 @@
                                  'class="glossary-word" ' +
                                  'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                                  'tooltip-append-to-body="true" ' +
-                                 'tooltip="' + word + '">'
+                                 'tooltip="\'' + word + '\'">'
                                 + elem.html() + '</span>';
                 },
                 link: function (scope, element, attrs) {
@@ -402,42 +477,42 @@
                 }
             }
         })
-        .directive('insertText', function($rootScope, $parse) {
+        .directive('insertText', function($rootScope) {
             return {
                 link: function(scope, element) {
-                    var id =  scope.entry.id;
-                    $rootScope.$on('insertText', function(e, data) {
-                        if (data['id'] !== id) {
-                            return;
-                        }
-                        var domElement = element[0],
-                            val = data['text'],
-                            result = '';
-                        if (document.selection) {
-                            domElement.focus();
-                            var sel = document.selection.createRange();
-                            result = val;
-                            scope.entry.suggestion = result;
-                            scope.$apply();
-                            domElement.focus();
-                        } else if (domElement.selectionStart || domElement.selectionStart === 0) {
-                            var startPos = domElement.selectionStart;
-                            var endPos = domElement.selectionEnd;
-                            var scrollTop = domElement.scrollTop;
-                            result = domElement.value.substring(0, startPos) + val + domElement.value.substring(endPos, domElement.value.length);
-                            scope.entry.suggestion = result;
-                            scope.$apply();
-                            domElement.focus();
-                            domElement.selectionStart = startPos + val.length;
-                            domElement.selectionEnd = startPos + val.length;
-                            domElement.scrollTop = scrollTop;
-                        } else {
-                            result = domElement.value + val;
-                            scope.entry.suggestion = result;
-                            scope.$apply();
-                            domElement.focus();
-                        }
-                    });
+                    if (typeof scope.entry !== 'undefined') {
+                        scope.entry = scope.entry || undefined;
+                        var id =  scope.entry.id;
+                        $rootScope.$on('insertText', function(e, data) {
+                            if (data['id'] !== id) {
+                                return;
+                            }
+                            var domElement = element[0],
+                                val = data['text'],
+                                result = '';
+                            if (document.selection) {
+                                domElement.focus();
+                                //var sel = document.selection.createRange();
+                                result = val;
+                                scope.entry.suggestion = result;
+                                domElement.focus();
+                            } else if (domElement.selectionStart || domElement.selectionStart === 0) {
+                                var startPos = domElement.selectionStart;
+                                var endPos = domElement.selectionEnd;
+                                var scrollTop = domElement.scrollTop;
+                                result = domElement.value.substring(0, startPos) + val + domElement.value.substring(endPos, domElement.value.length);
+                                scope.entry.suggestion = result;
+                                domElement.focus();
+                                domElement.selectionStart = startPos + val.length;
+                                domElement.selectionEnd = startPos + val.length;
+                                domElement.scrollTop = scrollTop;
+                            } else {
+                                result = domElement.value + val;
+                                scope.entry.suggestion = result;
+                                domElement.focus();
+                            }
+                        });
+                    }
                 }
             }
         })

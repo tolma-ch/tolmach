@@ -1,6 +1,6 @@
 {% load i18n static %}
 {% spaceless %}
-<ul class="nav ace-nav">
+<ul class="social-providers">
     {% for provider in providers %}
         <li class="social-provider">
             <a href="{% url 'social:begin' backend=provider.id %}" class="icon custom-{{ provider.icon }} "></a>

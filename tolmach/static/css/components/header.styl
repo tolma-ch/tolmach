@@ -39,31 +39,34 @@
 				font-size 14px
 				margin-bottom 8px
 
-			.social-provider
-				margin 0 8px
-				display inline-block
 
-				.icon
-					iconSize = 40px
+.social-providers
+	margin 0
+.social-provider
+	margin 0 8px
+	display inline-block
 
-					// background-color #115770
-					background-image url('/static/images/header//social-buttons@1.png') // todo: set url to images
-					width iconSize
-					height iconSize
-					display inline-block
+	.icon
+		iconSize = 40px
 
-					&.custom-icon
-						&-vk
-							background-position 0 0
+		// background-color #115770
+		background-image url('/static/images/header//social-buttons@1.png') // todo: set url to images
+		width iconSize
+		height iconSize
+		display inline-block
 
-							&:hover
-								background-color transparent
-								background-position 0 -1*iconSize
+		&.custom-icon
+			&-vk
+				background-position 0 0
 
-						&-twitter
-							background-position -2*iconSize 0
+				&:hover
+					background-color transparent
+					background-position 0 -1*iconSize
 
-							&:hover
-								background-color transparent
-								background-position -2*iconSize -1*iconSize
+			&-twitter
+				background-position -2*iconSize 0
+
+				&:hover
+					background-color transparent
+					background-position -2*iconSize -1*iconSize
 
