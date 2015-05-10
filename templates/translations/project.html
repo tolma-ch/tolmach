@@ -5,7 +5,7 @@
     <script>
         projectId={{ project.id }};
     </script>
-    <div ng-controller="projectCtrl">
+    <div ng-controller="projectCtrl" ng-cloak>
         <div class="page-header">
             <h1>
                 {{ project.name }}
@@ -45,7 +45,8 @@
                                 <div class="project-list-participant__btns">
                                     <a class="project-list-participant__btn" href=""><i class="fa fa-eye"></i></a>
                                     <a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
-                                    <a class="project-list-participant__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                    <a class="project-list-participant__btn" href=""
+                                       ng-click="removeParticipant(participant)"><i class="fa fa-trash-o"></i></a>
                                 </div>
                                 <div class="project-list-participant__menu"
                                         ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
@@ -124,7 +125,8 @@
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
-                                    <a class="project-list-glossary__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                    <a class="project-list-glossary__btn" href=""
+                                       ng-click="removeGlossary(glossary)"><i class="fa fa-trash-o"></i></a>
                                 </div>
                             </div>
                             </div>
