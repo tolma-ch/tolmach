@@ -196,8 +196,7 @@ def add_glossary_ajax(request):
     glossary_name = post['name']
     if 'file' in post:
         f = post['file']
-        # TODO: need to pass this file size variable to database
-        if f['size'] > 1048576:
+        if f['size'] > settings.GLOSSARY_FILE_SIZE:
             return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
                                 status=400)
         elif f['type'] not in ['text/plain', 'application/octet-stream', 'text/csv']:
