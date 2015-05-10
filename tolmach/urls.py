@@ -43,16 +43,16 @@ urlpatterns = patterns('',
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
 
     # ajax
+    url(r'^api/project-create/$', trans_ajax.create_project_ajax, name='get_entries_ajax'),
+    url(r'^api/get-entries/$', trans_ajax.get_entries_ajax, name='get_entries_ajax'),
     url(r'^api/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),
     url(r'^api/entry-disapprove/$', trans_ajax.disapprove_entry_ajax, name='entry_approve_ajax'),
     url(r'^api/entry-translate/$', trans_ajax.translate_entry_ajax, name='translate_entry_ajax'),
     url(r'^api/get-users/$', trans_ajax.get_users_ajax, name='get_users_ajax'),
-    url(r'^api/get-participants/$', trans_ajax.get_participants_ajax, name='get_participants_ajax'),
-    url(r'^api/add-participant/$', trans_ajax.add_participant_ajax, name='add_participant_ajax'),
+    url(r'^api/participant/$', trans_ajax.participant_ajax, name='participant_ajax'),
     url(r'^api/get-texts/$', trans_ajax.get_texts_ajax, name='get_texts_ajax'),
     url(r'^api/add-text/$', trans_ajax.add_text_ajax, name='add_text_ajax'),
-    url(r'^api/get-glossaries/$', trans_ajax.get_glossaries_ajax, name='get_glossaries_ajax'),
-    url(r'^api/add-glossary/$', trans_ajax.add_glossary_ajax, name='add_glossary_ajax'),
+    url(r'^api/glossary/$', trans_ajax.glossary_ajax, name='glossary_ajax'),
     url(r'^api/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
 
     # temporarily added urls for developing purpuses
