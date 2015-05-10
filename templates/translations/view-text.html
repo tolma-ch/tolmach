@@ -14,17 +14,9 @@
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 
-{% trans 'Change your locale' %}:
-<form action="/i18n/setlang/" method="POST">
-	{% csrf_token %}
-	<!--<input name="next" type="hidden" value="/accounts/profile/" /><br/>-->
-	<select name="language">
-		{% for lang in LANGUAGES %}
-			<option value="{{ lang.0 }}">{{ lang.1 }}</option>
-		{% endfor %}
-	</select><br/>
-	<input type="submit" value="{% trans 'change' %}" />
-</form>
+    <script>
+        window['textId'] = {{ text.id }};
+    </script>
 
     <div class="translation" ng-controller="transCtrl">
         <h1 class="translation__title">{{ text.title }}</h1>
@@ -40,7 +32,7 @@
                                 'translation__sentence-translation_state_approved': entry.approved}">
 
                     <div class="translation__sentence-translation-original"
-                         ng-click="toogleEntry(entry)"
+                         ng-click="toggleEntry(entry)"
                          data-content="entry.body">
                     </div>
 
@@ -72,19 +64,20 @@
                                           data-insert-text=""
                                           ng-model="entry.suggestion"></textarea>
 
-                                <div class="translation__sentence-machine-suggestions">
+                                <div class="translation__sentence-machine-suggestions"
+                                        ng-show="entry.machines.length">
                                     <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
 
                                     <ul class="translation__sentence-machine-suggestions-list">
                                         <li class="translation__sentence-machine-suggestions-item"
-                                            ng-repeat="machine in machines"
+                                            ng-repeat="machine in entry.machines"
                                             ng-click="addMachineSuggestion(entry, machine)">
                                             <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
                                             <span class="translation__sentence-machine-suggestions-relevance"
                                                   ng-class="{
                                                     'translation__sentence-machine-suggestions-relevance_high': machine.percent >= 70,
                                                     'translation__sentence-machine-suggestions-relevance_medium': machine.percent> 40 && machine.percent < 70,
-                                                    'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40,
+                                                    'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40
                                                   }">{= machine.percent =}%</span>
                                         </li>
                                     </ul>
@@ -127,6 +120,7 @@
             </div>
 
             <div class="col-sm-6 hidden-xs">
+                <iframe id="translation__frame" name="translation__frame" width=100% height=100% style="position:absolute;z-index:-1"></iframe>
                 <div class="translation-text">
                     <div class="translation-text__switcher">
                         <div class="switcher">
@@ -147,6 +141,19 @@
                     </div>
                 </div>
             </div>
+            <script>
+                setTimeout(function(){ // Отработка задержки фрейма (для FF и ИЕ)
+                    var timerResize='first';
+                    translation__frame.onresize = function () { // frame,  - Имя фрейма (name=frame)  - cм начало Кода;
+                        if (timerResize !== 'first') clearTimeout(timerResize);
+                        timerResize=setTimeout(function () {  //  Задержка для очистки чрезмерных срабатываний;
+                            $('#translations-container').css({height: + $('#translation__frame').height() + 'px'});
+                            console.log($('#translation__frame').height());
+                        }, 20);
+                    }
+                }, 200);
+
+            </script>
         </div>
     </div>
 {% endblock %}

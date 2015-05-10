@@ -84,7 +84,6 @@
   cursor: pointer;
 }
 .translation__sentence-translation-result {
-/*padding 0 15px 5px;*/
   overflow: hidden;
   background: $grayBorder;
 }

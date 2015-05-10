@@ -16,12 +16,19 @@ import json
 def create_project_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
+        if 'name' not in post or not post['name']:
+            return HttpResponse(json.dumps('name of project can not be empty'), content_type="application/json", status=400)
         name = post['name']
+        if 'description' not in post or not post['description']:
+            return HttpResponse(json.dumps('project description can not be empty'), content_type="application/json", status=400)
+        description = post['description']
+        if 'type' not in post:
+            return HttpResponse(json.dumps('project type is lost'), content_type="application/json", status=400)
         access = post['type']
         project = Project(name=name,
+                          description=description,
                           is_private=access == 'private',
                           manager=request.user)
-
         project.save()
         return HttpResponse(json.dumps(project.id), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -46,34 +53,32 @@ def get_users_ajax(request):
 
 
 @login_required
-def get_participants_ajax(request):
-    if 'project' not in request.GET:
-        return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
-    project_id = request.GET['project']
-    try:
-        project = Project.objects.get(id=project_id)
-    except Project.DoesNotExist:
-        return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
-    if not project.is_user_manager(request.user):
-        return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
-                            status=400)
-    if project.members:
-        members = project.members.split(',')
-    else:
-        members = []
-    users = User.objects.filter(id__in=members)
-    result = []
-    for user in users:
-        username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
-        result.append({
-            'id': user.id,
-            'name': username
-        })
-    return HttpResponse(json.dumps(result), content_type="application/json")
+def participant_ajax(request):
+    if request.method == 'GET':
+        if 'project' not in request.GET:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        project_id = request.GET['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
+                                status=400)
+        if project.members:
+            members = project.members.split(',')
+        else:
+            members = []
+        users = User.objects.filter(id__in=members)
+        result = []
+        for user in users:
+            username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
+            result.append({
+                'id': user.id,
+                'name': username
+            })
+        return HttpResponse(json.dumps(result), content_type="application/json")
 
-
-@login_required
-def add_participant_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'user' not in post:
@@ -101,12 +106,37 @@ def add_participant_ajax(request):
         members.append(str(user.id))
         project.members = ','.join(members)
         project.save()
+        username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
         result = {
             'id': user.id,
-            'name': user.username
+            'name': username
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
-
+    if request.method == 'DELETE':
+        if 'user' not in request.GET:
+            return HttpResponse(json.dumps('user id is being expected'), content_type="application/json", status=400)
+        try:
+            user = User.objects.get(id=request.GET['user'])
+        except User.DoesNotExist:
+            return HttpResponse(json.dumps('User not found'), content_type="application/json", status=400)
+        if 'project' not in request.GET:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        try:
+            project = Project.objects.get(id=request.GET['project'])
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        members = project.members.split(',') if project.members else []
+        if str(user.id) not in members:
+            return HttpResponse(json.dumps('User is already removed from in members of project'),
+                                content_type="application/json",
+                                status=400)
+        members.remove(str(user.id))
+        project.members = ','.join(members)
+        project.save()
+        result = {
+            'id': user.id
+        }
+        return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
@@ -155,79 +185,146 @@ def add_text_ajax(request):
 
 
 @login_required
-def get_glossaries_ajax(request):
-    if 'project' not in request.GET:
-        return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
-    project_id = request.GET['project']
-    try:
-        project = Project.objects.get(id=project_id)
-    except Project.DoesNotExist:
-        return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
-    if not project.is_user_manager(request.user):
-        return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
-                            status=400)
-    glossaries = Glossary.objects.filter(project=project).all()
-    result = []
-    for glossary in glossaries:
-        result.append({
+def glossary_ajax(request):
+    if request.method == 'GET':
+        if 'project' not in request.GET:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        project_id = request.GET['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
+                                status=400)
+        glossaries = Glossary.objects.filter(project=project).all()
+        result = []
+        for glossary in glossaries:
+            result.append({
+                'id': glossary.id,
+                'name': glossary.name
+            })
+        return HttpResponse(json.dumps(result), content_type="application/json")
+
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        if 'project' not in post:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        try:
+            project = Project.objects.get(id=post['project'])
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
+                                status=400)
+        if 'name' not in post:
+            return HttpResponse(json.dumps('Glossary name is being expected'), content_type="application/json",
+                                status=400)
+        glossary_name = post['name']
+        if 'file' in post:
+            f = post['file']
+            # TODO: need to pass this file size variable to database
+            if f['size'] > 1048576:
+                return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
+                                    status=400)
+            elif f['type'] not in ['text/plain', 'application/octet-stream', 'text/csv']:
+                return HttpResponse(json.dumps('Lol nope! Wrong file type'), content_type="application/json",
+                                    status=400)
+            text = f['file'].replace('data:%s;base64,' % f['type'], '')
+            # file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
+            # fh = open(file_on_disk, "wb")
+            # fh.write(text.decode('base64'))
+            # fh.close()
+            pairs_array = utils.parse_glossary_text(text.decode('base64'), f['type'])
+        else:
+            if 'text' not in post:
+                return HttpResponse(json.dumps('please, send file or plain text'), content_type="application/json",
+                                    status=400)
+            pairs_array = utils.parse_glossary_text(post['text'], 'text/csv')
+        glossary = Glossary(name=glossary_name,
+                            owner=request.user,
+                            project=project)
+        glossary.save()
+        for src, trg in pairs_array:
+            # print src
+            glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
+                                           source_entry=src,
+                                           target_entry=trg)
+            glossary_entry.save()
+        result = {
             'id': glossary.id,
             'name': glossary.name
-        })
-    return HttpResponse(json.dumps(result), content_type="application/json")
+        }
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.method == 'DELETE':
+        if 'glossary' not in request.GET:
+            return HttpResponse(json.dumps('glossary id is being expected'), content_type="application/json", status=400)
+        try:
+            glossary = Glossary.objects.get(id=request.GET['glossary'])
+        except Glossary.DoesNotExist:
+            return HttpResponse(json.dumps('Glossary not found'), content_type="application/json", status=400)
+        if 'project' not in request.GET:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        project_id = request.GET['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        glossary.delete()
+        return HttpResponse(json.dumps(True), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 @login_required
-def add_glossary_ajax(request):
+def get_entries_ajax(request):
     if not request.method == 'POST':
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
     post = json.loads(request.body)
-    if 'project' not in post:
-        return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+    if 'text' not in post:
+        return HttpResponse(json.dumps('text id is being expected'), content_type="application/json", status=400)
     try:
-        project = Project.objects.get(id=post['project'])
-    except Project.DoesNotExist:
-        return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
-    if not project.is_user_manager(request.user):
-        return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
-                            status=400)
-    if 'name' not in post:
-        return HttpResponse(json.dumps('Glossary name is being expected'), content_type="application/json",
-                            status=400)
-    glossary_name = post['name']
-    if 'file' in post:
-        f = post['file']
-        if f['size'] > settings.GLOSSARY_FILE_SIZE:
-            return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
-                                status=400)
-        elif f['type'] not in ['text/plain', 'application/octet-stream', 'text/csv']:
-            return HttpResponse(json.dumps('Lol nope! Wrong file type'), content_type="application/json",
-                                status=400)
-        text = f['file'].replace('data:%s;base64,' % f['type'], '')
-        # file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
-        # fh = open(file_on_disk, "wb")
-        # fh.write(text.decode('base64'))
-        # fh.close()
-        pairs_array = utils.parse_glossary_text(text.decode('base64'), f['type'])
-    else:
-        if 'text' not in post:
-            return HttpResponse(json.dumps('please, send file or plain text'), content_type="application/json",
-                                status=400)
-        pairs_array = utils.parse_glossary_text(post['text'], 'text/csv')
-    glossary = Glossary(name=glossary_name,
-                        owner=request.user,
-                        project=project)
-    glossary.save()
-    for src, trg in pairs_array:
-        # print src
-        glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
-                                       source_entry=src,
-                                       target_entry=trg)
-        glossary_entry.save()
-    result = {
-        'id': glossary.id,
-        'name': glossary.name
-    }
-    return HttpResponse(json.dumps(result), content_type="application/json")
+        text = Text.objects.get(id=post['text'])
+    except Text.DoesNotExist:
+        return HttpResponse(json.dumps('Text not found'), content_type="application/json", status=400)
+    entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+    result = []
+    for entry in entries:
+        transtlations = []
+        approved = False
+        approved_text = ''
+        for translation in TextEntry.objects.filter(parent_entry=entry):
+            transtlations.append({
+                'id': translation.id,
+                'parentId': entry.id,
+                'body': translation.body,
+                'author': translation.author.id,
+                'isApproved': translation.is_approved,
+            })
+            if translation.is_approved:
+                approved_text = translation.body
+            approved = approved or translation.is_approved
+        # каждую entry проверяем на наличие в ней слов из словаря
+        # и оборачиваем нужным тегом
+        entry_body = entry.body
+        if not text.glossaries == '':
+            entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
+        result.append({
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            # 'body': entry.body,
+            'rawBody': entry.body,
+            'body': entry_body,
+            'translations': transtlations,
+            'approved': approved,
+            'translation': approved_text or entry.body
+        })
+        # entry.translations = TextEntry.objects.filter(parent_entry=entry)
+    # return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
+    return HttpResponse(json.dumps({
+                                       'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
+                                       'user_is_manager': text.project.is_user_manager(request.user),
+                                       'user': request.user.id,
+                                       'entries': result}, ensure_ascii=False), content_type="application/json")
 
 
 @login_required
@@ -326,6 +423,7 @@ def yandex_translate_ajax(request):
         post = json.loads(request.body)
         print post
         from yandex_translate import YandexTranslate
+
         translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
         translated_body = translate.translate(post['entry_body'], post['lang_pair'])
 

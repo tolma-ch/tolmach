@@ -390,52 +390,6 @@ def view_text(request, text_id):
     if not text.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
-    if request.method == 'POST':
-        entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
-        result = []
-        for entry in entries:
-            transtlations = []
-            approved = False
-            approved_text = ''
-            for translation in TextEntry.objects.filter(parent_entry=entry):
-                transtlations.append({
-                    'id': translation.id,
-                    'parentId': entry.id,
-                    'body': translation.body,
-                    'author': translation.author.id,
-                    'isApproved': translation.is_approved,
-                })
-                if translation.is_approved:
-                    approved_text = translation.body
-                approved = approved or translation.is_approved
-            # каждую entry проверяем на наличие в ней слов из словаря
-            # и оборачиваем нужным тегом
-            entry_body = entry.body
-            if not text.glossaries == '':
-                entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
-            result.append({
-                'id': entry.id,
-                'idInText': entry.id_in_text,
-                # 'body': entry.body,
-                'rawBody': entry.body,
-                'body': entry_body,
-                'translations': transtlations,
-                'approved': approved,
-                'translation': approved_text or entry.body,
-                'lang_pair': text.source_lang.code + "-" + text.target_lang.code
-            })
-            # entry.translations = TextEntry.objects.filter(parent_entry=entry)
-        # return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
-        return HttpResponse(json.dumps({
-            'user_is_manager': text.project.is_user_manager(request.user),
-            'user': request.user.id,
-            'entries': result}, ensure_ascii=False), content_type="application/json")
-
-    entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
-
-    for entry in entries:
-        entry.translations = TextEntry.objects.filter(parent_entry=entry)
-
     data = {'username': request.user,
             'page_title': text.title,
             'breadcrumbs': [
@@ -444,7 +398,6 @@ def view_text(request, text_id):
                 [text.title, ''],
             ],
             'text': text,
-            'entries': entries,
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
