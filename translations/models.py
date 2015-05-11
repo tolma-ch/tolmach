@@ -38,6 +38,18 @@ class Project(models.Model):
         """
         return self.manager == user
 
+    def is_user_allowed(self, user):
+        """
+        Check whether provided user is allowed to act within the current project and return Boolean
+        """
+        if self.is_private is False:
+            return True
+        else:
+            if self.manager == user or str(user.id) in self.members.split(','):
+                return True
+            else:
+                return False
+
     def get_progress(self):
         """
         Get progress percentage of the current project and return Int from 0 to 100

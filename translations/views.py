@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
+from django.conf import settings
 
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -204,10 +205,9 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/projects/')
 
     pr = Project.objects.get(id=proj_id)
-    # TODO: тупняк. Проверять ещё и на участие чувака в проекте, а не только на менеджеровость
-    if not pr.is_user_manager(request.user):
-        messages.add_message(request, messages.ERROR, _('Sorry, you are not a manager of this project!'))
-        return HttpResponseRedirect('/projects/')
+    if not pr.is_user_manager(request.user) or not pr.is_user_allowed(request.user):
+        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
+        return HttpResponseRedirect('/')
     data = {
         'project': pr,
         'breadcrumbs': [
@@ -386,10 +386,9 @@ def remove_user_from_project(request, proj_id, us_id):
 
 @login_required
 def view_text(request, text_id):
-    # TODO: добавить проверку авторизации для пользователя и доступов к тексту
     text = Text.objects.get(id=text_id)
     if not text.is_user_allowed(request.user):
-        messages.add_message(request, messages.ERROR, _('You are not allowed to translate this text'))
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
     data = {'username': request.user,
             'page_title': text.title,
@@ -589,8 +588,7 @@ def dev_add_new_glossary(request):
 
         file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
 
-        # TODO: need to pass this filesize variable to database
-        if f.size > 1048576:
+        if f.size > settings.GLOSSARY_FILE_SIZE:
             content = {'message': 'Sorry, bro, file too big!'}
             return render_to_response(template, content, RequestContext(request))
         elif f.content_type not in ['text/plain', 'application/octet-stream', 'text/csv']:
