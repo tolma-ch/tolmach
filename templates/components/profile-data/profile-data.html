@@ -15,6 +15,14 @@
 {% trans 'Private' as private_checkbox %}
 {% trans 'Add' as add_button %}
 <div class="profile-container" ng-controller="projectsCtrl">
+    <!-- Messages from HttpReturn. TODO: create new styles for messages. -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <aside class="profile-sidebar">
         {% include "components/profile-data/personal-info.html" %}
     </aside>
