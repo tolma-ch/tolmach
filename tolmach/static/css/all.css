@@ -1397,6 +1397,32 @@ body > .main.auth {
 .project-list-glossary:hover .project-list-glossary__btns {
   display: block;
 }
+.glossary-manual {
+  margin-bottom: 15px;
+}
+.glossary-manual:after {
+  clear: both;
+  display: table;
+  content: " ";
+}
+.glossary-manual__input {
+  width: 50%;
+  padding-right: 15px;
+  float: left;
+}
+.glossary-manual__input:last-child {
+  width: 50%;
+  padding-right: 0;
+  padding-left: 15px;
+}
+.glossary-manual__arrow {
+  width: 30px;
+  margin: 0 -15px;
+  float: left;
+  height: 34px;
+  line-height: 32px;
+  text-align: center;
+}
 .user-sidebar {
   padding-top: 30px;
 }

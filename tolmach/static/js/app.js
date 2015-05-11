@@ -295,13 +295,40 @@
                     size: 'md',
                     backdrop: 'static',
                     resolve: {
+                        glossary: function () {
+                            return false;
+                        }
                     }
                 });
 
                 modalInstance.result.then(function (glossary) {
                     $scope.glossaries.push(glossary);
                 }, function (data) {
-                    alert(data);
+                });
+            };
+            $scope.editGlossary = function (glossary) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addGlossaryModal.html',
+                    controller: 'AddGlossaryModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        glossary: function () {
+                            return glossary;
+                        }
+                    }
+                });
+                $http.get('/api/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
+                     .then(function(response) {
+                        glossary.rows = response.data.rows;
+                        var lastRow = glossary.rows[glossary.rows.length - 1];
+                        if (lastRow[0] && lastRow[1]) {
+                            glossary.rows.push(['', ''])
+                        }
+                     });
+
+                modalInstance.result.then(function (glossary) {
+                }, function (data) {
                 });
             };
             $scope.removeGlossary = function (glossary) {
@@ -375,16 +402,28 @@
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http) {
-            $scope.data = {};
+        .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http, glossary) {
+            $scope.glossary = glossary || {
+                rows: [['', '']]
+            };
+            $scope.changeRow = function (i) {
+                if (i === $scope.glossary.rows.length - 1) {
+                    if ($scope.glossary.rows[i][0] && $scope.glossary.rows[i][1]) {
+                        $scope.glossary.rows.push(['', '']);
+                    }
+                } else if (i < $scope.glossary.rows.length - 1) {
+                    if (!$scope.glossary.rows[i][0] && !$scope.glossary.rows[i][1]) {
+                        delete $scope.glossary.rows.splice(i, 1);
+                    }
+                }
+            };
             $scope.ok = function () {
                 $scope.error = '';
-                var data = {
-                    'project': window['projectId'],
-                    'name': $scope.data.name,
-                    'file': $scope.data.f
-                };
-                $scope.busy = true;
+                var data = $scope.glossary;
+                data['project'] = window['projectId'];
+                if ($scope.glossary.id || $scope.tab === 1) {
+                    delete data.file;
+                }$scope.busy = true;
                 $http.post('/api/glossary/', data)
                     .success(function(glossary) {
                         $modalInstance.close(glossary);

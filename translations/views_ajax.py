@@ -197,14 +197,33 @@ def glossary_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
                                 status=400)
-        glossaries = Glossary.objects.filter(project=project).all()
-        result = []
-        for glossary in glossaries:
-            result.append({
+        if 'glossary' in request.GET:
+            try:
+                glossary = Glossary.objects.get(id=request.GET['glossary'])
+            except Glossary.DoesNotExist:
+                return HttpResponse(json.dumps('Glossary not found'), content_type="application/json", status=400)
+            result = {
                 'id': glossary.id,
-                'name': glossary.name
-            })
-        return HttpResponse(json.dumps(result), content_type="application/json")
+                'name': glossary.name,
+                'rows': [],
+            }
+            entries = GlossaryEntry.objects.filter(glossary=glossary.id).all()
+            for entry in entries:
+                result['rows'].append([
+                    unicode(entry.source_entry),
+                    unicode(entry.target_entry),
+                ])
+            print result
+            return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
+        else:
+            glossaries = Glossary.objects.filter(project=project).all()
+            result = []
+            for glossary in glossaries:
+                result.append({
+                    'id': glossary.id,
+                    'name': glossary.name
+                })
+            return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
         post = json.loads(request.body)
@@ -237,16 +256,24 @@ def glossary_ajax(request):
             # fh.close()
             pairs_array = utils.parse_glossary_text(text.decode('base64'), f['type'])
         else:
-            if 'text' not in post:
-                return HttpResponse(json.dumps('please, send file or plain text'), content_type="application/json",
+            if 'rows' not in post:
+                return HttpResponse(json.dumps('please, send file or input manually'), content_type="application/json",
                                     status=400)
-            pairs_array = utils.parse_glossary_text(post['text'], 'text/csv')
-        glossary = Glossary(name=glossary_name,
-                            owner=request.user,
-                            project=project)
-        glossary.save()
+            pairs_array = post['rows']
+        if 'id' in post:
+            try:
+                glossary = Glossary.objects.get(id=post['id'])
+            except Glossary.DoesNotExist:
+                return HttpResponse(json.dumps('Glossary not found'), content_type="application/json", status=400)
+            GlossaryEntry.objects.filter(glossary=glossary).delete()
+        else:
+            glossary = Glossary(name=glossary_name,
+                                owner=request.user,
+                                project=project)
+            glossary.save()
         for src, trg in pairs_array:
-            # print src
+            if not src or not trg:
+                continue
             glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
                                            source_entry=src,
                                            target_entry=trg)
