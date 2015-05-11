@@ -124,7 +124,8 @@
                                     {= glossary.name =}
                                 </div>
                                 <div class="project-list-glossary__btns">
-                                    <a class="project-list-glossary__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-glossary__btn" href=""
+                                       ng-click="editGlossary(glossary)"><i class="fa fa-pencil-square-o"></i></a>
                                     <a class="project-list-glossary__btn" href=""
                                        ng-click="removeGlossary(glossary)"><i class="fa fa-trash-o"></i></a>
                                 </div>
@@ -203,11 +204,15 @@
             <button type="button"
                     class="bootbox-close-button close"
                     ng-click="cancel()">×</button>
-            <h3 class="modal-title">{% trans "Add glossary" %}</h3>
+            <h3 class="modal-title"
+                ng-show="!glossary.id">{% trans "Add glossary" %}</h3>
+            <h3 class="modal-title"
+                ng-show="glossary.id">{% trans "Edit glossary" %}</h3>
         </div>
         <div class="modal-body">
             <form ng-init="tab = 0">
-                <div class="form-group">
+                <div class="form-group"
+                     ng-show="!glossary.id">
                     <div class="switcher">
                         <a class="switcher__button"
                            ng-class="{'switcher__button_active': tab === 0}"
@@ -225,20 +230,31 @@
                     <input type="text"
                            placeholder="{% trans "Glossary name" %}"
                            class="form-control"
-                           ng-model="data.name">
+                           ng-model="glossary.name">
                 </div>
                 <div class="form-group"
-                     ng-if="tab === 0">
+                     ng-if="!glossary.id && tab === 0">
                     <input type="file"
                            placeholder="{% trans "Select file" %}"
                            class="form-control"
-                           fileread="data.f">
+                           fileread="glossary.file">
                 </div>
-                <div class="form-group"
-                     ng-if="tab === 1">
-                    <textarea placeholder="{% trans "Insert text" %}"
-                              class="form-control"
-                              ng-model="data.text"></textarea>
+                <div ng-if="glossary.id || tab === 1">
+                    <div class="glossary-manual" ng-repeat="row in glossary.rows">
+                        <div class="glossary-manual__input">
+                            <input class="form-control" type="text"
+                                   ng-model="row[0]"
+                                   ng-change="changeRow($index)"/>
+                        </div>
+                        <div class="glossary-manual__arrow">
+                            <label for="exampleInputName2">→</label>
+                        </div>
+                        <div class="glossary-manual__input">
+                            <input class="form-control" type="text"
+                                   ng-model="row[1]"
+                                   ng-change="changeRow($index)"/>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group" ng-show="error">
@@ -249,7 +265,10 @@
         <div class="modal-footer">
             <button class="btn btn-success"
                     ng-click="ok()"
-                    ng-disabled="busy">{% trans "Add" %}</button>
+                    ng-disabled="busy">
+                <span ng-show="!glossary.id">{% trans "Add" %}</span>
+                <span ng-show="glossary.id">{% trans "Save" %}</span>
+            </button>
         </div>
     </script>
 {% endblock %}
