@@ -1423,6 +1423,27 @@ body > .main.auth {
   line-height: 32px;
   text-align: center;
 }
+.drop-box {
+  border: 1px dashed #ddd;
+  width: 100%;
+  text-align: center;
+  padding: 30px;
+}
+.drop-box-inner {
+  width: 250px;
+  margin: 0 auto;
+  text-align: left;
+}
+.drop-box-icon {
+  float: left;
+  margin: -10px 10px 0 0;
+  color: #ccc;
+  font-size: 35px;
+}
+.drop-box.drag-over {
+  background: #eee;
+  border-color: #438eb9;
+}
 .user-sidebar {
   padding-top: 30px;
 }

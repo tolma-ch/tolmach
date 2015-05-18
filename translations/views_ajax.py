@@ -7,6 +7,8 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.conf import settings
 import uuid
+from entries.models import Subject
+from entries.models import Language
 from translations import utils
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry
 import json
@@ -141,32 +143,29 @@ def participant_ajax(request):
 
 
 @login_required
-def get_texts_ajax(request):
-    if 'project' not in request.GET:
-        return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
-    project_id = request.GET['project']
-    try:
-        project = Project.objects.get(id=project_id)
-    except Project.DoesNotExist:
-        return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
-    if not project.is_user_manager(request.user):
-        return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
-                            status=400)
-    texts = Text.objects.filter(project=project).all()
-    result = []
-    for text in texts:
-        result.append({
-            'id': text.id,
-            'title': text.title,
-            'progress': text.get_progress(),
-            'source_lang': str(text.source_lang),
-            'target_lang': str(text.target_lang)
-        })
-    return HttpResponse(json.dumps(result), content_type="application/json")
-
-
-@login_required
-def add_text_ajax(request):
+def text_ajax(request):
+    if request.method == 'GET':
+        if 'project' not in request.GET:
+            return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
+        project_id = request.GET['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
+                                status=400)
+        texts = Text.objects.filter(project=project).all()
+        result = []
+        for text in texts:
+            result.append({
+                'id': text.id,
+                'title': text.title,
+                'progress': text.get_progress(),
+                'sourceLang': str(text.source_lang),
+                'targetLang': str(text.target_lang)
+            })
+        return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'project' not in post:
@@ -178,9 +177,44 @@ def add_text_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
                                 status=400)
-        result = {}
+        # TODO accept file
+        sentences, marked_text = utils.split_text(post['textBody'], int(post['sourceLang']))
+        try:
+            sourceLang = Language.objects.get(id=post['sourceLang'])
+        except Language.DoesNotExist:
+            return HttpResponse(json.dumps('Language not found'), content_type="application/json", status=400)
+        try:
+            targetLang = Language.objects.get(id=post['targetLang'])
+        except Language.DoesNotExist:
+            return HttpResponse(json.dumps('Language not found'), content_type="application/json", status=400)
+        try:
+            subject = Subject.objects.get(id=post['subject'])
+        except Subject.DoesNotExist:
+            return HttpResponse(json.dumps('Subject not found'), content_type="application/json", status=400)
+        new_text = Text(title=post['title'],
+                        body=marked_text,
+                        project=project,
+                        subject=subject,
+                        source_lang=sourceLang,
+                        target_lang=targetLang,
+                        )
+        new_text.save()
+        for idx, sent in enumerate(sentences, start=1):
+            print sent
+            txt_entry = TextEntry(body=sent,
+                                  text=new_text,
+                                  id_in_text=idx,
+                                  author=request.user,
+                                  )
+            txt_entry.save()
+        result = {
+            'id': new_text.id,
+            'title': new_text.title,
+            'progress': new_text.get_progress(),
+            'sourceLang': str(new_text.source_lang),
+            'targetLang': str(new_text.target_lang)
+        }
         return HttpResponse(json.dumps(result), content_type="application/json")
-
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
@@ -313,7 +347,7 @@ def get_entries_ajax(request):
         text = Text.objects.get(id=post['text'])
     except Text.DoesNotExist:
         return HttpResponse(json.dumps('Text not found'), content_type="application/json", status=400)
-    entries = TextEntry.objects.filter(text=text, parent_entry=TextEntry.objects.get(id=1)).order_by('id_in_text')
+    entries = TextEntry.objects.filter(text=text, parent_entry=None).order_by('id_in_text')
     result = []
     for entry in entries:
         transtlations = []

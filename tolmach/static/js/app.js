@@ -4,7 +4,8 @@
 
 (function () {
     angular.module('tolmachApp', [
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ngFileUpload'
     ])
         .controller('transCtrl', function ($rootScope, $scope, $http) {
             var textId = window['textId'],
@@ -230,7 +231,7 @@
                     $scope.participants = response.data;
                  });
             $scope.texts = [];
-            $http.get('/api/get-texts', {params: {project: $scope.projectId}})
+            $http.get('/api/text', {params: {project: $scope.projectId}})
                  .then(function(response) {
                     $scope.texts = response.data;
                  });
@@ -284,7 +285,7 @@
                 });
 
                 modalInstance.result.then(function (text) {
-                        $scope.texts.push(text);
+                    $scope.texts.push(text);
                 }, function () {
                 });
             };
@@ -380,22 +381,67 @@
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('AddTextModalCtrl', function ($scope, $modalInstance, $http) {
+        .controller('AddTextModalCtrl', function ($scope, $modalInstance, $http, Upload) {
+            $scope.text = {};
+            $scope.tab = 0;
             $scope.ok = function () {
+                if (!$scope.text.title) {
+                    $scope.error = 'Where is the title?';
+                    return;
+                }
+                if (!$scope.text.subject) {
+                    $scope.error = 'Subject is lost';
+                    return;
+                }
+                if (!$scope.text.sourceLang || !$scope.text.targetLang) {
+                    $scope.error = 'Langauges is not set?';
+                    return;
+                }
                 $scope.error = '';
                 var data = {
-                    'project': window['projectId']
+                    project: window['projectId'],
+                    title: $scope.text.title,
+                    subject: $scope.text.subject,
+                    sourceLang: $scope.text.sourceLang,
+                    targetLang: $scope.text.targetLang
                 };
-                $scope.busy = true;
-                $http.post('/api/add-text/', data)
-                    .success(function(text) {
-                        $modalInstance.close(text);
-                        $scope.busy = false;
+                if ($scope.tab === 0) {
+                    if (!$scope.text.files || !$scope.text.files.length) {
+                        $scope.error = 'Please, select a file';
+                        return;
+                    }
+                    Upload.upload({
+                        url: '/api/text/',
+                        fields: data,
+                        file: $scope.text.files[0]
                     })
-                    .error(function(data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
+                        .progress(function (evt) {
+                        })
+                        .success(function(text) {
+                            $modalInstance.close(text);
+                            $scope.busy = false;
+                        })
+                        .error(function(data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                } else {
+                    if (!$scope.text.textBody) {
+                        $scope.error = 'Empty text';
+                        return;
+                    }
+                    data.textBody = $scope.text.textBody;
+                    $scope.busy = true;
+                    $http.post('/api/text/', data)
+                        .success(function(text) {
+                            $modalInstance.close(text);
+                            $scope.busy = false;
+                        })
+                        .error(function(data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                }
             };
 
             $scope.cancel = function () {
