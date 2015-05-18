@@ -210,6 +210,8 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/')
     data = {
         'project': pr,
+        'languages': Language.objects.all(),
+        'subjects': Subject.objects.all(),
         'breadcrumbs': [
                 [_('Projects'), '/projects/'],
                 [pr.name, ''],
