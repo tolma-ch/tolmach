@@ -99,7 +99,7 @@ Vagrant.configure(2) do |config|
     mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'localhost' WITH GRANT OPTION;"
     mysql -uroot -p123 -e "CREATE USER 'vagrant'@'%' IDENTIFIED BY '';"
     mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'%' WITH GRANT OPTION;"
-    mysql -e "CREATE DATABASE tolmach"
+    mysql -e "CREATE DATABASE tolmach CHARACTER SET utf8"
     mysql tolmach < tolmach_dev.sql
   SHELL
 end
