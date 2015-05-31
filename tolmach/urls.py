@@ -57,4 +57,5 @@ urlpatterns = patterns('',
     # temporarily added urls for developing purpuses
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),
     url(r'^dev-add-glossary/$', trans_views.dev_add_new_glossary),
+    url(r'^projects/add-tmx/$', trans_views.dev_add_tmx_to_project, name='dev_add_tmx'),
 )
