@@ -68,7 +68,7 @@
                     $scope.activeEntry = entry;
                 }
                 setTimeout(function () {
-                    var $body = $('body'),
+                    var $body = $('html, body'),
                         $container = $('#translations-container'),
                         $elem = $('#entry-' + entry.id),
                         $resElem = $('#res-entry-' + entry.id),
@@ -85,7 +85,7 @@
                         bodyShift = resTop - maxTop;
                     }
                     if (bodyShift) {
-                        $('html, body').stop().animate({
+                        $body.stop().animate({
                             scrollTop: bodyTop + bodyShift
                         }, 500);
                     }
