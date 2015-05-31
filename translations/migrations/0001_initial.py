@@ -73,16 +73,4 @@ class Migration(migrations.Migration):
                 ('text', models.ForeignKey(related_name='text_entries', to='translations.Text')),
             ],
         ),
-        migrations.CreateModel(
-            name='TMDatabase',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='TMDatabaseEntry',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-            ],
-        ),
     ]

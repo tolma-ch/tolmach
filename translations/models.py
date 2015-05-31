@@ -153,8 +153,18 @@ class GlossaryEntry(models.Model):
 
 
 class TMDatabase(models.Model):
-    pass
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey('auth.User')
+    project = models.ForeignKey('translations.Project', related_name='tmxdatabases')
 
 
 class TMDatabaseEntry(models.Model):
-    pass
+    tmx = models.ForeignKey('translations.TMDatabase', related_name='tmx_entries')
+    orig_lang = models.CharField(max_length=3)
+    orig_text = models.CharField(max_length=1024)
+    target_lang = models.CharField(max_length=3)
+    target_text = models.CharField(max_length=1024)
+    target_author = models.CharField(max_length=80, null=True, blank=True, default=None)
+    target_created = models.DateTimeField(null=True, blank=True, default=None)
+    target_editor = models.CharField(max_length=80, null=True, blank=True, default=None)
+    target_edited = models.DateTimeField(null=True, blank=True, default=None)

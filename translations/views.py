@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry
+from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from entries.models import Language, Subject
 import json
 import os
@@ -619,6 +619,118 @@ def dev_add_new_glossary(request):
     return render_to_response(template, content, RequestContext(request))
 
 
+@login_required
+def dev_add_tmx_to_project(request):
+    user = User.objects.get(username=request.user)
+    user_projects = Project.objects.filter(manager=user)
+    data = {
+        'projects': user_projects,
+    }
+    template = 'translations/dev_add_tmx_to_project.html'
+
+    if request.method == 'POST':
+        project_id = int(request.POST["project-id"]) if request.POST["project-id"] else 0
+        try:
+            proj = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such project, sorry.'))
+            return HttpResponseRedirect('/')
+        if not proj.is_user_manager(request.user):
+            messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
+            return HttpResponseRedirect('/')
+
+
+        tmdb_name = request.POST["tmdb-name"]
+
+        if tmdb_name == "":
+            messages.add_message(request, messages.ERROR, _('Please, provide TMX database name'))
+            return HttpResponseRedirect('/projects/add-tmx/')
+
+        filename = "%s/dev/test_files/tmx/project_save.tmx" % os.getcwd()
+
+        from lxml import etree
+
+        # учитываем различия в аттрибутах языка в разных версиях спеки TMX
+        lang_11 = "lang"
+        lang_14 = "{http://www.w3.org/XML/1998/namespace}lang"
+
+        try:
+            with open(filename) as source:
+                context = etree.iterparse(source, events=('end',), tag='tu')
+
+                new_tmdb = TMDatabase(name=tmdb_name,
+                                      owner=user,
+                                      project=proj,
+                                      )
+                new_tmdb.save()
+
+                for event, elem in context:
+                    tuv = elem.findall('tuv')
+                    try:
+                        orig_lang = tuv[0].attrib[lang_14]
+                        target_lang = tuv[1].attrib[lang_14]
+                    except KeyError:
+                        orig_lang = tuv[0].attrib[lang_11]
+                        target_lang = tuv[1].attrib[lang_11]
+
+                    orig_text = tuv[0].find('seg').text
+                    target_text = tuv[1].find('seg').text
+
+                    print "Source: Lang - %s, Segment - %s" % (orig_lang, orig_text)
+                    print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+
+                    try:
+                        target_author = tuv[1].attrib["creationid"]
+                    except KeyError:
+                        target_author = None
+
+                    from datetime import datetime
+                    try:
+                        target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
+                    except KeyError:
+                        target_created = None
+
+                    try:
+                        target_editor = tuv[1].attrib["changeid"]
+                    except KeyError:
+                        target_editor = None
+
+                    try:
+                        target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
+                    except KeyError:
+                        target_edited = None
+                    if target_created == target_edited:
+                        target_edited = None
+                        target_editor = None
+
+                    print "Target creator: %s" % target_author if target_author else "Target creator:"
+                    print "Tagret created: %s" % target_created if target_created else "Tagret created:"
+                    print "Target editor: %s" % target_editor if target_editor else "Target editor:"
+                    print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+
+                    new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=new_tmdb.id),
+                                                     orig_lang=orig_lang.lower(),
+                                                     orig_text=orig_text,
+                                                     target_lang=target_lang.lower(),
+                                                     target_text=target_text,
+                                                     target_author=target_author,
+                                                     target_created=target_created,
+                                                     target_editor=target_editor,
+                                                     target_edited=target_edited,
+                                                     )
+                    new_tmdb_entry.save()
+
+                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                    elem.clear()
+
+                    # Удалите пустые ссылки из корневого узла в <Title>
+                    while elem.getprevious() is not None:
+                        del elem.getparent()[0]
+        except etree.XMLSyntaxError:
+            pass
+
+    return render_to_response(template, data, RequestContext(request))
+
 ### Translation stub
 
 def dev_add_text_to_project(request):
@@ -627,3 +739,4 @@ def dev_add_text_to_project(request):
     }
     template = 'translations/dev_add_text_to_project.html'
     return render_to_response(template, data, RequestContext(request))
+
