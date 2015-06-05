@@ -244,9 +244,19 @@ def project_delete(request, proj_id=0):
 def add_text_to_project(request):
     if request.method == "POST":
         data = request.POST
-        project = Project.objects.get(id=data['id'])
+        try:
+            project = Project.objects.get(id=data['id'])
+        except Project.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such project, sorry.'))
+            return HttpResponseRedirect('/projects/')
+        try:
+            lang = Language.objecst.get(id=data['source_lang'])
+        except Language.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such language, sorry.'))
+            return HttpResponseRedirect('/projects/%d/' % project.id)
         if project.is_user_manager(request.user):
-            sentences, marked_text = utils.split_text(data['text_body'], int(data['source_lang']))
+            print lang.code
+            sentences, marked_text = utils.split_text(data['text_body'], lang.code)
             new_text = Text(title=data['title'],
                             body=marked_text,
                             project=Project.objects.get(id=data['id']),
@@ -639,7 +649,6 @@ def dev_add_tmx_to_project(request):
             messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
             return HttpResponseRedirect('/')
 
-
         tmdb_name = request.POST["tmdb-name"]
 
         if tmdb_name == "":
@@ -663,6 +672,10 @@ def dev_add_tmx_to_project(request):
                                       project=proj,
                                       )
                 new_tmdb.save()
+
+                from elasticsearch import Elasticsearch
+                es = Elasticsearch()
+                elastic_id = 1
 
                 for event, elem in context:
                     tuv = elem.findall('tuv')
@@ -720,6 +733,22 @@ def dev_add_tmx_to_project(request):
                                                      )
                     new_tmdb_entry.save()
 
+                    doc = {
+                        'db_id': new_tmdb_entry.id,
+                        orig_lang.lower(): orig_text,
+                        target_lang.lower(): target_text,
+                    }
+
+                    res = es.index(
+                        index=tmdb_name.lower(),
+                        doc_type='tmx1',
+                        id=elastic_id,
+                        body=doc
+                    )
+
+                    print "ELASTICSEARCH: ", res['created']
+
+                    elastic_id += 1
                     # Нет обращений к потомкам, поэтому вызов clear() безопасен
                     elem.clear()
 
