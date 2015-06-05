@@ -178,7 +178,6 @@ def text_ajax(request):
             return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
                                 status=400)
         # TODO accept file
-        sentences, marked_text = utils.split_text(post['textBody'], int(post['sourceLang']))
         try:
             sourceLang = Language.objects.get(id=post['sourceLang'])
         except Language.DoesNotExist:
@@ -191,6 +190,9 @@ def text_ajax(request):
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
             return HttpResponse(json.dumps('Subject not found'), content_type="application/json", status=400)
+
+        sentences, marked_text = utils.split_text(post['textBody'], sourceLang.code)
+
         new_text = Text(title=post['title'],
                         body=marked_text,
                         project=project,

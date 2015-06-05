@@ -41,19 +41,19 @@ num_in_text = 1
 
 SPLIT_PATTERN = {
         # TODO: Add variable brackets before end signs
-        1: u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
-        2: u" [%(RU_L)s%(RU_U)s]+\\)?! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\? [%(RU_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # rus
-        3: u"。”|。",  # zho
-        4: u" [%(SPA_L)s%(SPA_U)s]+\\)?! [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\. [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\? [%(SPA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # spa
-        5: u"\\. |\\! |\\? ",  # kor
-        6: u"。”|。",  # jpn
-        7: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
-        8: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
-        9: u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        'en': u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
+        'ru': u" [%(RU_L)s%(RU_U)s]+\\)?! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\? [%(RU_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # rus
+        'zh': u"。”|。",  # zho
+        'es': u" [%(SPA_L)s%(SPA_U)s]+\\)?! [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\. [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\? [%(SPA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # spa
+        'ko': u"\\. |\\! |\\? ",  # kor
+        'jp': u"。”|。",  # jpn
+        'fr': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        'de': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        'it': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
         }
 
 
-def split_text(line_to_translate, lang=1, pattern=""):
+def split_text(line_to_translate, lang='en', pattern=""):
     marked_text = line_to_translate
     num_in_text = 1
 
@@ -62,7 +62,7 @@ def split_text(line_to_translate, lang=1, pattern=""):
         return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
 
     def repl(matchobj):
-        if lang == 1 or lang == 2 or lang == 7:
+        if lang == 'en' or lang == 'ru' or lang == 'fr':
             return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
         else:
             return matchobj.group(0) + u'†'
@@ -126,24 +126,7 @@ def parse_glossary_text(text, filetype):
     return array
 
 
-def parse_tmx(request):
-    import xml.etree.ElementTree as ET
-    import json
-
-    source = request.FILES['gloss']
-    return_dict = {}
-
-    context = iter(ET.iterparse(source, events=('start', 'end')))
-    _, root = next(context)
-    for event, elem in context:
-        if event == 'end' and elem.tag == 'tu':
-            return_dict[elem[0][0].text] = elem[1][0].text
-            root.clear()
-
-    return HttpResponse(json.dumps(return_dict, ensure_ascii=False), content_type="application/json")
-
-
-
+# выделяем слова, из глоссария в активном entry на странице перевода текста
 def glossary_to_entry(entry_body, glossary_list):
     def highlight_word(target_word):
         def repl_in_text(matchobj):
@@ -157,3 +140,10 @@ def glossary_to_entry(entry_body, glossary_list):
             body_to_return = re.sub(pair.source_entry, highlight_word(pair.target_entry), body_to_return)
 
     return body_to_return
+
+
+# def get_standart_lang(incoming_lang):
+#     langs = {
+#         'rus'
+#     }
+#     if incoming_lang in
