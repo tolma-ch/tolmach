@@ -10,7 +10,7 @@ import uuid
 from entries.models import Subject
 from entries.models import Language
 from translations import utils
-from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry
+from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
 
 
@@ -491,4 +491,39 @@ def yandex_translate_ajax(request):
         translated_body = translate.translate(post['entry_body'], post['lang_pair'])
 
         return HttpResponse(json.dumps(translated_body['text'][0]), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+@login_required
+def search_in_tmx(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        print post
+
+        if 'id' not in post:
+            return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
+        entry_id = post['id']
+        try:
+            entry = TextEntry.objects.get(id=entry_id)
+        except TextEntry.DoesNotExist:
+            return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+        text = entry.text
+        text_tmx_list = text.tmdatabases.split(',') if not text.tmdatabases == '' else []
+
+        search_results = []
+
+        if text_tmx_list:
+            from elasticsearch import Elasticsearch
+            es = Elasticsearch()
+            for tmx_id in text_tmx_list:
+                res = es.search(index=tmx_id, body={'fields': ['source_lang', 'target_lang'],
+                                                    'query': {'match':
+                                                                  {
+                                                                      'source_lang': entry.body
+                                                                  }
+                                                              }
+                                                    })
+                for item in res['hits']['hits']:
+                    print "%s - %s" % (item['_score'], item['fields']['target_lang'][0])
+
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)

@@ -630,6 +630,32 @@ def dev_add_new_glossary(request):
 
 
 @login_required
+def dev_add_tmdb_to_text(request, text_id, tmdb_id):
+    text = Text.objects.get(id=text_id)
+    project = text.project
+    proj_id = int(project.id)
+    if not project.is_user_manager(request.user):
+        messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
+        return HttpResponseRedirect('/')
+    else:
+        try:
+            tmdb = TMDatabase.objects.get(id=tmdb_id)
+        except TMDatabase.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('There\'s no such translation memry database, sorry.'))
+            return HttpResponseRedirect('/projects/%d/' % proj_id)
+        text_tmdbs = text.tmdatabases.split(',') if not text.tmdatabases == '' else []
+        if tmdb_id in text_tmdbs:
+            messages.add_message(request, messages.ERROR, _('Sorry, there\'s such translation memry database here already'))
+            return HttpResponseRedirect('/projects/%d/' % proj_id)
+        else:
+            text_tmdbs.append(str(tmdb_id))
+        text.tmdatabases = ','.join(text_tmdbs)
+        text.save()
+
+    return HttpResponseRedirect('/projects/%d/' % proj_id)
+
+
+@login_required
 def dev_add_tmx_to_project(request):
     user = User.objects.get(username=request.user)
     user_projects = Project.objects.filter(manager=user)
@@ -656,6 +682,7 @@ def dev_add_tmx_to_project(request):
             return HttpResponseRedirect('/projects/add-tmx/')
 
         filename = "%s/dev/test_files/tmx/project_save.tmx" % os.getcwd()
+        # filename = "%s/dev/test_files/tmx/project_save_multilang.tmx" % os.getcwd()
 
         from lxml import etree
 
@@ -666,95 +693,182 @@ def dev_add_tmx_to_project(request):
         try:
             with open(filename) as source:
                 context = etree.iterparse(source, events=('end',), tag='tu')
+                print type(context)
 
-                new_tmdb = TMDatabase(name=tmdb_name,
-                                      owner=user,
-                                      project=proj,
-                                      )
-                new_tmdb.save()
+                lang_stat = {'source_lang': {},
+                             'target_lang': {}
+                             }
 
-                from elasticsearch import Elasticsearch
-                es = Elasticsearch()
-                elastic_id = 1
+                # проверяем TMX на бардак и мультиязычность
+                lang_pairs = []
 
+                # Получаем список языковых пар в tmx'е
                 for event, elem in context:
                     tuv = elem.findall('tuv')
                     try:
-                        orig_lang = tuv[0].attrib[lang_14]
-                        target_lang = tuv[1].attrib[lang_14]
+                        source_lang = tuv[0].attrib[lang_14].lower()
+                        target_lang = tuv[1].attrib[lang_14].lower()
                     except KeyError:
-                        orig_lang = tuv[0].attrib[lang_11]
-                        target_lang = tuv[1].attrib[lang_11]
+                        source_lang = tuv[0].attrib[lang_11].lower()
+                        target_lang = tuv[1].attrib[lang_11].lower()
 
-                    orig_text = tuv[0].find('seg').text
-                    target_text = tuv[1].find('seg').text
-
-                    print "Source: Lang - %s, Segment - %s" % (orig_lang, orig_text)
-                    print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
-
-                    try:
-                        target_author = tuv[1].attrib["creationid"]
-                    except KeyError:
-                        target_author = None
-
-                    from datetime import datetime
-                    try:
-                        target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
-                    except KeyError:
-                        target_created = None
-
-                    try:
-                        target_editor = tuv[1].attrib["changeid"]
-                    except KeyError:
-                        target_editor = None
-
-                    try:
-                        target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
-                    except KeyError:
-                        target_edited = None
-                    if target_created == target_edited:
-                        target_edited = None
-                        target_editor = None
-
-                    print "Target creator: %s" % target_author if target_author else "Target creator:"
-                    print "Tagret created: %s" % target_created if target_created else "Tagret created:"
-                    print "Target editor: %s" % target_editor if target_editor else "Target editor:"
-                    print "Target edited: %s" % target_edited if target_edited else "Target edited:"
-
-                    new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=new_tmdb.id),
-                                                     orig_lang=orig_lang.lower(),
-                                                     orig_text=orig_text,
-                                                     target_lang=target_lang.lower(),
-                                                     target_text=target_text,
-                                                     target_author=target_author,
-                                                     target_created=target_created,
-                                                     target_editor=target_editor,
-                                                     target_edited=target_edited,
-                                                     )
-                    new_tmdb_entry.save()
-
-                    doc = {
-                        'db_id': new_tmdb_entry.id,
-                        orig_lang.lower(): orig_text,
-                        target_lang.lower(): target_text,
-                    }
-
-                    res = es.index(
-                        index=tmdb_name.lower(),
-                        doc_type='tmx1',
-                        id=elastic_id,
-                        body=doc
-                    )
-
-                    print "ELASTICSEARCH: ", res['created']
-
-                    elastic_id += 1
+                    if not "%s-%s" % (source_lang, target_lang) in lang_pairs:
+                        lang_pairs.append("%s-%s" % (source_lang, target_lang))
                     # Нет обращений к потомкам, поэтому вызов clear() безопасен
                     elem.clear()
 
                     # Удалите пустые ссылки из корневого узла в <Title>
                     while elem.getprevious() is not None:
                         del elem.getparent()[0]
+
+                print lang_pairs
+
+                tmdb_names = {}
+                # Если языковых пар больше одной, то создаём базы памяти для каждой из них
+                # К названию базы памяти тогда добавляется суффикс "[<sl>-<tl>]" где sl и tl -
+                # - код исходного языка и целевого языка в двухбуквенном коде соответственно
+                if len(lang_pairs) > 1:
+                    for pair in lang_pairs:
+                        source_lang_name = pair.split("-")[0]
+                        target_lang_name = pair.split("-")[1]
+                        try:
+                            source_lang_obj = Language.objects.get(code=source_lang_name)
+                        except Language.DoesNotExist:
+                            print 'This source language is not supported yet'
+                            messages.add_message(request, messages.ERROR, _('This source language is not supported yet'))
+                            return HttpResponseRedirect('/projects/add-tmx/')
+
+                        try:
+                            target_lang_obj = Language.objects.get(code=target_lang_name)
+                        except Language.DoesNotExist:
+                            print 'This target language is not supported yet'
+                            messages.add_message(request, messages.ERROR, _('This target language is not supported yet'))
+                            return HttpResponseRedirect('/projects/add-tmx/')
+                        new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
+                                              owner=user,
+                                              project=proj,
+                                              source_lang=source_lang_obj,
+                                              target_lang=target_lang_obj
+                                              )
+                        new_tmdb.save()
+                        # Записываем соответствия языковых пар и ID'шников свежесозданных баз памяти в словарь
+                        tmdb_names[pair] = new_tmdb.id
+                # Если же языковая пара всего одна, то забиваем и создаём одну базу памяти
+                else:
+                    source_lang_name = lang_pairs[0].split("-")[0]
+                    target_lang_name = lang_pairs[0].split("-")[1]
+                    try:
+                        source_lang_obj = Language.objects.get(code=source_lang_name)
+                    except Language.DoesNotExist:
+                        print 'This source language is not supported yet'
+                        messages.add_message(request, messages.ERROR, _('This source language is not supported yet'))
+                        return HttpResponseRedirect('/projects/add-tmx/')
+
+                    try:
+                        target_lang_obj = Language.objects.get(code=target_lang_name)
+                    except Language.DoesNotExist:
+                        print 'This target language is not supported yet'
+                        messages.add_message(request, messages.ERROR, _('This target language is not supported yet'))
+                        return HttpResponseRedirect('/projects/add-tmx/')
+
+                    new_tmdb = TMDatabase(name=tmdb_name,
+                                          owner=user,
+                                          project=proj,
+                                          source_lang=source_lang_obj,
+                                          target_lang=target_lang_obj
+                                          )
+                    new_tmdb.save()
+                    tmdb_names[lang_pairs[0]] = new_tmdb.id
+
+            with open(filename) as source:
+                from elasticsearch import Elasticsearch
+                es = Elasticsearch()
+                elastic_id = 1
+                # А теперь для каждой из полученных языковых пар (даже если она всего одна)
+                for i in tmdb_names:
+                    # парсим файлик и записываем пары предложений в соответствующую базу памяти
+                    parse_context = etree.iterparse(source, events=('end',), tag='tu')
+                    for event, elem in parse_context:
+                        tuv = elem.findall('tuv')
+                        try:
+                            source_lang = tuv[0].attrib[lang_14].lower()
+                            target_lang = tuv[1].attrib[lang_14].lower()
+                        except KeyError:
+                            source_lang = tuv[0].attrib[lang_11].lower()
+                            target_lang = tuv[1].attrib[lang_11].lower()
+
+                        lang_pair = "%s-%s" % (source_lang, target_lang)
+                        print lang_pair
+
+                        source_text = tuv[0].find('seg').text
+                        target_text = tuv[1].find('seg').text
+
+                        print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
+                        print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+
+                        try:
+                            target_author = tuv[1].attrib["creationid"]
+                        except KeyError:
+                            target_author = None
+
+                        from datetime import datetime
+                        try:
+                            target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
+                        except KeyError:
+                            target_created = None
+
+                        try:
+                            target_editor = tuv[1].attrib["changeid"]
+                        except KeyError:
+                            target_editor = None
+
+                        try:
+                            target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
+                        except KeyError:
+                            target_edited = None
+                        if target_created == target_edited:
+                            target_edited = None
+                            target_editor = None
+
+                        print "Target creator: %s" % target_author if target_author else "Target creator:"
+                        print "Tagret created: %s" % target_created if target_created else "Tagret created:"
+                        print "Target editor: %s" % target_editor if target_editor else "Target editor:"
+                        print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+
+                        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
+                                                         orig_lang=source_lang.lower(),
+                                                         orig_text=source_text,
+                                                         target_lang=target_lang.lower(),
+                                                         target_text=target_text,
+                                                         target_author=target_author,
+                                                         target_created=target_created,
+                                                         target_editor=target_editor,
+                                                         target_edited=target_edited,
+                                                         )
+                        new_tmdb_entry.save()
+
+                        doc = {
+                            'db_id': new_tmdb_entry.id,
+                            'source_lang': source_text,
+                            'target_lang': target_text,
+                        }
+
+                        res = es.index(
+                            index=tmdb_names[lang_pair],
+                            doc_type='tmx1',
+                            id=elastic_id,
+                            body=doc
+                        )
+
+                        print "ELASTICSEARCH: ", res['created']
+
+                        elastic_id += 1
+                        # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                        elem.clear()
+
+                        # Удалите пустые ссылки из корневого узла в <Title>
+                        while elem.getprevious() is not None:
+                            del elem.getparent()[0]
         except etree.XMLSyntaxError:
             pass
 

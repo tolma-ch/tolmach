@@ -74,6 +74,7 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     target_lang = models.ForeignKey('entries.Language', related_name='target_lang')
     glossaries = models.TextField(default="")
+    tmdatabases = models.TextField(default="")
 
     def __unicode__(self):
         return unicode(self.title)
@@ -156,6 +157,8 @@ class TMDatabase(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
     project = models.ForeignKey('translations.Project', related_name='tmxdatabases')
+    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
+    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
 
 
 class TMDatabaseEntry(models.Model):
