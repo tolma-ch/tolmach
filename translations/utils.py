@@ -46,7 +46,7 @@ SPLIT_PATTERN = {
         'zh': u"。”|。",  # zho
         'es': u" [%(SPA_L)s%(SPA_U)s]+\\)?! [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\. [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\? [%(SPA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # spa
         'ko': u"\\. |\\! |\\? ",  # kor
-        'jp': u"。”|。",  # jpn
+        'ja': u"。”|。",  # jpn
         'fr': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
         'de': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
         'it': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra

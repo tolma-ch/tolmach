@@ -9,6 +9,7 @@
 {% trans 'Translate' as make_translation %}
 {% trans 'Your translation' as your_translation %}
 {% trans 'Machine translations' as mtranslations %}
+{% trans 'Translation memory variants' as tmtranslations %}
 {% trans 'Add' as add_translation %}
 {% trans 'Cancel' as cancel_translation %}
 {% trans 'Original' as original_text %}
@@ -66,7 +67,7 @@
 
                                 <div class="translation__sentence-machine-suggestions"
                                         ng-show="entry.machines.length">
-                                    <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
+                                    <h4 class="translation__sentence-suggestions-title">{{ tmtranslations }}</h4>
 
                                     <ul class="translation__sentence-machine-suggestions-list">
                                         <li class="translation__sentence-machine-suggestions-item"
@@ -79,6 +80,15 @@
                                                     'translation__sentence-machine-suggestions-relevance_medium': machine.percent> 40 && machine.percent < 70,
                                                     'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40
                                                   }">{= machine.percent =}%</span>
+                                        </li>
+                                    </ul>
+                                    <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
+
+                                    <ul class="translation__sentence-machine-suggestions-list">
+                                        <li class="translation__sentence-machine-suggestions-item"
+                                            ng-repeat="machine in entry.yaMachines"
+                                            ng-click="addMachineSuggestion(entry, machine)">
+                                            <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
                                         </li>
                                     </ul>
                                 </div>

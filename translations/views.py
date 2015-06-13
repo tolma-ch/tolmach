@@ -208,9 +208,18 @@ def project(request, proj_id=0):
     if not pr.is_user_manager(request.user) or not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
+
+    lang_list = []
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+
     data = {
         'project': pr,
-        'languages': Language.objects.all(),
+        'languages': lang_list,
         'subjects': Subject.objects.all(),
         'breadcrumbs': [
                 [_('Projects'), '/projects/'],
@@ -693,11 +702,6 @@ def dev_add_tmx_to_project(request):
         try:
             with open(filename) as source:
                 context = etree.iterparse(source, events=('end',), tag='tu')
-                print type(context)
-
-                lang_stat = {'source_lang': {},
-                             'target_lang': {}
-                             }
 
                 # проверяем TMX на бардак и мультиязычность
                 lang_pairs = []

@@ -495,14 +495,14 @@ def yandex_translate_ajax(request):
 
 
 @login_required
-def search_in_tmx(request):
+def tmdb_search(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        print post
+        print "Test data:", post
 
-        if 'id' not in post:
+        if 'entry_id' not in post:
             return HttpResponse(json.dumps('Id is being expected'), content_type="application/json", status=400)
-        entry_id = post['id']
+        entry_id = post['entry_id']
         try:
             entry = TextEntry.objects.get(id=entry_id)
         except TextEntry.DoesNotExist:
@@ -516,14 +516,18 @@ def search_in_tmx(request):
             from elasticsearch import Elasticsearch
             es = Elasticsearch()
             for tmx_id in text_tmx_list:
-                res = es.search(index=tmx_id, body={'fields': ['source_lang', 'target_lang'],
-                                                    'query': {'match':
-                                                                  {
-                                                                      'source_lang': entry.body
-                                                                  }
-                                                              }
-                                                    })
+                print "TMDB IS: %s" % tmx_id
+                res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
+                                                            'query': {'match':
+                                                                          {
+                                                                              'source_lang': entry.body
+                                                                          }
+                                                                      }
+                                                            })
                 for item in res['hits']['hits']:
-                    print "%s - %s" % (item['_score'], item['fields']['target_lang'][0])
+                    search_results.append({'id': 123, 'text': item['fields']['target_lang'][0], 'percent': int(float(item['_score'])*100)})
+                    print "%d - %s" % (int(float(item['_score'])*100), item['fields']['target_lang'][0])
+            return HttpResponse(json.dumps(search_results))
 
-    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+        # TODO: нормально обрабатывать отсутствие баз памяти
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
