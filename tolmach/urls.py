@@ -52,6 +52,7 @@ urlpatterns = patterns('',
     url(r'^api/text/$', trans_ajax.text_ajax, name='text_ajax'),
     url(r'^api/glossary/$', trans_ajax.glossary_ajax, name='glossary_ajax'),
     url(r'^api/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
+    url(r'^api/tmdb-search/$', trans_ajax.tmdb_search, name='tmdb_search'),
 
     # temporarily added urls for developing purpuses
     url(r'^dev-add-text/$', trans_views.dev_add_text_to_project, name='dev_add_text'),

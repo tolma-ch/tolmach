@@ -119,13 +119,11 @@
                     <div class="widget-body">
                         <div class="widget-main">
                             <div class="project-list-glossary" ng-repeat="glossary in glossaries">
-                                <div class="project-list-glossary__name">
+                                <div class="project-list-glossary__name" ng-click="editGlossary(glossary)">
                                     <i class="fa fa-book"></i>
                                     {= glossary.name =}
                                 </div>
                                 <div class="project-list-glossary__btns">
-                                    <a class="project-list-glossary__btn" href=""
-                                       ng-click="editGlossary(glossary)"><i class="fa fa-pencil-square-o"></i></a>
                                     <a class="project-list-glossary__btn" href=""
                                        ng-click="removeGlossary(glossary)"><i class="fa fa-trash-o"></i></a>
                                 </div>
