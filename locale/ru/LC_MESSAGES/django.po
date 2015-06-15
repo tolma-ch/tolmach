@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-01 09:30+0000\n"
+"POT-Creation-Date: 2015-06-15 09:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgstr "Tolma.ch на Facebook"
 
 #: templates/components/main/main.html:5
 msgid "How it works?"
-msgstr ""
+msgstr "Как это работает?"
 
 #: templates/components/navbar/loggedin.html:41
 msgid "Hi,"
@@ -56,7 +56,8 @@ msgid "sentences translated"
 msgstr "предложений переведено"
 
 #: templates/components/profile-data/profile-data.html:8
-#: translations/views.py:167
+#: templates/main/base-logged-in.html:6 translations/views.py:168
+#: translations/views.py:225 translations/views.py:417
 msgid "Projects"
 msgstr "Проекты"
 
@@ -91,11 +92,131 @@ msgid "Private"
 msgstr "Приватный"
 
 #: templates/components/profile-data/profile-data.html:16
+#: templates/translations/project.html:166
+#: templates/translations/project.html:336
 #: templates/translations/projects-main.html:138
 #: templates/translations/projects-main.html:351
-#: templates/translations/view-text.html:12
+#: templates/translations/view-text.html:13
 msgid "Add"
 msgstr "Добавить"
+
+#: templates/main/base-logged-in.html:5
+msgid "Dashboard"
+msgstr "Табло"
+
+#: templates/main/base-logged-in.html:7
+msgid "My projects"
+msgstr "Мои проекты"
+
+#: templates/main/base-logged-in.html:8
+msgid "Third party"
+msgstr "Сторонние проекты"
+
+#: templates/main/base-logged-in.html:9
+msgid "Community"
+msgstr "Сообщество"
+
+#: templates/main/base-logged-in.html:10
+msgid "Public projects"
+msgstr "Публичные проекты"
+
+#: templates/main/base-logged-in.html:11
+msgid "People"
+msgstr "Люди"
+
+#: templates/main/base-logged-in.html:12
+msgid "TM Databases"
+msgstr "Базы памяти"
+
+#: templates/main/base-logged-in.html:13
+msgid "Support"
+msgstr "Поддержка"
+
+#: templates/main/base-logged-in.html:14
+msgid "Blog"
+msgstr "Журнал"
+
+#: templates/main/base-logged-in.html:15
+msgid "Settings"
+msgstr "Настройки"
+
+#: templates/main/base-logged-in.html:16
+msgid "Home"
+msgstr "Домой"
+
+#: templates/main/base-logged-in.html:17
+msgid "Search"
+msgstr "Найти"
+
+#: templates/translations/project.html:24
+msgid "Participants"
+msgstr "Участники"
+
+#: templates/translations/project.html:66
+msgid "Documents"
+msgstr "Документы"
+
+#: templates/translations/project.html:110
+msgid "TMX/Glossaries"
+msgstr "Базы памяти / Глоссарии"
+
+#: templates/translations/project.html:145
+msgid "Add participant"
+msgstr "Добавить участника"
+
+#: templates/translations/project.html:152
+msgid "Enter nick or name"
+msgstr "Введите имя или ник"
+
+#: templates/translations/project.html:179
+#: templates/translations/projects-main.html:382
+#: templates/translations/projects-main.html:423
+msgid "Add text"
+msgstr "Добавить текст"
+
+#: templates/translations/project.html:185
+msgid "Title"
+msgstr "Название:"
+
+#: templates/translations/project.html:204
+msgid "Upload file"
+msgstr "Загрузить файл"
+
+#: templates/translations/project.html:209
+msgid "Insert plain test"
+msgstr "Вставить тест"
+
+#: templates/translations/project.html:266
+msgid "Next"
+msgstr "Далее"
+
+#: templates/translations/project.html:275
+msgid "Add glossary"
+msgstr "Добавить глоссарий"
+
+#: templates/translations/project.html:277
+msgid "Edit glossary"
+msgstr "Редактировать глоссарий"
+
+#: templates/translations/project.html:287
+msgid "Upload"
+msgstr "Загрузить"
+
+#: templates/translations/project.html:292
+msgid "Manual add"
+msgstr "Добавить вручную"
+
+#: templates/translations/project.html:298
+msgid "Glossary name"
+msgstr "Название глоссария"
+
+#: templates/translations/project.html:305
+msgid "Select file"
+msgstr "Выбрать файл"
+
+#: templates/translations/project.html:337
+msgid "Save"
+msgstr "Сохранить"
 
 #: templates/translations/projects-main.html:64
 #: templates/translations/projects-main.html:97
@@ -118,11 +239,6 @@ msgstr "Добавить проект"
 #: templates/translations/projects-main.html:355
 msgid "Private?"
 msgstr "Приватный?"
-
-#: templates/translations/projects-main.html:382
-#: templates/translations/projects-main.html:423
-msgid "Add text"
-msgstr "Добавить текст"
 
 #: templates/translations/projects-main.html:388
 msgid "Title:"
@@ -173,151 +289,174 @@ msgstr "Ваш перевод"
 msgid "Machine translations"
 msgstr "Машинные переводы"
 
-#: templates/translations/view-text.html:13
+#: templates/translations/view-text.html:12
+msgid "Translation memory variants"
+msgstr "Варианты перевода из базы памяти"
+
+#: templates/translations/view-text.html:14
 msgid "Cancel"
 msgstr "Отмена"
 
-#: templates/translations/view-text.html:14
+#: templates/translations/view-text.html:15
 msgid "Original"
 msgstr "Оригинал"
 
-#: templates/translations/view-text.html:15
+#: templates/translations/view-text.html:16
 msgid "Translation"
 msgstr "Перевод"
 
-#: templates/translations/view-text.html:17
-msgid "Change your locale"
-msgstr "Сменить язык"
-
-#: templates/translations/view-text.html:26
-msgid "change"
-msgstr "сменить"
-
-#: translations/views.py:191
+#: translations/views.py:192
 #, python-format
 msgid "Project \"%(project_name)s\" successfully created!"
 msgstr "Проект \"%(project_name)s\" успешно создан!"
 
-#: translations/views.py:206
+#: translations/views.py:204 translations/views.py:209
+#: translations/views.py:248
+msgid "Sorry, no such project here!"
+msgstr ""
+
+#: translations/views.py:239
 #, python-format
 msgid "Project \"%(project_name)s\" successfully deleted!"
 msgstr "Проект \"%(project_name)s\" успешно удалён!"
 
-#: translations/views.py:212
+#: translations/views.py:245
 msgid "You are not allowed to delete this project!"
 msgstr ""
 
-#: translations/views.py:215
-msgid "Sorry, no such project here!"
+#: translations/views.py:259 translations/views.py:681
+msgid "There's no such project, sorry."
 msgstr ""
 
-#: translations/views.py:252
+#: translations/views.py:264
+msgid "There's no such language, sorry."
+msgstr ""
+
+#: translations/views.py:295
 msgid "There's no such user, sorry."
 msgstr ""
 
-#: translations/views.py:286
+#: translations/views.py:329
 #, fuzzy, python-format
 #| msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgid "User %(user_name)s is already invited to the project %(project_name)s"
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:294
+#: translations/views.py:337
 #, fuzzy, python-format
 #| msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgid ""
 "User %(user_name)s is already participating in the project %(project_name)s"
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:310
+#: translations/views.py:353
 #, python-format
 msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:317
+#: translations/views.py:360
 msgid "You have no rights to delete this project!"
 msgstr ""
 
-#: translations/views.py:338
+#: translations/views.py:381
 #, fuzzy, python-format
 #| msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgid "You successfully left project \"%(project_name)s\""
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:346
+#: translations/views.py:389
 #, fuzzy, python-format
 #| msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgid ""
 "User %(user_name)s was successfully removed from project \"%(project_name)s\""
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:354
+#: translations/views.py:397
 #, fuzzy, python-format
 #| msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgid ""
 "Sorry, user %(user_name)s doesn't participate in project \"%(project_name)s\""
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:361 translations/views.py:444
+#: translations/views.py:404 translations/views.py:441
 msgid "You are not allowed to edit this project!"
 msgstr ""
 
-#: translations/views.py:370 translations/views.py:468
-msgid "You are not allowed to translate this text"
+#: translations/views.py:412
+msgid "Sorry, no such text here"
 msgstr ""
 
-#: translations/views.py:437
+#: translations/views.py:434
 #, python-format
 msgid ""
 "Text \"%(text_title)s\" from project \"%(project_name)s\" successfully "
 "deleted!"
 msgstr ""
 
-#: translations/views.py:543 translations/views.py:565
+#: translations/views.py:465
+msgid "You are not allowed to translate this text"
+msgstr ""
+
+#: translations/views.py:481 translations/views.py:503
 msgid "Vote accepted"
-msgstr ""
+msgstr "Голос принят"
 
-#: translations/views.py:546 translations/views.py:568
+#: translations/views.py:484 translations/views.py:506
 msgid "You have already voted for this entry"
-msgstr ""
+msgstr "Вы уже голосовали за этот фрагмент"
 
-#: translations/views.py:549 translations/views.py:571
+#: translations/views.py:487 translations/views.py:509
 msgid "Sorry, you are unable to vote for this entry"
 msgstr ""
 
-#: translations/views.py:584
+#: translations/views.py:522
 msgid "You need to be project manager to approve translation entries"
 msgstr ""
 
-#: translations/views.py:658
+#: translations/views.py:579 translations/views.py:647
+#: translations/views.py:684
 msgid "You are not allowed to edit this text"
 msgstr ""
 
-#: translations/views.py:664
+#: translations/views.py:585
 msgid "There's no such glossary, sorry."
 msgstr ""
 
-#: translations/views.py:668
+#: translations/views.py:589
 msgid "Sorry, there's such glossary here already"
 msgstr ""
 
+#: translations/views.py:653
+msgid "There's no such translation memry database, sorry."
+msgstr ""
+
+#: translations/views.py:657
+msgid "Sorry, there's such translation memry database here already"
+msgstr ""
+
+#: translations/views.py:690
+msgid "Please, provide TMX database name"
+msgstr "Пожалуйста, укажите имя базы памяти"
+
+#: translations/views.py:742 translations/views.py:768
+msgid "This source language is not supported yet"
+msgstr "Этот язык пока не поддерживается как исходный"
+
+#: translations/views.py:749 translations/views.py:775
+msgid "This target language is not supported yet"
+msgstr "Этот язык пока не поддерживается как язык перевода"
+
+#~ msgid "Change your locale"
+#~ msgstr "Сменить язык"
+
+#~ msgid "change"
+#~ msgstr "сменить"
+
 #~ msgid "Recent progress"
 #~ msgstr "Прогресс"
-
-#~ msgid "Settings"
-#~ msgstr "Настройки"
-
-#~ msgid "Profile"
-#~ msgstr "Профиль"
 
 #~ msgid "Logout"
 #~ msgstr "Выход"
 
 #~ msgid "Project Name"
 #~ msgstr "Название проекта"
-
-#: templates\translations\project.html:59
-msgid "Add participant"
-msgstr ""
-#: templates\translations\project.html:12
-msgid "Participants"
-msgstr ""
