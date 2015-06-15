@@ -7,8 +7,12 @@ from translations.models import Project
 
 
 def index(request):
+    first_name = ""
+    last_name = ""
     if request.user.is_authenticated():
         template = 'components/profile-data/profile-data.html'
+        first_name = request.user.first_name
+        last_name = request.user.last_name
     else:
         template = 'main/main.html'
 
@@ -17,7 +21,9 @@ def index(request):
     data = {
         'projects': projects,
         'is_index': True,
-        'username': request.user.username
+        'username': request.user.username,
+        'first_name': first_name,
+        'last_name': last_name
     }
     return render_to_response(template, data, RequestContext(request))
 
