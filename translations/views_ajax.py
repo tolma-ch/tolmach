@@ -278,7 +278,8 @@ def glossary_ajax(request):
         glossary_name = post['name']
         if 'file' in post:
             f = post['file']
-            # TODO: need to pass this file size variable to database
+            print f
+            # TODO: KeyError: u'size'
             if f['size'] > 1048576:
                 return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
                                     status=400)

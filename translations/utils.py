@@ -62,7 +62,8 @@ def split_text(line_to_translate, lang='en', pattern=""):
         return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
 
     def repl(matchobj):
-        if lang == 'en' or lang == 'ru' or lang == 'fr':
+        if lang in ['en', 'ru', 'fr', 'es']:
+        # if lang == 'en' or lang == 'ru' or lang == 'fr' or lang == 'es':
             return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
         else:
             return matchobj.group(0) + u'†'
