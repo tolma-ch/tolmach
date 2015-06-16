@@ -1,5 +1,20 @@
 {% extends "main/base.html" %}
+{% load i18n %}
+
 {% block content %}
+{% trans 'Dashboard' as sidebar_dashboard %}
+{% trans 'Projects' as sidebar_projects %}
+{% trans 'My projects' as sidebar_my_projects %}
+{% trans 'Third party' as sidebar_third_party %}
+{% trans 'Community' as sidebar_community %}
+{% trans 'Public projects' as sidebar_public_projects %}
+{% trans 'People' as sidebar_people %}
+{% trans 'TM Databases' as sidebar_tmdb %}
+{% trans 'Support' as sidebar_support %}
+{% trans 'Blog' as sidebar_blog %}
+{% trans 'Settings' as sidebar_settings %}
+{% trans 'Home' as home_link %}
+{% trans 'Search' as search_placeholder %}
     <div class="main-container" id="main-container">
         <script type="text/javascript">
             try{ace.settings.check('main-container' , 'fixed')}catch(e){}
@@ -52,14 +67,14 @@
                     <li>
                         <a href="/">
                             <i class="fa fa-dashboard"></i>
-                            <span class="menu-text"> Dashboard </span>
+                            <span class="menu-text"> {{ sidebar_dashboard }} </span>
                         </a>
                     </li>
 
                     <li>
                         <a href="#" class="dropdown-toggle">
                             <i class="fa fa-desktop"></i>
-                            <span class="menu-text"> Projects </span>
+                            <span class="menu-text"> {{ sidebar_projects }} </span>
 
                             <b class="arrow fa fa-angle-down"></b>
                         </a>
@@ -68,14 +83,14 @@
                             <li>
                                 <a href="/projects/">
                                     <i class="fa fa-double-angle-right"></i>
-                                    My projects
+                                    {{ sidebar_my_projects }}
                                 </a>
                             </li>
 
                             <li>
                                 <a href="/third-party/">
                                     <i class="fa fa-double-angle-right"></i>
-                                    Others' projects
+                                    {{ sidebar_third_party }}
                                 </a>
                             </li>
                         </ul>
@@ -84,7 +99,7 @@
                     <li>
                         <a href="#" class="dropdown-toggle">
                             <i class="fa fa-street-view"></i>
-                            <span class="menu-text"> Community </span>
+                            <span class="menu-text"> {{ sidebar_community }} </span>
 
                             <b class="arrow fa fa-angle-down"></b>
                         </a>
@@ -93,44 +108,44 @@
                             <li>
                                 <a href="/public-projects/">
                                     <i class="fa fa-double-angle-right"></i>
-                                    Public projects
+                                    {{ sidebar_public_projects }}
                                 </a>
                             </li>
 
                             <li>
                                 <a href="/people/">
                                     <i class="fa fa-double-angle-right"></i>
-                                    People
+                                    {{ sidebar_people }}
                                 </a>
                             </li>
 
                             <li>
                                 <a href="/translation-memory/">
                                     <i class="fa fa-double-angle-right"></i>
-                                    TM Databases
+                                    {{ sidebar_tmdb }}
                                 </a>
                             </li>
                         </ul>
                     </li>
 
                     <li>
-                        <a href="/tickets/">
+                        <a href="/support/">
                             <i class="fa fa-info"></i>
-                            <span class="menu-text"> Tickets </span>
+                            <span class="menu-text"> {{ sidebar_support }} </span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="/blog/">
+                        <a href="http://vk.com/tolma_ch">
                             <i class="fa fa-newspaper-o"></i>
-                            <span class="menu-text"> Blog </span>
+                            <span class="menu-text"> {{ sidebar_blog }} </span>
                         </a>
                     </li>
 
                     <li>
                         <a href="/settings/">
                             <i class="fa fa-gears"></i>
-                            <span class="menu-text"> Settings </span>
+                            <span class="menu-text"> {{ sidebar_settings }} </span>
                         </a>
                     </li>
                 </ul><!-- /.nav-list -->
@@ -153,7 +168,7 @@
                     <ul class="breadcrumb">
                         <li>
                             <i class="fa fa-home home-icon"></i>
-                            <a href="/">Home</a>
+                            <a href="/">{{ home_link }}</a>
                         </li>
                         {% for link in breadcrumbs %}
                         <li class="active">
@@ -167,7 +182,7 @@
                     <div class="nav-search" id="nav-search">
                         <form class="form-search">
                             <span class="input-icon">
-                                <input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off">
+                                <input type="text" placeholder="{{ search_placeholder }} ..." class="nav-search-input" id="nav-search-input" autocomplete="off">
                                 <i class="fa fa-search nav-search-icon"></i>
                             </span>
                         </form>
