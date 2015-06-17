@@ -88,6 +88,8 @@ Vagrant.configure(2) do |config|
     apt-get install -y python-virtualenv
     apt-get install -y libmysqlclient-dev
     apt-get install -y gettext
+    apt-get install -y libxml2-dev libxslt1-dev python-dev
+    apt-get install -y python-lxml
     exit
 
     virtualenv tolmach

@@ -63,34 +63,38 @@
                                           class="translation__sentence-suggestion-input"
                                           placeholder="{{ your_translation }}"
                                           data-insert-text=""
-                                          ng-model="entry.suggestion"></textarea>
+                                          ng-model="entry.suggestion"
+                                          ng-keypress="textareaKeypress($event, entry)"></textarea>
 
-                                <div class="translation__sentence-machine-suggestions"
-                                        ng-show="entry.machines.length">
-                                    <h4 class="translation__sentence-suggestions-title">{{ tmtranslations }}</h4>
+                                <div class="translation__sentence-machine-suggestions">
+                                    <div ng-show="entry.tmdbVariants.length">
+                                        <h4 class="translation__sentence-suggestions-title">{{ tmtranslations }}</h4>
 
-                                    <ul class="translation__sentence-machine-suggestions-list">
-                                        <li class="translation__sentence-machine-suggestions-item"
-                                            ng-repeat="machine in entry.machines"
-                                            ng-click="addMachineSuggestion(entry, machine)">
-                                            <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
-                                            <span class="translation__sentence-machine-suggestions-relevance"
-                                                  ng-class="{
-                                                    'translation__sentence-machine-suggestions-relevance_high': machine.percent >= 70,
-                                                    'translation__sentence-machine-suggestions-relevance_medium': machine.percent> 40 && machine.percent < 70,
-                                                    'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40
-                                                  }">{= machine.percent =}%</span>
-                                        </li>
-                                    </ul>
-                                    <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
+                                        <ul class="translation__sentence-machine-suggestions-list">
+                                            <li class="translation__sentence-machine-suggestions-item"
+                                                ng-repeat="machine in entry.tmdbVariants"
+                                                ng-click="addMachineSuggestion(entry, machine)">
+                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
+                                                <span class="translation__sentence-machine-suggestions-relevance"
+                                                      ng-class="{
+                                                        'translation__sentence-machine-suggestions-relevance_high': machine.percent >= 70,
+                                                        'translation__sentence-machine-suggestions-relevance_medium': machine.percent> 40 && machine.percent < 70,
+                                                        'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40
+                                                      }">{= machine.percent =}%</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div ng-show="entry.yaMachines.length">
+                                        <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
 
-                                    <ul class="translation__sentence-machine-suggestions-list">
-                                        <li class="translation__sentence-machine-suggestions-item"
-                                            ng-repeat="machine in entry.yaMachines"
-                                            ng-click="addMachineSuggestion(entry, machine)">
-                                            <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
-                                        </li>
-                                    </ul>
+                                        <ul class="translation__sentence-machine-suggestions-list">
+                                            <li class="translation__sentence-machine-suggestions-item"
+                                                ng-repeat="machine in entry.yaMachines"
+                                                ng-click="addMachineSuggestion(entry, machine)">
+                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
 
                                 <button type="submit" class="translation__sentence-commit"
