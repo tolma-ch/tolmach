@@ -9,12 +9,18 @@
     ])
         .controller('transCtrl', function ($rootScope, $scope, $http) {
             var textId = window['textId'],
-                getMachines = function (entry) {
+                getYaMachines = function (entry) {
                     $http.post('/api/ya-translate/', {lang_pair: $scope.langPair, entry_body: entry['rawBody']}).success(function (data) {
-                        entry.machines = [{
-                            text: data,
-                            percent: 53
+                        entry.yaMachines = [{
+                            text: data
                         }];
+                    }).error(function (a) {
+                        console.error(a);
+                    });
+                },
+                getTmdbVariants = function (entry) {
+                    $http.post('/api/tmdb-search/', {entry_id: entry['id']}).success(function (data) {
+                        entry.tmdbVariants = data;
                     }).error(function (a) {
                         console.error(a);
                     });
@@ -63,9 +69,15 @@
             var expandEntry = function (entry) {
                 if (!entry.approved) {
                     if (typeof entry['machines'] === 'undefined') {
-                        getMachines(entry);
+                        getYaMachines(entry);
+                        getTmdbVariants(entry);
                     }
                     $scope.activeEntry = entry;
+                    if (entry.mode === 1) {
+                        setTimeout(function () {
+                            $('#entry-' + entry.idInText).find('textarea').focus();
+                        }, 10);
+                    }
                 }
                 setTimeout(function () {
                     var $body = $('html, body'),
@@ -179,6 +191,23 @@
                     'text': text
                 });
                 //entry.suggestion += text;
+            };
+            $scope.textareaKeypress = function (event, entry) {
+                if (event.ctrlKey && event.keyCode === 10) {
+                    $scope.suggestTranslation(entry);
+                    var i,
+                        found = false;
+                    for (i in $scope.entries) {
+                        var someEntry = $scope.entries[i];
+                        if (found === true && !someEntry.approved) {
+                            $scope.toggleEntry(someEntry);
+                            break;
+                        }
+                        if (someEntry === entry) {
+                            found = true;
+                        }
+                    }
+                }
             }
         })
 
@@ -240,6 +269,10 @@
                  .then(function(response) {
                     $scope.glossaries = response.data;
                  });
+            $http.get('/api/tmx', {params: {project: $scope.projectId}})
+                 .then(function(response) {
+                    $scope.tmxes = response.data;
+                 });
             $scope.addParticipant = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'addParticipantModal.html',
@@ -294,7 +327,7 @@
                     templateUrl: 'addGlossaryModal.html',
                     controller: 'AddGlossaryModalCtrl',
                     size: 'md',
-                    backdrop: 'static',
+                    backdrop: 'true',
                     resolve: {
                         glossary: function () {
                             return false;
@@ -304,6 +337,24 @@
 
                 modalInstance.result.then(function (glossary) {
                     $scope.glossaries.push(glossary);
+                }, function (data) {
+                });
+            };
+            $scope.addTmx = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addTmxModal.html',
+                    controller: 'AddTmxModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        tmx: function () {
+                            return false;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (tmx) {
+                    $scope.tmxes.push(tmx);
                 }, function (data) {
                 });
             };
@@ -473,6 +524,44 @@
                 $http.post('/api/glossary/', data)
                     .success(function(glossary) {
                         $modalInstance.close(glossary);
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+        .controller('AddTmxModalCtrl', function ($scope, $modalInstance, $http, tmx) {
+            $scope.tmx = tmx || {
+                rows: [['', '']]
+            };
+            $scope.changeRow = function (i) {
+                if (i === $scope.tmx.rows.length - 1) {
+                    if ($scope.tmx.rows[i][0] && $scope.tmx.rows[i][1]) {
+                        $scope.tmx.rows.push(['', '']);
+                    }
+                } else if (i < $scope.tmx.rows.length - 1) {
+                    if (!$scope.tmx.rows[i][0] && !$scope.tmx.rows[i][1]) {
+                        delete $scope.tmx.rows.splice(i, 1);
+                    }
+                }
+            };
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = $scope.tmx;
+                data['project'] = window['projectId'];
+                if ($scope.tmx.id || $scope.tab === 1) {
+                    delete data.file;
+                }
+                $scope.busy = true;
+                $http.post('/api/tmx/', data)
+                    .success(function(tmx) {
+                        $modalInstance.close(tmx);
                         $scope.busy = false;
                     })
                     .error(function(data) {

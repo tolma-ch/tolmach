@@ -110,10 +110,28 @@
                             {% trans "TMX/Glossaries" %}
                         </h5>
                         <div class="widget-toolbar no-border">
-                            <a href=""
-                               ng-click="addGlossary()">
+                            <a data-toggle="dropdown"
+                               class="dropdown-toggle"
+                               href="">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
+                            <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								<li>
+									<a href="#"
+                                       ng-click="addTmx()">
+										<i class="fa fa-language"></i>
+										{% trans "TMX" %}
+									</a>
+								</li>
+
+								<li>
+									<a href="#"
+                                       ng-click="addGlossary()">
+                                        <i class="fa fa-book"></i>
+										{% trans "Glossaries" %}
+									</a>
+								</li>
+							</ul>
                         </div>
                     </div>
                     <div class="widget-body">
@@ -125,7 +143,9 @@
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""
-                                       ng-click="removeGlossary(glossary)"><i class="fa fa-trash-o"></i></a>
+                                       popover-template="'glossaryRemovePopover.html'"
+                                       popover-placement="left"
+                                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                 </div>
                             </div>
                             </div>
@@ -336,6 +356,91 @@
                 <span ng-show="!glossary.id">{% trans "Add" %}</span>
                 <span ng-show="glossary.id">{% trans "Save" %}</span>
             </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="addTmxModal.html">
+        <div class="modal-header">
+            <button type="button"
+                    class="bootbox-close-button close"
+                    ng-click="cancel()">×</button>
+            <h3 class="modal-title"
+                ng-show="!tmx.id">{% trans "Add TMX" %}</h3>
+            <h3 class="modal-title"
+                ng-show="tmx.id">{% trans "Edit TMX" %}</h3>
+        </div>
+        <div class="modal-body">
+            <form ng-init="tab = 0">
+                <div class="form-group"
+                     ng-show="!tmx.id">
+                    <div class="switcher">
+                        <a class="switcher__button"
+                           ng-class="{'switcher__button_active': tab === 0}"
+                           ng-click="tab = 0">
+                            <span>{% trans "Upload" %}</span>
+                        </a>
+                        <a class="switcher__button"
+                           ng-class="{'switcher__button_active': tab === 1}"
+                           ng-click="tab = 1">
+                            <span>{% trans "Manual add" %}</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text"
+                           placeholder="{% trans "TMX name" %}"
+                           class="form-control"
+                           ng-model="tmx.name">
+                </div>
+                <div class="form-group"
+                     ng-if="!tmx.id && tab === 0">
+                    <input type="file"
+                           placeholder="{% trans "Select file" %}"
+                           class="form-control"
+                           fileread="tmx.file">
+                </div>
+                <div ng-if="tmx.id || tab === 1">
+                    <div class="glossary-manual" ng-repeat="row in tmx.rows">
+                        <div class="glossary-manual__input">
+                            <input class="form-control" type="text"
+                                   ng-model="row[0]"
+                                   ng-change="changeRow($index)"/>
+                        </div>
+                        <div class="glossary-manual__arrow">
+                            <label for="exampleInputName2">→</label>
+                        </div>
+                        <div class="glossary-manual__input">
+                            <input class="form-control" type="text"
+                                   ng-model="row[1]"
+                                   ng-change="changeRow($index)"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-show="error">
+                    <div class="label label-danger">{= error =}</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success"
+                    ng-click="ok()"
+                    ng-disabled="busy">
+                <span ng-show="!tmx.id">{% trans "Add" %}</span>
+                <span ng-show="tmx.id">{% trans "Save" %}</span>
+            </button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="glossaryRemovePopover.html">
+        <div>
+            <label>{% trans "Are you sure?" %}</label>
+        </div>
+        <div>
+        </div>
+        <div class="btn-group">
+            <a class="btn btn-sm btn-danger" href="" ng-click="removeGlossary(glossary)">{% trans "Yes" %}</a>
+            <a class="btn btn-sm" href="" ng-click="no()">{% trans "No" %}</a>
         </div>
     </script>
 {% endblock %}

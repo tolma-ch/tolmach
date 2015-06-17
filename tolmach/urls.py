@@ -51,6 +51,7 @@ urlpatterns = patterns('',
     url(r'^api/participant/$', trans_ajax.participant_ajax, name='participant_ajax'),
     url(r'^api/text/$', trans_ajax.text_ajax, name='text_ajax'),
     url(r'^api/glossary/$', trans_ajax.glossary_ajax, name='glossary_ajax'),
+    url(r'^api/tmx/$', trans_ajax.tmx_ajax, name='tmx_ajax'),
     url(r'^api/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
     url(r'^api/tmdb-search/$', trans_ajax.tmdb_search, name='tmdb_search'),
 
