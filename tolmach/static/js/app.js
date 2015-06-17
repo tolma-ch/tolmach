@@ -193,7 +193,8 @@
                 //entry.suggestion += text;
             };
             $scope.textareaKeypress = function (event, entry) {
-                if (event.ctrlKey && event.keyCode === 10) {
+                var code = event.keyCode ? event.keyCode : event.which;
+                if (event.ctrlKey && (code === 13 || code === 10)) {
                     $scope.suggestTranslation(entry);
                     var i,
                         found = false;
