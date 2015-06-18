@@ -105,6 +105,7 @@ class Text(models.Model):
         else:
             return 0
 
+
 class TextEntry(models.Model):
     body = models.TextField(default="")
     parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True)

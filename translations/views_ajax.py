@@ -469,23 +469,31 @@ def get_entries_ajax(request):
         text = Text.objects.get(id=post['text'])
     except Text.DoesNotExist:
         return HttpResponse(json.dumps('Text not found'), content_type="application/json", status=400)
-    entries = TextEntry.objects.filter(text=text, parent_entry=None).order_by('id_in_text')
+    # entries = TextEntry.objects.filter(text=text, parent_entry=None).order_by('id_in_text')
+    all_text_entries = TextEntry.objects.filter(text=text)
+    base_entries = []
+    for entry in all_text_entries:
+        if not entry.parent_entry:
+            base_entries.append(entry)
     result = []
-    for entry in entries:
+    for entry in base_entries:
         transtlations = []
         approved = False
         approved_text = ''
-        for translation in TextEntry.objects.filter(parent_entry=entry):
-            transtlations.append({
-                'id': translation.id,
-                'parentId': entry.id,
-                'body': translation.body,
-                'author': translation.author.id,
-                'isApproved': translation.is_approved,
-            })
-            if translation.is_approved:
-                approved_text = translation.body
-            approved = approved or translation.is_approved
+        for translation in all_text_entries:
+            if translation.parent_entry == entry:
+                transtlations.append(
+                    {
+                        'id': translation.id,
+                        'parentId': entry.id,
+                        'body': translation.body,
+                        'author': translation.author.id,
+                        'isApproved': translation.is_approved,
+                    }
+                )
+                if translation.is_approved:
+                    approved_text = translation.body
+                approved = approved or translation.is_approved
         # каждую entry проверяем на наличие в ней слов из словаря
         # и оборачиваем нужным тегом
         entry_body = entry.body
@@ -501,6 +509,37 @@ def get_entries_ajax(request):
             'approved': approved,
             'translation': approved_text or entry.body
         })
+    # result = []
+    # for entry in entries:
+    #     transtlations = []
+    #     approved = False
+    #     approved_text = ''
+    #     for translation in TextEntry.objects.filter(parent_entry=entry):
+    #         transtlations.append({
+    #             'id': translation.id,
+    #             'parentId': entry.id,
+    #             'body': translation.body,
+    #             'author': translation.author.id,
+    #             'isApproved': translation.is_approved,
+    #         })
+    #         if translation.is_approved:
+    #             approved_text = translation.body
+    #         approved = approved or translation.is_approved
+    #     # каждую entry проверяем на наличие в ней слов из словаря
+    #     # и оборачиваем нужным тегом
+    #     entry_body = entry.body
+    #     if not text.glossaries == '':
+    #         entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
+    #     result.append({
+    #         'id': entry.id,
+    #         'idInText': entry.id_in_text,
+    #         # 'body': entry.body,
+    #         'rawBody': entry.body,
+    #         'body': entry_body,
+    #         'translations': transtlations,
+    #         'approved': approved,
+    #         'translation': approved_text or entry.body
+    #     })
         # entry.translations = TextEntry.objects.filter(parent_entry=entry)
     # return HttpResponse(json.dumps(entries.all(), ensure_ascii=False), content_type="application/json, charset=utf-8")
     return HttpResponse(json.dumps({
@@ -649,5 +688,4 @@ def tmdb_search(request):
                     print "%d - %s" % (int(float(item['_score'])*100), item['fields']['target_lang'][0])
             return HttpResponse(json.dumps(search_results))
 
-        # TODO: нормально обрабатывать отсутствие баз памяти
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
