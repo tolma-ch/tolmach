@@ -69,9 +69,9 @@ def split_text(line_to_translate, lang='en', pattern=""):
             return matchobj.group(0) + u'†'
 
     def escape_brackets(string):
-        # бэкслешим скобки круглые и квадратные, звёздочку,
+        # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
         # чтобы не ломался re.sub далее
-        return re.sub(r'([()]|[\[\]]|[\*])', r'\\\1', string)
+        return re.sub(r'([()]|[\[\]]|[\*]|[\?])', r'\\\1', string)
 
     text = re.sub("\n{2,}", "\n", line_to_translate)
     out_list = []
@@ -87,8 +87,8 @@ def split_text(line_to_translate, lang='en', pattern=""):
                 # removing extra spaces/tabs from beginning/end of the line
                 out_list.append(i.strip(u"　     "))
                 # берём предложение i, с помощью escape_brackets бэкслешим скобки круглые и квадратные,
-                # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как оригинальный)
-                # находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
+                # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как
+                # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
                 sent_to_mark = u"(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip(u"　     ")) + u"(?!</span>)"
                 print sent_to_mark
