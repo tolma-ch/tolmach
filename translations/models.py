@@ -79,9 +79,24 @@ class Text(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
-    def is_user_allowed(self, user):
+    def is_user_allowed_to_read(self, user):
         """
-        Check whether provided user is allowed to act within the current text and return Boolean
+        Check whether provided user is allowed to read within the current text and return Boolean
+        """
+        if self.project.is_private is False:
+            if str(user.id) in self.project.members.split(','):
+                return True
+            else:
+                return False
+        else:
+            if self.project.manager == user or str(user.id) in self.project.members.split(','):
+                return True
+            else:
+                return False
+
+    def is_user_allowed_to_write(self, user):
+        """
+        Check whether provided user is allowed to write within the current text and return Boolean
         """
         if self.project.is_private is False:
             return True

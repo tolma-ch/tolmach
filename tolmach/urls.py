@@ -38,7 +38,6 @@ urlpatterns = patterns('',
     url(r'^text/(?P<text_id>\d+)/delete/$', trans_views.delete_text, name='delete_text'),
     url(r'^entry/(?P<ent_id>\d+)/translate/$', trans_views.translate_entry, name='translate_entry'),
     url(r'^entry/(?P<ent_id>\d+)/voteup/$', trans_views.entry_voteup, name='entry_voteup'),
-    url(r'^entry/(?P<ent_id>\d+)/votedown/$', trans_views.entry_votedown, name='entry_votedown'),
     url(r'^entry/(?P<ent_id>\d+)/approve/$', trans_views.entry_approve, name='entry_approve'),
 
     # ajax
