@@ -354,8 +354,13 @@
                     }
                 });
 
-                modalInstance.result.then(function (tmx) {
-                    $scope.tmxes.push(tmx);
+                modalInstance.result.then(function (tmxes) {
+                    if (angular.isArray($scope.tmxes)) {
+                        $scope.tmxes = $scope.tmxes.concat(tmxes);
+                    } else {
+                        $scope.tmxes = tmxes;
+                    }
+
                 }, function (data) {
                 });
             };
@@ -402,6 +407,28 @@
                         $scope.error = data;
                         $scope.busy = false;
                     });
+            };
+            $scope.removeTmx = function (tmx) {
+                var data = {
+                    'project': window['projectId'],
+                    'tmx': tmx.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/tmx/', {params: data})
+                    .success(function() {
+                        var i = $scope.tmxes.indexOf(tmx);
+                        if (i > -1) {
+                            delete $scope.tmxes.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.closePopover = function () {
+                $('.popover').remove();
             };
         })
         .controller('AddParticipantModalCtrl', function ($scope, $modalInstance, $http) {
@@ -500,7 +527,7 @@
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http, glossary) {
+        .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http, glossary, Upload) {
             $scope.glossary = glossary || {
                 rows: [['', '']]
             };
@@ -517,58 +544,68 @@
             };
             $scope.ok = function () {
                 $scope.error = '';
+                $scope.busy = true;
                 var data = $scope.glossary;
                 data['project'] = window['projectId'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
-                }$scope.busy = true;
-                $http.post('/api/glossary/', data)
-                    .success(function(glossary) {
-                        $modalInstance.close(glossary);
-                        $scope.busy = false;
+                    $http.post('/api/glossary/', data)
+                        .success(function(glossary) {
+                            $modalInstance.close(glossary);
+                            $scope.busy = false;
+                        })
+                        .error(function(data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                } else {
+                    Upload.upload({
+                        url: '/api/glossary/',
+                        fields: data,
+                        file: data.files[0]
                     })
-                    .error(function(data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
+                        .progress(function (evt) {
+                        })
+                        .success(function(glossary) {
+                            $modalInstance.close(glossary);
+                            $scope.busy = false;
+                        })
+                        .error(function(data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                }
             };
 
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('AddTmxModalCtrl', function ($scope, $modalInstance, $http, tmx) {
+        .controller('AddTmxModalCtrl', function ($scope, $modalInstance, $http, tmx, Upload) {
             $scope.tmx = tmx || {
                 rows: [['', '']]
             };
-            $scope.changeRow = function (i) {
-                if (i === $scope.tmx.rows.length - 1) {
-                    if ($scope.tmx.rows[i][0] && $scope.tmx.rows[i][1]) {
-                        $scope.tmx.rows.push(['', '']);
-                    }
-                } else if (i < $scope.tmx.rows.length - 1) {
-                    if (!$scope.tmx.rows[i][0] && !$scope.tmx.rows[i][1]) {
-                        delete $scope.tmx.rows.splice(i, 1);
-                    }
-                }
-            };
             $scope.ok = function () {
+                $scope.busy = true;
                 $scope.error = '';
                 var data = $scope.tmx;
                 data['project'] = window['projectId'];
-                if ($scope.tmx.id || $scope.tab === 1) {
-                    delete data.file;
-                }
-                $scope.busy = true;
-                $http.post('/api/tmx/', data)
-                    .success(function(tmx) {
-                        $modalInstance.close(tmx);
-                        $scope.busy = false;
+
+                Upload.upload({
+                        url: '/api/tmx/',
+                        fields: data,
+                        file: data.files[0]
                     })
-                    .error(function(data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
+                        .progress(function (evt) {
+                        })
+                        .success(function(tmxes) {
+                            $modalInstance.close(tmxes);
+                            $scope.busy = false;
+                        })
+                        .error(function(data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
             };
 
             $scope.cancel = function () {

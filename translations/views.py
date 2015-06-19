@@ -785,9 +785,9 @@ def dev_add_tmx_to_project(request):
                     tmdb_names[lang_pairs[0]] = new_tmdb.id
 
             with open(filename) as source:
-                from elasticsearch import Elasticsearch
-                es = Elasticsearch()
-                elastic_id = 1
+                # from elasticsearch import Elasticsearch
+                # es = Elasticsearch()
+                # elastic_id = 1
                 # А теперь для каждой из полученных языковых пар (даже если она всего одна)
                 for i in tmdb_names:
                     # парсим файлик и записываем пары предложений в соответствующую базу памяти
@@ -851,22 +851,22 @@ def dev_add_tmx_to_project(request):
                                                          )
                         new_tmdb_entry.save()
 
-                        doc = {
-                            'db_id': new_tmdb_entry.id,
-                            'source_lang': source_text,
-                            'target_lang': target_text,
-                        }
-
-                        res = es.index(
-                            index=tmdb_names[lang_pair],
-                            doc_type='tmx1',
-                            id=elastic_id,
-                            body=doc
-                        )
-
-                        print "ELASTICSEARCH: ", res['created']
-
-                        elastic_id += 1
+                        # doc = {
+                        #     'db_id': new_tmdb_entry.id,
+                        #     'source_lang': source_text,
+                        #     'target_lang': target_text,
+                        # }
+                        #
+                        # res = es.index(
+                        #     index=tmdb_names[lang_pair],
+                        #     doc_type='tmx1',
+                        #     id=elastic_id,
+                        #     body=doc
+                        # )
+                        #
+                        # print "ELASTICSEARCH: ", res['created']
+                        #
+                        # elastic_id += 1
                         # Нет обращений к потомкам, поэтому вызов clear() безопасен
                         elem.clear()
 

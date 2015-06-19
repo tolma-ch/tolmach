@@ -17,7 +17,7 @@
   margin: -3px 0;
 }
 .translation-text__text .approved {
-  background: #94ffa1;
+  background: #c5ffcc;
   padding: 3px 0;
   margin: -3px 0;
 }
@@ -62,7 +62,7 @@
   background: transparent;
 }
 .translation__sentence-translation_state_approved {
-  background: #94ffa1;
+  background: #c5ffcc;
 }
 .translation__sentence-translation_state_approved .translation__sentence-translation-original:after {
   content: '';

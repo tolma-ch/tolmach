@@ -64,6 +64,7 @@
                                           placeholder="{{ your_translation }}"
                                           data-insert-text=""
                                           ng-model="entry.suggestion"
+                                          ng-model-options="{ updateOn: 'blur'}"
                                           ng-keypress="textareaKeypress($event, entry)"></textarea>
 
                                 <div class="translation__sentence-machine-suggestions">
