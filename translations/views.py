@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from django.core import serializers
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.translation import ugettext as _
@@ -14,7 +13,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry,\
+    TMDatabase, TMDatabaseEntry
 from entries.models import Language, Subject
 import json
 import os
@@ -110,44 +110,38 @@ def projects(request):
     user = User.objects.get(username=request.user)
 
     meta, p = UserMeta.objects.get_or_create(user=user)
-    # try:
-    #    meta = UserMeta.objects.get(user=user)
-    #except UserMeta.DoesNotExist:
-    #    new_meta = UserMeta(user=user)
-    #    new_meta.save()
-    #    meta = UserMeta.objects.get(user=user)
 
     # Getting data about user's projects
     user_projects_list = Project.objects.filter(manager=user)
-    for project in user_projects_list:
-        project.texts = Text.objects.filter(project=project)
-        project.progress = project.get_progress()
-        project.users = []
-        if not project.members == '':
-            project_users = User.objects.filter(id__in=project.members.split(','))
+    for proj in user_projects_list:
+        proj.texts = Text.objects.filter(project=proj)
+        proj.progress = proj.get_progress()
+        proj.users = []
+        if not proj.members == '':
+            project_users = User.objects.filter(id__in=proj.members.split(','))
             for i in project_users:
-                project.users.append({
+                proj.users.append({
                     'id': i.id,
                     'username': i.username,
                 })
-        project.entries_details = []
-        entries = TextEntry.objects.filter(text__in=project.texts, id_in_text=0).order_by('-time_created')
+        proj.entries_details = []
+        entries = TextEntry.objects.filter(text__in=proj.texts, id_in_text=0).order_by('-time_created')
         for ent in entries:
-            if len(project.entries_details) > 0:
-                if not project.entries_details[-1]['author'].username == ent.author.username:
-                    project.entries_details += [{
-                                                    'author': ent.author,
-                                                    'number_of_sent': 1,
-                                                    'time_created': ent.time_created,
-                                                }]
+            if len(proj.entries_details) > 0:
+                if not proj.entries_details[-1]['author'].username == ent.author.username:
+                    proj.entries_details += [{
+                                             'author': ent.author,
+                                             'number_of_sent': 1,
+                                             'time_created': ent.time_created,
+                                             }]
                 else:
-                    project.entries_details[-1]['number_of_sent'] += 1
+                    proj.entries_details[-1]['number_of_sent'] += 1
             else:
-                project.entries_details += [{
-                                                'author': ent.author,
-                                                'number_of_sent': 1,
-                                                'time_created': ent.time_created,
-                                            }]
+                proj.entries_details += [{
+                                         'author': ent.author,
+                                         'number_of_sent': 1,
+                                         'time_created': ent.time_created,
+                                         }]
 
     # Getting data about projects, user participating in
     if not meta.member_of == "":
@@ -192,7 +186,8 @@ def project_add(request):
             messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully created!') %
                                  {
                                      'project_name': add_project_form.cleaned_data['name'],
-                                 })
+                                     }
+                                 )
             return HttpResponseRedirect('/projects/')
     else:
         return HttpResponseRedirect('/projects/')
@@ -210,6 +205,7 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/')
 
     lang_list = []
+    # Получаем список названий языков для текущей локали
     from babel import Locale
     for lang in Language.objects.all():
         lang_name = Locale(lang.code)
@@ -222,9 +218,9 @@ def project(request, proj_id=0):
         'languages': lang_list,
         'subjects': Subject.objects.all(),
         'breadcrumbs': [
-                [_('Projects'), '/projects/'],
-                [pr.name, ''],
-            ],
+                       [_('Projects'), '/projects/'],
+                       [pr.name, ''],
+        ],
     }
     template = 'translations/project.html'
     return render_to_response(template, data, RequestContext(request))
@@ -239,7 +235,8 @@ def project_delete(request, proj_id=0):
             messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully deleted!') %
                                  {
                                      'project_name': pr.name,
-                                 })
+                }
+            )
             return HttpResponseRedirect('/projects/')
         else:
             messages.add_message(request, messages.ERROR, _('You are not allowed to delete this project!'))
@@ -254,7 +251,7 @@ def add_text_to_project(request):
     if request.method == "POST":
         data = request.POST
         try:
-            project = Project.objects.get(id=data['id'])
+            project_to_edit = Project.objects.get(id=data['id'])
         except Project.DoesNotExist:
             messages.add_message(request, messages.ERROR, _('There\'s no such project, sorry.'))
             return HttpResponseRedirect('/projects/')
@@ -262,8 +259,8 @@ def add_text_to_project(request):
             lang = Language.objecst.get(id=data['source_lang'])
         except Language.DoesNotExist:
             messages.add_message(request, messages.ERROR, _('There\'s no such language, sorry.'))
-            return HttpResponseRedirect('/projects/%d/' % project.id)
-        if project.is_user_manager(request.user):
+            return HttpResponseRedirect('/projects/%d/' % project_to_edit.id)
+        if project_to_edit.is_user_manager(request.user):
             print lang.code
             sentences, marked_text = utils.split_text(data['text_body'], lang.code)
             new_text = Text(title=data['title'],
@@ -287,24 +284,18 @@ def add_text_to_project(request):
 
 @login_required
 def invite_user_to_project(request, proj_id, us_id):
-    project = Project.objects.get(id=proj_id)
-    if project.is_user_manager(request.user):
+    project_to_edit = Project.objects.get(id=proj_id)
+    if project_to_edit.is_user_manager(request.user):
         try:
             user = User.objects.get(id=us_id)
         except User.DoesNotExist:
             messages.add_message(request, messages.ERROR, _('There\'s no such user, sorry.'))
             return HttpResponseRedirect('/projects/')
-        members = project.members.split(',') if not project.members == '' else []
-        invited = project.users_invited.split(',') if not project.users_invited == '' else []
-        requested = project.users_requested.split(',') if not project.users_requested == '' else []
+        members = project_to_edit.members.split(',') if not project_to_edit.members == '' else []
+        invited = project_to_edit.users_invited.split(',') if not project_to_edit.users_invited == '' else []
+        requested = project_to_edit.users_requested.split(',') if not project_to_edit.users_requested == '' else []
 
         meta, p = UserMeta.objects.get_or_create(user=user)
-        # try:
-        #    meta = UserMeta.objects.get(user=user)
-        #except UserMeta.DoesNotExist:
-        #    new_meta = UserMeta(user=user)
-        #    new_meta.save()
-        #    meta = UserMeta.objects.get(user=user)
 
         user_invited_to = meta.invited_to.split(',') if not meta.invited_to == '' else []
         user_requests = meta.requested_to.split(',') if not meta.requested_to == "" else []
@@ -329,7 +320,7 @@ def invite_user_to_project(request, proj_id, us_id):
                                      _('User %(user_name)s is already invited to the project %(project_name)s') %
                                      {
                                          'user_name': user.username,
-                                         'project_name': project.name
+                                         'project_name': project_to_edit.name
                                      })
                 return HttpResponseRedirect('/projects/')
         else:
@@ -337,14 +328,14 @@ def invite_user_to_project(request, proj_id, us_id):
                                  _('User %(user_name)s is already participating in the project %(project_name)s') %
                                  {
                                      'user_name': user.username,
-                                     'project_name': project.name
+                                     'project_name': project_to_edit.name
                                  })
             return HttpResponseRedirect('/projects/')
 
-        project.members = ','.join(members)
-        project.users_invited = ','.join(invited)
-        project.users_requested = ','.join(requested)
-        project.save()
+        project_to_edit.members = ','.join(members)
+        project_to_edit.users_invited = ','.join(invited)
+        project_to_edit.users_requested = ','.join(requested)
+        project_to_edit.save()
 
         meta.invited_to = ','.join(user_invited_to)
         meta.requested_to = ','.join(user_requests)
@@ -353,7 +344,7 @@ def invite_user_to_project(request, proj_id, us_id):
                              _('User %(user_name)s added to project "%(project_name)s".') %
                              {
                                  'user_name': user.username,
-                                 'project_name': project.name
+                                 'project_name': project_to_edit.name
                              })
         return HttpResponseRedirect('/projects/')
     else:
@@ -363,16 +354,16 @@ def invite_user_to_project(request, proj_id, us_id):
 
 @login_required
 def remove_user_from_project(request, proj_id, us_id):
-    project = Project.objects.get(id=proj_id)
+    project_to_edit = Project.objects.get(id=proj_id)
     user = User.objects.get(id=us_id)
     meta = UserMeta.objects.get(user=user)
-    if project.is_user_manager(request.user) or user == request.user:
-        project_members = project.members.split(',') if not project.members == '' else []
+    if project_to_edit.is_user_manager(request.user) or user == request.user:
+        project_members = project_to_edit.members.split(',') if not project_to_edit.members == '' else []
         users_projects = meta.member_of.split(',') if not meta.member_of == "" else []
         if str(user.id) in project_members:
             project_members.remove(str(user.id))
-            project.members = ','.join(project_members)
-            project.save()
+            project_to_edit.members = ','.join(project_members)
+            project_to_edit.save()
 
             users_projects.remove(str(proj_id))
             meta.member_of = ','.join(users_projects)
@@ -380,8 +371,8 @@ def remove_user_from_project(request, proj_id, us_id):
             if user == request.user:
                 messages.add_message(request, messages.SUCCESS, _('You successfully left project "%(project_name)s"') %
                                      {
-                                         'project_name': project.name,
-                                     }
+                                         'project_name': project_to_edit.name,
+                                         }
                                      )
                 return HttpResponseRedirect('/')
             else:
@@ -389,7 +380,7 @@ def remove_user_from_project(request, proj_id, us_id):
                                      _('User %(user_name)s was successfully removed from project "%(project_name)s"') %
                                      {
                                          'user_name': user.username,
-                                         'project_name': project.name,
+                                         'project_name': project_to_edit.name,
                                      })
                 return HttpResponseRedirect('/projects/')
         else:
@@ -397,7 +388,7 @@ def remove_user_from_project(request, proj_id, us_id):
                                  _('Sorry, user %(user_name)s doesn\'t participate in project "%(project_name)s"') %
                                  {
                                      'user_name': user.username,
-                                     'project_name': project.name,
+                                     'project_name': project_to_edit.name,
                                  })
             return HttpResponseRedirect('/projects/')
     else:
@@ -408,7 +399,7 @@ def remove_user_from_project(request, proj_id, us_id):
 @login_required
 def view_text(request, text_id):
     text = Text.objects.get(id=text_id)
-    if not text.is_user_allowed(request.user):
+    if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
     data = {'username': request.user,
@@ -427,14 +418,14 @@ def view_text(request, text_id):
 @login_required
 def delete_text(request, text_id):
     text = Text.objects.get(id=text_id)
-    project = text.project
-    if project.is_user_manager(request.user):
+    project_to_delete = text.project
+    if project_to_delete.is_user_manager(request.user):
         text.delete()
         messages.add_message(request, messages.INFO,
                              _('Text "%(text_title)s" from project "%(project_name)s" successfully deleted!') %
                              {
                                  'text_title': text.title,
-                                 'project_name': project.name
+                                 'project_name': project_to_delete.name
                              })
         return HttpResponseRedirect('/projects/')
     else:
@@ -446,8 +437,8 @@ def delete_text(request, text_id):
 def translate_entry(request, ent_id):
     entry = TextEntry.objects.get(id=ent_id)
     text = entry.text
-    project = text.project
-    if text.is_user_allowed(request.user):
+    if text.is_user_allowed_to_write(request.user):
+        translated_project = text.project
         trans_entry = TextEntry(body=request.POST['body'],
                                 parent_entry=entry,
                                 text=text,
@@ -457,8 +448,8 @@ def translate_entry(request, ent_id):
 
         from django.utils import timezone
 
-        project.last_modified = timezone.now()
-        project.save()
+        translated_project.last_modified = timezone.now()
+        translated_project.save()
 
         return HttpResponseRedirect('/text/%d/' % text.id)
     else:
@@ -477,28 +468,6 @@ def entry_voteup(request, ent_id):
             voters.append(str(user.id))
             entry.voters = ','.join(voters)
             entry.vote += 1
-            entry.save()
-            messages.add_message(request, messages.SUCCESS, _('Vote accepted'))
-            return HttpResponseRedirect('/text/%d/' % text.id)
-        else:
-            messages.add_message(request, messages.ERROR, _('You have already voted for this entry'))
-            return HttpResponseRedirect('/text/%d/' % text.id)
-    else:
-        messages.add_message(request, messages.ERROR, _('Sorry, you are unable to vote for this entry'))
-        return HttpResponseRedirect('/text/%d/' % text.id)
-
-
-@login_required
-def entry_votedown(request, ent_id):
-    user = request.user
-    entry = TextEntry.objects.get(id=ent_id)
-    text = entry.text
-    if text.is_user_allowed(user):
-        voters = entry.voters.split(',') if not entry.voters == '' else []
-        if not str(user.id) in voters:
-            voters.append(str(user.id))
-            entry.voters = ','.join(voters)
-            entry.vote -= 1
             entry.save()
             messages.add_message(request, messages.SUCCESS, _('Vote accepted'))
             return HttpResponseRedirect('/text/%d/' % text.id)
@@ -548,6 +517,7 @@ def entry_approve_ajax(request):
             return HttpResponse(json.dumps('User have to be a manager'), content_type="application/json", status=400)
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
+
 @login_required
 def entry_disapprove_ajax(request):
     if request.method == 'POST':
@@ -573,15 +543,13 @@ def entry_disapprove_ajax(request):
 @login_required
 def dev_add_glossary_to_text(request, text_id, glos_id):
     text = Text.objects.get(id=text_id)
-    project = text.project
-    proj_id = int(project.id)
-    if not project.is_user_manager(request.user):
+    project_to_edit = text.project
+    proj_id = int(project_to_edit.id)
+    if not project_to_edit.is_user_manager(request.user):
         messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
         return HttpResponseRedirect('/')
     else:
-        try:
-            glossary = Glossary.objects.get(id=glos_id)
-        except Glossary.DoesNotExist:
+        if not Glossary.objects.get(id=glos_id).exists():
             messages.add_message(request, messages.ERROR, _('There\'s no such glossary, sorry.'))
             return HttpResponseRedirect('/projects/%d/' % proj_id)
         text_glossaries = text.glossaries.split(',') if not text.glossaries == '' else []
@@ -641,20 +609,21 @@ def dev_add_new_glossary(request):
 @login_required
 def dev_add_tmdb_to_text(request, text_id, tmdb_id):
     text = Text.objects.get(id=text_id)
-    project = text.project
-    proj_id = int(project.id)
-    if not project.is_user_manager(request.user):
+    project_to_edit = text.project
+    proj_id = int(project_to_edit.id)
+    if not project_to_edit.is_user_manager(request.user):
         messages.add_message(request, messages.ERROR, _('You are not allowed to edit this text'))
         return HttpResponseRedirect('/')
     else:
-        try:
-            tmdb = TMDatabase.objects.get(id=tmdb_id)
-        except TMDatabase.DoesNotExist:
+        if not TMDatabase.objects.get(id=tmdb_id).exists():
             messages.add_message(request, messages.ERROR, _('There\'s no such translation memry database, sorry.'))
             return HttpResponseRedirect('/projects/%d/' % proj_id)
         text_tmdbs = text.tmdatabases.split(',') if not text.tmdatabases == '' else []
         if tmdb_id in text_tmdbs:
-            messages.add_message(request, messages.ERROR, _('Sorry, there\'s such translation memry database here already'))
+            messages.add_message(request,
+                                 messages.ERROR,
+                                 _('Sorry, there\'s such translation memry database here already')
+                                 )
             return HttpResponseRedirect('/projects/%d/' % proj_id)
         else:
             text_tmdbs.append(str(tmdb_id))
@@ -739,14 +708,20 @@ def dev_add_tmx_to_project(request):
                             source_lang_obj = Language.objects.get(code=source_lang_name)
                         except Language.DoesNotExist:
                             print 'This source language is not supported yet'
-                            messages.add_message(request, messages.ERROR, _('This source language is not supported yet'))
+                            messages.add_message(request,
+                                                 messages.ERROR,
+                                                 _('This source language is not supported yet')
+                                                 )
                             return HttpResponseRedirect('/projects/add-tmx/')
 
                         try:
                             target_lang_obj = Language.objects.get(code=target_lang_name)
                         except Language.DoesNotExist:
                             print 'This target language is not supported yet'
-                            messages.add_message(request, messages.ERROR, _('This target language is not supported yet'))
+                            messages.add_message(request,
+                                                 messages.ERROR,
+                                                 _('This target language is not supported yet')
+                                                 )
                             return HttpResponseRedirect('/projects/add-tmx/')
                         new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
                                               owner=user,
@@ -785,100 +760,100 @@ def dev_add_tmx_to_project(request):
                     tmdb_names[lang_pairs[0]] = new_tmdb.id
 
             with open(filename) as source:
-                # from elasticsearch import Elasticsearch
-                # es = Elasticsearch()
-                # elastic_id = 1
+                from elasticsearch import Elasticsearch
+                es = Elasticsearch()
+                elastic_id = 1
                 # А теперь для каждой из полученных языковых пар (даже если она всего одна)
-                for i in tmdb_names:
-                    # парсим файлик и записываем пары предложений в соответствующую базу памяти
-                    parse_context = etree.iterparse(source, events=('end',), tag='tu')
-                    for event, elem in parse_context:
-                        tuv = elem.findall('tuv')
-                        try:
-                            source_lang = tuv[0].attrib[lang_14].lower()
-                            target_lang = tuv[1].attrib[lang_14].lower()
-                        except KeyError:
-                            source_lang = tuv[0].attrib[lang_11].lower()
-                            target_lang = tuv[1].attrib[lang_11].lower()
+                # парсим файлик и записываем пары предложений в соответствующую базу памяти
+                parse_context = etree.iterparse(source, events=('end',), tag='tu')
+                for event, elem in parse_context:
+                    tuv = elem.findall('tuv')
+                    try:
+                        source_lang = tuv[0].attrib[lang_14].lower()
+                        target_lang = tuv[1].attrib[lang_14].lower()
+                    except KeyError:
+                        source_lang = tuv[0].attrib[lang_11].lower()
+                        target_lang = tuv[1].attrib[lang_11].lower()
 
-                        lang_pair = "%s-%s" % (source_lang, target_lang)
-                        print lang_pair
+                    lang_pair = "%s-%s" % (source_lang, target_lang)
+                    print lang_pair
 
-                        source_text = tuv[0].find('seg').text
-                        target_text = tuv[1].find('seg').text
+                    source_text = tuv[0].find('seg').text
+                    target_text = tuv[1].find('seg').text
 
-                        print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
-                        print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+                    print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
+                    print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
 
-                        try:
-                            target_author = tuv[1].attrib["creationid"]
-                        except KeyError:
-                            target_author = None
+                    try:
+                        target_author = tuv[1].attrib["creationid"]
+                    except KeyError:
+                        target_author = None
 
-                        from datetime import datetime
-                        try:
-                            target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
-                        except KeyError:
-                            target_created = None
+                    from datetime import datetime
+                    try:
+                        target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
+                    except KeyError:
+                        target_created = None
 
-                        try:
-                            target_editor = tuv[1].attrib["changeid"]
-                        except KeyError:
-                            target_editor = None
+                    try:
+                        target_editor = tuv[1].attrib["changeid"]
+                    except KeyError:
+                        target_editor = None
 
-                        try:
-                            target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
-                        except KeyError:
-                            target_edited = None
-                        if target_created == target_edited:
-                            target_edited = None
-                            target_editor = None
+                    try:
+                        target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
+                    except KeyError:
+                        target_edited = None
+                    if target_created == target_edited:
+                        target_edited = None
+                        target_editor = None
 
-                        print "Target creator: %s" % target_author if target_author else "Target creator:"
-                        print "Tagret created: %s" % target_created if target_created else "Tagret created:"
-                        print "Target editor: %s" % target_editor if target_editor else "Target editor:"
-                        print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+                    print "Target creator: %s" % target_author if target_author else "Target creator:"
+                    print "Tagret created: %s" % target_created if target_created else "Tagret created:"
+                    print "Target editor: %s" % target_editor if target_editor else "Target editor:"
+                    print "Target edited: %s" % target_edited if target_edited else "Target edited:"
 
-                        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
-                                                         orig_lang=source_lang.lower(),
-                                                         orig_text=source_text,
-                                                         target_lang=target_lang.lower(),
-                                                         target_text=target_text,
-                                                         target_author=target_author,
-                                                         target_created=target_created,
-                                                         target_editor=target_editor,
-                                                         target_edited=target_edited,
-                                                         )
-                        new_tmdb_entry.save()
+                    new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
+                                                     orig_lang=source_lang.lower(),
+                                                     orig_text=source_text,
+                                                     target_lang=target_lang.lower(),
+                                                     target_text=target_text,
+                                                     target_author=target_author,
+                                                     target_created=target_created,
+                                                     target_editor=target_editor,
+                                                     target_edited=target_edited,
+                                                     )
+                    new_tmdb_entry.save()
 
-                        # doc = {
-                        #     'db_id': new_tmdb_entry.id,
-                        #     'source_lang': source_text,
-                        #     'target_lang': target_text,
-                        # }
-                        #
-                        # res = es.index(
-                        #     index=tmdb_names[lang_pair],
-                        #     doc_type='tmx1',
-                        #     id=elastic_id,
-                        #     body=doc
-                        # )
-                        #
-                        # print "ELASTICSEARCH: ", res['created']
-                        #
-                        # elastic_id += 1
-                        # Нет обращений к потомкам, поэтому вызов clear() безопасен
-                        elem.clear()
+                    doc = {
+                        'db_id': new_tmdb_entry.id,
+                        'source_lang': source_text,
+                        'target_lang': target_text,
+                    }
 
-                        # Удалите пустые ссылки из корневого узла в <Title>
-                        while elem.getprevious() is not None:
-                            del elem.getparent()[0]
+                    res = es.index(
+                        index=tmdb_names[lang_pair],
+                        doc_type='tmx1',
+                        id=elastic_id,
+                        body=doc
+                    )
+
+                    print "ELASTICSEARCH: ", res['created']
+
+                    elastic_id += 1
+                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                    elem.clear()
+
+                    # Удалите пустые ссылки из корневого узла в <Title>
+                    while elem.getprevious() is not None:
+                        del elem.getparent()[0]
         except etree.XMLSyntaxError:
             pass
 
     return render_to_response(template, data, RequestContext(request))
 
-### Translation stub
+# ## Translation stub
+
 
 def dev_add_text_to_project(request):
     data = {
@@ -886,4 +861,3 @@ def dev_add_text_to_project(request):
     }
     template = 'translations/dev_add_text_to_project.html'
     return render_to_response(template, data, RequestContext(request))
-
