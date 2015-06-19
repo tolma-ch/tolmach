@@ -262,7 +262,7 @@ def glossary_ajax(request):
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
-        post = json.loads(request.body)
+        post = request.POST or json.loads(request.body)
         if 'project' not in post:
             return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
         try:
@@ -276,22 +276,20 @@ def glossary_ajax(request):
             return HttpResponse(json.dumps('Glossary name is being expected'), content_type="application/json",
                                 status=400)
         glossary_name = post['name']
-        if 'file' in post:
-            f = post['file']
-            print f
-            # TODO: KeyError: u'size'
-            if f['size'] > 1048576:
+        if 'file' in request.FILES:
+            f = request.FILES['file']
+            import uuid
+            file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
+            if f.size > settings.GLOSSARY_FILE_SIZE:
                 return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
                                     status=400)
-            elif f['type'] not in ['text/plain', 'application/octet-stream', 'text/csv']:
+            elif f.content_type not in ['text/plain', 'application/octet-stream', 'text/csv']:
                 return HttpResponse(json.dumps('Lol nope! Wrong file type'), content_type="application/json",
                                     status=400)
-            text = f['file'].replace('data:%s;base64,' % f['type'], '')
-            # file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
-            # fh = open(file_on_disk, "wb")
-            # fh.write(text.decode('base64'))
-            # fh.close()
-            pairs_array = utils.parse_glossary_text(text.decode('base64'), f['type'])
+            with open(file_on_disk, 'w+') as fd:
+                for chunk in f.chunks():
+                    fd.write(chunk)
+            pairs_array = utils.parse_glossary(file_on_disk, f.content_type)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps('please, send file or input manually'), content_type="application/json",
@@ -381,7 +379,7 @@ def tmx_ajax(request):
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
-        post = json.loads(request.body)
+        post = request.POST or json.loads(request.body)
         if 'project' not in post:
             return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
         try:
@@ -392,60 +390,225 @@ def tmx_ajax(request):
             return HttpResponse(json.dumps('You have to be a manager of project'), content_type="application/json",
                                 status=400)
         if 'name' not in post:
-            return HttpResponse(json.dumps('Glossary name is being expected'), content_type="application/json",
+            return HttpResponse(json.dumps('TMX name is being expected'), content_type="application/json",
                                 status=400)
-        glossary_name = post['name']
-        if 'file' in post:
-            f = post['file']
-            print f
-            # TODO: KeyError: u'size'
-            if f['size'] > 1048576:
-                return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
-                                    status=400)
-            elif f['type'] not in ['text/plain', 'application/octet-stream', 'text/csv']:
-                return HttpResponse(json.dumps('Lol nope! Wrong file type'), content_type="application/json",
-                                    status=400)
-            text = f['file'].replace('data:%s;base64,' % f['type'], '')
-            # file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
-            # fh = open(file_on_disk, "wb")
-            # fh.write(text.decode('base64'))
-            # fh.close()
-            pairs_array = utils.parse_glossary_text(text.decode('base64'), f['type'])
-        else:
-            if 'rows' not in post:
-                return HttpResponse(json.dumps('please, send file or input manually'), content_type="application/json",
-                                    status=400)
-            pairs_array = post['rows']
-        if 'id' in post:
-            try:
-                glossary = Glossary.objects.get(id=post['id'])
-            except Glossary.DoesNotExist:
-                return HttpResponse(json.dumps('Glossary not found'), content_type="application/json", status=400)
-            GlossaryEntry.objects.filter(glossary=glossary).delete()
-        else:
-            glossary = Glossary(name=glossary_name,
-                                owner=request.user,
-                                project=project)
-            glossary.save()
-        for src, trg in pairs_array:
-            if not src or not trg:
-                continue
-            glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
-                                           source_entry=src,
-                                           target_entry=trg)
-            glossary_entry.save()
-        result = {
-            'id': glossary.id,
-            'name': glossary.name
-        }
+        tmdb_name = post['name']
+        if 'file' not in request.FILES:
+            return HttpResponse(json.dumps('TMX file is being expected'), content_type="application/json",
+                                status=400)
+        f = request.FILES['file']
+        if f.size > settings.TM_FILE_SIZE:
+            return HttpResponse(json.dumps('Sorry, bro, file too big!'), content_type="application/json",
+                                status=400)
+        # elif f.content_type not in ['application/xml']: TODO
+        #     return HttpResponse(json.dumps('Lol nope! Wrong file type'), content_type="application/json",
+        #                         status=400)
+        import uuid
+        filename = '/tmp/glossary_%s' % uuid.uuid4()
+        with open(filename, 'w+') as fd:
+            for chunk in f.chunks():
+                fd.write(chunk)
+
+        from lxml import etree
+
+        # учитываем различия в аттрибутах языка в разных версиях спеки TMX
+        lang_11 = "lang"
+        lang_14 = "{http://www.w3.org/XML/1998/namespace}lang"
+
+        result = []
+        try:
+            with open(filename) as source:
+                context = etree.iterparse(source, events=('end',), tag='tu')
+
+                # проверяем TMX на бардак и мультиязычность
+                lang_pairs = []
+
+                # Получаем список языковых пар в tmx'е
+                for event, elem in context:
+                    tuv = elem.findall('tuv')
+                    try:
+                        source_lang = tuv[0].attrib[lang_14].lower()
+                        target_lang = tuv[1].attrib[lang_14].lower()
+                    except KeyError:
+                        source_lang = tuv[0].attrib[lang_11].lower()
+                        target_lang = tuv[1].attrib[lang_11].lower()
+
+                    if not "%s-%s" % (source_lang, target_lang) in lang_pairs:
+                        lang_pairs.append("%s-%s" % (source_lang, target_lang))
+                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                    elem.clear()
+
+                    # Удалите пустые ссылки из корневого узла в <Title>
+                    while elem.getprevious() is not None:
+                        del elem.getparent()[0]
+
+                print lang_pairs
+
+                tmdb_names = {}
+                # Если языковых пар больше одной, то создаём базы памяти для каждой из них
+                # К названию базы памяти тогда добавляется суффикс "[<sl>-<tl>]" где sl и tl -
+                # - код исходного языка и целевого языка в двухбуквенном коде соответственно
+                if len(lang_pairs) > 1:
+                    for pair in lang_pairs:
+                        source_lang_name = pair.split("-")[0]
+                        target_lang_name = pair.split("-")[1]
+                        try:
+                            source_lang_obj = Language.objects.get(code=source_lang_name)
+                        except Language.DoesNotExist:
+                            print 'This source language is not supported yet'
+                            return HttpResponse(json.dumps('This source language is not supported yet'), content_type="application/json",
+                                                status=400)
+
+                        try:
+                            target_lang_obj = Language.objects.get(code=target_lang_name)
+                        except Language.DoesNotExist:
+                            print 'This target language is not supported yet'
+                            return HttpResponse(json.dumps('This target language is not supported yet'), content_type="application/json",
+                                                status=400)
+                        new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
+                                              owner=request.user,
+                                              project=project,
+                                              source_lang=source_lang_obj,
+                                              target_lang=target_lang_obj
+                                              )
+                        new_tmdb.save()
+                        result.append({
+                            'id': new_tmdb.id,
+                            'name': new_tmdb.name,
+                        })
+                        # Записываем соответствия языковых пар и ID'шников свежесозданных баз памяти в словарь
+                        tmdb_names[pair] = new_tmdb.id
+                # Если же языковая пара всего одна, то забиваем и создаём одну базу памяти
+                else:
+                    source_lang_name = lang_pairs[0].split("-")[0]
+                    target_lang_name = lang_pairs[0].split("-")[1]
+                    try:
+                        source_lang_obj = Language.objects.get(code=source_lang_name)
+                    except Language.DoesNotExist:
+                        print 'This source language is not supported yet'
+                        return HttpResponse(json.dumps('This source language is not supported yet'), content_type="application/json",
+                                            status=400)
+
+                    try:
+                        target_lang_obj = Language.objects.get(code=target_lang_name)
+                    except Language.DoesNotExist:
+                        print 'This target language is not supported yet'
+                        return HttpResponse(json.dumps('This target language is not supported yet'), content_type="application/json",
+                                            status=400)
+
+                    new_tmdb = TMDatabase(name=tmdb_name,
+                                          owner=request.user,
+                                          project=project,
+                                          source_lang=source_lang_obj,
+                                          target_lang=target_lang_obj
+                                          )
+                    new_tmdb.save()
+                    result.append({
+                        'id': new_tmdb.id,
+                        'name': new_tmdb.name,
+                    })
+                    tmdb_names[lang_pairs[0]] = new_tmdb.id
+
+            with open(filename) as source:
+                # from elasticsearch import Elasticsearch
+                # es = Elasticsearch()
+                # elastic_id = 1
+                # А теперь для каждой из полученных языковых пар (даже если она всего одна)
+                for i in tmdb_names:
+                    # парсим файлик и записываем пары предложений в соответствующую базу памяти
+                    parse_context = etree.iterparse(source, events=('end',), tag='tu')
+                    for event, elem in parse_context:
+                        tuv = elem.findall('tuv')
+                        try:
+                            source_lang = tuv[0].attrib[lang_14].lower()
+                            target_lang = tuv[1].attrib[lang_14].lower()
+                        except KeyError:
+                            source_lang = tuv[0].attrib[lang_11].lower()
+                            target_lang = tuv[1].attrib[lang_11].lower()
+
+                        lang_pair = "%s-%s" % (source_lang, target_lang)
+                        print lang_pair
+
+                        source_text = tuv[0].find('seg').text
+                        target_text = tuv[1].find('seg').text
+
+                        print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
+                        print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+
+                        try:
+                            target_author = tuv[1].attrib["creationid"]
+                        except KeyError:
+                            target_author = None
+
+                        from datetime import datetime
+                        try:
+                            target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
+                        except KeyError:
+                            target_created = None
+
+                        try:
+                            target_editor = tuv[1].attrib["changeid"]
+                        except KeyError:
+                            target_editor = None
+
+                        try:
+                            target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
+                        except KeyError:
+                            target_edited = None
+                        if target_created == target_edited:
+                            target_edited = None
+                            target_editor = None
+
+                        print "Target creator: %s" % target_author if target_author else "Target creator:"
+                        print "Tagret created: %s" % target_created if target_created else "Tagret created:"
+                        print "Target editor: %s" % target_editor if target_editor else "Target editor:"
+                        print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+
+                        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
+                                                         orig_lang=source_lang.lower(),
+                                                         orig_text=source_text,
+                                                         target_lang=target_lang.lower(),
+                                                         target_text=target_text,
+                                                         target_author=target_author,
+                                                         target_created=target_created,
+                                                         target_editor=target_editor,
+                                                         target_edited=target_edited,
+                                                         )
+                        new_tmdb_entry.save()
+
+                        # doc = {
+                        #     'db_id': new_tmdb_entry.id,
+                        #     'source_lang': source_text,
+                        #     'target_lang': target_text,
+                        # }
+                        #
+                        # res = es.index(
+                        #     index=tmdb_names[lang_pair],
+                        #     doc_type='tmx1',
+                        #     id=elastic_id,
+                        #     body=doc
+                        # )
+                        #
+                        # print "ELASTICSEARCH: ", res['created']
+                        #
+                        # elastic_id += 1
+                        # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                        elem.clear()
+
+                        # Удалите пустые ссылки из корневого узла в <Title>
+                        while elem.getprevious() is not None:
+                            del elem.getparent()[0]
+        except etree.XMLSyntaxError:
+            pass
+
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
-        if 'glossary' not in request.GET:
-            return HttpResponse(json.dumps('glossary id is being expected'), content_type="application/json", status=400)
+        if 'tmx' not in request.GET:
+            return HttpResponse(json.dumps('tmx id is being expected'), content_type="application/json", status=400)
         try:
-            glossary = Glossary.objects.get(id=request.GET['glossary'])
-        except Glossary.DoesNotExist:
-            return HttpResponse(json.dumps('Glossary not found'), content_type="application/json", status=400)
+            tmx = TMDatabase.objects.get(id=request.GET['tmx'])
+        except TMDatabase.DoesNotExist:
+            return HttpResponse(json.dumps('TMX not found'), content_type="application/json", status=400)
         if 'project' not in request.GET:
             return HttpResponse(json.dumps('project id is being expected'), content_type="application/json", status=400)
         project_id = request.GET['project']
@@ -453,7 +616,7 @@ def tmx_ajax(request):
             project = Project.objects.get(id=project_id)
         except Project.DoesNotExist:
             return HttpResponse(json.dumps('Project not found'), content_type="application/json", status=400)
-        glossary.delete()
+        tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
