@@ -42,7 +42,7 @@ def update_user_social_data(strategy, *args, **kwargs):
 
     if image_name and image_url:
         image_stream = urlopen(image_url)
-        meta = UserMeta.objects.get_or_create(user=user)
+        meta, p = UserMeta.objects.get_or_create(user=user)
         meta.avatar.save(
             image_name,
             ContentFile(image_stream.read()),
