@@ -45,7 +45,8 @@ class Project(models.Model):
         if self.is_private is False:
             return True
         else:
-            if self.manager == user or str(user.id) in self.members.split(','):
+            members = self.members.split(',') if self.members else []
+            if self.manager == user or str(user.id) in members:
                 return True
             else:
                 return False

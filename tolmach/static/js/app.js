@@ -132,12 +132,25 @@
                     }
                 })
             };
+            var updateTranslation = function (entry) {
+                if (!entry.isApproved && entry.translations.length) {
+                    entry.translation = parent['rawBody'];
+                    for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
+                        var translation = entry.translations[i];
+                        if (translation.author === $scope.user) {
+                            entry.translation = translation['body'];
+                            break;
+                        }
+                    }
+                }
+            };
             $scope.disapproveEntry = function (entry, parent) {
                 $http.post('/api/entry-disapprove/', {id: entry.id}).success(function () {
                     entry.isApproved = false;
                     parent.approved = false;
-                    parent.translation = parent['rawBody'];
                     $scope.activeEntry = parent;
+                    parent.translation = '';
+                    updateTranslation(parent);
                 })
             };
             $scope.suggestTranslation = function (entry) {
@@ -161,14 +174,18 @@
                                 if (translation.isApproved === true) {
                                     entry.approved = true;
                                     entry.translation = translation.body;
+                                } else {
+                                    updateTranslation(entry);
                                 }
                                 break;
                             }
                         }
                     } else {
                         entry['translations'].push(data);
+                        updateTranslation(entry);
                     }
                     entry.mode = 0;
+                    entry.suggestion = '';
                 })
             };
             $scope.editTranslation = function (entry, translation) {

@@ -42,13 +42,13 @@
                              ng-show="!!entry.translations.length">
                             <div class="switcher">
                             <span class="switcher__button"
-                                  ng-class="{'switcher__button_state_active': entry.mode !== 1}"
+                                  ng-class="{'switcher__button_active': entry.mode !== 1}"
                                   ng-click="cancelEditing(entry)">
                                 <i class="fa fa-user switcher__button-icon"></i>
                                 <span class="switcher__button-content">{{ users_trans }}</span>
                             </span>
                             <span class="switcher__button"
-                                  ng-class="{'switcher__button_state_active': entry.mode === 1}"
+                                  ng-class="{'switcher__button_active': entry.mode === 1}"
                                   ng-click="entry.mode = 1">
                                 <i class="fa fa-pencil switcher__button-icon"></i>
                                 <span class="switcher__button-content">{{ make_translation }}</span>
@@ -64,7 +64,7 @@
                                           placeholder="{{ your_translation }}"
                                           data-insert-text=""
                                           ng-model="entry.suggestion"
-                                          ng-model-options="{ updateOn: 'blur'}"
+                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
                                           ng-keypress="textareaKeypress($event, entry)"></textarea>
 
                                 <div class="translation__sentence-machine-suggestions">
