@@ -36,13 +36,13 @@ def update_user_social_data(strategy, *args, **kwargs):
 
     elif isinstance(backend, TwitterOAuth):
         if kwargs['response'].get('profile_image_url'):
-            id = kwargs['response']['user_id']
+            id = kwargs['response']['id']
             image_name = 'tw_avatar_%d.jpg' % id
             image_url = kwargs['response'].get('profile_image_url')
 
     if image_name and image_url:
         image_stream = urlopen(image_url)
-        meta = UserMeta.objects.get(user=user)
+        meta = UserMeta.objects.get_or_create(user=user)
         meta.avatar.save(
             image_name,
             ContentFile(image_stream.read()),
