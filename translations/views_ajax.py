@@ -10,6 +10,7 @@ from django.conf import settings
 from entries.models import Subject
 from entries.models import Language
 from translations import utils
+from translations.decorators import get_text, accept_project
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
 
@@ -57,20 +58,10 @@ def get_users_ajax(request):
         })
     return HttpResponse(json.dumps(result), content_type="application/json")
 
-
+@accept_project
 @login_required
-def participant_ajax(request):
+def participant_ajax(request, project):
     if request.method == 'GET':
-        if 'project' not in request.GET:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        project_id = request.GET['project']
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         if project.members:
             members = project.members.split(',')
         else:
@@ -93,15 +84,6 @@ def participant_ajax(request):
             user = User.objects.get(id=post['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if 'project' not in post:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        try:
-            project = Project.objects.get(id=post['project'])
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
@@ -125,12 +107,6 @@ def participant_ajax(request):
             user = User.objects.get(id=request.GET['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if 'project' not in request.GET:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        try:
-            project = Project.objects.get(id=request.GET['project'])
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         members = project.members.split(',') if project.members else []
         if str(user.id) not in members:
             return HttpResponse(json.dumps(_('User is not a member of project')),
@@ -638,18 +614,12 @@ def tmx_ajax(request):
 
 
 @login_required
-def get_entries_ajax(request):
+@get_text
+def get_entries_ajax(request, text):
     if not request.method == 'POST':
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
     post = json.loads(request.body)
-    if 'text' not in post:
-        return HttpResponse(json.dumps(_('text id is not set')), content_type="application/json", status=400)
-    try:
-        text = Text.objects.get(id=post['text'])
-    except Text.DoesNotExist:
-        return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
-    if not text.is_user_allowed_to_read(request.user):
-        return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+
     all_text_entries = TextEntry.objects.filter(text=text)
     base_entries = []
     for entry in all_text_entries:
@@ -660,6 +630,7 @@ def get_entries_ajax(request):
         transtlations = []
         approved = False
         approved_text = ''
+        user_translation_text = ''
         for translation in all_text_entries:
             if translation.parent_entry == entry:
                 transtlations.append(
@@ -673,6 +644,8 @@ def get_entries_ajax(request):
                 )
                 if translation.is_approved:
                     approved_text = translation.body
+                if translation.author.id == request.user.id:
+                    user_translation_text = translation.body
                 approved = approved or translation.is_approved
         # каждую entry проверяем на наличие в ней слов из словаря
         # и оборачиваем нужным тегом
@@ -687,7 +660,7 @@ def get_entries_ajax(request):
             'body': entry_body,
             'translations': transtlations,
             'approved': approved,
-            'translation': approved_text or entry.body
+            'translation': approved_text or user_translation_text or entry.body
         })
     return HttpResponse(json.dumps({
                                    'lang_pair': text.source_lang.code + "-" + text.target_lang.code,

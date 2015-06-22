@@ -15,6 +15,7 @@ class UserMeta(models.Model):
     user = models.OneToOneField('auth.User')
     email = models.EmailField()
     website = models.URLField()
+    avatar = models.ImageField(upload_to='avatar/', default=None)
 
     member_of = models.TextField(default="")
     invited_to = models.TextField(default="")
