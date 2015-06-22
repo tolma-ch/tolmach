@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from urllib2 import urlopen
 from django.core.files.base import ContentFile
 from social.backends.twitter import TwitterOAuth
@@ -29,6 +31,7 @@ def update_user_social_data(strategy, *args, **kwargs):
     image_name = False
     image_url = False
     if isinstance(backend, VKOAuth2):
+        print "OLOLOSHENKA", kwargs['response']
         if kwargs['response'].get('photo'):
             id = kwargs['response']['user_id']
             image_name = 'vk_avatar_%s.jpg' % id
@@ -38,10 +41,14 @@ def update_user_social_data(strategy, *args, **kwargs):
         if kwargs['response'].get('profile_image_url'):
             id = kwargs['response']['id']
             image_name = 'tw_avatar_%d.jpg' % id
-            image_url = kwargs['response'].get('profile_image_url')
+            # Заменяем урл http://pbs.twimg.com/profile_images/556102849361231874/c5mOlg1X_normal.png
+            # на урл http://pbs.twimg.com/profile_images/556102849361231874/c5mOlg1X.png
+            # чтобы получаемая картинка была чуть больше, чем микроскопической
+            image_url = kwargs['response'].get('profile_image_url').replace('_normal', '')
 
     if image_name and image_url:
         image_stream = urlopen(image_url)
+        print "IMAGE_URL: ", image_url
         meta, p = UserMeta.objects.get_or_create(user=user)
         meta.avatar.save(
             image_name,
