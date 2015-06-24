@@ -3,23 +3,26 @@
 
 import re
 import os
-from translations.models import Glossary, GlossaryEntry
+from translations.models import GlossaryEntry
 
 
-RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'\""
-RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя'\""
+RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”()'\""
+RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя…“”()'\""
+
+EN_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ.…“”()'\""
+EN_L = u"abcdefghijklmnopqrstuvwxyz.…“”()'\""
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DEU_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ'\""
-DEU_L = u"abcdefghijklmnopqrstuvwxyzäöüß'\""
+DE_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ…“”()'\""
+DE_L = u"abcdefghijklmnopqrstuvwxyzäöüß…“”()'\""
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FRA_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ'\""
-FRA_L = u"abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç'\""
+FR_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ…“”()'\""
+FR_L = u"abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç…“”()'\""
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
-SPA_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÑ'\""
-SPA_L = u"abcdefghijklmnopqrstuvwxyzñ'\""
+ES_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÑ…“”()'\""
+ES_L = u"abcdefghijklmnopqrstuvwxyzñ…“”()'\""
 
 KOR = "[가-힣]"
 
@@ -40,16 +43,16 @@ num_in_text = 1
 # +----+----------+------+
 
 SPLIT_PATTERN = {
-        # TODO: Add variable brackets before end signs
-        'en': u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
-        'ru': u" [%(RU_L)s%(RU_U)s]+\\)?! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\)?\\? [%(RU_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # rus
-        'zh': u"。”|。",  # zho
-        'es': u" [%(SPA_L)s%(SPA_U)s]+\\)?! [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\. [%(SPA_U)s]+| [%(SPA_L)s%(SPA_U)s]+\\)?\\? [%(SPA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # spa
-        'ko': u"\\. |\\! |\\? ",  # kor
-        'ja': u"。”|。",  # jpn
-        'fr': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
-        'de': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
-        'it': u" [%(FRA_L)s%(FRA_U)s]+\\)?! [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\. [%(FRA_U)s]+| [%(FRA_L)s%(FRA_U)s]+\\)?\\? [%(FRA_U)s]+| [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+" % locals(),  # fra
+        #'en': u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
+        'en': u" [%(EN_L)s%(EN_U)s]+! [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\. [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\? [%(EN_U)s]+" % locals(),  # eng
+        'ru': u" [%(RU_L)s%(RU_U)s]+! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\? [%(RU_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # rus
+        'zh': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # zho
+        'es': u" [%(ES_L)s%(ES_U)s]+! [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\. [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\? [%(ES_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # spa
+        'ko': u"\\. |\\! |\\? |ㆍ| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # kor
+        'ja': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # jpn
+        'fr': u" [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        'de': u" [%(DE_L)s%(DE_U)s]+! [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\. [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\? [%(DE_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        'it': u" [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
         }
 
 
@@ -58,12 +61,11 @@ def split_text(line_to_translate, lang='en', pattern=""):
     num_in_text = 1
 
     def repl_in_text(matchobj):
-        print u" === " + matchobj.group(0) + u" === "
+        # print u" === " + matchobj.group(0) + u" === "
         return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
 
     def repl(matchobj):
         if lang in ['en', 'ru', 'fr', 'es']:
-        # if lang == 'en' or lang == 'ru' or lang == 'fr' or lang == 'es':
             return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
         else:
             return matchobj.group(0) + u'†'
@@ -91,7 +93,7 @@ def split_text(line_to_translate, lang='en', pattern=""):
                 # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
                 sent_to_mark = u"(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip(u"　     ")) + u"(?!</span>)"
-                print sent_to_mark
+                # print sent_to_mark
                 marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                 num_in_text += 1
 
