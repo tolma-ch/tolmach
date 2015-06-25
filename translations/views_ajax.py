@@ -58,6 +58,7 @@ def get_users_ajax(request):
         })
     return HttpResponse(json.dumps(result), content_type="application/json")
 
+
 @accept_project
 @login_required
 def participant_ajax(request, project):

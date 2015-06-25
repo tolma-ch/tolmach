@@ -6,58 +6,62 @@ import os
 from translations.models import GlossaryEntry
 
 
-RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”()'\""
-RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя…“”()'\""
+RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
+RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
 
-EN_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ.…“”()'\""
-EN_L = u"abcdefghijklmnopqrstuvwxyz.…“”()'\""
+EN_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ.…“”«»()'\""
+EN_L = u"abcdefghijklmnopqrstuvwxyz.…“”«»()'\""
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ…“”()'\""
-DE_L = u"abcdefghijklmnopqrstuvwxyzäöüß…“”()'\""
+DE_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ…“”«»()'\""
+DE_L = u"abcdefghijklmnopqrstuvwxyzäöüß…“”«»()'\""
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ…“”()'\""
-FR_L = u"abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç…“”()'\""
+FR_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890…“”«»\\(\\)'\""
+FR_L = u"abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890…“”«»\\(\\)'\""
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
-ES_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÑ…“”()'\""
-ES_L = u"abcdefghijklmnopqrstuvwxyzñ…“”()'\""
+ES_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÑ…“”«»()'\""
+ES_L = u"abcdefghijklmnopqrstuvwxyzñ…“”«»()'\""
+
+# http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
+IT_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ…“”«»()'\""
+IT_L = u"abcdefghijklmnopqrstuvwxyzàèéìíîòóùú…“”«»()'\""
 
 KOR = "[가-힣]"
-
-num_in_text = 1
 
 # +----+----------+------+
 # | id | name     | code |
 # +----+----------+------+
-# |  1 | English  | eng  |
-# |  2 | Russian  | rus  |
-# |  3 | Chinese  | zho  |
-# |  4 | Spanish  | spa  |
-# |  5 | Korean   | kor  |
-# |  6 | Japanese | jpn  |
-# |  7 | French   | fra  |
-# |  8 | German   | deu  |
-# |  9 | Italian  | ita  |
+# |  1 | English  | en   |
+# |  2 | Russian  | ru   |
+# |  3 | Chinese  | zh   |
+# |  4 | Spanish  | es   |
+# |  5 | Korean   | ko   |
+# |  6 | Japanese | ja   |
+# |  7 | French   | fr   |
+# |  8 | German   | de   |
+# |  9 | Italian  | it   |
 # +----+----------+------+
 
 SPLIT_PATTERN = {
         #'en': u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
         'en': u" [%(EN_L)s%(EN_U)s]+! [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\. [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\? [%(EN_U)s]+" % locals(),  # eng
-        'ru': u" [%(RU_L)s%(RU_U)s]+! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]+\\? [%(RU_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # rus
+        'ru': u" [%(RU_L)s%(RU_U)s]{2,}! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\? [%(RU_U)s]+| [a-zA-Z]{2,}! [A-Z]+| [a-zA-Z]{2,}\\. [A-Z]+| [a-zA-Z]{2,}\\? [A-Z]+" % locals(),  # rus
         'zh': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # zho
         'es': u" [%(ES_L)s%(ES_U)s]+! [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\. [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\? [%(ES_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # spa
-        'ko': u"\\. |\\! |\\? |ㆍ| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # kor
+        'ko': u"\\. |\\! |\\? | [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # kor
         'ja': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # jpn
         'fr': u" [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
         'de': u" [%(DE_L)s%(DE_U)s]+! [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\. [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\? [%(DE_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        'it': u" [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        'it': u" [%(IT_L)s%(IT_U)s]+! [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\. [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\? [%(IT_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
         }
 
 
 def split_text(line_to_translate, lang='en', pattern=""):
     marked_text = line_to_translate
+    # Убираем всякие палёные подобия пробелов и заменяем на кошеrные
+    marked_text = marked_text.replace(u"\xa0", " ")
     num_in_text = 1
 
     def repl_in_text(matchobj):
@@ -65,8 +69,13 @@ def split_text(line_to_translate, lang='en', pattern=""):
         return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
 
     def repl(matchobj):
-        if lang in ['en', 'ru', 'fr', 'es']:
-            return matchobj.group(0)[:-2] + u'†' + matchobj.group(0)[-2:]
+        if lang in ['en', 'ru', 'fr', 'es', 'de', 'it']:
+            # print matchobj.group(0)
+            line = matchobj.group(0)
+            line = line.replace(u". ", u".† ")
+            line = line.replace(u"! ", u"!† ")
+            line = line.replace(u"? ", u"?† ")
+            return line
         else:
             return matchobj.group(0) + u'†'
 
@@ -75,7 +84,8 @@ def split_text(line_to_translate, lang='en', pattern=""):
         # чтобы не ломался re.sub далее
         return re.sub(r'([()]|[\[\]]|[\*]|[\?])', r'\\\1', string)
 
-    text = re.sub("\n{2,}", "\n", line_to_translate)
+    # Убираем лишние пустые строки
+    text = re.sub("\n{2,}", "\n", marked_text)
     out_list = []
     for new_line in text.split("\n"):
         new_line = new_line.strip()
@@ -106,6 +116,7 @@ def parse_glossary(file_on_disk, filetype):
         # открываем файл
         for line in file_to_show:
             if not line == '':
+                print line
                 if filetype in ['text/plain', 'application/octet-stream']:
                     # и режем либо по запятым, либо по табам
                     array.append(line.decode('utf-8').rstrip().split('\t', 1))
