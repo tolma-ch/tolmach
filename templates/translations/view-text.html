@@ -39,7 +39,7 @@
 
                     <div class="translation__sentence-translation-result">
                         <div class="translation__sentence-translation-switcher"
-                             ng-show="!!entry.translations.length">
+                             ng-show="translationAllowed && !!entry.translations.length">
                             <div class="switcher">
                             <span class="switcher__button"
                                   ng-class="{'switcher__button_active': entry.mode !== 1}"
