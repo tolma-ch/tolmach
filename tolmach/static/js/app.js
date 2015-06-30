@@ -28,7 +28,7 @@
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.userIsManager = false;
-            $http.post('/api/get-entries/', {text: textId}).success(function (data) {
+            $http.get('/api/entry/', {params: {text: textId}}).success(function (data) {
                 var entries = data['entries'];
                 $scope.userIsManager = !!data['user_is_manager'];
                 $scope.langPair = data['lang_pair'];
@@ -193,6 +193,23 @@
                 entry.suggestion = translation.body;
                 entry.suggestionId = translation.id;
             };
+            $scope.voteTranslation = function (entry, translation) {
+                translation.busy = true;
+                var vote = !translation.isVoted,
+                    data = {
+                        text: textId,
+                        entry: translation.id,
+                        vote: vote ? 1 : 0
+                    };
+                translation.isVoted = vote;
+                $http.post('/api/entry/vote/', data).success(function (data) {
+                    translation.busy = false;
+                }).error(function (data) {
+                    translation.isVoted = !vote;
+                    translation.busy = false;
+                })
+
+            };
             $scope.cancelEditing = function (entry) {
                 entry.mode = 0;
                 entry.suggestion = '';
@@ -337,6 +354,30 @@
 
                 modalInstance.result.then(function (text) {
                     $scope.texts.push(text);
+                }, function () {
+                });
+            };
+            $scope.editText = function (text) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'editTextModal.html',
+                    controller: 'EditTextModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        text: function () {
+                            return text;
+                        },
+                        glossaries: function () {
+                            return $scope.glossaries;
+                        },
+                        tmxes: function () {
+                            return $scope.tmxes;
+                        },
+                    }
+                });
+
+                modalInstance.result.then(function (text) {
+                    //$scope.texts.push(text);
                 }, function () {
                 });
             };
@@ -544,6 +585,50 @@
                 $modalInstance.dismiss('cancel');
             };
         })
+        .controller('EditTextModalCtrl', function ($scope, $modalInstance, $http, text, glossaries, tmxes) {
+            $scope.text = text;
+            $scope.glossaries = glossaries;
+            $scope.tmxes = tmxes;
+            $scope.tab = 0;
+            $scope.ok = function () {
+                if (!$scope.text.title) {
+                    $scope.error = 'Where is the title?';
+                    return;
+                }
+                if (!$scope.text.subject) {
+                    $scope.error = 'Subject is lost';
+                    return;
+                }
+                if (!$scope.text.sourceLang || !$scope.text.targetLang) {
+                    $scope.error = 'Langauges is not set?';
+                    return;
+                }
+                $scope.error = '';
+                var data = {
+                    project: window['projectId'],
+                    title: $scope.text.title,
+                    subject: $scope.text.subject,
+                    sourceLang: $scope.text.sourceLang,
+                    targetLang: $scope.text.targetLang,
+                    glossaries: $scope.text.glossaries,
+                    tmxes: $scope.text.tmxes
+                };
+                $scope.busy = true;
+                $http.post('/api/text/', data)
+                    .success(function(text) {
+                        $modalInstance.close(text);
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
         .controller('AddGlossaryModalCtrl', function ($scope, $modalInstance, $http, glossary, Upload) {
             $scope.glossary = glossary || {
                 rows: [['', '']]
@@ -686,10 +771,11 @@
 
                     return '<span ng-show="entry !== activeEntry || entry.mode !== 1">'
                                 + elem.html() + '</span>' +
-                           '<span ng-show="entry === activeEntry && entry.mode === 1"' +
+                           '<span ng-show="entry === activeEntry && entry.mode === 1" ' +
                                  'class="glossary-word" ' +
                                  'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                                  'tooltip-append-to-body="true" ' +
+                                 'tooltip-placement="top" ' +
                                  'tooltip="\'' + word + '\'">'
                                 + elem.html() + '</span>';
                 },

@@ -10,7 +10,7 @@ from django.conf import settings
 from entries.models import Subject
 from entries.models import Language
 from translations import utils
-from translations.decorators import get_text, accept_project
+from translations.decorators import accept_text, accept_project
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
 
@@ -123,41 +123,28 @@ def participant_ajax(request, project):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@accept_project
 @login_required
-def text_ajax(request):
+def text_ajax(request, project):
     if request.method == 'GET':
-        if 'project' not in request.GET:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        project_id = request.GET['project']
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         texts = Text.objects.filter(project=project).all()
         result = []
         for text in texts:
             result.append({
                 'id': text.id,
                 'title': text.title,
+                'subject': text.subject.id,
                 'progress': text.get_progress(),
                 'sourceLang': str(text.source_lang),
-                'targetLang': str(text.target_lang)
+                'sourceLangId': text.source_lang.id,
+                'targetLang': str(text.target_lang),
+                'targetLangId': text.target_lang.id,
+                'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
+                'tmxes': [int(x) for x in text.tmdatabases.splut(',')] if text.tmdatabases else []
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         post = json.loads(request.body)
-        if 'project' not in post:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        try:
-            project = Project.objects.get(id=post['project'])
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         # TODO accept file
         try:
             source_lang = Language.objects.get(id=post['sourceLang'])
@@ -172,48 +159,54 @@ def text_ajax(request):
         except Subject.DoesNotExist:
             return HttpResponse(json.dumps(_('Subject not found')), content_type="application/json", status=400)
 
-        sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+        if 'id' in post:
+            text = Text.objects.get(id=post['id'])
+            text.title = post['title']
+            text.subject = subject
+            text.source_lang = source_lang
+            text.target_lang = target_lang
+            text.glossaries = ','.join(post['glossaries'])
+            text.tmdatabases = ','.join(post['tmxes'])
+            text.save()
+        else:
+            sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
 
-        new_text = Text(title=post['title'],
-                        body=marked_text,
-                        project=project,
-                        subject=subject,
-                        source_lang=source_lang,
-                        target_lang=target_lang,
-                        )
-        new_text.save()
-        for idx, sent in enumerate(sentences, start=1):
-            print sent
-            txt_entry = TextEntry(body=sent,
-                                  text=new_text,
-                                  id_in_text=idx,
-                                  author=request.user,
-                                  )
-            txt_entry.save()
+            text = Text(title=post['title'],
+                            body=marked_text,
+                            project=project,
+                            subject=subject,
+                            source_lang=source_lang,
+                            target_lang=target_lang,
+                            )
+            text.save()
+            for idx, sent in enumerate(sentences, start=1):
+                print sent
+                txt_entry = TextEntry(body=sent,
+                                      text=text,
+                                      id_in_text=idx,
+                                      author=request.user,
+                                      )
+                txt_entry.save()
         result = {
-            'id': new_text.id,
-            'title': new_text.title,
-            'progress': new_text.get_progress(),
-            'sourceLang': str(new_text.source_lang),
-            'targetLang': str(new_text.target_lang)
+            'id': text.id,
+            'title': text.title,
+            'subject': text.subject.id,
+            'progress': text.get_progress(),
+            'sourceLang': str(text.source_lang),
+            'sourceLangId': text.source_lang.id,
+            'targetLang': str(text.target_lang),
+            'targetLangId': text.target_lang.id,
+            'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
+            'tmxes': [int(x) for x in text.tmdatabases.splut(',')] if text.tmdatabases else []
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@accept_project
 @login_required
-def glossary_ajax(request):
+def glossary_ajax(request, project):
     if request.method == 'GET':
-        if 'project' not in request.GET:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        project_id = request.GET['project']
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         if 'glossary' in request.GET:
             try:
                 glossary = Glossary.objects.get(id=request.GET['glossary'])
@@ -325,19 +318,10 @@ def glossary_ajax(request):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@accept_project
 @login_required
-def tmx_ajax(request):
+def tmx_ajax(request, project):
     if request.method == 'GET':
-        if 'project' not in request.GET:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        project_id = request.GET['project']
-        try:
-            project = Project.objects.get(id=project_id)
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         if 'tmx' in request.GET:
             try:
                 tmx = TMDatabase.objects.get(id=request.GET['tmx'])
@@ -615,60 +599,87 @@ def tmx_ajax(request):
 
 
 @login_required
-@get_text
-def get_entries_ajax(request, text):
-    if not request.method == 'POST':
-        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
-    post = json.loads(request.body)
-
-    all_text_entries = TextEntry.objects.filter(text=text)
-    base_entries = []
-    for entry in all_text_entries:
-        if not entry.parent_entry:
-            base_entries.append(entry)
+@accept_text
+def entry_ajax(request, action, text):
     result = []
-    for entry in base_entries:
-        transtlations = []
-        approved = False
-        approved_text = ''
-        user_translation_text = ''
-        for translation in all_text_entries:
-            if translation.parent_entry == entry:
-                transtlations.append(
-                    {
-                        'id': translation.id,
-                        'parentId': entry.id,
-                        'body': translation.body,
-                        'author': translation.author.id,
-                        'isApproved': translation.is_approved,
-                    }
-                )
-                if translation.is_approved:
-                    approved_text = translation.body
-                if translation.author.id == request.user.id:
-                    user_translation_text = translation.body
-                approved = approved or translation.is_approved
-        # каждую entry проверяем на наличие в ней слов из словаря
-        # и оборачиваем нужным тегом
-        entry_body = entry.body
-        if not text.glossaries == '':
-            entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
-        result.append({
-            'id': entry.id,
-            'idInText': entry.id_in_text,
-            # 'body': entry.body,
-            'rawBody': entry.body,
-            'body': entry_body,
-            'translations': transtlations,
-            'approved': approved,
-            'translation': approved_text or user_translation_text or entry.body
-        })
-    return HttpResponse(json.dumps({
-                                   'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
-                                   'user_is_manager': text.project.is_user_manager(request.user),
-                                   'user': request.user.id,
-                                   'entries': result
-                                   }, ensure_ascii=False), content_type="application/json")
+    if request.method == 'GET':
+        all_text_entries = TextEntry.objects.filter(text=text)
+        base_entries = []
+        for entry in all_text_entries:
+            if not entry.parent_entry:
+                base_entries.append(entry)
+        entries = []
+        for entry in base_entries:
+            translations = []
+            approved = False
+            approved_text = ''
+            user_translation_text = ''
+            for translation in all_text_entries:
+                if translation.parent_entry == entry:
+                    voters = translation.voters.split(',') if translation.voters else []
+                    translations.append(
+                        {
+                            'id': translation.id,
+                            'parentId': entry.id,
+                            'body': translation.body,
+                            'author': {
+                                'id': translation.author.id,
+                                'name': translation.author.username
+                            },
+                            'isApproved': translation.is_approved,
+                            'isVoted': str(request.user.id) in voters,
+                        }
+                    )
+                    if translation.is_approved:
+                        approved_text = translation.body
+                    if translation.author.id == request.user.id:
+                        user_translation_text = translation.body
+                    approved = approved or translation.is_approved
+            # каждую entry проверяем на наличие в ней слов из словаря
+            # и оборачиваем нужным тегом
+            entry_body = entry.body
+            if not text.glossaries == '':
+                entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
+            entries.append({
+                'id': entry.id,
+                'idInText': entry.id_in_text,
+                # 'body': entry.body,
+                'rawBody': entry.body,
+                'body': entry_body,
+                'translations': translations,
+                'approved': approved,
+                'translation': approved_text or user_translation_text or entry.body
+            })
+        result = {
+           'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
+           'user_is_manager': text.project.is_user_manager(request.user),
+           'user': request.user.id,
+           'entries': entries
+        }
+    elif request.method == 'POST':
+        params = request.POST or json.loads(request.body)
+        if action == 'vote':
+            user = request.user
+            vote = params['vote']
+            result = vote
+            entry = TextEntry.objects.get(id=params['entry'])
+            # TODO not use decorator in this case
+            text = entry.text
+            if not text.is_user_allowed_to_read(user):
+                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+            voters = entry.voters.split(',') if not entry.voters == '' else []
+            if vote and not str(user.id) in voters:
+                voters.append(str(user.id))
+                entry.vote = len(voters)
+                entry.voters = ','.join(voters)
+                entry.save()
+            elif not vote and str(user.id) in voters:
+                voters.remove(str(user.id))
+                entry.vote = len(voters)
+                entry.voters = ','.join(voters)
+                entry.save()
+
+    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
 
 
 @login_required

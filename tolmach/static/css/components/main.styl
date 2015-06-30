@@ -1,15 +1,11 @@
-html, body 
+html, body
 	height 100%
 	font-family 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif
 
 
 body > .main 
 	min-height 100%
-	padding-bottom 72px
 	height auto
-
-	&.auth
-		padding-bottom 200px
 
 .stripy-heading
 	text-align center
@@ -88,7 +84,7 @@ body > .main
 		text-shadow 0 0 4px #fff
 
 .profile-container
-	width 1004px
+	max-width 1004px
 	margin: 0 auto;
 
 .profile-sidebar
@@ -97,12 +93,19 @@ body > .main
 	float left
 
 .profile-content
-	width 744px
 	margin-left 260px
 	margin-right 0
 	margin-top 0
 	min-height 100%
 	padding 0
+
+@media (max-width: 755px)
+	.profile-content
+		margin 0
+	.profile-sidebar
+		width auto
+		margin 0
+		float none
 
 .main-content
 	clearfix()
@@ -115,35 +118,6 @@ body > .main
 		background #d9d9d9
 		color #fff
 		font-weight 300
-
-@media (max-width: 1049px)
-	.container
-		width 725px
-
-	.footer-container
-		width 705px
-
-	.footer-data
-		width 505px
-
-		&__list
-			width 215px
-
-			&:last-child
-				display none
-	.content
-		float left
-		width 444px
-
-@media (max-width:979px)
-	.content
-		width 444px
-
-
-@media (max-width: 767px)
-	body
-		padding 0
-
 
 .scrollable
 	height 600px

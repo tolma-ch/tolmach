@@ -200,7 +200,7 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/projects/')
 
     pr = Project.objects.get(id=proj_id)
-    if not pr.is_user_manager(request.user) or not pr.is_user_allowed(request.user):
+    if not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
 

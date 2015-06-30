@@ -36,23 +36,23 @@
 		padding-left 0
 		float left
 		margin-top 20px
+		margin-left 0
 		clearfix()
 
 		&__item
 			list-style-type none
 			float left
-			width 135px
-			margin-right 20px
+			width 29%
+			margin-right 4%
 
 	&-column
 		box-sizing border-box
-		width 135px
 		height 270px
 		position relative
 		background url('/static/images/profile-data/column-back.png')
 
 		&__value
-			width 64px
+			width 48%
 			position absolute
 			bottom 0
 			background #666
@@ -64,10 +64,11 @@
 				right 0
 
 	&__total
-		float right
-		height 270px
+		float left
+		/*height 270px*/
 		padding 55px 0
 		margin-top 20px
+		max-width 270px
 
 		&-title,
 		&-sentences
@@ -79,7 +80,6 @@
 			font-size 110px
 			color $headerColor
 			line-height 82px
-			text-align center
 
 	&__recent-progress
 		text-align center
@@ -125,22 +125,17 @@
 			text-align right
 
 
-@media (max-width: 1049px)
+@media (max-width: 1242px)
 	.user-statistics
 		position relative
 		clearfix()
-		
-		&__translations
-			width 444px
-			margin-left 20px
-			float right
+
+		&-list
+			width 100%
 
 		&__total
-			position absolute
-			top 30px
-			right 0
+			float none
 			padding 0
-			height auto
 			margin-top 0
 
 			&-title,
@@ -175,11 +170,14 @@
 				padding 5px 10px 0
 				text-align right
 
-@media (max-width: 979px) 
+@media (max-width: 495px)
 	.user-statistics
-		position relative
-		clearfix()
+		&-list
+			width auto
+			float none
 
-		
-
-		
+			&__item
+				list-style-type none
+				float none
+				width auto
+				margin-right 20px
