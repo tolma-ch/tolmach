@@ -1,32 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 import re
 import os
 from translations.models import GlossaryEntry
 
 
-RU_U = u"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
-RU_L = u"абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
+RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
+RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
 
-EN_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ.…“”«»()'\""
-EN_L = u"abcdefghijklmnopqrstuvwxyz.…“”«»()'\""
+EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\""
+EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\""
+EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ…“”«»()'\""
-DE_L = u"abcdefghijklmnopqrstuvwxyzäöüß…“”«»()'\""
+DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\""
+DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\""
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890…“”«»\\(\\)'\""
-FR_L = u"abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890…“”«»\\(\\)'\""
+FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\""
+FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\""
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
-ES_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÑ…“”«»()'\""
-ES_L = u"abcdefghijklmnopqrstuvwxyzñ…“”«»()'\""
+# http://www.donquijote.org/culture/spain/languages/spanish-accents
+ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\""
+ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\""
 
 # http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = u"ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ…“”«»()'\""
-IT_L = u"abcdefghijklmnopqrstuvwxyzàèéìíîòóùú…“”«»()'\""
+IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\""
+IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\""
 
 KOR = "[가-힣]"
 
@@ -45,39 +48,48 @@ KOR = "[가-힣]"
 # +----+----------+------+
 
 SPLIT_PATTERN = {
-        #'en': u" [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
-        'en': u" [%(EN_L)s%(EN_U)s]+! [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\. [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\? [%(EN_U)s]+" % locals(),  # eng
-        'ru': u" [%(RU_L)s%(RU_U)s]{2,}! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\? [%(RU_U)s]+| [a-zA-Z]{2,}! [A-Z]+| [a-zA-Z]{2,}\\. [A-Z]+| [a-zA-Z]{2,}\\? [A-Z]+" % locals(),  # rus
-        'zh': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # zho
-        'es': u" [%(ES_L)s%(ES_U)s]+! [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\. [%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\? [%(ES_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # spa
-        'ko': u"\\. |\\! |\\? | [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # kor
-        'ja': u"。”|。| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+",  # jpn
-        'fr': u" [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        'de': u" [%(DE_L)s%(DE_U)s]+! [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\. [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\? [%(DE_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        'it': u" [%(IT_L)s%(IT_U)s]+! [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\. [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\? [%(IT_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        #'en': " [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
+        'en': " [%(EN_L)s%(EN_U)s]+! [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\. [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\? [%(EN_U)s]+" % locals(),  # eng
+        'ru': " [%(RU_L)s%(RU_U)s]{2,}! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\? [%(RU_U)s]+| [a-zA-Z]{2,}! [A-Z]+| [a-zA-Z]{2,}\\. [A-Z]+| [a-zA-Z]{2,}\\? [A-Z]+" % locals(),  # rus
+        'zh': "？!”|？!|。”|。|？”|？|\\. |\\! |\\?",  # zho
+        'es': " [%(ES_L)s%(ES_U)s]+! ¿?¡?[%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\. ¿?¡?[%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\? ¿?¡?[%(ES_U)s]+" % locals(),  # spa
+        'ko': "\\. |\\! |\\?",  # kor
+        'ja': "。”|。",  # jpn
+        'fr': " [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        'de': " [%(DE_L)s%(DE_U)s]+! [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\. [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\? [%(DE_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
+        'it': " [%(IT_L)s%(IT_U)s]+! [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\. [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\? [%(IT_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
         }
 
 
 def split_text(line_to_translate, lang='en', pattern=""):
     marked_text = line_to_translate
     # Убираем всякие палёные подобия пробелов и заменяем на кошеrные
-    marked_text = marked_text.replace(u"\xa0", " ")
+    marked_text = marked_text.replace("\xa0", " ")
     num_in_text = 1
 
     def repl_in_text(matchobj):
-        # print u" === " + matchobj.group(0) + u" === "
-        return u"<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + u"</span>"
+        # print " === " + matchobj.group(0) + " === "
+        return "<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + "</span>"
 
     def repl(matchobj):
-        if lang in ['en', 'ru', 'fr', 'es', 'de', 'it']:
+        if lang == 'en':
             # print matchobj.group(0)
             line = matchobj.group(0)
-            line = line.replace(u". ", u".† ")
-            line = line.replace(u"! ", u"!† ")
-            line = line.replace(u"? ", u"?† ")
+            # Игнорируем популярные сокращения, которые не являются концом предложения сами по себе
+            if line.split(".")[0].lstrip().lower() not in ["mr", "mrs", "ms", "dr", "sr", "jr"]:
+                line = line.replace(". ", ".† ")
+                line = line.replace("! ", "!† ")
+                line = line.replace("? ", "?† ")
+            return line
+        elif lang in ['ru', 'fr', 'es', 'de', 'it']:
+            # print matchobj.group(0)
+            line = matchobj.group(0)
+            line = line.replace(". ", ".† ")
+            line = line.replace("! ", "!† ")
+            line = line.replace("? ", "?† ")
             return line
         else:
-            return matchobj.group(0) + u'†'
+            return matchobj.group(0) + '†'
 
     def escape_brackets(string):
         # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
@@ -93,16 +105,16 @@ def split_text(line_to_translate, lang='en', pattern=""):
         # добавляем после конца предложения спец.символ для разделения
         new_line = re.sub(SPLIT_PATTERN[lang], repl, new_line)
         # делим по заданному спец.символу
-        new_line = re.split(u'†', new_line)
+        new_line = re.split('†', new_line)
         for i in new_line:
             if not i == '':
                 # removing extra spaces/tabs from beginning/end of the line
-                out_list.append(i.strip(u"　     "))
+                out_list.append(i.strip("　     "))
                 # берём предложение i, с помощью escape_brackets бэкслешим скобки круглые и квадратные,
                 # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как
                 # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                sent_to_mark = u"(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip(u"　     ")) + u"(?!</span>)"
+                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip("　     ")) + "(?!</span>)"
                 # print sent_to_mark
                 marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                 num_in_text += 1
@@ -144,7 +156,7 @@ def parse_glossary_text(text, filetype):
 def glossary_to_entry(entry_body, glossary_list):
     def highlight_word(target_word):
         def repl_in_text(matchobj):
-            return u"<span data-glossary-word=\"%s\">" % target_word + matchobj.group(0) + u"</span>"
+            return "<span data-glossary-word=\"%s\">" % target_word + matchobj.group(0) + "</span>"
         return repl_in_text
     body_to_return = entry_body
 

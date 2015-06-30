@@ -4,6 +4,11 @@ from django.test import TestCase
 from translations import utils
 
 
+def print_results(sentences):
+    for sent in sentences:
+        print "u\"" + sent + "\","
+
+
 class TextSplitTest(TestCase):
     maxDiff = None
 
@@ -19,7 +24,7 @@ Then, what do you do with sessions that set variables? Do you restrict those ses
 
 Over the last few years, a few products have tried to tackle the read/write split challenge. The MySQL_proxy was the first attempt I am aware of at solving this problem but it ended up with many limitations. ScaleARC does a much better job and is very usable but it stills has some limitations. The latest contender is MaxScale from MariaDB and this post is a road story..."? Of my first implementation of MaxScale for a customer.
 
-Let me first introduce what is MaxScale exactly. MaxScale is an open source project, developed by MariaDB, that aims to be a modular proxy for MySQL. Most of the functionality in MaxScale is implemented as modules, which includes for example, modules for the MySQL protocol, client side and server side.
+Let me first introduce what is MaxScale exactly. MaxScale is an open source project, developed by MariaDB, that aims to be a modular proxy for MySQL. Most of the functionality in MaxScale is implemented as modules, which includes for example, modules for the MySQL protocol, client side and server side. Yes, yes, my dear sir - and I do know your name, Mr. Bilbo Baggins. Dr. Watson, what's going on? What if we will use some mrakable. Info? After a while he stepped up, and with the spike of his staff scratched a queer sign on the hobbit's beautiful green front-door. Then he strode away, just about the time when Bilbo was finishing his second cake and beginning to think that he had escape adventures very well.
         """
         good_result = [u'Ever since MySQL replication has existed, people have dreamed of a good solution to automatically split read from write operations, sending the writes to the MySQL master and load balancing the reads over a set of MySQL slaves.',
                        u'While if at first it seems easy to solve, the reality is far more complex.',
@@ -40,7 +45,13 @@ Let me first introduce what is MaxScale exactly. MaxScale is an open source proj
                        u'Of my first implementation of MaxScale for a customer.',
                        u'Let me first introduce what is MaxScale exactly.',
                        u'MaxScale is an open source project, developed by MariaDB, that aims to be a modular proxy for MySQL.',
-                       u'Most of the functionality in MaxScale is implemented as modules, which includes for example, modules for the MySQL protocol, client side and server side.',]
+                       u'Most of the functionality in MaxScale is implemented as modules, which includes for example, modules for the MySQL protocol, client side and server side.',
+                       u'Yes, yes, my dear sir - and I do know your name, Mr. Bilbo Baggins.',
+                       u"Dr. Watson, what's going on?",
+                       u'What if we will use some mrakable.',
+                       # TODO: Проблема с однословными предложениями. Похоже, re не умеет перекрещивающиеся совпадения
+                       u"Info? After a while he stepped up, and with the spike of his staff scratched a queer sign on the hobbit's beautiful green front-door.",
+                       u"Then he strode away, just about the time when Bilbo was finishing his second cake and beginning to think that he had escape adventures very well."]
         sentences, marked_text = utils.split_text(text_to_split, 'en')
         self.assertEqual(sentences, good_result)
 
@@ -99,4 +110,153 @@ L'OMS et les autorités nationales n'ont pas émis de restrictions aux voyages v
                        u"В украинской националистической историографии того же времени уточняющий термин «Киевская Русь» не был особо популярным, поскольку подразумевал существование других форм или проявлений Руси (будь то в географическом или хронологическом смысле).",
                        u"Основоположник украинской исторической школы М. С. Грушевский им почти не пользовался, предпочитая термины «Киевское государство» или «Руська держава» («Русское государство», противопоставленное в его версии государству Московскому).",]
         sentences, marked_text = utils.split_text(text_to_split, 'ru')
+        self.assertEqual(sentences, good_result)
+
+    def test_zh_split(self):
+        text_to_split = u"""
+        “你们来这里拍电影？”赵红旗问。“这里有什么好拍的？”
+
+“这个电影是写生活在煤矿的几个初中生的故事。”我说。
+
+“什么样的故事？”
+
+“土匪老妈还差不多。”老板娘笑着回敬了一句，抓了把瓜子，到外面跟厨师聊天去了。
+
+我们吃完饭出来，天黑得透透的，星星像是从很远的地方射过来的长矛，穿透黑夜的帷幕，露出点点银亮的矛尖。镇子很静，在酒桌上听了那些故事以后，这种静谧变得阴险和杀机重重了。
+
+小莫家的旅馆是一栋两层小楼，一共八个房间，厕所是公用的，没有洗澡间。惟一一间带浴室的房间，是小莫自己用的，他带我们去看他的浴盆，他介绍那两条金龙鱼的样子就好像它们是他的儿子。
+
+第二天一早起来，夏末秋初的季节，洗脸的水居然冰手。洗过脸后，神清气爽，我们散步走过两条街，去昨天吃过饭的饭店？!街上不少骑自行车上班的人，铃声嘀铃铃响，树上还有雾气没有褪尽，像丝丝缕缕的白絮。空气又凉又湿，有重量似的。
+
+赵红旗和张景乾先到了，餐桌上面摆着煮鸡蛋，馒头，葱油饼，小米粥，几个凉菜都是大盘的，老板娘跟我们打了声招呼就进了厨房，接着听到里面一阵声响，她又端出四盘热菜来。
+
+“弄得太隆重了，”我说，“平时我们都不吃早餐的。”
+
+“也没什么好吃的，你们将就将就，”赵红旗说，“晚上我看看能不能弄个野狍子，烤着吃吃。”
+
+“千万别，”我们几个直摆手，连说好几遍，务必让赵红旗相信我们是认真的，不是跟他客气。
+
+“那吃蛤蟆吧，现在的蛤蟆最肥？!”赵红旗问小莫，“哎对了，老吴不是会捉蛇吗？让他捉两条来。”
+
+“千万别千万别。”我们又开始猛摆手。
+
+“我最怕蛇了。”我说。
+
+“切成段炖熟了，你根本看不出是什么玩意儿。”小莫说，“女孩儿吃毒蛇还美容呢，脸上不长疙瘩。”
+
+“我宁可长疙瘩。”我说。
+
+周为和方磊也坚决反对吃蛇，“从现在开始除了绿叶儿的东西其他的我们都不吃了。”
+
+张景乾让我们逗笑了，对赵红旗说，“给他们弄点儿新鲜榛蘑炖老母鸡。”
+
+吃完了饭，张景乾去上班，赵红旗开车，带着小莫跟我们去山上。公路像层层捆缚山的绳索，我们像砣螺似的转了一圈儿又一圈儿，往下面看时，松树镇变成了一个漏斗的底坐。又开了一会儿，一些小煤窑开始出现在我们眼前，规模不大，大部分是斜井，往外运煤的小火车车厢，跟棺材差不多大小，开动的时候晃里晃当地响。工人们每天坐着这些小火车进掌子面工作，下班再坐这小火车出来。
+
+赵红旗和小莫谁都认识，方磊和周为拿着摄像机取景的时候，他们跟煤窑主，或者主管聊天。
+
+他们无一例外地问我们是干什么的。赵红旗说我们是拍电影的，他们的回答全都一样，“这地方有什么好拍的？!”
+
+“是煤矿里一些中学生的故事。”赵红旗说。
+
+他们很快谈起真正关心的事情，贮藏量怎么样？煤质如何？找到买家没有？今年冬天的煤价是涨还是降？他们都为钱焦虑，工人的工资拖欠得太久了，再不赶紧把煤发走弄回钱来，不知道哪天刨煤的大镐头就刨到他们的脑袋上了。
+        """
+        good_result = [u"“你们来这里拍电影？”",
+                       u"赵红旗问。",
+                       u"“这里有什么好拍的？”",
+                       u"“这个电影是写生活在煤矿的几个初中生的故事。”",
+                       u"我说。",
+                       u"“什么样的故事？”",
+                       u"“土匪老妈还差不多。”",
+                       u"老板娘笑着回敬了一句，抓了把瓜子，到外面跟厨师聊天去了。",
+                       u"我们吃完饭出来，天黑得透透的，星星像是从很远的地方射过来的长矛，穿透黑夜的帷幕，露出点点银亮的矛尖。",
+                       u"镇子很静，在酒桌上听了那些故事以后，这种静谧变得阴险和杀机重重了。",
+                       u"小莫家的旅馆是一栋两层小楼，一共八个房间，厕所是公用的，没有洗澡间。",
+                       u"惟一一间带浴室的房间，是小莫自己用的，他带我们去看他的浴盆，他介绍那两条金龙鱼的样子就好像它们是他的儿子。",
+                       u"第二天一早起来，夏末秋初的季节，洗脸的水居然冰手。",
+                       u"洗过脸后，神清气爽，我们散步走过两条街，去昨天吃过饭的饭店？!",
+                       u"街上不少骑自行车上班的人，铃声嘀铃铃响，树上还有雾气没有褪尽，像丝丝缕缕的白絮。",
+                       u"空气又凉又湿，有重量似的。",
+                       u"赵红旗和张景乾先到了，餐桌上面摆着煮鸡蛋，馒头，葱油饼，小米粥，几个凉菜都是大盘的，老板娘跟我们打了声招呼就进了厨房，接着听到里面一阵声响，她又端出四盘热菜来。",
+                       u"“弄得太隆重了，”我说，“平时我们都不吃早餐的。”",
+                       u"“也没什么好吃的，你们将就将就，”赵红旗说，“晚上我看看能不能弄个野狍子，烤着吃吃。”",
+                       u"“千万别，”我们几个直摆手，连说好几遍，务必让赵红旗相信我们是认真的，不是跟他客气。",
+                       u"“那吃蛤蟆吧，现在的蛤蟆最肥？!”",
+                       u"赵红旗问小莫，“哎对了，老吴不是会捉蛇吗？",
+                       u"让他捉两条来。”",
+                       u"“千万别千万别。”",
+                       u"我们又开始猛摆手。",
+                       u"“我最怕蛇了。”",
+                       u"我说。",
+                       u"“切成段炖熟了，你根本看不出是什么玩意儿。”",
+                       u"小莫说，“女孩儿吃毒蛇还美容呢，脸上不长疙瘩。”",
+                       u"“我宁可长疙瘩。”",
+                       u"我说。",
+                       u"周为和方磊也坚决反对吃蛇，“从现在开始除了绿叶儿的东西其他的我们都不吃了。”",
+                       u"张景乾让我们逗笑了，对赵红旗说，“给他们弄点儿新鲜榛蘑炖老母鸡。”",
+                       u"吃完了饭，张景乾去上班，赵红旗开车，带着小莫跟我们去山上。",
+                       u"公路像层层捆缚山的绳索，我们像砣螺似的转了一圈儿又一圈儿，往下面看时，松树镇变成了一个漏斗的底坐。",
+                       u"又开了一会儿，一些小煤窑开始出现在我们眼前，规模不大，大部分是斜井，往外运煤的小火车车厢，跟棺材差不多大小，开动的时候晃里晃当地响。",
+                       u"工人们每天坐着这些小火车进掌子面工作，下班再坐这小火车出来。",
+                       u"赵红旗和小莫谁都认识，方磊和周为拿着摄像机取景的时候，他们跟煤窑主，或者主管聊天。",
+                       u"他们无一例外地问我们是干什么的。",
+                       u"赵红旗说我们是拍电影的，他们的回答全都一样，“这地方有什么好拍的？!”",
+                       u"“是煤矿里一些中学生的故事。”",
+                       u"赵红旗说。",
+                       u"他们很快谈起真正关心的事情，贮藏量怎么样？",
+                       u"煤质如何？",
+                       u"找到买家没有？",
+                       u"今年冬天的煤价是涨还是降？",
+                       u"他们都为钱焦虑，工人的工资拖欠得太久了，再不赶紧把煤发走弄回钱来，不知道哪天刨煤的大镐头就刨到他们的脑袋上了。",]
+        sentences, marked_text = utils.split_text(text_to_split, 'zh')
+        self.assertEqual(sentences, good_result)
+
+    def test_es_split(self):
+        text_to_split = u"""
+        Al cabo de un tiempo la princesa, que estaba deseando tener inteligencia, dijo a Riquete el del Copete que se comprometía a casarse con él dentro de un año.
+
+Desde ese mismo instante algo cambió en la princesa. Podía expresarse fácilmente y lo hacía con gran corrección y exquisitos modales. Cuando volvió al palacio todo el mundo quedó maravillado ante el cambio tan extraordinario que había experimentado y no tardaron en llegar príncipes de reinos vecinos que buscaban conquistar su corazón.
+
+Llegó uno rico y apuesto y aunque le gustó desde el primer momento decidió ir a pensar al bosque. Allí se encontró con un grupo numeroso de cocineros que preparaban un gran banquete.
+
+Pero cuando preguntó para quien trabajaban le respondieron que para la boda del príncipe Riquete el del Copete que se celebraba al día siguiente. ¡La princesa lo había olvidado por completo al volverse inteligente y olvidar todas sus tonterías!
+
+En ese momento el príncipe Riquete el del Copete apareció por allí.
+
+- Disculpadme pero creo que no voy a poder corresponderos como vos esperáis.
+- ¿Por qué? ¿Qué ha ocurrido? ¿Hay algo en mi que no sea mi fealdad y no os guste?
+- No no lo hay. Sois un hombre inteligente, bueno y educado
+- Entonces está en vuestra mano convertirme en el hombre más bello de entre todos los hombres.
+- ¿En mi mano? - dijo la princesa sorprendida
+- La misma hada que me concedió el don de hacer inteligente a quien amase os concedió a vos al nacer el don de hacer hermosa a la persona a quien amáseis.
+- Nada me gustaría más. Deseo con todo mi corazón que os convirtáis en el príncipe más hermoso y agradable del mundo.
+
+Y en cuanto la princesa pronunció estas palabras Riquete el del Copete se convirtió en el hombre mejor plantado y más agradable que jamás había conocido.
+
+Hay quien dice que nada tuvo que ver el hada y que todo fue fruto del amor de la princesa, que fue capaz de hacerle ver todas las cualidades buenas de su amante por encima de la fealdad de su rostro y de su cuerpo.
+        """
+        good_result = [u"Al cabo de un tiempo la princesa, que estaba deseando tener inteligencia, dijo a Riquete el del Copete que se comprometía a casarse con él dentro de un año.",
+                       u"Desde ese mismo instante algo cambió en la princesa.",
+                       u"Podía expresarse fácilmente y lo hacía con gran corrección y exquisitos modales.",
+                       u"Cuando volvió al palacio todo el mundo quedó maravillado ante el cambio tan extraordinario que había experimentado y no tardaron en llegar príncipes de reinos vecinos que buscaban conquistar su corazón.",
+                       u"Llegó uno rico y apuesto y aunque le gustó desde el primer momento decidió ir a pensar al bosque.",
+                       u"Allí se encontró con un grupo numeroso de cocineros que preparaban un gran banquete.",
+                       u"Pero cuando preguntó para quien trabajaban le respondieron que para la boda del príncipe Riquete el del Copete que se celebraba al día siguiente.",
+                       u"¡La princesa lo había olvidado por completo al volverse inteligente y olvidar todas sus tonterías!",
+                       u"En ese momento el príncipe Riquete el del Copete apareció por allí.",
+                       u"- Disculpadme pero creo que no voy a poder corresponderos como vos esperáis.",
+                       u"- ¿Por qué?",
+                       u"¿Qué ha ocurrido?",
+                       u"¿Hay algo en mi que no sea mi fealdad y no os guste?",
+                       u"- No no lo hay.",
+                       u"Sois un hombre inteligente, bueno y educado",
+                       u"- Entonces está en vuestra mano convertirme en el hombre más bello de entre todos los hombres.",
+                       u"- ¿En mi mano?",
+                       u"- dijo la princesa sorprendida",
+                       u"- La misma hada que me concedió el don de hacer inteligente a quien amase os concedió a vos al nacer el don de hacer hermosa a la persona a quien amáseis.",
+                       u"- Nada me gustaría más.",
+                       u"Deseo con todo mi corazón que os convirtáis en el príncipe más hermoso y agradable del mundo.",
+                       u"Y en cuanto la princesa pronunció estas palabras Riquete el del Copete se convirtió en el hombre mejor plantado y más agradable que jamás había conocido.",
+                       u"Hay quien dice que nada tuvo que ver el hada y que todo fue fruto del amor de la princesa, que fue capaz de hacerle ver todas las cualidades buenas de su amante por encima de la fealdad de su rostro y de su cuerpo.",]
+        sentences, marked_text = utils.split_text(text_to_split, 'es')
+        # print_results(sentences)
         self.assertEqual(sentences, good_result)
