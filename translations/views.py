@@ -143,6 +143,11 @@ def projects(request):
                                          'time_created': ent.time_created,
                                          }]
 
+        proj.langpairs = []
+        for text in proj.texts:
+            if not {'source_lang': text.source_lang, 'target_lang': text.target_lang} in proj.langpairs:
+                proj.langpairs.append({'source_lang': text.source_lang, 'target_lang': text.target_lang})
+
     # Getting data about projects, user participating in
     if not meta.member_of == "":
         user_particip_list = Project.objects.filter(id__in=meta.member_of.split(','))
