@@ -146,15 +146,8 @@ def text_ajax(request, project):
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         post = json.loads(request.body)
+        print post
         # TODO accept file
-        try:
-            source_lang = Language.objects.get(id=post['sourceLang'])
-        except Language.DoesNotExist:
-            return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-        try:
-            target_lang = Language.objects.get(id=post['targetLang'])
-        except Language.DoesNotExist:
-            return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
         try:
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
@@ -164,12 +157,19 @@ def text_ajax(request, project):
             text = Text.objects.get(id=post['id'])
             text.title = post['title']
             text.subject = subject
-            text.source_lang = source_lang
-            text.target_lang = target_lang
-            text.glossaries = ','.join(post['glossaries'])
-            text.tmdatabases = ','.join(post['tmxes'])
+            text.glossaries = ','.join([str(x) for x in post['glossaries']])
+            text.tmdatabases = ','.join([str(x) for x in post['tmxes']])
             text.save()
         else:
+            try:
+                source_lang = Language.objects.get(id=post['sourceLang'])
+            except Language.DoesNotExist:
+                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+            try:
+                target_lang = Language.objects.get(id=post['targetLang'])
+            except Language.DoesNotExist:
+                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+
             sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
 
             text = Text(title=post['title'],
@@ -645,6 +645,7 @@ def entry_ajax(request, action, text):
         result = {
            'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
            'user_is_manager': text.project.is_user_manager(request.user),
+           'translation_allowed': text.is_user_allowed_to_write(request.user),
            'user': request.user.id,
            'entries': entries
         }
