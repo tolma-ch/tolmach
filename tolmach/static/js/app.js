@@ -31,6 +31,7 @@
             $http.get('/api/entry/', {params: {text: textId}}).success(function (data) {
                 var entries = data['entries'];
                 $scope.userIsManager = !!data['user_is_manager'];
+                $scope.translationAllowed = !!data['translation_allowed'];
                 $scope.langPair = data['lang_pair'];
                 $scope.user = data['user'];
                 var entriesById = {},
@@ -519,7 +520,9 @@
             };
         })
         .controller('AddTextModalCtrl', function ($scope, $modalInstance, $http, Upload) {
-            $scope.text = {};
+            $scope.text = {
+                subject: 1
+            };
             $scope.tab = 0;
             $scope.ok = function () {
                 if (!$scope.text.title) {
@@ -606,6 +609,7 @@
                 $scope.error = '';
                 var data = {
                     project: window['projectId'],
+                    id: $scope.text.id,
                     title: $scope.text.title,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
