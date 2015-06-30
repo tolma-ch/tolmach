@@ -13,6 +13,7 @@ from translations import utils
 from translations.decorators import accept_text, accept_project
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
+from translations.utils_ajax import translation_to_json
 
 
 @login_required
@@ -618,19 +619,9 @@ def entry_ajax(request, action, text):
             for translation in all_text_entries:
                 if translation.parent_entry == entry:
                     voters = translation.voters.split(',') if translation.voters else []
-                    translations.append(
-                        {
-                            'id': translation.id,
-                            'parentId': entry.id,
-                            'body': translation.body,
-                            'author': {
-                                'id': translation.author.id,
-                                'name': translation.author.username
-                            },
-                            'isApproved': translation.is_approved,
-                            'isVoted': str(request.user.id) in voters,
-                        }
-                    )
+                    translation_array = translation_to_json(translation)
+                    translation_array['isVoted'] = translation.is_voted(request.user)
+                    translations.append(translation_array)
                     if translation.is_approved:
                         approved_text = translation.body
                     if translation.author.id == request.user.id:
@@ -716,13 +707,9 @@ def translate_entry_ajax(request):
 
         project.last_modified = timezone.now()
         project.save()
-        return HttpResponse(json.dumps({
-            'id': translation.id,
-            'author': translation.author.id,
-            'parentId': entry.id,
-            'body': translation.body,
-            'isApproved': translation.is_approved,
-        }), content_type="application/json")
+        translation_array = translation_to_json(translation)
+        translation_array['isVoted'] = translation.is_voted(request.user)
+        return HttpResponse(json.dumps(translation_array), content_type="application/json")
 
 
 @login_required

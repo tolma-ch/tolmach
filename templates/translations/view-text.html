@@ -21,7 +21,7 @@
 
     <div class="translation" ng-controller="transCtrl">
         <h1 class="translation__title">{{ text.title }}</h1>
-        <div class="row">
+        <div class="row" ng-cloak>
             <div class="col-xs-12 col-sm-6">
                 <div class="scrollable" id="translations-container">
                 <h2 class="translation__variants-title">{{ trans_variants }}</h2>
@@ -111,7 +111,6 @@
                              ng-show="entry.mode === 0"
                              ng-repeat="translation in entry.translations"
                              ng-class="{
-                                'translation__sentence-suggestion_state_voted': translation.isVoted,
                                 'translation__sentence-suggestion_state_approved': translation.isApproved
                              }">
                             <div class="translation__sentence-suggestion-text">
@@ -120,29 +119,35 @@
                             <div class="translation__sentence-suggestion-author">
                                 <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                             </div>
-                            <div class="translation__sentence-suggestion-approve"
-                                 ng-show="userIsManager">
-                                <i class="fa fa-check-circle"
-                                   ng-click="approveEntry(translation, entry)"
-                                   ng-disabled="translation.busy"></i>
-                            </div>
-                            <div class="translation__sentence-suggestion-approved">
-                                <i class="fa fa-check"
+                            <div class="translation__sentence-suggestion-icons">
+                                <a class="active"
+                                   ng-show="translation.isApproved"
                                    ng-click="disapproveEntry(translation, entry)"
-                                   ng-disabled="translation.busy"></i>
-                            </div>
-                            <div class="translation__sentence-suggestion-edit"
-                                 ng-show="user == translation.author"
-                                 ng-click="editTranslation(entry, translation)"
-                                 ng-disabled="translation.busy">
-                                <i class="fa fa-pencil"></i>
-                            </div>
-                            <div class="translation__sentence-suggestion-vote"
-                                 ng-class="{}"
-                                 ng-show="user !== translation.author"
-                                 ng-click="voteTranslation(entry, translation)"
-                                 ng-disabled="translation.busy">
-                                <i class="fa fa-plus-square-o"></i>
+                                   ng-disabled="translation.busy">
+                                    <i class="fa fa-check"></i>
+                                </a>
+                                <div ng-show="!translation.isApproved">
+                                    <a ng-show="userIsManager"
+                                       ng-click="approveEntry(translation, entry)"
+                                       ng-disabled="translation.busy">
+                                        <i class="fa fa-check-circle"></i>
+                                    </a>
+                                    <a ng-show="user == translation.author"
+                                       ng-click="editTranslation(entry, translation)"
+                                       ng-disabled="translation.busy">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a ng-class="{'active': translation.isVoted}"
+                                       ng-show="!userIsManager && user !== translation.author.id"
+                                       ng-click="voteTranslation(entry, translation)"
+                                       ng-disabled="translation.busy">
+                                        <i class="fa fa-plus-square-o"></i>
+                                    </a>
+                                    <span class="translation__sentence-suggestion-vote"
+                                          ng-show="userIsManager && translation.vote">
+                                        <i class="fa fa-plus"></i> {= translation.vote =}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
