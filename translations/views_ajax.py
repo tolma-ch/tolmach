@@ -372,7 +372,8 @@ def tmx_ajax(request, project):
         if f.size > settings.TM_FILE_SIZE:
             return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
                                 status=400)
-        elif f.content_type not in ['application/xml']:
+        # TODO: Разобраться, какого хрена tmx тут ваще определяется как octet-stream
+        elif f.content_type not in ['application/xml', 'application/octet-stream']:
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                 status=400)
         import uuid

@@ -1,0 +1,76 @@
+{% extends "main/base-logged-in.html" %}
+{% load i18n %}
+
+{% block innercontent %}
+                {% for project in user_projects %}
+                  <!--<tr class="projects-table__row">-->
+                    <!--<td class="projects-table__projects-name">-->
+                      <!--<a href="#" class="title{% if project.progress == 100 %} finished{% endif %}"{% if project.is_private %} data-state="private"{% endif %}>{{ project.name }}</a>-->
+                      <!--<a href="#" class="manager">{{ project.manager.username }}</a>-->
+                    <!--</td>-->
+                    <!--<td class="projects-table__projects-progress">-->
+                      <!--<div class="progress-bar">-->
+                        <!--<div class="progress-fill" style="width:{{ project.progress }}%;" data-progress="{{ project.progress }}"></div>-->
+                        <!--<span class="progress-bubble" style="left:{{ project.progress }}%">{{ project.progress }}%</span>-->
+                      <!--</div>-->
+                    <!--</td>-->
+                    <!--<td class="projects-table__projects-dates">-->
+                      <!--<span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span>-->
+                      <!--<span class="created-date">{{ project.time_created|date:"d.m.Y" }}</span>-->
+                    <!--</td>-->
+                  <!--</tr>-->
+                <div class="widget-box">
+                    <div class="widget-header widget-header-flat">
+                        <h5>
+                            <a href="/projects/{{ project.id }}">
+                                {{ project.name }}
+                            </a>
+                        </h5>
+                        updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span>
+                        <div class="widget-toolbar no-border">
+                            <a href="/user/{{ project.manager.id }}">
+                                <img class="navbar-nav__user-photo" src="/media/avatar/vk_avatar_4207726_Xb1sidZ.jpg" alt="Avatar">
+                                {{ project.manager.username }}
+                            </a>
+                        </div>
+                    </div>
+                    <div class="widget-body">
+                        <table class="project-list-texts table table-striped">
+                            <tbody>
+                            <tr class="project-list-text ng-scope">
+                                <td class="project-list-text__languages">
+                                    <div class="languages">
+                                        <i class="flag flag-English"></i>
+                                        <i class="fa fa-chevron-right"></i>
+                                        <i class="flag flag-Russian"></i>
+                                    </div>
+                                </td>
+                                <td class="project-list-text">
+                                    <p>
+                                        {{ project.description }}
+                                    </p>
+                                </td>
+                                <td class="project-list-text__btns">
+                                    <a class="project-list-text__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="project-list-text__progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                        <span class="progress-bar__value ng-binding">{{ project.progress }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div><!-- /widget-body -->
+                </div>
+                {% empty %}
+                  <tr class="empty">
+                    <td>{% trans "Sorry, you haven't created any projects yet" %}</td>
+                  </tr>
+                {% endfor %}
+
+{% endblock %}

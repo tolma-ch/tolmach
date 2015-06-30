@@ -85,10 +85,7 @@ class Text(models.Model):
         Check whether provided user is allowed to read within the current text and return Boolean
         """
         if self.project.is_private is False:
-            if str(user.id) in self.project.members.split(','):
-                return True
-            else:
-                return False
+            return True
         else:
             if self.project.manager == user or str(user.id) in self.project.members.split(','):
                 return True
@@ -100,7 +97,10 @@ class Text(models.Model):
         Check whether provided user is allowed to write within the current text and return Boolean
         """
         if self.project.is_private is False:
-            return True
+            if str(user.id) in self.project.members.split(',') or self.project.manager == user:
+                return True
+            else:
+                return False
         else:
             if self.project.manager == user or str(user.id) in self.project.members.split(','):
                 return True

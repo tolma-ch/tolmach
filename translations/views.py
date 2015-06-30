@@ -173,7 +173,7 @@ def projects(request):
             'messages': messages.get_messages(request)
             }
 
-    template = 'translations/projects-main.html'
+    template = 'translations/projects.html'
     return render_to_response(template, data, RequestContext(request))
 
 
