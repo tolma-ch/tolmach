@@ -1,13 +1,7 @@
 .footer {
   background: #666;
-  height: 72px;
   position: relative;
-  margin-top: -72px;
   clear: both;
-}
-.footer.auth {
-  height: 145px;
-  margin: -200px 0 55px;
 }
 .footer-logo {
   margin: 0 !important;
@@ -107,7 +101,6 @@
 .footer-container {
   padding-left: 10px;
   padding-right: 20px;
-  height: 72px;
   max-width: 1024px;
   margin: 0 auto;
 }
@@ -119,12 +112,8 @@
   background: transparent;
 }
 .footer-white .footer-container {
-  height: 145px;
   border-top: 1px solid $grayBorder;
-  padding: 0;
-  margin: 0 auto;
-  max-width: 1004px;
-  position: relative;
+  padding-top: 20px;
 }
 .footer-white .footer-logo-full {
   margin: 8px 40px 0 0;
@@ -135,14 +124,13 @@
 }
 .footer-white .footer-data__list {
   padding: 0 0 0 25px;
-  list-style-type: none;
-  width: 250px;
-  height: 110px;
   border-right: 1px solid $grayBorder;
-  float: left;
 }
 .footer-white .footer-data__list:last-child {
   border: none;
+}
+.footer-white .footer-data__list ul {
+  list-style-type: none;
 }
 .footer-white .footer-data__item {
   font-size: 16px;

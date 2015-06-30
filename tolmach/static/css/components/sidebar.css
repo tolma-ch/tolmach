@@ -23,6 +23,7 @@
 .user-sidebar__username {
   color: $darkBlue;
   font-size: 24px;
+  line-height: 1.1em;
 }
 .user-sidebar__location {
   color: #575756;

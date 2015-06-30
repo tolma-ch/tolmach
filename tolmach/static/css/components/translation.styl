@@ -107,6 +107,9 @@
 		&:last-child
 			border-bottom none
 
+		&-author
+			font-size 80%
+
 		&-approved
 			position absolute
 			right 10px
@@ -133,6 +136,16 @@
 			font-size 1.5em
 			cursor pointer
 
+		&-vote
+			position absolute
+			right 10px
+			bottom 5px
+			color #9c9b9b
+			font-size 1.5em
+			cursor pointer
+			&:hover
+				color #02c14f
+
 			&:hover
 				color $mainBlue
 
@@ -144,6 +157,9 @@
 
 	&__sentence-suggestion_state_approved &__sentence-suggestion-approve
 		display none
+
+	&__sentence-suggestion_state_voted &__sentence-suggestion-vote
+		color #02c14f
 
 	&__sentence-suggestion &__sentence-suggestion-approved
 		display none

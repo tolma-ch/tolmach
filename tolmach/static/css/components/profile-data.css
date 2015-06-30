@@ -32,22 +32,22 @@
   padding-left: 0;
   float: left;
   margin-top: 20px;
+  margin-left: 0;
 }
 .user-statistics-list__item {
   list-style-type: none;
   float: left;
-  width: 135px;
-  margin-right: 20px;
+  width: 29%;
+  margin-right: 4%;
 }
 .user-statistics-column {
   box-sizing: border-box;
-  width: 135px;
   height: 270px;
   position: relative;
   background: url("/static/images/profile-data/column-back.png");
 }
 .user-statistics-column__value {
-  width: 64px;
+  width: 48%;
   position: absolute;
   bottom: 0;
   background: #666;
@@ -59,10 +59,11 @@
   right: 0;
 }
 .user-statistics__total {
-  float: right;
-  height: 270px;
+  float: left;
+/*height 270px*/
   padding: 55px 0;
   margin-top: 20px;
+  max-width: 270px;
 }
 .user-statistics__total-title,
 .user-statistics__total-sentences {
@@ -74,7 +75,6 @@
   font-size: 110px;
   color: $headerColor;
   line-height: 82px;
-  text-align: center;
 }
 .user-statistics__recent-progress {
   text-align: center;
@@ -117,21 +117,16 @@
   padding: 5px 10px 0;
   text-align: right;
 }
-@media (max-width: 1049px) {
+@media (max-width: 1242px) {
   .user-statistics {
     position: relative;
   }
-  .user-statistics__translations {
-    width: 444px;
-    margin-left: 20px;
-    float: right;
+  .user-statistics-list {
+    width: 100%;
   }
   .user-statistics__total {
-    position: absolute;
-    top: 30px;
-    right: 0;
+    float: none;
     padding: 0;
-    height: auto;
     margin-top: 0;
   }
   .user-statistics__total-title,
@@ -166,8 +161,15 @@
     text-align: right;
   }
 }
-@media (max-width: 979px) {
-  .user-statistics {
-    position: relative;
+@media (max-width: 495px) {
+  .user-statistics-list {
+    width: auto;
+    float: none;
+  }
+  .user-statistics-list__item {
+    list-style-type: none;
+    float: none;
+    width: auto;
+    margin-right: 20px;
   }
 }

@@ -109,6 +109,9 @@
 .translation__sentence-suggestion:last-child {
   border-bottom: none;
 }
+.translation__sentence-suggestion-author {
+  font-size: 80%;
+}
 .translation__sentence-suggestion-approved {
   position: absolute;
   right: 10px;
@@ -136,7 +139,18 @@
   font-size: 1.5em;
   cursor: pointer;
 }
-.translation__sentence-suggestion-edit:hover {
+.translation__sentence-suggestion-vote {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  color: #9c9b9b;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.translation__sentence-suggestion-vote:hover {
+  color: #02c14f;
+}
+.translation__sentence-suggestion-vote:hover {
   color: $mainBlue;
 }
 .translation__sentence-translation_state_closed .translation__sentence-suggestion {
@@ -147,6 +161,9 @@
 }
 .translation__sentence-suggestion_state_approved .translation__sentence-suggestion-approve {
   display: none;
+}
+.translation__sentence-suggestion_state_voted .translation__sentence-suggestion-vote {
+  color: #02c14f;
 }
 .translation__sentence-suggestion .translation__sentence-suggestion-approved {
   display: none;

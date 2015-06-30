@@ -5,7 +5,7 @@ from django.http.response import HttpResponse
 from translations.models import Text, Project
 
 
-def get_text(func):
+def accept_text(func):
     def decorator(request, *args, **kwargs):
         if request.method == 'POST':
             params = request.POST or json.loads(request.body)
@@ -38,8 +38,8 @@ def accept_project(func):
             project = Project.objects.get(id=project_id)
         except Project.DoesNotExist:
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+        if not project.is_user_allowed(request.user):
+            return HttpResponse(json.dumps(_('Access denied')), content_type="application/json",
                                 status=400)
         kwargs['project'] = project
         return func(request, *args, **kwargs)
