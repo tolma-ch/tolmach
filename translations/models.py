@@ -138,6 +138,12 @@ class TextEntry(models.Model):
         return unicode(self.text)
 
 
+    def is_voted(self, user):
+        voters = self.voters.split(',') if self.voters else []
+        return str(user.id) in voters
+
+
+
 class ProjectForm(ModelForm):
     class Meta:
         model = Project

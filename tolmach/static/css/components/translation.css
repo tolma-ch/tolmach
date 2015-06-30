@@ -100,7 +100,6 @@
 }
 .translation__sentence-suggestion {
   position: relative;
-  min-height: 80px;
   padding: 10px 40px 10px 15px;
   border-bottom: 1px dashed #cacaca;
   color: #1d1d1b;
@@ -112,46 +111,27 @@
 .translation__sentence-suggestion-author {
   font-size: 80%;
 }
-.translation__sentence-suggestion-approved {
+.translation__sentence-suggestion-icons {
+  width: 25px;
   position: absolute;
-  right: 10px;
-  bottom: 40px;
-  color: #02c14f;
-  font-size: 1.5em;
-  cursor: pointer;
+  top: 5px;
+  right: 5px;
 }
-.translation__sentence-suggestion-approve {
-  position: absolute;
-  right: 10px;
-  bottom: 40px;
+.translation__sentence-suggestion-icons a {
+  cursor: pointer;
+  font-size: 1.5em;
   color: #9c9b9b;
-  font-size: 1.5em;
-  cursor: pointer;
 }
-.translation__sentence-suggestion-approve:hover {
+.translation__sentence-suggestion-icons a:hover {
   color: #02c14f;
 }
-.translation__sentence-suggestion-edit {
-  position: absolute;
-  right: 10px;
-  bottom: 5px;
-  color: #9c9b9b;
-  font-size: 1.5em;
-  cursor: pointer;
+.translation__sentence-suggestion-icons a.active {
+  color: #02c14f;
 }
 .translation__sentence-suggestion-vote {
-  position: absolute;
-  right: 10px;
-  bottom: 5px;
+  text-align: right;
+  font-size: 12px;
   color: #9c9b9b;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-.translation__sentence-suggestion-vote:hover {
-  color: #02c14f;
-}
-.translation__sentence-suggestion-vote:hover {
-  color: $mainBlue;
 }
 .translation__sentence-translation_state_closed .translation__sentence-suggestion {
   display: none;
@@ -159,20 +139,8 @@
 .translation__sentence-translation_state_closed .translation__sentence-suggestion_state_approved {
   display: block;
 }
-.translation__sentence-suggestion_state_approved .translation__sentence-suggestion-approve {
-  display: none;
-}
-.translation__sentence-suggestion_state_voted .translation__sentence-suggestion-vote {
-  color: #02c14f;
-}
-.translation__sentence-suggestion .translation__sentence-suggestion-approved {
-  display: none;
-}
 .translation__sentence-suggestion_state_approved .translation__sentence-suggestion-approved {
   display: block;
-}
-.translation__sentence-suggestion_state_approved .translation__sentence-suggestion-edit {
-  color: #02c14f;
 }
 .translation__sentence-translation_state_approved .translation__sentence-suggestion {
   border: none;
