@@ -11,6 +11,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
+from tolmach.models import UserMeta
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
 from translations.utils_ajax import translation_to_json
@@ -89,13 +90,19 @@ def participant_ajax(request, project):
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
+        # TODO: добавлять ещё id проекта в пользовательскую мету member_of
         members = project.members.split(',') if project.members else []
-        if str(user.id) in members:
+        user_meta = UserMeta.objects.get(user=user)
+        user_member_of = user_meta.member_of.split(',')
+        if str(user.id) in members or str(project.id) in user_member_of:
             return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
                                 status=400)
         members.append(str(user.id))
         project.members = ','.join(members)
         project.save()
+        user_member_of.append(str(project.id))
+        user_meta.member_of = ','.join(user_member_of)
+        user_meta.save()
         username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
         result = {
             'id': user.id,
@@ -110,13 +117,18 @@ def participant_ajax(request, project):
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
         members = project.members.split(',') if project.members else []
-        if str(user.id) not in members:
+        user_meta = UserMeta.objects.get(user=user)
+        user_member_of = user_meta.member_of.split(',')
+        if str(user.id) not in members or str(project.id) not in user_member_of:
             return HttpResponse(json.dumps(_('User is not a member of project')),
                                 content_type="application/json",
                                 status=400)
         members.remove(str(user.id))
         project.members = ','.join(members)
         project.save()
+        user_member_of.remove(str(project.id))
+        user_meta.member_of = ','.join(user_member_of)
+        user_meta.save()
         result = {
             'id': user.id
         }
@@ -173,12 +185,12 @@ def text_ajax(request, project):
             sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
 
             text = Text(title=post['title'],
-                            body=marked_text,
-                            project=project,
-                            subject=subject,
-                            source_lang=source_lang,
-                            target_lang=target_lang,
-                            )
+                        body=marked_text,
+                        project=project,
+                        subject=subject,
+                        source_lang=source_lang,
+                        target_lang=target_lang,
+                        )
             text.save()
             for idx, sent in enumerate(sentences, start=1):
                 print sent
@@ -201,6 +213,8 @@ def text_ajax(request, project):
             'tmxes': [int(x) for x in text.tmdatabases.splut(',')] if text.tmdatabases else []
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
+    if request.method == 'DELETE':
+        pass
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
