@@ -2,22 +2,17 @@
 
 from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect
-from django.conf import settings
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextEntry, Glossary, GlossaryEntry,\
-    TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectForm, Text, TextEntry
 from entries.models import Language, Subject
-import json
-import os
 import translations.utils as utils
 
 
@@ -51,7 +46,6 @@ def projects(request, proj_type):
         for text in proj.texts:
             if not {'source_lang': text.source_lang, 'target_lang': text.target_lang} in proj.langpairs:
                 proj.langpairs.append({'source_lang': text.source_lang, 'target_lang': text.target_lang})
-
 
     data = {'page_title': page_title,
             'breadcrumbs': [[page_title, page_url], ],
@@ -96,7 +90,7 @@ def project(request, proj_id=0):
     if pr.is_user_manager(request.user):
         projects_text = _('My projects')
         projects_url = '/projects/my/'
-    elif request.user.id in pr.members.split(','):
+    elif str(request.user.id) in pr.members.split(','):
         projects_text = _('Third-party projects')
         projects_url = '/projects/thirdparty/'
     elif not pr.is_private:
@@ -307,7 +301,7 @@ def view_text(request, text_id):
     if pr.is_user_manager(request.user):
         projects_text = _('My projects')
         projects_url = '/projects/my/'
-    elif request.user.id in pr.members.split(','):
+    elif str(request.user.id) in pr.members.split(','):
         projects_text = _('Third-party projects')
         projects_url = '/projects/thirdparty/'
     elif not pr.is_private:
