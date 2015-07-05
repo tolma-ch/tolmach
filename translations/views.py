@@ -40,6 +40,8 @@ def projects(request, proj_type):
         page_url = '/projects/public/'
         user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
     for proj in user_projects_list:
+        proj_manager_meta = UserMeta.objects.get(user=proj.manager)
+        proj.manager_avatar = proj_manager_meta.avatar
         proj.texts = Text.objects.filter(project=proj)
         proj.progress = proj.get_progress()
         proj.langpairs = []

@@ -29,7 +29,7 @@
                         updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span>
                         <div class="widget-toolbar no-border">
                             <a href="/user/{{ project.manager.id }}">
-                                <img class="navbar-nav__user-photo" src="/media/avatar/vk_avatar_4207726_Xb1sidZ.jpg" alt="Avatar">
+                                <img class="navbar-nav__user-photo" src="/media/{{ project.manager_avatar }}" alt="Avatar">
                                 {{ project.manager.username }}
                             </a>
                         </div>
