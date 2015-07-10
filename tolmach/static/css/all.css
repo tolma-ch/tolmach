@@ -437,6 +437,16 @@ body > .main {
   padding-left: 12px;
   min-height: 400px;
 }
+.clear {
+  clear: both;
+}
+h3 small,
+.h3 small,
+h4 small,
+.h4 small {
+  font-size: 0.6em;
+  opacity: 0.6;
+}
 .switcher {
   margin: 0;
 }
@@ -1312,7 +1322,11 @@ body > .main {
   display: block;
 }
 .project-list-texts {
+  margin-bottom: 0 !important;
   width: 100%;
+}
+.project-list-texts td {
+  border: none !important;
 }
 .project-list-texts .project-list-text td {
   vertical-align: middle;
@@ -1418,6 +1432,46 @@ body > .main {
 .drop-box.drag-over {
   background: #eee;
   border-color: #438eb9;
+}
+.project-list__languages {
+  width: 70px;
+  float: left;
+}
+.project-list__description {
+  margin: 0 70px 36px 88px;
+}
+.project-list__buttons {
+  width: 60px;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  bottom: 34px;
+  vertical-align: middle;
+}
+.project-list__buttons-inner {
+  display: table;
+  height: 100%;
+}
+.project-list__buttons-inner-inner {
+  display: table-cell;
+  vertical-align: middle;
+}
+.project-list__progress-bar {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  left: 106px;
+}
+.project-list__user-photo {
+  width: 40px;
+  height: 40px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  display: inline-block;
 }
 .user-sidebar {
   padding-top: 30px;

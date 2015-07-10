@@ -99,6 +99,7 @@
 
   .widget-header-large > & {
 	line-height:48px;
+    padding: 0 18px;
   }
   .widget-header-small > & {
 	line-height:29px;
@@ -251,9 +252,21 @@
   border:1px solid #CCC;
   border-top:none;
   background:#F7F7F7;
+
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+  &:after {
+    clear: right;
+  }
 }
 .widget-main {
   padding:12px;
+}
+.widget-main-large {
+  padding:18px;
 }
 .widget-main {
  .widget-paddingX (@index) when (@index >= 0) {
@@ -642,6 +655,7 @@
 
 /* simple forms in widgetboxes */
 .widget-main {
+  position: relative;
   > form {
 	 margin-bottom:0;
 	 .input-append , .input-prepend {
@@ -662,6 +676,15 @@
 			padding:10px 12px 12px;
 		}
 	}
+  }
+
+  &:before, &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+  &:after {
+	clear:right;
   }
 }
 

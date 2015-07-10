@@ -19,54 +19,52 @@
                       <!--<span class="created-date">{{ project.time_created|date:"d.m.Y" }}</span>-->
                     <!--</td>-->
                   <!--</tr>-->
+                <h1>Projects list</h1>
                 <div class="widget-box">
-                    <div class="widget-header widget-header-flat">
-                        <h5>
+                    <div class="widget-header widget-header-flat widget-header-large">
+                        <h3>
                             <a href="/project/{{ project.id }}">
                                 {{ project.name }}
                             </a>
-                        </h5>
-                        updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span>
+                            <small>updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span></small>
+                        </h3>
                         <div class="widget-toolbar no-border">
                             <a href="/user/{{ project.manager.id }}">
-                                <img class="navbar-nav__user-photo" src="/media/{{ project.manager_avatar }}" alt="Avatar">
+                                <img class="project-list__user-photo" src="/media/{{ project.manager_avatar }}" alt="Avatar">
                                 {{ project.manager.username }}
                             </a>
                         </div>
                     </div>
                     <div class="widget-body">
-                        <table class="project-list-texts table">
-                            <tbody>
-                            <tr class="project-list-text ng-scope">
-                                <td class="project-list-text__languages">
+                        <div class="widget-main widget-main-large">
+                            <div class="project-list__languages">
+                                {% for pair in project.langpairs %}
                                     <div class="languages">
-                                        {% for pair in project.langpairs %}
                                         <i class="flag flag-{{ pair.source_lang }}"></i>
                                         <i class="fa fa-chevron-right"></i>
                                         <i class="flag flag-{{ pair.target_lang }}"></i>
-                                        {% endfor %}
                                     </div>
-                                </td>
-                                <td class="project-list-text">
-                                    <p>
-                                        {{ project.description }}
-                                    </p>
-                                </td>
-                                <td class="project-list-text__btns">
-                                    <a class="project-list-text__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
-                                    <a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td class="project-list-text__progress">
-                                    <div class="progress-bar">
-                                        <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
-                                        <span class="progress-bar__value ng-binding">{{ project.progress }}%</span>
+                                {% endfor %}
+                            </div>
+                            <p class="project-list__description">
+                                {{ project.description }}
+                            </p>
+                            <div class="project-list__buttons">
+                                <div class="project-list__buttons-inner">
+                                    <div class="project-list__buttons-inner-inner">
+                                        <a class="project-list-text__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                        <a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody></table>
+                                </div>
+                            </div>
+                            <div class="project-list__progress-bar">
+                                <div class="progress-bar">
+                                    <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                    <span class="progress-bar__value ng-binding">{{ project.progress }}%</span>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
                     </div><!-- /widget-body -->
                 </div>
                 {% empty %}
