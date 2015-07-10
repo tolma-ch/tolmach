@@ -2,24 +2,8 @@
 {% load i18n %}
 
 {% block innercontent %}
-                {% for project in user_projects %}
-                  <!--<tr class="projects-table__row">-->
-                    <!--<td class="projects-table__projects-name">-->
-                      <!--<a href="#" class="title{% if project.progress == 100 %} finished{% endif %}"{% if project.is_private %} data-state="private"{% endif %}>{{ project.name }}</a>-->
-                      <!--<a href="#" class="manager">{{ project.manager.username }}</a>-->
-                    <!--</td>-->
-                    <!--<td class="projects-table__projects-progress">-->
-                      <!--<div class="progress-bar">-->
-                        <!--<div class="progress-fill" style="width:{{ project.progress }}%;" data-progress="{{ project.progress }}"></div>-->
-                        <!--<span class="progress-bubble" style="left:{{ project.progress }}%">{{ project.progress }}%</span>-->
-                      <!--</div>-->
-                    <!--</td>-->
-                    <!--<td class="projects-table__projects-dates">-->
-                      <!--<span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span>-->
-                      <!--<span class="created-date">{{ project.time_created|date:"d.m.Y" }}</span>-->
-                    <!--</td>-->
-                  <!--</tr>-->
                 <h1>Projects list</h1>
+                {% for project in user_projects %}
                 <div class="widget-box">
                     <div class="widget-header widget-header-flat widget-header-large">
                         <h3>
