@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block innercontent %}
-                <h1>Projects list</h1>
+                <!--<h1>Projects list</h1>-->
                 {% for project in user_projects %}
                 <div class="widget-box">
                     <div class="widget-header widget-header-flat widget-header-large">
@@ -50,6 +50,7 @@
                         </div>
                     </div><!-- /widget-body -->
                 </div>
+                <br>
                 {% empty %}
                   <tr class="empty">
                     <td>{% trans "Sorry, you haven't created any projects yet" %}</td>
