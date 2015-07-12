@@ -153,7 +153,7 @@ def text_ajax(request, project):
                 'targetLang': str(text.target_lang),
                 'targetLangId': text.target_lang.id,
                 'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
-                'tmxes': [int(x) for x in text.tmdatabases.splut(',')] if text.tmdatabases else []
+                'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
@@ -210,7 +210,7 @@ def text_ajax(request, project):
             'targetLang': str(text.target_lang),
             'targetLangId': text.target_lang.id,
             'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
-            'tmxes': [int(x) for x in text.tmdatabases.splut(',')] if text.tmdatabases else []
+            'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
