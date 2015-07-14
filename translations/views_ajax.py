@@ -18,6 +18,28 @@ from translations.utils_ajax import translation_to_json
 
 
 @login_required
+def project_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        if 'id' in post:
+            try:
+                project = Project.objects.get(id=post['id'])
+            except Project.DoesNotExist:
+                return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+            if not project.is_user_allowed(request.user):
+                return HttpResponse(json.dumps(_('Access denied')), content_type="application/json",
+                                    status=400)
+            if 'name' in post:
+                project.name = post['name']
+            if 'description' in post:
+                project.description = post['description']
+            project.save()
+            return HttpResponse(json.dumps(project.id), content_type="application/json")
+        else:
+            pass  # TODO move creation of project here
+    return HttpResponse(json.dumps(False), content_type="application/json")
+
+@login_required
 def create_project_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)

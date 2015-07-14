@@ -3,15 +3,48 @@
 
 {% block innercontent %}
     <script>
+        project={{ projectData | safe }};
         projectId={{ project.id }};
     </script>
     <div ng-controller="projectCtrl" ng-cloak>
         <div class="page-header">
             <h1>
-                {{ project.name }}
+                <span ng-show="!editingName">
+                    {= project.name =}
+                </span>
+                <input class="form-contrl" type="text"
+                       ng-show="editingName"
+                       ng-model="projectName"/>
+                <small><a class="float-right"
+                          href=""
+                          ng-show="editingName"
+                          ng-click="saveName()"><i class="fa fa-check"></i></a></small>
+                <small><a class="float-right"
+                          href=""
+                          ng-show="editingName"
+                          ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
+                <small><a class="float-right"
+                          href=""
+                          ng-show="!editingName"
+                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
             </h1>
             <blockquote>
-                <p>{{ project.description }}</p>
+                <a class="float-right"
+                          href=""
+                          ng-show="editingDescription"
+                          ng-click="saveDescription()"><i class="fa fa-check"></i></a>
+                <a class="float-right"
+                   href=""
+                   ng-show="editingDescription"
+                   ng-click="cancelEditDescription()"><i class="fa fa-times"></i></a>
+                <a class="float-right"
+                          href=""
+                          ng-show="!editingDescription"
+                          ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
+                <p>{= project.description =}</p>
+                <textarea class="form-control" name="" id="" cols="30" rows="10"
+                          ng-model="projectDescription"
+                          ng-show="editingDescription"></textarea>
             </blockquote>
         </div>
 
