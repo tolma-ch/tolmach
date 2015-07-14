@@ -1,7 +1,8 @@
 .footer {
   background: #666;
-  position: relative;
-  clear: both;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 .footer-logo {
   margin: 0 !important;

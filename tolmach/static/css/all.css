@@ -82,8 +82,9 @@
 }
 .footer {
   background: #666;
-  position: relative;
-  clear: both;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 .footer-logo {
   margin: 0 !important;
@@ -300,12 +301,11 @@
 }
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 body > .main {
-  min-height: 100%;
-  height: auto;
+  margin-bottom: 55px;
 }
 .stripy-heading {
   text-align: center;
