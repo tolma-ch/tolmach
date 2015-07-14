@@ -289,6 +289,7 @@
             };
         })
         .controller('projectCtrl', function ($scope, $modal, $http) {
+            $scope.project = window['project']
             $scope.projectId = window['projectId'];
             $scope.participants = [];
             $http.get('/api/participant', {params: {project: $scope.projectId}})
@@ -373,7 +374,7 @@
                         },
                         tmxes: function () {
                             return $scope.tmxes;
-                        },
+                        }
                     }
                 });
 
@@ -488,6 +489,45 @@
             };
             $scope.closePopover = function () {
                 $('.popover').remove();
+            };
+
+            $scope.editName = function () {
+                $scope.projectName = $scope.project.name
+                $scope.editingName = true;
+            };
+            $scope.saveName = function () {
+                $scope.editingName = false;
+                $scope.project.name = $scope.projectName;
+                $http.post('/api/project/', {
+                    'id': $scope.project.id,
+                    'name': $scope.project.name
+                })
+                    .success(function(data) {
+                    })
+                    .error(function(data) {
+                    });
+            };
+            $scope.cancelEditName = function () {
+                $scope.editingName = false;
+            };
+            $scope.editDescription = function () {
+                $scope.editingDescription = true;
+                $scope.projectDescription = $scope.project.description
+            };
+            $scope.saveDescription = function () {
+                $scope.project.description = $scope.projectDescription;
+                $scope.editingDescription = false;
+                $http.post('/api/project/', {
+                    'id': $scope.project.id,
+                    'description': $scope.project.description
+                })
+                    .success(function(data) {
+                    })
+                    .error(function(data) {
+                    });
+            };
+            $scope.cancelEditDescription = function () {
+                $scope.editingDescription = false;
             };
         })
         .controller('AddParticipantModalCtrl', function ($scope, $modalInstance, $http) {
