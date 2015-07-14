@@ -113,7 +113,7 @@ class Text(models.Model):
 
         entries_approved/(entries_total/100.0)
         """
-        entries_total = TextEntry.objects.filter(text=self).count()
+        entries_total = TextEntry.objects.filter(text=self, parent_entry=None).count()
         entries_approved = TextEntry.objects.filter(text=self, is_approved=True).count()
 
         if not entries_total == 0:
