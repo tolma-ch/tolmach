@@ -36,7 +36,11 @@ function invite(data){
 
 	<li class="navbar-nav__button button_light-blue navbar-nav__user">
 		<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+            {% if user_avatar %}
 			<img class="navbar-nav__user-photo" src="/media/{{ user_avatar }}" alt="Avatar">
+            {% else %}
+            <img class="navbar-nav__user-photo" src="/media/avatar/default.png" alt="Avatar">
+            {% endif %}
 			<span class="navbar-nav__user-info">
 				<small>{% trans "Hi," %}</small>
 				<span>{{ username }}</span>

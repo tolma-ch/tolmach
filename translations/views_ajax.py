@@ -95,9 +95,12 @@ def participant_ajax(request, project):
         result = []
         for user in users:
             username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
+            user_meta = UserMeta.objects.get(user=user)
+            avatar = "%s" % user_meta.avatar if user_meta.avatar else "avatar/default.png"
             result.append({
                 'id': user.id,
-                'name': username
+                'name': username,
+                'avatar': avatar
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
 

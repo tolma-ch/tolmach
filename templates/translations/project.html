@@ -70,14 +70,14 @@
                                  ng-click="activeParticipant = participant"
                                  ng-class="{'project-list-participant_active': activeParticipant === participant}">
                                 <div class="project-list-participant__ava">
-                                    <img src="/static/avatars/user.jpg" alt="Jason's Photo">
+                                    <img class="navbar-nav__user-photo" src="/media/{= participant.avatar =}" alt="Jason's Photo">
                                 </div>
                                 <div class="project-list-participant__name">
                                     {= participant.name =}
                                 </div>
                                 <div class="project-list-participant__btns">
-                                    <a class="project-list-participant__btn" href=""><i class="fa fa-eye"></i></a>
-                                    <a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>
+                                    <a class="project-list-participant__btn" href="/user/{= participant.id =}"><i class="fa fa-eye"></i></a>
+                                    <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                     <a class="project-list-participant__btn" href=""
                                        ng-click="removeParticipant(participant)"><i class="fa fa-trash-o"></i></a>
                                 </div>
