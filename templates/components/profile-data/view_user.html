@@ -1,0 +1,172 @@
+{% extends "main/base-logged-in.html" %}
+{% load i18n %}
+
+{% block innercontent %}
+{% trans 'Statistics' as statistics_header %}
+{% trans 'Total' as total_label %}
+{% trans 'fragments translated' as sentences_translated_label %}
+{% trans 'Projects' as projects_label %}
+{% trans 'Start new' as start_new_label %}
+{% trans 'Add project' as add_project_header %}
+{% trans 'Project name' as project_name_label %}
+{% trans 'Short project name' as short_name_label %}
+{% trans 'Short project description' as short_description_name %}
+{% trans 'Public' as public_checkbox %}
+{% trans 'Private' as private_checkbox %}
+{% trans 'Add' as add_button %}
+<div class="profile-container" ng-controller="projectsCtrl">
+    <aside class="profile-sidebar">
+        <div class="user-sidebar">
+            <div class="user-sidebar__photo">
+                {% if usermeta.avatar %}
+                    <img class="user-sidebar__img" src="/media/{{ usermeta.avatar }}">
+                {% else %}
+                    <img class="user-sidebar__img" src="/media/avatar/default.png">
+                {% endif %}
+            </div>
+
+            <div class="user-sidebar__info">
+                <div class="user-sidebar__nickname">{{ username }}</div>
+                <div class="user-sidebar__username">{{ first_name }} {{ last_name }}</div>
+                <div class="user-sidebar__location">
+                    <i class="fa fa-map"></i>
+                    Irkutsk, Russia
+                </div>
+            </div>
+
+            <div class="user-sidebar__socials">
+                <a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_vk"></a>
+                <a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_gp"></a>
+                <a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_tw"></a>
+                <a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_fb"></a>
+            </div>
+
+            <div class="user-sidebar__profile">
+                <div class="user-sidebar__profile-line">
+                    <span class="user-sidebar__profile-line-title">website:</span>
+                    <a class="user-sidebar__profile-line-data" href="" target="__blank">xxxx.com</a>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <section class="profile-content">
+        <div class="user-statistics">
+            <div class="user-statistics__title">{{ statistics_header }}</div>
+            <div class="user-statistics__translations">
+                <ul class="user-statistics-list">
+                    <li class="user-statistics-list__item">
+                        <div class="user-statistics-column">
+                            <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 30%"></div>
+                            <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 30%"></div>
+                        </div>
+                        <div class="user-statistics__translations-rate">
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_l-r">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="user-statistics-list__item">
+                        <div class="user-statistics-column">
+                            <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 30%"></div>
+                            <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 30%"></div>
+                        </div>
+                        <div class="user-statistics__translations-rate">
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_l-r">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="user-statistics-list__item">
+                        <div class="user-statistics-column">
+                            <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 30%"></div>
+                            <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 30%"></div>
+                        </div>
+                        <div class="user-statistics__translations-rate">
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_l-r">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
+                                <div class="languages">
+                                    <i class="flag flag-English"></i>
+                                    <i class="fa fa-chevron-right"></i>
+                                    <i class="flag flag-Russian"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="user-statistics__total">
+                    <div class="user-statistics__total-title">{{ total_label }}:</div>
+                    <div class="user-statistics__total-number">{{ entries_total }}</div>
+                    <div class="user-statistics__total-sentences">{{ sentences_translated_label }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-statistics__recent-progress">
+            {% if projects %}
+            <div class="user-statistics__recent-progress-title stripy-heading">
+                <span class="stripy-heading__before"></span>
+                <span class="stripy-heading__text">{{ projects_label }}</span>
+                <span class="stripy-heading__after"></span>
+            </div>
+
+            <div class="user-statistics__recent-progress-table">
+                <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                    <tbody>
+                        {% for project in projects %}
+                        <tr class="user-statistics-table__row">
+                            <td class="user-statistics-table__title">
+                                <a href="/project/{{ project.id }}">{{ project.name }}</a>
+                            </td>
+                            <td class="user-statistics-table__progress">
+                                <div class="progress-bar">
+                                    <div class="progress-bar__gauge" style="width:{{ project.get_progress }}%;background:#02c14f"></div>
+                                    <span class="progress-bar__value">{{ project.get_progress }}%</span>
+                                </div>
+                            </td>
+                            <!--<td class="project-list-text__btns">-->
+                                    <!--<a class="project-list-text__btn" href=""-->
+                                       <!--ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>-->
+                                    <!--<a class="project-list-text__btn" href=""><i class="fa fa-download"></i></a>-->
+                                    <!--<a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>-->
+                            <!--</td>-->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+        </div>
+    </section>
+</div>
+
+{% endblock %}
