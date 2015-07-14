@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+import json
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
@@ -110,6 +112,11 @@ def project(request, proj_id=0):
 
     data = {
         'project': pr,
+        'projectData': json.dumps({
+            'id': pr.id,
+            'name': pr.name,
+            'description': pr.description,
+        }),
         'languages': lang_list,
         'subjects': Subject.objects.all(),
         'breadcrumbs': [

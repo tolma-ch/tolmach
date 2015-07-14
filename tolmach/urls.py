@@ -37,7 +37,8 @@ urlpatterns = patterns('',
     url(r'^text/(?P<text_id>\d+)/$', trans_views.view_text, name='view_text'),
 
     # ajax
-    url(r'^api/project-create/$', trans_ajax.create_project_ajax, name='get_entries_ajax'),
+    url(r'^api/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
+    url(r'^api/project/$', trans_ajax.project_ajax, name='project_ajax'),
     url(r'^api/entry/(?:(?P<action>\w+)/)?$', trans_ajax.entry_ajax, name='entry_action_ajax'),
     url(r'^api/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),
     url(r'^api/entry-disapprove/$', trans_ajax.disapprove_entry_ajax, name='entry_approve_ajax'),
