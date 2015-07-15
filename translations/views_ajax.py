@@ -37,6 +37,15 @@ def project_ajax(request):
             return HttpResponse(json.dumps(project.id), content_type="application/json")
         else:
             pass  # TODO move creation of project here
+    if request.method == 'DELETE':
+        if 'id' not in request.GET:
+            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+        try:
+            project = Project.objects.get(id=request.GET['id'])
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+        project.delete()
+        return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")
 
 @login_required
@@ -188,7 +197,8 @@ def text_ajax(request, project):
         try:
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
-            return HttpResponse(json.dumps(_('Subject not found')), content_type="application/json", status=400)
+            subject = Subject.objects.get(id=5)  # TODO select default subject
+            # return HttpResponse(json.dumps(_('Subject not found')), content_type="application/json", status=400)
 
         if 'id' in post:
             text = Text.objects.get(id=post['id'])
