@@ -135,10 +135,10 @@
             };
             var updateTranslation = function (entry) {
                 if (!entry.isApproved && entry.translations.length) {
-                    entry.translation = parent['rawBody'];
+                    entry.translation = entry['rawBody'];
                     for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
                         var translation = entry.translations[i];
-                        if (translation.author === $scope.user) {
+                        if (translation.author.id === $scope.user) {
                             entry.translation = translation['body'];
                             break;
                         }
@@ -529,6 +529,19 @@
             $scope.cancelEditDescription = function () {
                 $scope.editingDescription = false;
             };
+
+            $scope.removeProject = function (project) {
+                $scope.busy = true;
+                $http.delete('/api/project/', {params: {id: project.id}})
+                    .success(function() {
+                        $scope.busy = false;
+                        location.href = '/projects/';
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            }
         })
         .controller('AddParticipantModalCtrl', function ($scope, $modalInstance, $http) {
             $scope.getUsers = function (query) {
@@ -633,6 +646,22 @@
             $scope.glossaries = glossaries;
             $scope.tmxes = tmxes;
             $scope.tab = 0;
+            $scope.toggleGlossary = function (id) {
+                var index = $scope.text.glossaries.indexOf(id);
+                if (index > -1) {
+                    $scope.text.glossaries.splice(index, 1);
+                } else {
+                    $scope.text.glossaries.push(id);
+                }
+            };
+            $scope.toggleTmx = function (id) {
+                var index = $scope.text.glossaries.indexOf(id);
+                if (index > -1) {
+                    $scope.text.glossaries.splice(index, 1);
+                } else {
+                    $scope.text.glossaries.push(id);
+                }
+            };
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';
