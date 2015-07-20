@@ -3,13 +3,12 @@
 from __future__ import unicode_literals
 import json
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.template import RequestContext
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
@@ -327,3 +326,23 @@ def view_text(request, text_id):
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
+
+
+@login_required
+def export_text(request, text_id):
+    text = get_object_or_404(Text, id=text_id)
+    if not text.is_user_allowed_to_read(request.user):
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+        return HttpResponseRedirect('/')
+    import re
+    pure_text = re.sub(r'<.*?>', "", text.body)
+
+    entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+    for entry in entries:
+        entry_translation = TextEntry.objects.filter(parent_entry=entry, is_approved=True)
+        if entry_translation:
+            pure_text = re.sub(entry.body, entry_translation[0].body, pure_text)
+    response = HttpResponse(pure_text, content_type='text/plain')
+    response['Content-Disposition'] = "attachment; filename=%s.txt" % text.title
+
+    return response
