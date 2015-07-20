@@ -1,0 +1,65 @@
+{% load i18n %}
+
+{% trans 'Add project' as add_project_header %}
+{% trans 'Project name' as project_name_label %}
+{% trans 'Short project name' as short_name_label %}
+{% trans 'Short project description' as short_description_name %}
+{% trans 'public' as public_checkbox %}
+{% trans 'private' as private_checkbox %}
+{% trans 'Add' as add_button %}
+<script type="text/ng-template" id="newProjectModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{{ add_project_header }}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label class="control-label no-padding-right" for="form-field-1"> {{ project_name_label }}: </label>
+                <div class="">
+                    <input type="text"
+                           id="form-field-1"
+                           placeholder="{{ short_name_label }}"
+                           class="form-control"
+                           ng-model="name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label no-padding-right" for="form-field-2"> {{ short_description_name }}: </label>
+                <div class="">
+                    <textarea class="form-control"
+                              placeholder=""
+                              id="form-field-2"
+                              msd-elastic="\n"
+                              ng-model="description"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input name="form-field-radio" type="radio" class="ace"
+                           value="public"
+                           ng-model="type">
+                    <span class="lbl"> {{ public_checkbox }}</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input name="form-field-radio" type="radio" class="ace"
+                           value="private"
+                           ng-model="type">
+                    <span class="lbl"> {{ private_checkbox }}</span>
+                </label>
+            </div>
+            <div class="form-group" ng-show="error">
+                <div class="label label-danger">{= error =}</div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success"
+                ng-click="ok()"
+                ng-disabled="busy">{{ add_button }}</button>
+    </div>
+</script>

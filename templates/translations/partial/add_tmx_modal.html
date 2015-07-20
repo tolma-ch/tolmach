@@ -1,0 +1,50 @@
+{% load i18n %}
+<script type="text/ng-template" id="addTmxModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title"
+            ng-show="!tmx.id">{% trans "Add TMX" %}</h3>
+        <h3 class="modal-title"
+            ng-show="tmx.id">{% trans "Edit TMX" %}</h3>
+    </div>
+    <div class="modal-body">
+        <form ng-init="tab = 0">
+            <div class="form-group">
+                <input type="text"
+                       placeholder="{% trans "TMX name" %}"
+                       class="form-control"
+                       ng-model="tmx.name">
+            </div>
+            <div ngf-drop
+                 ngf-select
+                 ng-model="tmx.files"
+                 class="drop-box"
+                 ngf-drag-over-class="drag-over"
+                 ngf-multiple="false"
+                 ngf-allow-dir="false"
+                 accept="*">
+                <div class="drop-box-inner">
+                    <div class="drop-box-icon">
+                        <i class="fa fa-file-text-o"></i>
+                    </div>
+                    <span ng-show="tmx.files.length">{= tmx.files[0].name =}</span>
+                    <span ng-show="!tmx.files.length">Click here to upload file or drag file here to upload</span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="error">
+                <div class="label label-danger">{= error =}</div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success"
+                ng-click="ok()"
+                ng-disabled="busy">
+            <span ng-show="!tmx.id">{% trans "Add" %}</span>
+            <span ng-show="tmx.id">{% trans "Save" %}</span>
+        </button>
+    </div>
+</script>
