@@ -57,4 +57,10 @@
                   </tr>
                 {% endfor %}
 
+    <p style="text-align: center" ng-controller="projectsCtrl">
+        <a href="" class="btn" ng-click="startNewProject()">{% trans 'Create new' %}</a>
+    </p>
+
+    {% include "translations/partial/new_project_modal.html" %}
+
 {% endblock %}

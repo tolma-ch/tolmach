@@ -1,0 +1,12 @@
+{% load i18n %}
+<script type="text/ng-template" id="glossaryRemovePopover.html">
+    <div>
+        <label>{% trans "Are you sure?" %}</label>
+    </div>
+    <div>
+    </div>
+    <div class="btn-group">
+        <a class="btn btn-sm btn-danger" href="" ng-click="removeGlossary(glossary)">{% trans "Yes" %}</a>
+        <a class="btn btn-sm" href="" ng-click="closePopover()">{% trans "No" %}</a>
+    </div>
+</script>

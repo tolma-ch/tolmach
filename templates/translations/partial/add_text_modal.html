@@ -1,0 +1,96 @@
+{% load i18n %}
+<script type="text/ng-template" id="addTextModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{% trans "Add text" %}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <input type="text"
+                       placeholder="{% trans "Title" %}"
+                       class="form-control"
+                       ng-model="text.title">
+            </div>
+            <div class="form-group" style="display: none">
+                <select class="form-control"
+                        ng-model="text.subject">
+                    <option value="" disabled selected>Select subject</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group"
+                 ng-show="!glossary.id">
+                <div class="switcher">
+                    <a class="switcher__button"
+                       ng-class="{'switcher__button_active': tab === 0}"
+                       ng-click="tab = 0">
+                        <span>{% trans "Upload file" %}</span>
+                    </a>
+                    <a class="switcher__button"
+                       ng-class="{'switcher__button_active': tab === 1}"
+                       ng-click="tab = 1">
+                        <span>{% trans "Insert plain test" %}</span>
+                    </a>
+                </div>
+            </div>
+            <div class="form-group" ng-if="tab === 0">
+                <div ngf-drop
+                     ngf-select
+                     ng-model="text.files"
+                     class="drop-box"
+                     ngf-drag-over-class="drag-over"
+                     ngf-multiple="false"
+                     ngf-allow-dir="false"
+                     accept="image/*,application/pdf">
+                    <div class="drop-box-inner">
+                        <div class="drop-box-icon">
+                            <i class="fa fa-file-text-o"></i>
+                        </div>
+                        <span ng-show="text.files.length">{= text.files[0].name =}</span>
+                        <span ng-show="!text.files.length">Click here to upload file or drag file here to upload</span>
+                    </div>
+                </div>
+                <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+            </div>
+            <div class="form-group" ng-if="tab === 1">
+                <textarea class="form-control" cols="30" rows="10"
+                          ng-model="text.textBody"></textarea>
+            </div>
+
+            <div class="glossary-manual ng-scope">
+                <div class="glossary-manual__input">
+                    <select class="form-control"
+                            ng-model="text.sourceLang">
+                            <option value="" disabled selected>Source language</option>
+                        {% for language in languages %}
+                            <option value='{{ language.id }}'>{{ language.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="glossary-manual__input">
+                    <select class="form-control"
+                            ng-model="text.targetLang">
+                            <option value="" disabled selected>Target language</option>
+                        {% for language in languages %}
+                            <option value='{{ language.id }}'>{{ language.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="error">
+                <div class="label label-danger">{= error =}</div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success"
+                ng-click="ok()"
+                ng-disabled="busy">{% trans "Next" %}</button>
+    </div>
+</script>

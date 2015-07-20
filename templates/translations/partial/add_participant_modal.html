@@ -1,0 +1,30 @@
+{% load i18n %}
+<script type="text/ng-template" id="addParticipantModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{% trans "Add participant" %}</h3>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <input type="text"
+                       id="form-field-1"
+                       placeholder="{% trans "Enter nick or name" %}"
+                       class="form-control"
+                       ng-model="user"
+                       typeahead="user as user.username for user in getUsers($viewValue)"
+                       typeahead-template-url="userTypeaheadTemplate.html"></div>
+
+            <div class="form-group" ng-show="error">
+                <div class="label label-danger">{= error =}</div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-success"
+                ng-click="ok()"
+                ng-disabled="busy">{% trans "Add" %}</button>
+    </div>
+</script>
