@@ -11,7 +11,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta
+from tolmach.models import UserMeta, Messages
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
 from translations.utils_ajax import translation_to_json
@@ -124,7 +124,6 @@ def participant_ajax(request, project):
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
-        # TODO: добавлять ещё id проекта в пользовательскую мету member_of
         members = project.members.split(',') if project.members else []
         user_meta = UserMeta.objects.get(user=user)
         user_member_of = user_meta.member_of.split(',')
@@ -134,9 +133,23 @@ def participant_ajax(request, project):
         members.append(str(user.id))
         project.members = ','.join(members)
         project.save()
+
         user_member_of.append(str(project.id))
         user_meta.member_of = ','.join(user_member_of)
         user_meta.save()
+
+        # TODO: отправлять сообщение об инвайте
+        from django.utils import timezone
+        message = "{'type': 'invite', 'project': '%s', 'project_id': %s}" % (project.name, project.id)
+
+        new_message = Messages(
+            message_type='A',
+            addressee=user,
+            originator=request.user,
+            message=message
+        )
+        new_message.save()
+
         username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
         result = {
             'id': user.id,
@@ -163,6 +176,18 @@ def participant_ajax(request, project):
         user_member_of.remove(str(project.id))
         user_meta.member_of = ','.join(user_member_of)
         user_meta.save()
+
+        from django.utils import timezone
+        message = "{'type': 'uninvite', 'project': '%s', 'project_id': %s}" % (project.name, project.id)
+
+        new_message = Messages(
+            message_type='A',
+            addressee=user,
+            originator=request.user,
+            message=message
+        )
+        new_message.save()
+
         result = {
             'id': user.id
         }

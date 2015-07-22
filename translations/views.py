@@ -341,8 +341,11 @@ def export_text(request, text_id):
     for entry in entries:
         entry_translation = TextEntry.objects.filter(parent_entry=entry, is_approved=True)
         if entry_translation:
+            print entry_translation[0].body
             pure_text = re.sub(entry.body, entry_translation[0].body, pure_text)
+
+    from django.utils.encoding import iri_to_uri
     response = HttpResponse(pure_text, content_type='text/plain')
-    response['Content-Disposition'] = "attachment; filename=%s.txt" % text.title
+    response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
 
     return response

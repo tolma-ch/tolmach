@@ -9,28 +9,30 @@ function invite(data){
 }
 </script>
 <ul class="navbar-nav pull-right">
-	<li class="navbar-nav__button button_gray">
-		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="fa fa-tasks"></i>
-			<span class="badge badge-grey">4</span>
-		</a>
-	</li>
+	<!--<li class="navbar-nav__button button_gray">-->
+		<!--<a data-toggle="dropdown" class="dropdown-toggle" href="#">-->
+			<!--<i class="fa fa-tasks"></i>-->
+			<!--<span class="badge badge-grey">4</span>-->
+		<!--</a>-->
+	<!--</li>-->
 
-	<li class="navbar-nav__button button_purple">
-		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-            {% if invites_num > 0 %}
-			<i class="fa fa-bell-o fa-animated-bell"></i>
-			<span class="badge badge-important">{{ invites_num }}</span>
-            {% else %}
-            <i class="fa fa-bell-o"></i>
-            {% endif %}
-		</a>
-	</li>
+	<!--<li class="navbar-nav__button button_purple">-->
+		<!--<a data-toggle="dropdown" class="dropdown-toggle" href="#">-->
+            <!--{% if invites_num > 0 %}-->
+			<!--<i class="fa fa-bell-o fa-animated-bell"></i>-->
+			<!--<span class="badge badge-important">{{ invites_num }}</span>-->
+            <!--{% else %}-->
+            <!--<i class="fa fa-bell-o"></i>-->
+            <!--{% endif %}-->
+		<!--</a>-->
+	<!--</li>-->
 
 	<li class="navbar-nav__button button_dark-green">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="fa fa-envelope fa-animated-vertical"></i>
-			<span class="badge badge-success">5</span>
+			<i class="fa fa-bell-o fa-animated-bell"></i>
+            {% if invites_num > 0 %}
+			<span class="badge badge-success">{{ invites_num }}</span>
+            {% endif %}
 		</a>
 	</li>
 
