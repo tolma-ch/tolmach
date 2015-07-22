@@ -14,6 +14,10 @@ def login_navbar(context):
 
     unread_messages = Messages.objects.filter(addressee=request.user, was_read=False)
 
+    for i in unread_messages:
+        sender_meta = UserMeta.objects.get(user=i.originator)
+        i.sender_ava = sender_meta.avatar
+
     # invites = meta.invited_to.split(',') if not meta.invited_to == "" else []
     # project_invites = Project.objects.filter(id__in=invites)
     messages = []
