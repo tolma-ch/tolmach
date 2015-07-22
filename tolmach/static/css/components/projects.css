@@ -409,6 +409,8 @@
   left: 0;
 }
 .project-list-participant__ava img {
+  width: 40px;
+  height: 40px;
   border: 1px solid #fff;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -565,9 +567,17 @@
   background: #eee;
   border-color: #438eb9;
 }
+.project-list {
+  min-height: 85px;
+}
 .project-list__languages {
   width: 70px;
   float: left;
+  position: absolute;
+  bottom: 18px;
+  top: 18px;
+  overflow: hidden;
+  min-height: 50px;
 }
 .project-list__description {
   margin: 0 70px 36px 88px;
