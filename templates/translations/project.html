@@ -41,7 +41,7 @@
                           href=""
                           ng-show="!editingDescription"
                           ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
-                <p>{= project.description =}</p>
+                <p ng-show="!editingDescription">{= project.description =}</p>
                 <textarea class="form-control" name="" id="" cols="30" rows="10"
                           ng-model="projectDescription"
                           ng-show="editingDescription"></textarea>
@@ -70,7 +70,7 @@
                                  ng-click="activeParticipant = participant"
                                  ng-class="{'project-list-participant_active': activeParticipant === participant}">
                                 <div class="project-list-participant__ava">
-                                    <img class="navbar-nav__user-photo" src="/media/{= participant.avatar =}" alt="Jason's Photo">
+                                    <img src="/media/{= participant.avatar =}" alt="Jason's Photo">
                                 </div>
                                 <div class="project-list-participant__name">
                                     {= participant.name =}
@@ -79,7 +79,10 @@
                                     <a class="project-list-participant__btn" href="/user/{= participant.id =}"><i class="fa fa-eye"></i></a>
                                     <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                     <a class="project-list-participant__btn" href=""
-                                       ng-click="removeParticipant(participant)"><i class="fa fa-trash-o"></i></a>
+                                       popover-template="'participantRemovePopover.html'"
+                                       popover-placement="left"
+                                       popover-append-to-body="true"
+                                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                 </div>
                                 <div class="project-list-participant__menu"
                                         ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
@@ -208,6 +211,7 @@
     </div>
 
     {% include "translations/partial/add_participant_modal.html" %}
+    {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
     {% include "translations/partial/add_text_modal.html" %}
     {% include "translations/partial/edit_text_modal.html" %}
