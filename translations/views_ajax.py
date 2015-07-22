@@ -14,7 +14,7 @@ from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta
 from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 import json
-from translations.utils_ajax import translation_to_json
+from translations.utils_ajax import translation_to_json, user_to_json
 
 
 @login_required
@@ -103,14 +103,7 @@ def participant_ajax(request, project):
         users = User.objects.filter(id__in=members)
         result = []
         for user in users:
-            username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
-            user_meta = UserMeta.objects.get(user=user)
-            avatar = "%s" % user_meta.avatar if user_meta.avatar else "avatar/default.png"
-            result.append({
-                'id': user.id,
-                'name': username,
-                'avatar': avatar
-            })
+            result.append(user_to_json(user))
         return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -137,11 +130,7 @@ def participant_ajax(request, project):
         user_member_of.append(str(project.id))
         user_meta.member_of = ','.join(user_member_of)
         user_meta.save()
-        username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
-        result = {
-            'id': user.id,
-            'name': username
-        }
+        result = user_to_json(user)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'user' not in request.GET:
