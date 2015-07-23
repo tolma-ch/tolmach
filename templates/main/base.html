@@ -43,8 +43,8 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body>
-        <div class="main{% if user.is_authenticated %} auth{% endif %}" ng-app="tolmachApp">
+	<body ng-app="tolmachApp">
+        <div class="main{% if user.is_authenticated %} auth{% endif %}" ng-controller="mainCtrl">
             {% include "components/header/header.html" %}
 
             {% block content %}
