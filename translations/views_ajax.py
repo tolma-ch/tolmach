@@ -884,3 +884,19 @@ def tmdb_search(request):
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+def message_ajax(request):
+    if request.method == 'POST':
+        unread_messages = Messages.objects.filter(addressee=request.user, was_read=False)
+        result = []
+        for message in unread_messages:
+            sender_meta = UserMeta.objects.get(user=message.originator)
+            result.append({
+                'message': message.message,
+                'originator': message.originator.username,
+                'sender_ava': "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png",
+                'time_created': message.time_created.strftime('%Y-%m-%dT%H-%M')
+            })
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json")

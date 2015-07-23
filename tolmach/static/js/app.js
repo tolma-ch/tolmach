@@ -7,7 +7,14 @@
         'ui.bootstrap',
         'ngFileUpload'
     ])
-        .controller('mainCtrl', function ($scope) {
+        .controller('mainCtrl', function ($scope, $http, $timeout) {
+            var updateMessages = function () {
+                $http.post('/api/message/').success(function (data) {
+                    $scope.messages = data;
+                    $timeout(updateMessages, 5000);
+                }).error(function (data) {
+                })
+            };
             try {
                 $scope.sidebarCollapsed = angular.fromJson(sessionStorage.sidebarCollapsed);
             } catch (e) {
@@ -16,7 +23,8 @@
             $scope.toggleSidebar = function () {
                 $scope.sidebarCollapsed = !$scope.sidebarCollapsed;
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
-            }
+            };
+            updateMessages();
         })
         .controller('transCtrl', function ($rootScope, $scope, $http) {
             var textId = window['textId'],
