@@ -7,6 +7,17 @@
         'ui.bootstrap',
         'ngFileUpload'
     ])
+        .controller('mainCtrl', function ($scope) {
+            try {
+                $scope.sidebarCollapsed = angular.fromJson(sessionStorage.sidebarCollapsed);
+            } catch (e) {
+                $scope.sidebarCollapsed = false;
+            }
+            $scope.toggleSidebar = function () {
+                $scope.sidebarCollapsed = !$scope.sidebarCollapsed;
+                sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
+            }
+        })
         .controller('transCtrl', function ($rootScope, $scope, $http) {
             var textId = window['textId'],
                 getYaMachines = function (entry) {
