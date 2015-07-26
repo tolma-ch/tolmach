@@ -863,6 +863,7 @@ def tmdb_search(request):
 
         if text_tmx_list:
             from elasticsearch import Elasticsearch
+            # TODO: Сделать в сеттингсах указание хоста и порта эластика
             es = Elasticsearch()
             for tmx_id in text_tmx_list:
                 print "TMDB IS: %s" % tmx_id
