@@ -67,6 +67,20 @@ def user_page(request, user_id):
     return render_to_response(template, data, RequestContext(request))
 
 
+def handler404(request):
+    response = render_to_response('main/404.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+
+def handler500(request):
+    response = render_to_response('500.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
+
+
 @login_required
 def done(request):
     return render_to_response('main/done.html', {'user': request.user, 'request': request},

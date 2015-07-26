@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 from tolmach.models import UserMeta, Messages
-# from translations.models import Project
+
 
 @register.inclusion_tag('main/navbar-logged-in.html', takes_context=True)
 def login_navbar(context):
@@ -18,8 +18,6 @@ def login_navbar(context):
         sender_meta = UserMeta.objects.get(user=i.originator)
         i.sender_ava = sender_meta.avatar
 
-    # invites = meta.invited_to.split(',') if not meta.invited_to == "" else []
-    # project_invites = Project.objects.filter(id__in=invites)
     messages = []
 
     return {

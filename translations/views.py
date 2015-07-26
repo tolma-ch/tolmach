@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
@@ -40,6 +40,8 @@ def projects(request, proj_type):
         page_title = _('Public projects')
         page_url = '/projects/public/'
         user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
+    else:
+        raise Http404("Poll does not exist")
     for proj in user_projects_list:
         proj_manager_meta = UserMeta.objects.get(user=proj.manager)
         proj.manager_avatar = proj_manager_meta.avatar
@@ -81,11 +83,11 @@ def project_add(request):
 def project(request, proj_id=0):
     projects_text = ''
     projects_url = ''
-    if proj_id == 0:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
-        return HttpResponseRedirect('/projects/')
 
-    pr = Project.objects.get(id=proj_id)
+    try:
+        pr = Project.objects.get(id=proj_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
     if not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
@@ -299,7 +301,10 @@ def remove_user_from_project(request, proj_id, us_id):
 
 @login_required
 def view_text(request, text_id):
-    text = Text.objects.get(id=text_id)
+    try:
+        text = Text.objects.get(id=text_id)
+    except Text.DoesNotExist:
+        raise Http404(_('Sorry, no such text here!'))
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
