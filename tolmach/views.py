@@ -53,14 +53,30 @@ def user_page(request, user_id):
     last_name = user.last_name
     projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
     usermeta = UserMeta.objects.get(user=user)
-    translated_entries = TextEntry.objects.filter(author=user, is_approved=True).count()
+    translated_entries = TextEntry.objects.filter(author=user, is_approved=True)
+    stat_langpairs = {}
+    for entry in translated_entries:
+        text = entry.text
+        if not (text.source_lang, text.target_lang) in stat_langpairs:
+            stat_langpairs[(text.source_lang, text.target_lang)] = 1
+        else:
+            stat_langpairs[(text.source_lang, text.target_lang)] += 1
+    total_translated = sum([i for i in stat_langpairs.values()])
+    for key, value in stat_langpairs.items():
+        stat_langpairs[key] = int(value/(total_translated/100.0))
+
+    ordered_stat = OrderedDict(sorted(stat_langpairs.items(), key=lambda t: t[1], reverse=True))
     data = {
         'projects': projects,
         'username': user.username,
         'usermeta': usermeta,
         'first_name': first_name,
         'last_name': last_name,
-        'entries_total': translated_entries
+        'stat': ordered_stat,
+        'entries_total': total_translated,
+        'breadcrumbs': [
+                       [user.username, ''],
+        ],
     }
     template = 'components/profile-data/view_user.html'
 
