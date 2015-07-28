@@ -112,6 +112,7 @@ def project(request, proj_id=0):
         lang_list.append(localized_lang)
 
     data = {
+        'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,

@@ -310,6 +310,7 @@
         .controller('projectCtrl', function ($scope, $modal, $http) {
             $scope.project = window['project']
             $scope.projectId = window['projectId'];
+            $scope.isUserManager = window['isUserManager']
             $scope.participants = [];
             $http.get('/api/participant', {params: {project: $scope.projectId}})
                  .then(function(response) {
@@ -401,6 +402,25 @@
                     //$scope.texts.push(text);
                 }, function () {
                 });
+            };
+            $scope.removeText = function (text) {
+                var data = {
+                    'project': window['projectId'],
+                    'text': text.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/text/', {params: data})
+                    .success(function() {
+                        var i = $scope.texts.indexOf(text);
+                        if (i > -1) {
+                            delete $scope.texts.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
             };
             $scope.addGlossary = function () {
                 var modalInstance = $modal.open({
@@ -868,7 +888,7 @@
                                  'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                                  'tooltip-append-to-body="true" ' +
                                  'tooltip-placement="top" ' +
-                                 'tooltip="\'' + word + '\'">'
+                                 'tooltip="' + word + '">'
                                 + elem.html() + '</span>';
                 },
                 link: function (scope, element, attrs) {
