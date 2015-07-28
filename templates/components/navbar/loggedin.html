@@ -1,13 +1,4 @@
 {% load i18n %}
-<script type="text/javascript">
-function invite(data){
-    if(data!=Dajaxice.EXCEPTION){
-        alert(data.message);
-    }else{
-        alert('Error');
-    }
-}
-</script>
 <ul class="navbar-nav pull-right">
 
 	<li class="navbar-nav__button button_dark-green">
@@ -22,12 +13,12 @@ function invite(data){
                 {= messages.length =} new messages
             </li>
             <li ng-repeat="message in messages">
-                <a href="#">
+                <a href="/project/{= message.project_id =}/">
                     <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
                     <span class="msg-body">
                         <span class="msg-title">
                             <span class="blue">{= message.originator =}:</span>
-                            {= message.message =}
+                            пригласил вас в проект {= message.project_name =}
                         </span>
 
                         <span class="msg-time">
