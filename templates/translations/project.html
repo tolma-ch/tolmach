@@ -186,6 +186,7 @@
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""
+                                       ng-show="isUserManager"
                                        popover-template="'tmxRemovePopover.html'"
                                        popover-placement="left"
                                        class="btn btn-default"><i class="fa fa-trash-o"></i></a>
@@ -198,6 +199,7 @@
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""
+                                       ng-show="isUserManager"
                                        popover-template="'glossaryRemovePopover.html'"
                                        popover-placement="left"
                                        class="btn btn-default"><i class="fa fa-trash-o"></i></a>
@@ -208,14 +210,15 @@
                 </div>
             </div>
         </div>
-
+        {% if is_user_manager == 'true' %}
         <div class="pull-right">
             <a popover-template="'projectRemovePopover.html'"
                popover-placement="left"
                class="btn btn-default">{% trans "Remove Project" %}</a>
         </div>
+        {% endif %}
     </div>
-
+    {% if is_user_manager == 'true' %}
     {% include "translations/partial/add_participant_modal.html" %}
     {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
@@ -227,4 +230,5 @@
     {% include "translations/partial/glossary_remove_popover.html" %}
     {% include "translations/partial/tmx_remove_popover.html" %}
     {% include "translations/partial/project_remove_popover.html" %}
+    {% endif %}
 {% endblock %}
