@@ -152,6 +152,11 @@ def participant_ajax(request, project):
             user = User.objects.get(id=request.GET['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+        if user == project.manager:
+            return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
+                                status=400)
         members = project.members.split(',') if project.members else []
         user_meta = UserMeta.objects.get(user=user)
         user_member_of = user_meta.member_of.split(',')
@@ -263,7 +268,16 @@ def text_ajax(request, project):
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
-        pass
+        if 'text' not in request.GET:
+            return HttpResponse(json.dumps(_('Text id is not set')), content_type="application/json", status=400)
+        try:
+            text = Text.objects.get(id=request.GET['text'])
+        except Text.DoesNotExist:
+            return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
+        if not text.is_user_allowed_to_write(request.user):
+            return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+        text.delete()
+        return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 

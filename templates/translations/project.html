@@ -5,6 +5,7 @@
     <script>
         project={{ projectData | safe }};
         projectId={{ project.id }};
+        isUserManager = {{ is_user_manager }};
     </script>
     <div ng-controller="projectCtrl" ng-cloak>
         <div class="page-header">
@@ -79,6 +80,7 @@
                                     <a class="project-list-participant__btn" href="/user/{= participant.id =}"><i class="fa fa-eye"></i></a>
                                     <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                     <a class="project-list-participant__btn" href=""
+                                       ng-show="isUserManager"
                                        popover-template="'participantRemovePopover.html'"
                                        popover-placement="left"
                                        popover-append-to-body="true"
@@ -131,9 +133,13 @@
                                 </td>
                                 <td class="project-list-text__btns">
                                     <a class="project-list-text__btn" href=""
+                                       ng-show="isUserManager"
                                        ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>
                                     <a class="project-list-text__btn" href="/text/{= text.id =}/export/"><i class="fa fa-download"></i></a>
-                                    <a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>
+                                    <a class="project-list-text__btn" href=""
+                                       ng-show="isUserManager"
+                                       popover-template="'textRemovePopover.html'"
+                                       popover-placement="left"><i class="fa fa-trash-o"></i></a>
                                 </td>
                             </tr>
                         </table>
@@ -215,6 +221,7 @@
     {% include "translations/partial/user_typeahead_template.html" %}
     {% include "translations/partial/add_text_modal.html" %}
     {% include "translations/partial/edit_text_modal.html" %}
+    {% include "translations/partial/text_remove_popover.html" %}
     {% include "translations/partial/add_glossary_modal.html" %}
     {% include "translations/partial/add_tmx_modal.html" %}
     {% include "translations/partial/glossary_remove_popover.html" %}
