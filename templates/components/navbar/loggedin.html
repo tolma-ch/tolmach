@@ -14,7 +14,9 @@
             </li>
             <li ng-repeat="message in messages">
                 <a href="/project/{= message.project_id =}/">
-                    <img class="navbar-nav__user-photo" src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                    <div class="user-avatar">
+                        <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                    </div>
                     <span class="msg-body">
                         <span class="msg-title">
                             <span class="blue">{= message.originator =}:</span>
