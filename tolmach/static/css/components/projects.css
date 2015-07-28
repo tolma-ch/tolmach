@@ -483,7 +483,7 @@
   width: 82px;
 }
 .project-list-text__btns {
-  width: 106px;
+  max-width: 106px;
 }
 .project-list-text__btn {
   margin-left: 10px;
