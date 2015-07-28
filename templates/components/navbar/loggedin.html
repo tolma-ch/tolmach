@@ -3,7 +3,7 @@
 
 	<li class="navbar-nav__button button_dark-green">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="fa fa-bell-o fa-animated-bell"></i>
+			<i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"></i>
 			<span class="badge badge-success" ng-show="messages.length">{= messages.length =}</span>
 		</a>
 
@@ -14,7 +14,9 @@
             </li>
             <li ng-repeat="message in messages">
                 <a href="/project/{= message.project_id =}/">
-                    <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                    <div class="user-avatar">
+                        <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                    </div>
                     <span class="msg-body">
                         <span class="msg-title">
                             <span class="blue">{= message.originator =}:</span>
