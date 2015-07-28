@@ -160,6 +160,8 @@ def glossary_to_entry(entry_body, glossary_list):
         return repl_in_text
     body_to_return = entry_body
 
+    # TODO: сделать так, чтобы он перестал находить слово sci в слове lasciavano
+    # TODO: ололо, убрать нахер этот миллион селектов. Передавать в функцию сразу массив глоссариев
     for glos in glossary_list:
         gloss_entries = GlossaryEntry.objects.filter(glossary_id=glos)
         for pair in gloss_entries:
