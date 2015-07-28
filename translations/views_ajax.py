@@ -44,6 +44,9 @@ def project_ajax(request):
             project = Project.objects.get(id=request.GET['id'])
         except Project.DoesNotExist:
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+                                status=400)
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")
@@ -107,6 +110,9 @@ def participant_ajax(request, project):
         return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+                                status=400)
         post = json.loads(request.body)
         if 'user' not in post:
             return HttpResponse(json.dumps(_('User id is not set')), content_type="application/json", status=400)
@@ -133,7 +139,7 @@ def participant_ajax(request, project):
 
         # TODO: отправлять сообщение об инвайте
         from django.utils import timezone
-        message = "{'type': 'invite', 'project': '%s', 'project_id': %s}" % (project.name, project.id)
+        message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
         new_message = Messages(
             message_type='A',
@@ -172,7 +178,7 @@ def participant_ajax(request, project):
         user_meta.save()
 
         from django.utils import timezone
-        message = "{'type': 'uninvite', 'project': '%s', 'project_id': %s}" % (project.name, project.id)
+        message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
         new_message = Messages(
             message_type='A',
@@ -210,6 +216,9 @@ def text_ajax(request, project):
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+                                status=400)
         post = json.loads(request.body)
         print post
         # TODO accept file
@@ -274,8 +283,9 @@ def text_ajax(request, project):
             text = Text.objects.get(id=request.GET['text'])
         except Text.DoesNotExist:
             return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
-        if not text.is_user_allowed_to_write(request.user):
-            return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+        if not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+                                status=400)
         text.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -907,11 +917,15 @@ def message_ajax(request):
         result = []
         for message in unread_messages:
             sender_meta = UserMeta.objects.get(user=message.originator)
+            data = json.loads(message.message)
             result.append({
                 'message': message.message,
                 'originator': message.originator.username,
                 'sender_ava': "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png",
-                'time_created': message.time_created.strftime('%Y-%m-%dT%H-%M')
+                'project_id': data['project_id'],
+                'project_name': data['project'],
+                'type': data['type'],
+                'time_created': message.time_created.strftime('%H:%M %d-%m-%Y')
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")
