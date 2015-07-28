@@ -173,3 +173,16 @@
     margin-right: 20px;
   }
 }
+.user-avatar {
+  display: inline-block;
+  border-radius: 50%;
+  border: 1px solid #999;
+  width: 42px;
+  height: 42px;
+}
+.user-avatar img {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+}
