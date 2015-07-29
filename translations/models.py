@@ -51,6 +51,16 @@ class Project(models.Model):
             else:
                 return False
 
+    def is_user_a_member(self, user):
+        """
+        Check whether provided user is a member of the current project and return Boolean
+        """
+        members = self.members.split(',') if self.members else []
+        if str(user.id) in members:
+            return True
+        else:
+            return False
+
     def get_progress(self):
         """
         Get progress percentage of the current project and return Int from 0 to 100

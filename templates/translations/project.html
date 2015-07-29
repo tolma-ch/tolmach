@@ -57,7 +57,8 @@
                         <h5>
                             {% trans "Participants" %}
                         </h5>
-                        <div class="widget-toolbar no-border">
+                        <div class="widget-toolbar no-border"
+                             ng-show="isUserManager">
                             <a href=""
                                ng-click="addParticipant()">
                                 <i class="fa fa-plus-circle"></i>
@@ -103,7 +104,8 @@
                         <h5>
                             {% trans "Documents" %}
                         </h5>
-                        <div class="widget-toolbar no-border">
+                        <div class="widget-toolbar no-border"
+                             ng-show="isUserManager">
                             <a href=""
                                ng-click="addText()">
                                 <i class="fa fa-plus-circle"></i>
@@ -152,7 +154,8 @@
                         <h5>
                             {% trans "TMX/Glossaries" %}
                         </h5>
-                        <div class="widget-toolbar no-border">
+                        <div class="widget-toolbar no-border"
+                             ng-show="isUserManager">
                             <a data-toggle="dropdown"
                                class="dropdown-toggle"
                                href="">
