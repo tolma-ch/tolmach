@@ -31,15 +31,26 @@ def projects(request, proj_type):
         page_title = _('My projects')
         page_url = '/projects/my/'
         user_projects_list = Project.objects.filter(manager=user).order_by('-last_modified')
+        for pr in user_projects_list:
+            pr.list_button = 'none'
     elif proj_type == 'thirdparty':
         page_title = _('Third-party projects')
         page_url = '/projects/thirdparty/'
         member_of = filter(None, meta.member_of.split(','))
         user_projects_list = Project.objects.filter(id__in=member_of).order_by('-last_modified')
+        for pr in user_projects_list:
+            pr.list_button = 'leave'
     elif proj_type == 'public':
         page_title = _('Public projects')
         page_url = '/projects/public/'
         user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
+        for pr in user_projects_list:
+            if pr.is_user_manager(request.user):
+                pr.list_button = 'none'
+            elif pr.is_user_a_member(request.user):
+                pr.list_button = 'leave'
+            else:
+                pr.list_button = 'enter'
     else:
         raise Http404("Poll does not exist")
     for proj in user_projects_list:
