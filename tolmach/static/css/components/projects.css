@@ -456,34 +456,42 @@
   display: block;
 }
 .project-list-texts {
-  margin-bottom: 0 !important;
   width: 100%;
-}
-.project-list-texts td {
-  border: none !important;
-}
-.project-list-texts .project-list-text td {
-  vertical-align: middle;
-  padding: 5px 0 5px 12px;
+  display: table;
+  border-collapse: separate;
 }
 .project-list-text {
   color: #555;
-  min-height: 40px;
+  position: relative;
+  display: table-row;
 }
 .project-list-text__title {
-  margin: 0 100px 4px 50px;
-  line-height: 40px;
+  display: table-cell;
   white-space: nowrap;
   overflow: hidden;
+  vertical-align: middle;
+  padding: 12px;
 }
 .project-list-text__progress {
-  min-width: 100px;
+  width: 50%;
+  vertical-align: middle;
+  display: table-cell;
+  padding-right: 12px;
 }
 .project-list-text__languages {
+  display: table-cell;
   width: 82px;
+  vertical-align: middle;
+  white-space: nowrap;
+  padding-right: 12px;
 }
 .project-list-text__btns {
+  display: table-cell;
   max-width: 106px;
+  width: 1%;
+  vertical-align: middle;
+  white-space: nowrap;
+  padding-right: 12px;
 }
 .project-list-text__btn {
   margin-left: 10px;
