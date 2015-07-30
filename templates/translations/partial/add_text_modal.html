@@ -7,7 +7,7 @@
         <h3 class="modal-title">{% trans "Add text" %}</h3>
     </div>
     <div class="modal-body">
-        <form>
+        <form ng-init="tab=1">
             <div class="form-group">
                 <input type="text"
                        placeholder="{% trans "Title" %}"
@@ -28,7 +28,8 @@
                 <div class="switcher">
                     <a class="switcher__button"
                        ng-class="{'switcher__button_active': tab === 0}"
-                       ng-click="tab = 0">
+                       ng-click="tab = 0"
+                       ng-if="0">
                         <span>{% trans "Upload file" %}</span>
                     </a>
                     <a class="switcher__button"
@@ -38,7 +39,7 @@
                     </a>
                 </div>
             </div>
-            <div class="form-group" ng-if="tab === 0">
+            <div class="form-group" ng-if="0">
                 <div ngf-drop
                      ngf-select
                      ng-model="text.files"
@@ -66,7 +67,7 @@
                 <div class="glossary-manual__input">
                     <select class="form-control"
                             ng-model="text.sourceLang">
-                            <option value="" disabled selected>Source language</option>
+                            <option value="" disabled selected>{% trans "Source language" %}</option>
                         {% for language in languages %}
                             <option value='{{ language.id }}'>{{ language.name }}</option>
                         {% endfor %}
@@ -75,7 +76,7 @@
                 <div class="glossary-manual__input">
                     <select class="form-control"
                             ng-model="text.targetLang">
-                            <option value="" disabled selected>Target language</option>
+                            <option value="" disabled selected>{% trans "Target language" %}</option>
                         {% for language in languages %}
                             <option value='{{ language.id }}'>{{ language.name }}</option>
                         {% endfor %}

@@ -41,7 +41,13 @@ def index(request):
 
                 # English glossary
                 en_glossary = utils.copy_glossary("English", 40, test_project, request.user)
-                utils.copy_text("The Hobbit", 70, test_project, en_glossary)
+                en_tmdb = utils.copy_tmdb("English", 30, test_project, request.user)
+                utils.copy_text("The Hobbit", 70, test_project, en_glossary, en_tmdb)
+
+                # German glossary
+                de_glossary = utils.copy_glossary("German", 57, test_project, request.user)
+                de_tmdb = utils.copy_tmdb("German", 32, test_project, request.user)
+                utils.copy_text("Das brot der frühen jahre", 93, test_project, de_glossary, de_tmdb)
 
                 # Korean glossary
                 ko_glossary = utils.copy_glossary("Korean", 48, test_project, request.user)

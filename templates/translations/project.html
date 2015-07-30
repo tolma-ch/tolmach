@@ -13,6 +13,7 @@
                 <span ng-show="!editingName">
                     {= project.name =}
                 </span>
+                {% if is_user_manager == 'true' %}
                 <input class="form-contrl" type="text"
                        ng-show="editingName"
                        ng-model="projectName"/>
@@ -28,8 +29,10 @@
                           href=""
                           ng-show="!editingName"
                           ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
+                {% endif %}
             </h1>
             <blockquote>
+                {% if is_user_manager == 'true' %}
                 <a class="float-right"
                           href=""
                           ng-show="editingDescription"
@@ -42,6 +45,7 @@
                           href=""
                           ng-show="!editingDescription"
                           ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
+                {% endif %}
                 <p ng-show="!editingDescription">{= project.description =}</p>
                 <textarea class="form-control" name="" id="" cols="30" rows="10"
                           ng-model="projectDescription"
@@ -174,7 +178,7 @@
 									<a href="#"
                                        ng-click="addGlossary()">
                                         <i class="fa fa-book"></i>
-										{% trans "Glossaries" %}
+										{% trans "Glossary" %}
 									</a>
 								</li>
 							</ul>
