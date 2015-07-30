@@ -1,4 +1,8 @@
 {% load i18n %}
+{% trans 'new messages' as new_messages %}
+{% trans 'invited you to the project' as invitation %}
+{% trans 'Logout' as logout %}
+{% trans 'See all messages' as messages %}
 <ul class="navbar-nav pull-right">
 
 	<li class="navbar-nav__button button_dark-green">
@@ -10,7 +14,7 @@
         <ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">
             <li class="dropdown-header">
                 <i class="fa-envelope-alt"></i>
-                {= messages.length =} new messages
+                {= messages.length =} {{ new_messages }}
             </li>
             <li ng-repeat="message in messages">
                 <a href="/project/{= message.project_id =}/">
@@ -20,7 +24,7 @@
                     <span class="msg-body">
                         <span class="msg-title">
                             <span class="blue">{= message.originator =}:</span>
-                            пригласил вас в проект {= message.project_name =}
+                            {{ invitation }} {= message.project_name =}
                         </span>
 
                         <span class="msg-time">
@@ -32,8 +36,8 @@
             </li>
 
             <li>
-                <a href="inbox.html">
-                    See all messages
+                <a href="#">
+                    {{ messages }}
                     <i class="fa-arrow-right"></i>
                 </a>
             </li>
@@ -55,26 +59,26 @@
 			<i class="fa fa-caret-down"></i>
 		</a>
         <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-            <li>
-                <a href="#">
-                    <i class="fa-cog"></i>
-                    Settings
-                </a>
-            </li>
+            <!--<li>-->
+                <!--<a href="#">-->
+                    <!--<i class="fa-cog"></i>-->
+                    <!--Settings-->
+                <!--</a>-->
+            <!--</li>-->
 
-            <li>
-                <a href="/">
-                    <i class="fa-user"></i>
-                    Profile
-                </a>
-            </li>
+            <!--<li>-->
+                <!--<a href="/">-->
+                    <!--<i class="fa-user"></i>-->
+                    <!--Profile-->
+                <!--</a>-->
+            <!--</li>-->
 
-            <li class="divider"></li>
+            <!--<li class="divider"></li>-->
 
             <li>
                 <a href="/logout">
                     <i class="fa-off"></i>
-                    Logout
+                    {{ logout }}
                 </a>
             </li>
         </ul>

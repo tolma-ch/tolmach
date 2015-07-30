@@ -29,6 +29,10 @@ def project_ajax(request):
             if not project.is_user_allowed(request.user):
                 return HttpResponse(json.dumps(_('Access denied')), content_type="application/json",
                                     status=400)
+            if not project.is_user_manager(request.user):
+                return HttpResponse(json.dumps(_('You have to be a manager of project')),
+                                    content_type="application/json",
+                                    status=400)
             if 'name' in post:
                 project.name = post['name']
             if 'description' in post:
@@ -854,7 +858,6 @@ def disapprove_entry_ajax(request):
 
 @login_required
 def yandex_translate_ajax(request):
-    # TODO: могут заспуфить потенциально. Когда-нибудь в будущем что-нибудь придумать
     if request.method == 'POST':
         post = json.loads(request.body)
         print post
@@ -887,25 +890,55 @@ def tmdb_search(request):
 
         if text_tmx_list:
             from elasticsearch import Elasticsearch
+            from elasticsearch import exceptions as es_exept
             # TODO: Сделать в сеттингсах указание хоста и порта эластика
             es = Elasticsearch()
             for tmx_id in text_tmx_list:
                 print "TMDB IS: %s" % tmx_id
-                res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
-                                                            'query': {
-                                                                'match':
-                                                                {
-                                                                    'source_lang': entry.body
-                                                                }
-                                                                }
-                                                            })
-                for item in res['hits']['hits']:
-                    search_results.append({
-                                          'id': 123,
-                                          'text': item['fields']['target_lang'][0],
-                                          'percent': int(float(item['_score'])*100)
-                                          })
-                    print "%d - %s" % (int(float(item['_score'])*100), item['fields']['target_lang'][0])
+                if settings.ALFA:
+                    try:
+                        res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
+                                                                    'query': {
+                                                                        'match':
+                                                                        {
+                                                                            'source_lang': entry.body
+                                                                        }
+                                                                        }
+                                                                    })
+                    except es_exept.NotFoundError:
+                        print "Ololo, excepted!"
+                        tmx = TMDatabase.objects.get(id=tmx_id)
+                        tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
+                        for i in tmx_entries:
+                            doc = {
+                                'db_id': i.id,
+                                'source_lang': i.orig_text,
+                                'target_lang': i.target_text,
+                            }
+
+                            res = es.index(
+                                index=tmx.id,
+                                doc_type='tmx1',
+                                id=i.id,
+                                body=doc
+                            )
+
+                            print "ELASTICSEARCH: ", res['created']
+                        res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
+                                                                    'query': {
+                                                                        'match':
+                                                                        {
+                                                                            'source_lang': entry.body
+                                                                        }
+                                                                        }
+                                                                    })
+                    for item in res['hits']['hits']:
+                        search_results.append({
+                                              'id': 123,
+                                              'text': item['fields']['target_lang'][0],
+                                              'percent': int(float(item['_score'])*100)
+                                              })
+                        print "%d - %s" % (int(float(item['_score'])*100), item['fields']['target_lang'][0])
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)

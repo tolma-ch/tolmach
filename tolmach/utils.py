@@ -12,38 +12,21 @@ def send_message(originator, addressee, message, type):
     new_message.save()
 
 
-def copy_tmdb(tmdb_id, new_owner, new_project):
+def copy_tmdb(name, origin_id, target_project, target_owner):
     try:
-        tmx = TMDatabase.objects.get(id=tmdb_id)
+        tmx = TMDatabase.objects.get(name=name, project=target_project)
     except TMDatabase.DoesNotExist:
-        return 404, 'TMX not found'
-    tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
-    tmx.id = None
-    tmx.owner = new_owner
-    tmx.project = new_project
-    tmx.save()
+        tmx = TMDatabase.objects.get(id=origin_id)
+        tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
+        tmx.id = None
+        tmx.owner = target_owner
+        tmx.project = target_project
+        tmx.save()
 
-    from elasticsearch import Elasticsearch
-    es = Elasticsearch()
-    for i in tmx_entries:
-        i.id = None
-        i.tmx = tmx
-        i.save()
-
-        doc = {
-            'db_id': i.id,
-            'source_lang': i.orig_text,
-            'target_lang': i.target_text,
-        }
-
-        res = es.index(
-            index=tmx.id,
-            doc_type='tmx1',
-            id=i.id,
-            body=doc
-        )
-
-        print "ELASTICSEARCH: ", res['created']
+        for i in tmx_entries:
+            i.id = None
+            i.tmx = tmx
+            i.save()
 
     return tmx.id
 
@@ -66,7 +49,7 @@ def copy_glossary(name, origin_id, target_project, target_owner):
     return glossary.id
 
 
-def copy_text(name, origin_id, target_project, glossary):
+def copy_text(name, origin_id, target_project, glossary, tmdb=""):
     try:
         text = Text.objects.get(title=name,
                                 project=target_project)
@@ -77,8 +60,10 @@ def copy_text(name, origin_id, target_project, glossary):
         text.project = target_project
         text.title = name
         text.glossaries = str(glossary)
+        text.tmdatabases = str(tmdb)
         text.save()
         for i in text_entries:
             i.id = None
             i.text = text
             i.save()
+    return text.id
