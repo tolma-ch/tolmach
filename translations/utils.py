@@ -4,7 +4,8 @@
 from __future__ import unicode_literals
 import re
 import os
-from translations.models import GlossaryEntry
+import json
+from translations.models import GlossaryEntry, TMDatabase, TMDatabaseEntry
 
 
 RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
@@ -168,6 +169,15 @@ def glossary_to_entry(entry_body, glossary_list):
             body_to_return = re.sub(pair.source_entry, highlight_word(pair.target_entry), body_to_return)
 
     return body_to_return
+
+
+def update_tmdb(tmdb_id):
+    try:
+        tmx = TMDatabase.objects.get(id=tmdb_id)
+    except TMDatabase.DoesNotExist:
+        return _('TMX not found')
+
+    pass
 
 
 # def get_standart_lang(incoming_lang):
