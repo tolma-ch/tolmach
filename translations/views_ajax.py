@@ -595,8 +595,8 @@ def tmx_ajax(request, project):
                     source_text = tuv[0].find('seg').text
                     target_text = tuv[1].find('seg').text
 
-                    print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
-                    print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+                    # print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
+                    # print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
 
                     try:
                         target_author = tuv[1].attrib["creationid"]
@@ -622,10 +622,10 @@ def tmx_ajax(request, project):
                         target_edited = None
                         target_editor = None
 
-                    print "Target creator: %s" % target_author if target_author else "Target creator:"
-                    print "Tagret created: %s" % target_created if target_created else "Tagret created:"
-                    print "Target editor: %s" % target_editor if target_editor else "Target editor:"
-                    print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+                    # print "Target creator: %s" % target_author if target_author else "Target creator:"
+                    # print "Tagret created: %s" % target_created if target_created else "Tagret created:"
+                    # print "Target editor: %s" % target_editor if target_editor else "Target editor:"
+                    # print "Target edited: %s" % target_edited if target_edited else "Target edited:"
 
                     new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
                                                      orig_lang=source_lang.lower(),
