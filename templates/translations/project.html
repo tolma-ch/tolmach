@@ -113,27 +113,27 @@
                         </div>
                     </div>
                     <div class="widget-body">
-                        <table class="project-list-texts table table-striped">
-                            <tr class="project-list-text" ng-repeat="text in texts">
-                                <td class="project-list-text__title">
+                        <div class="project-list-texts">
+                            <div class="project-list-text" ng-repeat="text in texts">
+                                <div class="project-list-text__title">
                                     <a href="/text/{= text.id =}">
                                         {= text.title =}
                                     </a>
-                                </td>
-                                <td class="project-list-text__progress">
+                                </div>
+                                <div class="project-list-text__progress">
                                     <div class="progress-bar">
                                         <div class="progress-bar__gauge" style="width:{= text.progress =}%;background:#02c14f"></div>
                                         <span class="progress-bar__value">{= text.progress =}%</span>
                                     </div>
-                                </td>
-                                <td class="project-list-text__languages">
+                                </div>
+                                <div class="project-list-text__languages">
                                     <div class="languages">
                                         <i class="flag flag-{= text.sourceLang =}"></i>
                                         <i class="fa fa-chevron-right"></i>
                                         <i class="flag flag-{= text.targetLang =}"></i>
                                     </div>
-                                </td>
-                                <td class="project-list-text__btns">
+                                </div>
+                                <div class="project-list-text__btns">
                                     <a class="project-list-text__btn" href=""
                                        ng-show="isUserManager"
                                        ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>
@@ -142,9 +142,9 @@
                                        ng-show="isUserManager"
                                        popover-template="'textRemovePopover.html'"
                                        popover-placement="left"><i class="fa fa-trash-o"></i></a>
-                                </td>
-                            </tr>
-                        </table>
+                                </div>
+                            </div>
+                        </div>
                     </div><!-- /widget-body -->
                 </div>
             </div>
