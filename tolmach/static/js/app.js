@@ -57,7 +57,8 @@
                     i, entry;
                 for(i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
-                    entry.mode = angular.isArray(entry['translations']) && !!entry['translations'].length ? 0 : 1;
+                    entry.mode = (angular.isArray(entry['translations']) && !!entry['translations'].length)
+                                || !$scope.translationAllowed ? 0 : 1;
                     entriesById[entry['idInText']] = entry;
                 }
                 $scope.entries = entries;
