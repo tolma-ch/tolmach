@@ -6,7 +6,7 @@ from django.http.response import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.conf import settings
-from tolmach.models import UserMeta
+from tolmach.models import UserMeta, Messages
 from django.contrib.auth.models import User
 from translations.models import Project, TextEntry
 from collections import OrderedDict
