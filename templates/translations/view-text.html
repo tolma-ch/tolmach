@@ -107,6 +107,10 @@
                             </form>
                         </div>
 
+                        <div class="translation__sentence-suggestion" ng-show="!entry.translations.length">
+                            {% trans 'No translations' %}
+                        </div>
+
                         <div class="translation__sentence-suggestion"
                              ng-show="entry.mode === 0"
                              ng-repeat="translation in entry.translations"
