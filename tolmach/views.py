@@ -17,6 +17,31 @@ def index(request):
     if request.user.is_authenticated():
         if settings.ALFA:
             if not request.user.username == 'mega_venik':
+                project = Project.objects.get(id=7)
+                members = project.members.split(',') if project.members else []
+                user = request.user
+                user_meta = UserMeta.objects.get(user=user)
+                user_member_of = user_meta.member_of.split(',')
+                if str(user.id) in members or str(project.id) in user_member_of:
+                    pass
+                else:
+                    members.append(str(user.id))
+                    project.members = ','.join(members)
+                    project.save()
+
+                    user_member_of.append(str(project.id))
+                    user_meta.member_of = ','.join(user_member_of)
+                    user_meta.save()
+
+                    message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+
+                    new_message = Messages(
+                        message_type='A',
+                        addressee=user,
+                        originator=User.objects.get(id=1),
+                        message=message
+                    )
+                    new_message.save()
                 try:
                     test_project = Project.objects.get(name="Alfa test project", manager=request.user)
                     print "Project is okay, nothing to do"
@@ -31,35 +56,46 @@ def index(request):
                     print "Project populated!"
                 test_project = Project.objects.get(name="Alfa test project", manager=request.user)
 
-                # Italian glossary
-                it_glossary = utils.copy_glossary("Italiano", 32, test_project, request.user)
-                utils.copy_text("La solitudine dei numeri primi", 63, test_project, it_glossary)
+                # English glossary
+                en_glossary = utils.copy_glossary("English glossary", 2, test_project, request.user)
+                en_tmdb = utils.copy_tmdb("English->Russian translation memory", 2, test_project, request.user)
+                utils.copy_text("The Hobbit", 8, test_project, en_glossary, en_tmdb)
 
                 # Spanish glossary
-                es_glossary = utils.copy_glossary("Spanish", 31, test_project, request.user)
-                utils.copy_text("Riquete el de copete", 66, test_project, es_glossary)
+                es_glossary = utils.copy_glossary("Spanish glossary", 3, test_project, request.user)
+                es_tmdb = utils.copy_tmdb("Spanish->Russian translation memory", 3, test_project, request.user)
+                utils.copy_text("Riquete el de copete", 9, test_project, es_glossary, es_tmdb)
 
-                # English glossary
-                en_glossary = utils.copy_glossary("English", 40, test_project, request.user)
-                en_tmdb = utils.copy_tmdb("English", 30, test_project, request.user)
-                utils.copy_text("The Hobbit", 70, test_project, en_glossary, en_tmdb)
-
-                # German glossary
-                de_glossary = utils.copy_glossary("German", 57, test_project, request.user)
-                de_tmdb = utils.copy_tmdb("German", 32, test_project, request.user)
-                utils.copy_text("Das brot der frühen jahre", 93, test_project, de_glossary, de_tmdb)
-
-                # Korean glossary
-                ko_glossary = utils.copy_glossary("Korean", 48, test_project, request.user)
-                utils.copy_text("국회 대표단 러시아 바이칼 경제 포럼 참석하여 의원외교 펼쳐", 80, test_project, ko_glossary)
-
-                # French
-                fr_glossary = utils.copy_glossary("French", 43, test_project, request.user)
-                utils.copy_text("Que sait-on sur le MERS-Coronavirus?", 81, test_project, fr_glossary)
+                # Italian glossary
+                it_glossary = utils.copy_glossary("Italian glossary", 4, test_project, request.user)
+                it_tmdb = utils.copy_tmdb("Italian->Russian translation memory", 4, test_project, request.user)
+                utils.copy_text("La solitudine dei numeri primi", 10, test_project, it_glossary, it_tmdb)
 
                 # Japanese
-                ja_glossary = utils.copy_glossary("Japanese", 54, test_project, request.user)
-                utils.copy_text("日本の山水画展", 87, test_project, ja_glossary)
+                ja_glossary = utils.copy_glossary("Japanese glossary", 5, test_project, request.user)
+                ja_tmdb = utils.copy_tmdb("Japanese->Russian translation memory", 5, test_project, request.user)
+                utils.copy_text("日本の山水画展", 11, test_project, ja_glossary, ja_tmdb)
+
+                # French
+                fr_glossary = utils.copy_glossary("French glossary", 6, test_project, request.user)
+                fr_tmdb = utils.copy_tmdb("French->Russian translation memory", 6, test_project, request.user)
+                utils.copy_text("Que sait-on sur le MERS-Coronavirus?", 12, test_project, fr_glossary, fr_tmdb)
+
+                # Korean glossary
+                ko_glossary = utils.copy_glossary("Korean glossary", 7, test_project, request.user)
+                ko_tmdb = utils.copy_tmdb("Korean->Russian translation memory", 7, test_project, request.user)
+                utils.copy_text("국회 대표단 러시아 바이칼 경제 포럼 참석하여 의원외교 펼쳐", 13, test_project, ko_glossary, ko_tmdb)
+
+                # German glossary
+                de_glossary = utils.copy_glossary("German glossary", 8, test_project, request.user)
+                de_tmdb = utils.copy_tmdb("German->Russian translation memory", 8, test_project, request.user)
+                utils.copy_text("Das brot der frühen jahre", 14, test_project, de_glossary, de_tmdb)
+
+                # Chinese
+                zh_glossary = utils.copy_glossary("Chinese glossary", 9, test_project, request.user)
+                zh_tmdb = utils.copy_tmdb("Chinese->Russian translation memory", 9, test_project, request.user)
+                utils.copy_text("松树镇", 15, test_project, zh_glossary, zh_tmdb)
+
 
         first_name = request.user.first_name
         last_name = request.user.last_name

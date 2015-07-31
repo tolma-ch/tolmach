@@ -21,7 +21,7 @@ class GlossaryInLine(admin.StackedInline):
 
 
 class GlossaryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'project', 'owner')
     inlines = [GlossaryInLine]
 
 
@@ -31,7 +31,7 @@ class TMDBInLine(admin.StackedInline):
 
 
 class TMDBAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'owner')
     inlines = [TMDBInLine]
 
 admin.site.register(Project)
