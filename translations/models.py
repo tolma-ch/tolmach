@@ -46,7 +46,7 @@ class Project(models.Model):
             return True
         else:
             members = self.members.split(',') if self.members else []
-            if self.manager == user or str(user.id) in members:
+            if self.manager == user or str(user.id) in members or user.is_staff:
                 return True
             else:
                 return False

@@ -101,6 +101,11 @@
                     <tbody>
                         {% for project in projects %}
                         <tr class="user-statistics-table__row">
+                            <td>
+                                {% if project.is_private %}
+                                <i class="fa fa-lock"></i>
+                                {% endif %}
+                            </td>
                             <td class="user-statistics-table__title">
                                 <a href="/project/{{ project.id }}">{{ project.name }}</a>
                             </td>

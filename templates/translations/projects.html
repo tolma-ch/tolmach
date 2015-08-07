@@ -10,7 +10,11 @@
                             <a href="/project/{{ project.id }}">
                                 {{ project.name }}
                             </a>
-                            <small>updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span></small>
+                            <small>
+                            {% if project.is_private %}
+                            <i class="fa fa-lock"></i>
+                            {% endif %}
+                                updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span></small>
                         </h3>
                         <div class="widget-toolbar no-border">
                             <a href="/user/{{ project.manager.id }}">

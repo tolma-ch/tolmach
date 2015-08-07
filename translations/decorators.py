@@ -18,7 +18,7 @@ def accept_text(func):
             text = Text.objects.get(id=params['text'])
         except Text.DoesNotExist:
             return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
-        if not text.is_user_allowed_to_read(request.user):
+        if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
         kwargs['text'] = text
         return func(request, *args, **kwargs)
