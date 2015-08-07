@@ -133,7 +133,7 @@ def user_page(request, user_id):
     else:
         projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
     usermeta = UserMeta.objects.get(user=user)
-    ordered_stat, total_translated = utils.get_user_stat(request.user)
+    ordered_stat, total_translated = utils.get_user_stat(user)
     data = {
         'projects': projects,
         'username': user.username,
