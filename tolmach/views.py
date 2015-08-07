@@ -8,8 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.conf import settings
 from tolmach.models import UserMeta, Messages
 from django.contrib.auth.models import User
-from translations.models import Project, TextEntry
-from collections import OrderedDict
+from translations.models import Project
 from tolmach import utils
 
 
@@ -47,19 +46,7 @@ def index(request):
         last_name = request.user.last_name
         projects = Project.objects.filter(manager=request.user.id).order_by('last_modified')
         usermeta = UserMeta.objects.get(user=request.user)
-        translated_entries = TextEntry.objects.filter(author=request.user, is_approved=True)
-        stat_langpairs = {}
-        for entry in translated_entries:
-            text = entry.text
-            if not (text.source_lang, text.target_lang) in stat_langpairs:
-                stat_langpairs[(text.source_lang, text.target_lang)] = 1
-            else:
-                stat_langpairs[(text.source_lang, text.target_lang)] += 1
-        total_translated = sum([i for i in stat_langpairs.values()])
-        for key, value in stat_langpairs.items():
-            stat_langpairs[key] = int(value/(total_translated/100.0))
-
-        ordered_stat = OrderedDict(sorted(stat_langpairs.items(), key=lambda t: t[1], reverse=True))
+        ordered_stat, total_translated = utils.get_user_stat(request.user)
 
         data = {
             'projects': projects,
@@ -141,21 +128,12 @@ def user_page(request, user_id):
     user = get_object_or_404(User, id=user_id)
     first_name = user.first_name
     last_name = user.last_name
-    projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
+    if request.user == user or request.user.is_staff == 1:
+        projects = Project.objects.filter(manager=user).order_by('last_modified')
+    else:
+        projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
     usermeta = UserMeta.objects.get(user=user)
-    translated_entries = TextEntry.objects.filter(author=user, is_approved=True)
-    stat_langpairs = {}
-    for entry in translated_entries:
-        text = entry.text
-        if not (text.source_lang, text.target_lang) in stat_langpairs:
-            stat_langpairs[(text.source_lang, text.target_lang)] = 1
-        else:
-            stat_langpairs[(text.source_lang, text.target_lang)] += 1
-    total_translated = sum([i for i in stat_langpairs.values()])
-    for key, value in stat_langpairs.items():
-        stat_langpairs[key] = int(value/(total_translated/100.0))
-
-    ordered_stat = OrderedDict(sorted(stat_langpairs.items(), key=lambda t: t[1], reverse=True))
+    ordered_stat, total_translated = utils.get_user_stat(request.user)
     data = {
         'projects': projects,
         'username': user.username,

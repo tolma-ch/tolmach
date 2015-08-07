@@ -43,7 +43,10 @@ def projects(request, proj_type):
     elif proj_type == 'public':
         page_title = _('Public projects')
         page_url = '/projects/public/'
-        user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
+        if not request.user.is_staff == 1:
+            user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
+        else:
+            user_projects_list = Project.objects.filter().order_by('-last_modified')
         for pr in user_projects_list:
             if pr.is_user_manager(request.user):
                 pr.list_button = 'none'
@@ -99,7 +102,7 @@ def project(request, proj_id=0):
         pr = Project.objects.get(id=proj_id)
     except Project.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
-    if not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user):
+    if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
 
@@ -112,6 +115,9 @@ def project(request, proj_id=0):
     elif not pr.is_private:
         projects_text = _('Public projects')
         projects_url = '/projects/public/'
+    else:
+        projects_text = "%s" % pr.manager.username
+        projects_url = '/user/%d/' % pr.manager.id
 
     lang_list = []
     # Получаем список названий языков для текущей локали
@@ -317,7 +323,7 @@ def view_text(request, text_id):
         text = Text.objects.get(id=text_id)
     except Text.DoesNotExist:
         raise Http404(_('Sorry, no such text here!'))
-    if not text.is_user_allowed_to_read(request.user):
+    if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
     projects_text = ''
@@ -332,6 +338,9 @@ def view_text(request, text_id):
     elif not pr.is_private:
         projects_text = _('Public projects')
         projects_url = '/projects/public/'
+    else:
+        projects_text = "%s" % pr.manager.username
+        projects_url = '/user/%d/' % pr.manager.id
     data = {'username': request.user,
             'page_title': text.title,
             'breadcrumbs': [
