@@ -1,6 +1,7 @@
 {% load i18n %}
 {% trans 'new messages' as new_messages %}
 {% trans 'invited you to the project' as invitation %}
+{% trans 'pitched you out of the project' as uninvitation %}
 {% trans 'Logout' as logout %}
 {% trans 'See all messages' as messages %}
 <ul class="navbar-nav pull-right">
@@ -22,9 +23,13 @@
                         <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
                     </div>
                     <span class="msg-body">
-                        <span class="msg-title">
+                        <span class="msg-title" ng-if="message.type == 'invite'">
                             <span class="blue">{= message.originator =}:</span>
                             {{ invitation }} {= message.project_name =}
+                        </span>
+                        <span class="msg-title" ng-if="message.type == 'uninvite'">
+                            <span class="blue">{= message.originator =}:</span>
+                            {{ uninvitation }} {= message.project_name =}
                         </span>
 
                         <span class="msg-time">

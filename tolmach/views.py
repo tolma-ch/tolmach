@@ -48,6 +48,11 @@ def index(request):
         usermeta = UserMeta.objects.get(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
+        # Костыль для выведения пустых столбиков статистики
+        empty_list = []
+        if len(ordered_stat) < 3:
+            empty_list = range(3-len(ordered_stat))
+
         data = {
             'projects': projects,
             'username': request.user.username,
@@ -55,6 +60,7 @@ def index(request):
             'first_name': first_name,
             'last_name': last_name,
             'stat': ordered_stat,
+            'empty_list': empty_list,
             'entries_total': total_translated
         }
         template = 'components/profile-data/profile-data.html'
@@ -134,6 +140,11 @@ def user_page(request, user_id):
         projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
     usermeta = UserMeta.objects.get(user=user)
     ordered_stat, total_translated = utils.get_user_stat(user)
+
+    # Костыль для выведения пустых столбиков статистики
+    empty_list = []
+    if len(ordered_stat) < 3:
+        empty_list = range(3-len(ordered_stat))
     data = {
         'projects': projects,
         'username': user.username,
@@ -141,6 +152,7 @@ def user_page(request, user_id):
         'first_name': first_name,
         'last_name': last_name,
         'stat': ordered_stat,
+        'empty_list': empty_list,
         'entries_total': total_translated,
         'breadcrumbs': [
                        [user.username, ''],

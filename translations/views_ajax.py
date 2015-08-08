@@ -951,6 +951,7 @@ def message_ajax(request):
         for message in unread_messages:
             sender_meta = UserMeta.objects.get(user=message.originator)
             data = json.loads(message.message)
+            print data
             result.append({
                 'message': message.message,
                 'originator': message.originator.username,
