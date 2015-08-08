@@ -78,6 +78,16 @@
                         </div>
                     </li>
                     {% endfor %}
+                    {% if empty_list %}
+                        {% for i in empty_list %}
+                        <li class="user-statistics-list__item">
+                            <div class="user-statistics-column">
+                                <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 0%"></div>
+                                <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 0%"></div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
                 </ul>
 
                 <div class="user-statistics__total">

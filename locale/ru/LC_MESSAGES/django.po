@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-31 05:12+0000\n"
+"POT-Creation-Date: 2015-08-08 11:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,14 +48,18 @@ msgid "invited you to the project"
 msgstr "пригласил вас в проект"
 
 #: templates/components/navbar/loggedin.html:4
+msgid "pitched you out of the project"
+msgstr "прогнал вас из проекта"
+
+#: templates/components/navbar/loggedin.html:5
 msgid "Logout"
 msgstr "Выход"
 
-#: templates/components/navbar/loggedin.html:5
+#: templates/components/navbar/loggedin.html:6
 msgid "See all messages"
 msgstr "Все сообщения"
 
-#: templates/components/navbar/loggedin.html:55
+#: templates/components/navbar/loggedin.html:60
 msgid "Hi,"
 msgstr "Привет,"
 
@@ -131,7 +135,7 @@ msgid "Dashboard"
 msgstr "Табло"
 
 #: templates/main/base-logged-in.html:7 translations/views.py:31
-#: translations/views.py:107 translations/views.py:327
+#: translations/views.py:110 translations/views.py:333
 msgid "My projects"
 msgstr "Мои проекты"
 
@@ -144,7 +148,7 @@ msgid "Community"
 msgstr "Сообщество"
 
 #: templates/main/base-logged-in.html:10 translations/views.py:44
-#: translations/views.py:113 translations/views.py:333
+#: translations/views.py:116 translations/views.py:339
 msgid "Public projects"
 msgstr "Публичные проекты"
 
@@ -316,7 +320,7 @@ msgstr "Удалить проект"
 #: templates/translations/projects-main.html:64
 #: templates/translations/projects-main.html:97
 #: templates/translations/projects-main.html:322
-#: templates/translations/projects.html:59
+#: templates/translations/projects.html:63
 msgid "Sorry, you haven't created any projects yet"
 msgstr "Вы пока не создали ни одного проекта"
 
@@ -365,7 +369,7 @@ msgstr "Добавить пользователя"
 msgid "Username:"
 msgstr "Имя пользователя:"
 
-#: templates/translations/projects.html:64
+#: templates/translations/projects.html:68
 msgid "Create new"
 msgstr "Начать новый"
 
@@ -441,88 +445,91 @@ msgstr "Нет доступа"
 msgid "TMX not found"
 msgstr "База памяти не найдена"
 
-#: translations/views.py:37 translations/views.py:110
-#: translations/views.py:330
+#: translations/views.py:37 translations/views.py:113
+#: translations/views.py:336
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
-#: translations/views.py:83
+#: translations/views.py:86
 #, python-format
 msgid "Project \"%(project_name)s\" successfully created!"
 msgstr "Проект \"%(project_name)s\" успешно создан!"
 
-#: translations/views.py:101 translations/views.py:103
-#: translations/views.py:160
+#: translations/views.py:104 translations/views.py:106
+#: translations/views.py:166
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: translations/views.py:150
+#: translations/views.py:156
 #, python-format
 msgid "Project \"%(project_name)s\" successfully deleted!"
 msgstr "Проект \"%(project_name)s\" успешно удалён!"
 
-#: translations/views.py:157
+#: translations/views.py:163
 msgid "You are not allowed to delete this project!"
 msgstr "Вы не можете удалить этот проект!"
 
-#: translations/views.py:171
+#: translations/views.py:177
 msgid "There's no such project, sorry."
 msgstr "Проект не найден"
 
-#: translations/views.py:176
+#: translations/views.py:182
 msgid "There's no such language, sorry."
 msgstr "Указаннй язык не найден"
 
-#: translations/views.py:207
+#: translations/views.py:213
 msgid "There's no such user, sorry."
 msgstr "Указанный пользователь не найден"
 
-#: translations/views.py:235
+#: translations/views.py:241
 #, python-format
 msgid "User %(user_name)s is already invited to the project %(project_name)s"
-msgstr "Пользователь %(user_name)s уже приглашён в проект \"%(project_name)s\"."
+msgstr ""
+"Пользователь %(user_name)s уже приглашён в проект \"%(project_name)s\"."
 
-#: translations/views.py:243
+#: translations/views.py:249
 #, python-format
 msgid ""
 "User %(user_name)s is already participating in the project %(project_name)s"
-msgstr "Пользователь %(user_name)s уже добавлен к проекту \"%(project_name)s\"."
+msgstr ""
+"Пользователь %(user_name)s уже добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:259
+#: translations/views.py:265
 #, python-format
 msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:266
+#: translations/views.py:272
 msgid "You have no rights to delete this project!"
 msgstr "У вас нет прав на просмотр этого проекта"
 
-#: translations/views.py:287
+#: translations/views.py:293
 #, python-format
 msgid "You successfully left project \"%(project_name)s\""
 msgstr "Вы успешно покинули проект \"%(project_name)s\"."
 
-#: translations/views.py:295
+#: translations/views.py:301
 #, python-format
 msgid ""
 "User %(user_name)s was successfully removed from project \"%(project_name)s\""
 msgstr "Пользователь %(user_name)s удалён из проекта \"%(project_name)s\"."
 
-#: translations/views.py:303
+#: translations/views.py:309
 #, python-format
 msgid ""
 "Sorry, user %(user_name)s doesn't participate in project \"%(project_name)s\""
-msgstr "Пользователь %(user_name)s не участвует в проекте \"%(project_name)s\"."
+msgstr ""
+"Пользователь %(user_name)s не участвует в проекте \"%(project_name)s\"."
 
-#: translations/views.py:310
+#: translations/views.py:316
 msgid "You are not allowed to edit this project!"
 msgstr "Вы не можете редактировать этот проект"
 
-#: translations/views.py:319
+#: translations/views.py:325
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:321 translations/views.py:352
+#: translations/views.py:327 translations/views.py:361
 msgid "Sorry, no such text here"
 msgstr "Простите, указанный текст не найден"
 
