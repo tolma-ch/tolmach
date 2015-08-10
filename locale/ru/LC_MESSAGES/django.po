@@ -231,7 +231,7 @@ msgstr "Загрузить файл"
 
 #: templates/translations/partial/add_text_modal.html:38
 msgid "Insert plain test"
-msgstr "Вставить тест"
+msgstr "Вставить текст"
 
 #: templates/translations/partial/add_text_modal.html:70
 msgid "Source language"
