@@ -363,22 +363,11 @@ def export_text(request, text_id):
     import re
     pure_text = re.sub(r'<.*?>', "", text.body)
 
-    def repl_in_text(matchobj):
-        # print " === " + matchobj.group(0) + " === "
-        return "<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + "</span>"
-
-    def escape_brackets(string):
-        # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
-        # чтобы не ломался re.sub далее
-        return re.sub(r'([()]|[\[\]]|[\*]|[\?])', r'\\\1', string)
-
     entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
     for entry in entries:
         entry_translation = TextEntry.objects.filter(parent_entry=entry, is_approved=True)
         if entry_translation:
-            print "Original translation: ", entry_translation[0].body
-            print "Escaped translation: ", escape_brackets(entry_translation[0].body)
-            pure_text = re.sub(escape_brackets(entry.body), entry_translation[0].body, pure_text)
+            pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
             # print pure_text
 
     from django.utils.encoding import iri_to_uri

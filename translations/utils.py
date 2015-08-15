@@ -62,6 +62,12 @@ SPLIT_PATTERN = {
         }
 
 
+def escape_brackets(string):
+    # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
+    # чтобы не ломался re.sub далее
+    return re.sub(r'([()]|[\[\]]|[\*]|[\?]|[\^]|[\$]|[\+]|[\{\}]|[\\])', r'\\\1', string)
+
+
 def split_text(line_to_translate, lang='en', pattern=""):
     marked_text = line_to_translate
     # Убираем всякие палёные подобия пробелов и заменяем на кошеrные
@@ -91,11 +97,6 @@ def split_text(line_to_translate, lang='en', pattern=""):
             return line
         else:
             return matchobj.group(0) + '†'
-
-    def escape_brackets(string):
-        # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
-        # чтобы не ломался re.sub далее
-        return re.sub(r'([()]|[\[\]]|[\*]|[\?]|[\^]|[\$]|[\+]|[\{\}]|[\\])', r'\\\1', string)
 
     # Убираем лишние пустые строки
     text = re.sub("\n{2,}", "\n", marked_text)
@@ -164,11 +165,10 @@ def glossary_to_entry(entry_body, glossary_list):
     body_to_return = entry_body
 
     # TODO: сделать так, чтобы он перестал находить слово sci в слове lasciavano
-    # TODO: ололо, убрать нахер этот миллион селектов. Передавать в функцию сразу массив глоссариев
     for glos in glossary_list:
         gloss_entries = GlossaryEntry.objects.filter(glossary_id=glos)
         for pair in gloss_entries:
-            body_to_return = re.sub(pair.source_entry, highlight_word(pair.target_entry), body_to_return)
+            body_to_return = re.sub(escape_brackets(pair.source_entry), highlight_word(pair.target_entry), body_to_return)
 
     return body_to_return
 

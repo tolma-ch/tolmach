@@ -707,7 +707,23 @@ def entry_ajax(request, action, text):
             if not entry.parent_entry:
                 base_entries.append(entry)
         entries = []
+        pre_glossary_text = []
+
+        # Если глоссарии привязаны к тексту, то
+        if not text.glossaries == '':
+            for entry in base_entries:
+                pre_glossary_text.append(entry.body)
+
+            # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text.glossaries.split(',')).split('†')
+
+            # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
+            for post, clean in zip(post_glossary_entries, base_entries):
+                clean.glossary_body = post
+
         for entry in base_entries:
+            if text.glossaries == '':
+                entry.glossary_body = entry.body
             translations = []
             approved = False
             approved_text = ''
@@ -723,27 +739,22 @@ def entry_ajax(request, action, text):
                     if translation.author.id == request.user.id:
                         user_translation_text = translation.body
                     approved = approved or translation.is_approved
-            # каждую entry проверяем на наличие в ней слов из словаря
-            # и оборачиваем нужным тегом
-            entry_body = entry.body
-            if not text.glossaries == '':
-                entry_body = utils.glossary_to_entry(entry_body, text.glossaries.split(','))
+
             entries.append({
                 'id': entry.id,
                 'idInText': entry.id_in_text,
-                # 'body': entry.body,
                 'rawBody': entry.body,
-                'body': entry_body,
+                'body': entry.glossary_body,
                 'translations': translations,
                 'approved': approved,
                 'translation': approved_text or user_translation_text or entry.body
             })
         result = {
-           'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
-           'user_is_manager': text.project.is_user_manager(request.user),
-           'translation_allowed': text.is_user_allowed_to_write(request.user),
-           'user': request.user.id,
-           'entries': entries
+            'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
+            'user_is_manager': text.project.is_user_manager(request.user),
+            'translation_allowed': text.is_user_allowed_to_write(request.user),
+            'user': request.user.id,
+            'entries': entries
         }
     elif request.method == 'POST':
         params = request.POST or json.loads(request.body)
