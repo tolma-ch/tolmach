@@ -380,6 +380,8 @@ def glossary_ajax(request, project):
                 test1 = pair[1]
             except IndexError:
                 continue
+            if test == '' or test1 == '':
+                continue
             glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
                                            source_entry=pair[0],
                                            target_entry=pair[1])
