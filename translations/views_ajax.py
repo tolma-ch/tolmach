@@ -373,12 +373,16 @@ def glossary_ajax(request, project):
                                 owner=request.user,
                                 project=project)
             glossary.save()
-        for src, trg in pairs_array:
-            if not src or not trg:
+        for pair in pairs_array:
+            # print pair
+            try:
+                test = pair[0]
+                test1 = pair[1]
+            except IndexError:
                 continue
             glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
-                                           source_entry=src,
-                                           target_entry=trg)
+                                           source_entry=pair[0],
+                                           target_entry=pair[1])
             glossary_entry.save()
         result = {
             'id': glossary.id,
@@ -498,6 +502,7 @@ def tmx_ajax(request, project):
                         source_lang = tuv[0].attrib[lang_11].lower()
                         target_lang = tuv[1].attrib[lang_11].lower()
 
+                    # TODO: Обрабатывать обратные пары как прямые
                     if not "%s-%s" % (source_lang, target_lang) in lang_pairs:
                         lang_pairs.append("%s-%s" % (source_lang, target_lang))
                     # Нет обращений к потомкам, поэтому вызов clear() безопасен
@@ -580,7 +585,7 @@ def tmx_ajax(request, project):
 
             with open(filename) as source:
                 from elasticsearch import Elasticsearch
-                es = Elasticsearch()
+                es = Elasticsearch(settings.ELASTIC_LIST)
                 elastic_id = 1
                 # парсим файлик и записываем пары предложений в соответствующую базу памяти
                 parse_context = etree.iterparse(source, events=('end',), tag='tu')
@@ -643,20 +648,20 @@ def tmx_ajax(request, project):
                                                      )
                     new_tmdb_entry.save()
 
-                    doc = {
-                        'db_id': new_tmdb_entry.id,
-                        'source_lang': source_text,
-                        'target_lang': target_text,
-                    }
-
-                    res = es.index(
-                        index=tmdb_names[lang_pair],
-                        doc_type='tmx1',
-                        id=elastic_id,
-                        body=doc
-                    )
-
-                    print "ELASTICSEARCH: ", res['created']
+                    # doc = {
+                    #     'db_id': new_tmdb_entry.id,
+                    #     'source_lang': source_text,
+                    #     'target_lang': target_text,
+                    # }
+                    #
+                    # res = es.index(
+                    #     index=tmdb_names[lang_pair],
+                    #     doc_type='tmx1',
+                    #     id=elastic_id,
+                    #     body=doc
+                    # )
+                    #
+                    # print "ELASTICSEARCH: ", res['created']
 
                     elastic_id += 1
                     # Нет обращений к потомкам, поэтому вызов clear() безопасен
@@ -884,6 +889,8 @@ def tmdb_search(request):
         except TextEntry.DoesNotExist:
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
+        entry_source_lang = text.source_lang
+        entry_target_lang = text.target_lang
         text_tmx_list = text.tmdatabases.split(',') if not text.tmdatabases == '' else []
 
         search_results = []
@@ -891,17 +898,16 @@ def tmdb_search(request):
         if text_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept
-            # TODO: Сделать в сеттингсах указание хоста и порта эластика
-            es = Elasticsearch()
+            es = Elasticsearch(settings.ELASTIC_LIST)
             for tmx_id in text_tmx_list:
                 print "TMDB IS: %s" % tmx_id
                 if settings.ALFA:
                     try:
-                        res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
+                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                     'query': {
                                                                         'match':
                                                                         {
-                                                                            'source_lang': entry.body
+                                                                            entry_source_lang.code: entry.body
                                                                         }
                                                                         }
                                                                     })
@@ -910,10 +916,12 @@ def tmdb_search(request):
                         tmx = TMDatabase.objects.get(id=tmx_id)
                         tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
                         for i in tmx_entries:
+                            orig_lang = tmx.source_lang.code
+                            target_lang = tmx.target_lang.code
                             doc = {
                                 'db_id': i.id,
-                                'source_lang': i.orig_text,
-                                'target_lang': i.target_text,
+                                orig_lang: i.orig_text,
+                                target_lang: i.target_text,
                             }
 
                             res = es.index(
@@ -924,21 +932,21 @@ def tmdb_search(request):
                             )
 
                             print "ELASTICSEARCH: ", res['created']
-                        res = es.search(index=tmx_id, size=5, body={'fields': ['source_lang', 'target_lang'],
+                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                     'query': {
                                                                         'match':
                                                                         {
-                                                                            'source_lang': entry.body
+                                                                            entry_source_lang.code: entry.body
                                                                         }
                                                                         }
                                                                     })
                     for item in res['hits']['hits']:
                         search_results.append({
                                               'id': 123,
-                                              'text': item['fields']['target_lang'][0],
+                                              'text': item['fields'][entry_target_lang.code][0],
                                               'percent': int(float(item['_score'])*100)
                                               })
-                        print "%d - %s" % (int(float(item['_score'])*100), item['fields']['target_lang'][0])
+                        print "%d - %s" % (int(float(item['_score'])*100), item['fields'][entry_target_lang.code][0])
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
