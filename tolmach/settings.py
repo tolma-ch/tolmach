@@ -236,6 +236,10 @@ YANDEX_TRANSLATE_KEY = "trnsl.1.1.20150506T163916Z.b5e779fa488bccef.d7f2375e783e
 GLOSSARY_FILE_SIZE = 1048576
 TM_FILE_SIZE = 104857600
 
+ELASTIC_LIST = [
+    {"host": "localhost", "port": 9200}
+]
+
 try:
     from tolmach.local_settings import *
 except ImportError:
