@@ -203,15 +203,19 @@ def participant_ajax(request, project):
 @accept_project
 @login_required
 def text_ajax(request, project):
+    from babel import Locale
     if request.method == 'GET':
         texts = Text.objects.filter(project=project).all()
         result = []
         for text in texts:
             translations = []
             for translation in TextTranslation.objects.filter(text=text).all():
+                lang_name = Locale(translation.target_lang.code)
                 translations.append({
+                    'targetLangId': translation.target_lang.id,
                     'lang': translation.target_lang.code,
                     'langFull': str(translation.target_lang),
+                    'langLocal': lang_name.get_language_name(request.LANGUAGE_CODE),
                     'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
                     'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
                 })

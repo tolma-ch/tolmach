@@ -471,9 +471,10 @@
   overflow: hidden;
   vertical-align: middle;
   padding: 12px;
+  width: 40%;
 }
 .project-list-text__progress {
-  width: 50%;
+  width: 40%;
   vertical-align: middle;
   display: table-cell;
   padding-right: 12px;

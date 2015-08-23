@@ -24,7 +24,28 @@
                 </select>
             </div>
 
-            <div class="glossary-manual ng-scope">
+            <div class="switcher">
+                <a class="switcher__button"
+                   ng-repeat="translation in text.translations"
+                   ng-class="{'switcher__button_active': $parent.options.currentTranslation === translation}"
+                   ng-click="$parent.options.currentTranslation = translation">
+                    <span>{= translation.langLocal =}</span>
+                    <span ng-show="!translation.langLocal">{% trans "New" %}</span>
+                </a>
+                <a class="switcher__button"
+                   ng-class="{'switcher__button_active': textTab === 1}">
+                    <span ng-show="!options.addNewTranslation"
+                          ng-click="options.addNewTranslation = true"><i class="fa fa-plus"></i></span>
+                    <ui-select ng-show="options.addNewTranslation" ng-model="options.NewTranslationTargetLang" ng-change="addTranslation(options.NewTranslationTargetLang)" theme="selectize" ng-disabled="disabled" style="width: 180px;">
+                        <ui-select-match placeholder="Choose language">{= $select.selected.name =}</ui-select-match>
+                        <ui-select-choices repeat="language in getLanguages() | filter: $select.search">
+                          {= language.langLocal =}
+                        </ui-select-choices>
+                    </ui-select>
+                </a>
+            </div>
+
+            <div class="glossary-manual ng-scope" ng-show="!!options.currentTranslation">
                 <div class="glossary-manual__input">
                     <label for="">Glossaries:</label>
                     <div ng-repeat="glossary in glossaries">
@@ -32,7 +53,7 @@
                             <input class="ace"
                                    type="checkbox"
                                    ng-click="toggleGlossary(glossary.id)"
-                                   ng-checked="text.glossaries.indexOf(glossary.id) > -1"/>
+                                   ng-checked="options.currentTranslation.glossaries.indexOf(glossary.id) > -1"/>
                             <span class="lbl">
                                 {= glossary.name =}
                             </span>
@@ -46,7 +67,7 @@
                             <input class="ace"
                                    type="checkbox"
                                    ng-click="toggleTmx(tmx.id)"
-                                   ng-checked="text.tmxes.indexOf(tmx.id) > -1"/>
+                                   ng-checked="options.currentTranslation.tmxes.indexOf(tmx.id) > -1"/>
                             <span class="lbl">
                                 {= tmx.name =}
                             </span>

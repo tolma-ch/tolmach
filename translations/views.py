@@ -125,7 +125,7 @@ def project(request, proj_id=0):
     for lang in Language.objects.all():
         lang_name = Locale(lang.code)
         localized_lang = lang
-        localized_lang.name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
 
     data = {
@@ -137,6 +137,12 @@ def project(request, proj_id=0):
             'description': pr.description,
         }),
         'languages': lang_list,
+        'languagesData': json.dumps([{
+                                     'code': lang.code,
+                                     'langFull': lang.name,
+                                     'langLocal': lang.localized_name,
+                                     'id': lang.id
+                                     } for lang in lang_list]),
         'subjects': Subject.objects.all(),
         'breadcrumbs': [
                        [projects_text, projects_url],
