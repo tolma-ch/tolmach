@@ -62,6 +62,8 @@
                             {% trans "Participants" %}
                         </h5>
                         <div class="widget-toolbar no-border"
+                             tooltip="{% trans 'Add' %}"
+                             tooltip-append-to-body="true"
                              ng-show="isUserManager">
                             <a href=""
                                ng-click="addParticipant()">
@@ -111,6 +113,8 @@
                         <div class="widget-toolbar no-border"
                              ng-show="isUserManager">
                             <a href=""
+                               tooltip="{% trans 'Add' %}"
+                               tooltip-append-to-body="true"
                                ng-click="addText()">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
@@ -126,8 +130,8 @@
                                 </div>
                                 <div class="project-list-text__progress">
                                     <div class="progress-bar">
-                                        <div class="progress-bar__gauge" style="width:{= text.progress =}%;background:#02c14f"></div>
-                                        <span class="progress-bar__value">{= text.progress =}%</span>
+                                        <div class="progress-bar__gauge" style="width:{= translation.progress =}%;background:#02c14f"></div>
+                                        <span class="progress-bar__value">{= translation.progress =}%</span>
                                     </div>
                                 </div>
                                 <div class="project-list-text__languages">
@@ -139,10 +143,17 @@
                                 </div>
                                 <div class="project-list-text__btns" ng-repeat-end>
                                     <a class="project-list-text__btn" href=""
+                                       tooltip="{% trans 'Edit text' %}"
+                                       tooltip-append-to-body="true"
                                        ng-show="isUserManager"
                                        ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>
-                                    <a class="project-list-text__btn" href="/text/{= text.id =}/{= translation.lang =}/export/"><i class="fa fa-download"></i></a>
+                                    <a class="project-list-text__btn"
+                                       href="/text/{= text.id =}/{= translation.lang =}/export/"
+                                       tooltip="{% trans 'Export translation' %}"
+                                       tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
                                     <a class="project-list-text__btn" href=""
+                                       tooltip="{% trans 'Delete text' %}"
+                                       tooltip-append-to-body="true"
                                        ng-show="isUserManager"
                                        popover-template="'textRemovePopover.html'"
                                        popover-placement="left"><i class="fa fa-trash-o"></i></a>
@@ -162,6 +173,8 @@
                              ng-show="isUserManager">
                             <a data-toggle="dropdown"
                                class="dropdown-toggle"
+                               tooltip="{% trans 'Add' %}"
+                               tooltip-append-to-body="true"
                                href="">
                                 <i class="fa fa-plus-circle"></i>
                             </a>

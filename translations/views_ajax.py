@@ -212,6 +212,7 @@ def text_ajax(request, project):
                 translations.append({
                     'lang': translation.target_lang.code,
                     'langFull': str(translation.target_lang),
+                    'progress': translation.get_progress(),
                     'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
                     'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
                 })
