@@ -467,7 +467,7 @@
 }
 .project-list-text__title {
   display: table-cell;
-  white-space: nowrap;
+/*white-space nowrap*/
   overflow: hidden;
   vertical-align: middle;
   padding: 12px;
@@ -579,7 +579,7 @@
   min-height: 85px;
 }
 .project-list__languages {
-  width: 70px;
+  width: 80px;
   float: left;
   position: absolute;
   bottom: 18px;

@@ -1394,7 +1394,7 @@ h4 small,
 }
 .project-list-text__title {
   display: table-cell;
-  white-space: nowrap;
+/*white-space nowrap*/
   overflow: hidden;
   vertical-align: middle;
   padding: 12px;

@@ -210,12 +210,10 @@ def text_ajax(request, project):
             translations = []
             for translation in TextTranslation.objects.filter(text=text).all():
                 translations.append({
-                    str(translation.target_lang.code):
-                        {
-                            'lang': translation.target_lang.code,
-                            'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
-                            'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
-                        }
+                    'lang': translation.target_lang.code,
+                    'langFull': str(translation.target_lang),
+                    'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
+                    'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
                 })
             print translations
             result.append({
