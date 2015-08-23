@@ -935,10 +935,10 @@
                 }
             };
         })
-        .directive('htmlContentCustom', function($compile, $parse) {
+        .directive('htmlContent', function($compile, $parse) {
             return {
                 link: function(scope, element, attr) {
-                    var content = attr['content'];
+                    var content = attr['htmlContent'];
                     element.html($parse(content)(scope));
                     $compile(element.contents())(scope);
                 }
