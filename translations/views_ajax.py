@@ -12,7 +12,8 @@ from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages
-from translations.models import Project, TextEntry, Text, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextEntry, Text, TextTranslation
 import json
 from translations.utils_ajax import translation_to_json, user_to_json
 
@@ -206,6 +207,17 @@ def text_ajax(request, project):
         texts = Text.objects.filter(project=project).all()
         result = []
         for text in texts:
+            translations = []
+            for translation in TextTranslation.objects.filter(text=text).all():
+                translations.append({
+                    str(translation.target_lang.code):
+                        {
+                            'lang': translation.target_lang.code,
+                            'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
+                            'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
+                        }
+                })
+            print translations
             result.append({
                 'id': text.id,
                 'title': text.title,
@@ -215,6 +227,7 @@ def text_ajax(request, project):
                 'sourceLangId': text.source_lang.id,
                 'targetLang': str(text.target_lang),
                 'targetLangId': text.target_lang.id,
+                'translations': translations,
                 'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
                 'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
             })
@@ -259,6 +272,10 @@ def text_ajax(request, project):
                         target_lang=target_lang,
                         )
             text.save()
+            translation = TextTranslation(text=text,
+                                          target_lang=target_lang,
+                                          )
+            translation.save()
             for idx, sent in enumerate(sentences, start=1):
                 print sent
                 txt_entry = TextEntry(body=sent,
@@ -375,6 +392,7 @@ def glossary_ajax(request, project):
             glossary.save()
         for pair in pairs_array:
             # print pair
+            # TODO: пересмотреть происходящее на трезвую голову
             try:
                 test = pair[0]
                 test1 = pair[1]
@@ -703,51 +721,61 @@ def tmx_ajax(request, project):
 def entry_ajax(request, action, text):
     result = []
     if request.method == 'GET':
-        all_text_entries = TextEntry.objects.filter(text=text)
+        try:
+            target_lang = request.GET['target_lang']
+        except:
+            return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+        lang = Language.objects.get(code=target_lang)
+        text_translation = TextTranslation.objects.get(text=text,
+                                                       target_lang=lang,
+                                                       )
+        # all_text_entries = TextEntry.objects.filter(text=text)
         base_entries = []
-        for entry in all_text_entries:
+        for entry in TextEntry.objects.filter(text=text, parent_entry=None):
             if not entry.parent_entry:
                 base_entries.append(entry)
         entries = []
         pre_glossary_text = []
 
+        target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
+
         # Если глоссарии привязаны к тексту, то
-        if not text.glossaries == '':
+        if not text_translation.glossaries == '':
             for entry in base_entries:
                 pre_glossary_text.append(entry.body)
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text.glossaries.split(',')).split('†')
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries.split(',')).split('†')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
         for entry in base_entries:
-            if text.glossaries == '':
+            if text_translation.glossaries == '':
                 entry.glossary_body = entry.body
-            translations = []
+            entry_translations = []
             approved = False
             approved_text = ''
             user_translation_text = ''
-            for translation in all_text_entries:
-                if translation.parent_entry == entry:
-                    voters = translation.voters.split(',') if translation.voters else []
-                    translation_array = translation_to_json(translation)
-                    translation_array['isVoted'] = translation.is_voted(request.user)
-                    translations.append(translation_array)
-                    if translation.is_approved:
-                        approved_text = translation.body
-                    if translation.author.id == request.user.id:
-                        user_translation_text = translation.body
-                    approved = approved or translation.is_approved
+            for entry_translation in target_lang_entries:
+                if entry_translation.parent_entry == entry:
+                    voters = entry_translation.voters.split(',') if entry_translation.voters else []
+                    translation_array = translation_to_json(entry_translation)
+                    translation_array['isVoted'] = entry_translation.is_voted(request.user)
+                    entry_translations.append(translation_array)
+                    if entry_translation.is_approved:
+                        approved_text = entry_translation.body
+                    if entry_translation.author.id == request.user.id:
+                        user_translation_text = entry_translation.body
+                    approved = approved or entry_translation.is_approved
 
             entries.append({
                 'id': entry.id,
                 'idInText': entry.id_in_text,
                 'rawBody': entry.body,
                 'body': entry.glossary_body,
-                'translations': translations,
+                'translations': entry_translations,
                 'approved': approved,
                 'translation': approved_text or user_translation_text or entry.body
             })
@@ -796,29 +824,44 @@ def translate_entry_ajax(request):
         entry = TextEntry.objects.get(id=entry_id)
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+
     text = entry.text
     project = text.project
+
+    try:
+        entry_target_language = Language.objects.get(code=post['target_lang'])
+    except Language.DoesNotExist:
+        return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+
+    try:
+        text_translation = TextTranslation.objects.get(text=text,
+                                                       target_lang=entry_target_language,
+                                                       )
+    except TextTranslation.DoesNotExist:
+        return HttpResponse(json.dumps(_('Translation not found')), content_type="application/json", status=400)
+
     if not text.is_user_allowed_to_write(request.user):
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
     else:
         if 'translation_id' in post:
             try:
-                translation = TextEntry.objects.get(id=post['translation_id'])
+                entry_translation = TextEntry.objects.get(id=post['translation_id'])
             except TextEntry.DoesNotExist:
                 return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
-            translation.body = post['text']
+            entry_translation.body = post['text']
         else:
-            translation = TextEntry(body=post['text'],
-                                    parent_entry=entry,
-                                    text=text,
-                                    author=request.user)
-        translation.save()
+            entry_translation = TextEntry(body=post['text'],
+                                          parent_entry=entry,
+                                          text=text,
+                                          author=request.user,
+                                          translation=text_translation)
+        entry_translation.save()
         from django.utils import timezone
 
         project.last_modified = timezone.now()
         project.save()
-        translation_array = translation_to_json(translation)
-        translation_array['isVoted'] = translation.is_voted(request.user)
+        translation_array = translation_to_json(entry_translation)
+        translation_array['isVoted'] = entry_translation.is_voted(request.user)
         return HttpResponse(json.dumps(translation_array), content_type="application/json")
 
 

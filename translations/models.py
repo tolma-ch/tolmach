@@ -132,11 +132,19 @@ class Text(models.Model):
             return 0
 
 
+class TextTranslation(models.Model):
+    text = models.ForeignKey('translations.Text', related_name='text_translations')
+    target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
+    glossaries = models.TextField(default="")
+    tmdatabases = models.TextField(default="")
+
+
 class TextEntry(models.Model):
     body = models.TextField(default="")
     parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True)
     text = models.ForeignKey('translations.Text', related_name='text_entries')
     id_in_text = models.IntegerField(default=0)
+    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True)
     author = models.ForeignKey('auth.User')
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")

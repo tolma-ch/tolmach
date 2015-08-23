@@ -355,7 +355,68 @@ def view_text(request, text_id):
 
 
 @login_required
+def view_translation(request, text_id, target_lang):
+    try:
+        text = Text.objects.get(id=text_id)
+    except Text.DoesNotExist:
+        raise Http404(_('Sorry, no such text here!'))
+    if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+        return HttpResponseRedirect('/')
+    projects_text = ''
+    projects_url = ''
+    pr = Project.objects.get(id=text.project.id)
+    if pr.is_user_manager(request.user):
+        projects_text = _('My projects')
+        projects_url = '/projects/my/'
+    elif str(request.user.id) in pr.members.split(','):
+        projects_text = _('Third-party projects')
+        projects_url = '/projects/thirdparty/'
+    elif not pr.is_private:
+        projects_text = _('Public projects')
+        projects_url = '/projects/public/'
+    else:
+        projects_text = "%s" % pr.manager.username
+        projects_url = '/user/%d/' % pr.manager.id
+    data = {'username': request.user,
+            'page_title': text.title,
+            'breadcrumbs': [
+                [projects_text, projects_url],
+                [text.project.name, '/project/%d/' % text.project.id],
+                [text.title, ''],
+            ],
+            'text': text,
+            'target_lang': target_lang,
+            }
+    template = 'translations/view-text.html'
+    return render_to_response(template, data, RequestContext(request))
+
+
+@login_required
 def export_text(request, text_id):
+    text = get_object_or_404(Text, id=text_id)
+    if not text.is_user_allowed_to_read(request.user):
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+        return HttpResponseRedirect('/')
+    import re
+    pure_text = re.sub(r'<.*?>', "", text.body)
+
+    entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+    for entry in entries:
+        entry_translation = TextEntry.objects.filter(parent_entry=entry, is_approved=True)
+        if entry_translation:
+            pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
+            # print pure_text
+
+    from django.utils.encoding import iri_to_uri
+    response = HttpResponse(pure_text, content_type='text/plain')
+    response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
+
+    return response
+
+
+@login_required
+def export_translation(request, text_id):
     text = get_object_or_404(Text, id=text_id)
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
