@@ -5,7 +5,8 @@
 (function () {
     angular.module('tolmachApp', [
         'ui.bootstrap',
-        'ngFileUpload'
+        'ngFileUpload',
+        'ui.select'
     ])
         .controller('mainCtrl', function ($scope, $http, $timeout) {
             var updateMessages = function () {
@@ -312,7 +313,8 @@
         .controller('projectCtrl', function ($scope, $modal, $http) {
             $scope.project = window['project']
             $scope.projectId = window['projectId'];
-            $scope.isUserManager = window['isUserManager']
+            $scope.isUserManager = window['isUserManager'];
+            $scope.languages = window['languages'];
             $scope.participants = [];
             $http.get('/api/participant', {params: {project: $scope.projectId}})
                  .then(function(response) {
@@ -396,6 +398,9 @@
                         },
                         tmxes: function () {
                             return $scope.tmxes;
+                        },
+                        languages: function () {
+                            return $scope.languages;
                         }
                     }
                 });
@@ -682,11 +687,44 @@
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('EditTextModalCtrl', function ($scope, $modalInstance, $http, text, glossaries, tmxes) {
+        .controller('EditTextModalCtrl', function ($scope, $modalInstance, $http, text, glossaries, tmxes, languages) {
             $scope.text = text;
+            $scope.options = {};
+            if ($scope.text.translations.length) {
+                $scope.options.currentTranslation = $scope.text.translations[0];
+            } else {
+                $scope.options.currentTranslation = null;
+            }
+            $scope.options.addNewTranslation = false;
             $scope.glossaries = glossaries;
             $scope.tmxes = tmxes;
             $scope.tab = 0;
+            $scope.addTranslation = function (targetLang) {
+                $scope.text.translations.push({
+                    targetLangId: targetLang.id,
+                    lang: targetLang.code,
+                    langFull: targetLang.langFull,
+                    langLocal: targetLang.langLocal
+                });
+                $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
+                $scope.options.addNewTranslation = false;
+            };
+            $scope.getLanguages = function () {
+                var result = [],
+                    excludes = [],
+                    i;
+                for (i = 0; i < $scope.text.translations.length; i++) {
+                    var translation = $scope.text.translations[i];
+                    excludes.push(Number(translation.targetLangId));
+                }
+                for (i = 0; i < languages.length; i++) {
+                    var language = languages[i];
+                    if (excludes.indexOf(Number(language.id)) === -1) {
+                        result.push(language);
+                    }
+                }
+                return result;
+            };
             $scope.toggleGlossary = function (id) {
                 var index = $scope.text.glossaries.indexOf(id);
                 if (index > -1) {
@@ -897,7 +935,7 @@
                 }
             };
         })
-        .directive('content', function($compile, $parse) {
+        .directive('htmlContentCustom', function($compile, $parse) {
             return {
                 link: function(scope, element, attr) {
                     var content = attr['content'];
