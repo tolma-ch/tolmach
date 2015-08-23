@@ -119,8 +119,8 @@
                     <div class="widget-body">
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
-                                <div class="project-list-text__title">
-                                    <a href="/text/{= text.id =}">
+                                <div class="project-list-text__title" ng-repeat-start="translation in text.translations">
+                                    <a href="/text/{= text.id =}/{= translation.lang =}/">
                                         {= text.title =}
                                     </a>
                                 </div>
@@ -134,14 +134,14 @@
                                     <div class="languages">
                                         <i class="flag flag-{= text.sourceLang =}"></i>
                                         <i class="fa fa-chevron-right"></i>
-                                        <i class="flag flag-{= text.targetLang =}"></i>
+                                        <i class="flag flag-{= translation.langFull =}"></i>
                                     </div>
                                 </div>
-                                <div class="project-list-text__btns">
+                                <div class="project-list-text__btns" ng-repeat-end>
                                     <a class="project-list-text__btn" href=""
                                        ng-show="isUserManager"
                                        ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>
-                                    <a class="project-list-text__btn" href="/text/{= text.id =}/export/"><i class="fa fa-download"></i></a>
+                                    <a class="project-list-text__btn" href="/text/{= text.id =}/{= translation.lang =}/export/"><i class="fa fa-download"></i></a>
                                     <a class="project-list-text__btn" href=""
                                        ng-show="isUserManager"
                                        popover-template="'textRemovePopover.html'"

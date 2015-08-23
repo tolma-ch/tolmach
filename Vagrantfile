@@ -25,19 +25,20 @@ Vagrant.configure(2) do |config|
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
   config.vm.hostname = 'tolma.ch'
-  config.hostmanager.enabled = true
-  config.hostmanager.manage_host = true
-  config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
-    if vm.id
-      `VBoxManage guestproperty get #{vm.id} "/VirtualBox/GuestInfo/Net/1/V4/IP"`.split()[1]
-    end
-  end
+#  config.hostmanager.enabled = true
+#  config.hostmanager.manage_host = true
+#  config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
+#    if vm.id
+#      `VBoxManage guestproperty get #{vm.id} "/VirtualBox/GuestInfo/Net/1/V4/IP"`.split()[1]
+#    end
+#  end
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "private_network", type: "dhcp"
-
+  # config.vm.network "private_network", type: "dhcp"
+  config.vm.network "private_network", ip: "192.168.56.11"
+  
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
@@ -79,10 +80,12 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo -i
+    apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    echo "deb http://repo.percona.com/apt "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/percona.list
     apt-get update
+    apt-get install -y percona-server-server-5.6
     debconf-set-selections <<< 'mysql-server mysql-server/root_password password 123'
     debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password 123'
-    apt-get install -y mysql-server
     apt-get install -y python-dev
     apt-get install -y python-pip
     apt-get install -y python-virtualenv
@@ -96,12 +99,12 @@ Vagrant.configure(2) do |config|
     source /home/vagrant/tolmach/bin/activate
     cd /vagrant
     pip install -r requirements.txt
-    wget http://megavenik.ru/tolmach_dev.sql
+    wget http://alfa.tolma.ch/static/css/tolmach_alfa.sql
     mysql -uroot -p123 -e "CREATE USER 'vagrant'@'localhost' IDENTIFIED BY '';"
     mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'localhost' WITH GRANT OPTION;"
     mysql -uroot -p123 -e "CREATE USER 'vagrant'@'%' IDENTIFIED BY '';"
     mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'%' WITH GRANT OPTION;"
-    mysql -e "CREATE DATABASE tolmach CHARACTER SET utf8"
-    mysql tolmach < tolmach_dev.sql
+    mysql -e "CREATE DATABASE tolmach CHARACTER SET utf8;"
+    mysql tolmach < tolmach_alfa.sql
   SHELL
 end
