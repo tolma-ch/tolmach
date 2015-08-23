@@ -36,8 +36,10 @@ urlpatterns = patterns('',
     url(r'^project/(?P<proj_id>\d+)/invite-user/(?P<us_id>\d+)/$', trans_views.invite_user_to_project, name='add_user_to_project'),
     url(r'^project/(?P<proj_id>\d+)/remove-user/(?P<us_id>\d+)/$', trans_views.remove_user_from_project, name='remove_user_from_project'),
     # url(r'^project/add-text/$', trans_views.add_text_to_project),
-    url(r'^text/(?P<text_id>\d+)/$', trans_views.view_text, name='view_text'),
-    url(r'^text/(?P<text_id>\d+)/export/$', trans_views.export_text, name='view_text'),
+    # url(r'^text/(?P<text_id>\d+)/$', trans_views.view_text, name='view_text'),
+    # url(r'^text/(?P<text_id>\d+)/export/$', trans_views.export_text, name='view_text'),
+    url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
+    url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),
 
     # ajax
     url(r'^api/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),

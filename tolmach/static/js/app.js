@@ -47,7 +47,7 @@
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.userIsManager = false;
-            $http.get('/api/entry/', {params: {text: textId}}).success(function (data) {
+            $http.get('/api/entry/', {params: {text: textId, target_lang: window['translationTargetLang']}}).success(function (data) {
                 var entries = data['entries'];
                 $scope.userIsManager = !!data['user_is_manager'];
                 $scope.translationAllowed = !!data['translation_allowed'];
@@ -178,7 +178,8 @@
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
-                        text: entry.suggestion
+                        text: entry.suggestion,
+                        target_lang: window['translationTargetLang'],
                     };
                 if (suggestionId) {
                     data['translation_id'] = suggestionId;
