@@ -10,7 +10,7 @@
         <form>
             <div class="form-group">
                 <input type="text"
-                       placeholder="{% trans "Title" %}"
+                       placeholder="{% trans 'Title' %}"
                        class="form-control"
                        ng-model="text.title">
             </div>
@@ -26,7 +26,7 @@
 
             <div class="glossary-manual ng-scope">
                 <div class="glossary-manual__input">
-                    <label for="">Glossaries:</label>
+                    <label for="">{% trans 'Glossaries' %}:</label>
                     <div ng-repeat="glossary in glossaries">
                         <label class="middle" for="">
                             <input class="ace"
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="glossary-manual__input">
-                    <label for="">TMXes:</label>
+                    <label for="">{% trans 'TMXes' %}:</label>
                     <div ng-repeat="tmx in tmxes">
                         <label class="middle" for="">
                             <input class="ace"

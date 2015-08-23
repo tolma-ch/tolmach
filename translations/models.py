@@ -66,12 +66,16 @@ class Project(models.Model):
         Get progress percentage of the current project and return Int from 0 to 100
         """
         common_progress = 0
+        translations_num = 0
         texts = Text.objects.filter(project=self)
         for text in texts:
-            common_progress += text.get_progress()
+            translations = TextTranslation.objects.filter(text=text)
+            for translation in translations:
+                translations_num += 1
+                common_progress += translation.get_progress()
 
         if not texts.count() == 0:
-            return common_progress / texts.count()
+            return common_progress / translations_num
         else:
             return 0
 
@@ -137,6 +141,20 @@ class TextTranslation(models.Model):
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
     glossaries = models.TextField(default="")
     tmdatabases = models.TextField(default="")
+
+    def get_progress(self):
+        """
+        Get progress percentage of the current text and return Int from 0 to 100
+
+        entries_approved/(entries_total/100.0)
+        """
+        entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
+        entries_approved = TextEntry.objects.filter(text=self.text, is_approved=True, translation=self).count()
+
+        if not entries_total == 0:
+            return int(entries_approved/(entries_total/100.0))
+        else:
+            return 0
 
 
 class TextEntry(models.Model):
