@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http.response import HttpResponseRedirect
@@ -59,6 +60,12 @@ def index(request):
             'usermeta': usermeta,
             'first_name': first_name,
             'last_name': last_name,
+            'userData': json.dumps({
+                'firstName': first_name,
+                'lastName': last_name,
+                'username': request.user.username,
+                'website': usermeta.website,
+            }),
             'stat': ordered_stat,
             'empty_list': empty_list,
             'entries_total': total_translated

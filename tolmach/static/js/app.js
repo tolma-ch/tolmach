@@ -270,6 +270,7 @@
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {
+            $scope.userData = window['userData'];
             $scope.startNewProject = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'newProjectModal.html',
@@ -282,6 +283,25 @@
 
                 modalInstance.result.then(function () {
                 }, function () {
+                });
+            };
+            $scope.editProfile = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'editProfileModal.html',
+                    controller: 'EditProfileModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        'userData': function () {
+                            return $scope.userData;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (userData) {
+                    $scope.userData = userData;
+                }, function () {
+
                 });
             };
         })
@@ -298,6 +318,27 @@
                 $http.post('/api/project-create/', data)
                     .success(function(data) {
                         location.href = '/project/' + data;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                        //$modalInstance.close();
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        })
+        .controller('EditProfileModalCtrl', function ($scope, $modalInstance, $http, userData) {
+            $scope.error = '';
+            $scope.userData = userData;
+            $scope.ok = function () {
+                $scope.error = '';
+                $scope.busy = true;
+                $http.post('/api/user/', $scope.userData)
+                    .success(function(data) {
+                        $modalInstance.close(data);
                     })
                     .error(function(data) {
                         $scope.error = data;

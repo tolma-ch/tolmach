@@ -1029,3 +1029,27 @@ def message_ajax(request):
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")
+
+
+def user_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        if 'firstName' in post:
+            request.user.first_name = post['firstName']
+        if 'lastName' in post:
+            request.user.last_name = post['lastName']
+        if 'username' in post:
+            request.user.username = post['username']
+        request.user.save()
+        usermeta = UserMeta.objects.get(user=request.user)
+        if 'website' in post:
+            usermeta.website = post['website']
+            usermeta.save()
+        result = {
+            'firstName': request.user.first_name,
+            'lastName': request.user.last_name,
+            'username': request.user.username,
+            'website': usermeta.website,
+            }
+        return HttpResponse(json.dumps(result), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json")

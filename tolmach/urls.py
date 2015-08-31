@@ -56,6 +56,7 @@ urlpatterns = patterns('',
     url(r'^api/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
     url(r'^api/tmdb-search/$', trans_ajax.tmdb_search, name='tmdb_search'),
     url(r'^api/message/$', trans_ajax.message_ajax, name='message_ajax'),
+    url(r'^api/user/$', trans_ajax.user_ajax, name='user_ajax'),
 
     # temporarily added urls for developing purpuses
 )
