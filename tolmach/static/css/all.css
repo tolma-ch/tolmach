@@ -551,12 +551,11 @@ h4 small,
   box-shadow: none;
   background: #ccc;
   height: 1.5em;
+  margin: 4px 0;
 }
 .progress-bar__gauge {
-  position: absolute;
+  float: left;
   height: 100%;
-  top: 0;
-  left: 0;
 }
 .progress-bar__value {
   position: absolute;

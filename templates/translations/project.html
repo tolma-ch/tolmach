@@ -130,9 +130,10 @@
                                     {= text.title =}
                                 </div>
                                 <div class="project-list-text__progress">
-                                    <div class="progress-bar">
-                                        <div class="progress-bar__gauge" style="width:{= translation.progress =}%;background:#02c14f"></div>
-                                        <span class="progress-bar__value">{= translation.progress =}%</span>
+                                    <div class="progress-bar" ng-repeat="translation in text.translations">
+                                        <div class="progress-bar__gauge" style="width:{= translation.progress[1] =}%;background:#02c14f"></div>
+                                        <div class="progress-bar__gauge" style="width: {= translation.progress[0] - translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
+                                        <span class="progress-bar__value">{= translation.progress[1] =}%</span>
                                     </div>
                                 </div>
                                 <div class="project-list-text__languages">

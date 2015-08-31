@@ -7,6 +7,9 @@
 {% trans 'fragments translated' as sentences_translated_label %}
 {% trans 'Projects' as projects_label %}
 {% trans 'Start new' as start_new_label %}
+    <script>
+    window.userData = {{ userData | safe }};
+    </script>
 <div class="profile-container" ng-controller="projectsCtrl">
     <!-- Messages from HttpReturn. TODO: create new styles for messages. -->
     {% if messages %}
@@ -112,5 +115,6 @@
 </div>
 
 {% include "translations/partial/new_project_modal.html" %}
+{% include "tolmach/partial/edit_profile_modal.html" %}
 
 {% endblock %}

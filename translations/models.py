@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.forms import ModelForm
 from django.db import models
 from entries.models import Subject, Language
@@ -72,7 +73,7 @@ class Project(models.Model):
             translations = TextTranslation.objects.filter(text=text)
             for translation in translations:
                 translations_num += 1
-                common_progress += translation.get_progress()
+                common_progress += translation.get_progress()[1]
 
         if not texts.count() == 0:
             return common_progress / translations_num
@@ -149,12 +150,15 @@ class TextTranslation(models.Model):
         entries_approved/(entries_total/100.0)
         """
         entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-        entries_approved = TextEntry.objects.filter(text=self.text, is_approved=True, translation=self).count()
+        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).count()
+        entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+        print self.text.title
+        print [entries_total, entries_translated, entries_approved]
 
         if not entries_total == 0:
-            return int(entries_approved/(entries_total/100.0))
+            return [int(entries_translated/(entries_total/100.0)), int(entries_approved/(entries_total/100.0))]
         else:
-            return 0
+            return [0, 0]
 
 
 class TextEntry(models.Model):

@@ -80,20 +80,21 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     sudo -i
-    apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
-    echo "deb http://repo.percona.com/apt "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/percona.list
-    apt-get update
-    apt-get install -y percona-server-server-5.6
-    debconf-set-selections <<< 'mysql-server mysql-server/root_password password 123'
-    debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password 123'
-    apt-get install -y python-dev
-    apt-get install -y python-pip
-    apt-get install -y python-virtualenv
-    apt-get install -y libmysqlclient-dev
-    apt-get install -y gettext
-    apt-get install -y libxml2-dev libxslt1-dev python-dev
-    apt-get install -y python-lxml
-    exit
+    sudo apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    sudo echo "deb http://repo.percona.com/apt "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/percona.list
+    sudo apt-get update
+    sudo debconf-set-selections >> /dev/null <<DEBCONF
+    ${DEBCONF_PREFIX}/root_password password $PERCONA_PW
+    ${DEBCONF_PREFIX}/root_password_again password $PERCONA_PW
+    DEBCONF
+    sudo apt-get install -y percona-server-server-5.6
+    sudo apt-get install -y python-dev
+    sudo apt-get install -y python-pip
+    sudo apt-get install -y python-virtualenv
+    sudo apt-get install -y libmysqlclient-dev
+    sudo apt-get install -y gettext
+    sudo apt-get install -y libxml2-dev libxslt1-dev python-dev
+    sudo apt-get install -y python-lxml
 
     virtualenv tolmach
     source /home/vagrant/tolmach/bin/activate
