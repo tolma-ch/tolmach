@@ -425,6 +425,9 @@
                 });
             };
             $scope.editText = function (text) {
+                if (!$scope.isUserManager) {
+                    return;
+                }
                 var modalInstance = $modal.open({
                     templateUrl: 'editTextModal.html',
                     controller: 'EditTextModalCtrl',

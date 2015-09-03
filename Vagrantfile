@@ -49,6 +49,7 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder "../chtec", "/var/www/chtec"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -95,6 +96,15 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y gettext
     sudo apt-get install -y libxml2-dev libxslt1-dev python-dev
     sudo apt-get install -y python-lxml
+    sudo apt-get install -y curl
+    sudo apt-get install -y screen
+    sudo apt-get install -y libreoffice-writer
+    sudo apt-get install -y make
+    cd /tmp
+    sudo git clone https://github.com/dagwieers/unoconv
+    cd /unoconv
+    sudo make install
+
 
     virtualenv tolmach
     source /home/vagrant/tolmach/bin/activate

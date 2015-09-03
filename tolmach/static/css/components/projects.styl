@@ -454,11 +454,17 @@
 	display: table;
 	border-collapse: separate;
 
+
 .project-list-text
+	background f5f5f5
+	&:nth-of-type(odd)
+		background white
 	color #555
 	position: relative;
 	display: table-row;
 
+	&__translation
+		margin 3px 0
 	&__title
 		display table-cell
 		/*white-space nowrap*/
@@ -466,28 +472,33 @@
 		vertical-align: middle;
 		padding 12px
 		width: 40%;
-	&__progress
-		width: 40%;
+	&__cell-btn
+		vertical-align: middle;
+		display: table-cell;
+		padding-left 12px
+		position relative
+		width 28px
+	&__cell
 		vertical-align: middle;
 		display: table-cell;
 		padding-right 12px
-	&__languages
-		display table-cell
-		width 82px
-		vertical-align: middle;
-		white-space: nowrap;
-		padding-right 12px
-	&__btns
-		display table-cell
-		max-width 106px
-		width 1%
-		vertical-align: middle;
-		white-space: nowrap;
-		padding-right 12px
+		position relative
+	&__language
+		margin-right -70px
+		float: left
+		margin-top: -3px;
+	&__progress
+		margin-left 80px
+		margin-right 30px
+		display: block;
+		height: 28px;
+		padding: 1px 0;
 	&__btn
-		margin-left 10px
+		margin-left -20px
 		color #555
 		font-size 16px
+		float: right
+		padding: 3px 0 1px;
 
 
 .project-list-glossary
