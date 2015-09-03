@@ -28,8 +28,7 @@
                 <div class="switcher">
                     <a class="switcher__button"
                        ng-class="{'switcher__button_active': tab === 0}"
-                       ng-click="tab = 0"
-                       ng-if="0">
+                       ng-click="tab = 0">
                         <span>{% trans "Upload file" %}</span>
                     </a>
                     <a class="switcher__button"
@@ -39,7 +38,7 @@
                     </a>
                 </div>
             </div>
-            <div class="form-group" ng-if="0">
+            <div class="form-group" ng-if="tab === 0">
                 <div ngf-drop
                      ngf-select
                      ng-model="text.files"
