@@ -54,7 +54,7 @@ def project_ajax(request):
                                 status=400)
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
-    return HttpResponse(json.dumps(False), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 @login_required
 def create_project_ajax(request):
@@ -812,7 +812,7 @@ def entry_ajax(request, action, text):
                 entry.voters = ','.join(voters)
                 entry.save()
 
-    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
+    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json", status=400)
 
 
 @login_required
@@ -1011,14 +1011,30 @@ def tmdb_search(request):
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
-def message_ajax(request):
+def message_ajax(request, all):
     if request.method == 'POST':
-        unread_messages = Messages.objects.filter(addressee=request.user, was_read=False)
+        post = request.POST or json.loads(request.body)
+        if 'id' not in post:
+            return HttpResponse(json.dumps('Message Id is missed'), content_type="application/json", status=400)
+        try:
+            message = Messages.objects.get(id=post['id'])
+        except Messages.DoesNotExist:
+            return HttpResponse(json.dumps('Message was not found'), content_type="application/json", status=400)
+        message.was_read = True
+        message.save()
+        return HttpResponse(json.dumps(True), content_type="application/json")
+
+    if request.method == 'GET':
+        if all:
+            messages = Messages.objects.filter(addressee=request.user)
+        else:
+            messages = Messages.objects.filter(addressee=request.user, was_read=False)
         result = []
-        for message in unread_messages:
+        for message in messages:
             sender_meta = UserMeta.objects.get(user=message.originator)
             data = json.loads(message.message)
             result.append({
+                'id': message.id,
                 'message': message.message,
                 'originator': message.originator.username,
                 'sender_ava': "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png",
@@ -1028,7 +1044,7 @@ def message_ajax(request):
                 'time_created': message.time_created.strftime('%H:%M %d-%m-%Y')
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
-    return HttpResponse(json.dumps(False), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 def user_ajax(request):

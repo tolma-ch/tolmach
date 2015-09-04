@@ -8,9 +8,9 @@
         'ngFileUpload',
         'ui.select'
     ])
-        .controller('mainCtrl', function ($scope, $http, $timeout) {
+        .controller('mainCtrl', function ($scope, $http, $timeout, $modal) {
             var updateMessages = function () {
-                $http.post('/api/message/').success(function (data) {
+                $http.get('/api/message/').success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 5000);
                 }).error(function (data) {
@@ -25,7 +25,40 @@
                 $scope.sidebarCollapsed = !$scope.sidebarCollapsed;
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
             };
+            $scope.readMessage = function (message) {
+                $http.post('/api/message/', {id: message.id}).success(function (data) {
+                    $scope.messages = data;
+                    $timeout(updateMessages, 5000);
+                }).error(function (data) {
+                })
+            };
+            $scope.showAllMessages = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'allMessagesModal.html',
+                    controller: 'AllMessagesModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
             updateMessages();
+        })
+        .controller('AllMessagesModalCtrl', function ($scope, $modalInstance, $http) {
+            $scope.error = '';
+            $http.get('/api/message/all').success(function (data) {
+                $scope.messages = data;
+                $timeout(updateMessages, 5000);
+            }).error(function (data) {
+            });
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
         })
         .controller('transCtrl', function ($rootScope, $scope, $http) {
             var textId = window['textId'],

@@ -18,7 +18,7 @@
                 {= messages.length =} {{ new_messages }}
             </li>
             <li ng-repeat="message in messages">
-                <a href="/project/{= message.project_id =}/">
+                <a href="/project/{= message.project_id =}/" ng-click="readMessage(message)">
                     <div class="user-avatar">
                         <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
                     </div>
@@ -41,7 +41,7 @@
             </li>
 
             <li>
-                <a href="#">
+                <a href="#" ng-click="showAllMessages()">
                     {{ messages }}
                     <i class="fa-arrow-right"></i>
                 </a>

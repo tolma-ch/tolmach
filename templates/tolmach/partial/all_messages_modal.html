@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<script type="text/ng-template" id="allMessagesModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{% trans "Messages" %}</h3>
+    </div>
+    <div class="modal-body">
+        <ul class="nav">
+            <li ng-repeat="message in messages">
+                <a href="/project/{= message.project_id =}/" ng-click="readMessage(message)">
+                    <div class="user-avatar">
+                        <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                    </div>
+                <span class="msg-body">
+                    <span class="msg-title" ng-if="message.type == 'invite'">
+                        <span class="blue">{= message.originator =}:</span>
+                        {{ invitation }} {= message.project_name =}
+                    </span>
+                    <span class="msg-title" ng-if="message.type == 'uninvite'">
+                        <span class="blue">{= message.originator =}:</span>
+                        {{ uninvitation }} {= message.project_name =}
+                    </span>
+
+                    <span class="msg-time">
+                        <i class="fa-time"></i>
+                        <span>{= message.time_created|date:"d M Y" =}</span>
+                    </span>
+                </span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+    </div>
+</script>
