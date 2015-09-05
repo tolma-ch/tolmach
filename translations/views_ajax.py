@@ -812,7 +812,7 @@ def entry_ajax(request, action, text):
                 entry.voters = ','.join(voters)
                 entry.save()
 
-    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
 
 
 @login_required
