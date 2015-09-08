@@ -8,6 +8,25 @@ import json
 from translations.models import GlossaryEntry, TMDatabase, TMDatabaseEntry
 
 
+FORMATS = {
+    # Docs
+    "doc": "application/msword",
+    "odt": "application/vnd.oasis.opendocument.text",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "rtf": "application/rtf",
+
+    # Tables
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+    # Presentations
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "ppt": "application/vnd.ms-powerpoint",
+
+    # Static docs
+    "pdf": "application/pdf",
+}
+
+
 RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
 RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
 
