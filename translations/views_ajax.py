@@ -239,7 +239,7 @@ def text_ajax(request, project):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        post = json.loads(request.body)
+        post = request.POST or json.loads(request.body)
         print post
         # TODO accept file
         try:
@@ -265,7 +265,44 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+            if 'textBody' in post:
+                sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+            elif 'file' in request.FILES:
+                import os
+                f = request.FILES['file']
+                filename = request.FILES['file'].name
+                file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                          int(request.user.id),
+                                          int(project.id))
+                if not os.path.isdir(file_dir):
+                    os.makedirs(file_dir)
+                file_on_disk = '%s/%s' % (file_dir, filename)
+                if f.size > settings.GLOSSARY_FILE_SIZE:
+                    return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
+                                        status=400)
+                elif f.content_type not in utils.FORMATS.values():
+                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                        status=400)
+                with open(file_on_disk, 'w+') as fd:
+                    for chunk in f.chunks():
+                        fd.write(chunk)
+                import urllib
+                import urllib2
+
+                url = 'http://127.0.0.1:8080/convert'
+                values = {'fname': filename,
+                          'user_id': request.user.id,
+                          'project_id': project.id}
+
+                data = urllib.urlencode(values)
+                req = urllib2.Request(url, data)
+                response = urllib2.urlopen(req)
+                the_page = json.loads(response.read())
+                if the_page['Error'] == 0:
+                    sentences, marked_text = utils.split_text(the_page['Text'], source_lang.code)
+                print sentences
+                print marked_text
+                return True
 
             text = Text(title=post['title'],
                         body=marked_text,
