@@ -840,6 +840,7 @@
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
                     glossaries: $scope.text.glossaries,
+                    transtations: $scope.text.translations,
                     tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;

@@ -68,7 +68,7 @@
                             ng-model="text.sourceLang">
                             <option value="" disabled selected>{% trans "Source language" %}</option>
                         {% for language in languages %}
-                            <option value='{{ language.id }}'>{{ language.name }}</option>
+                            <option value='{{ language.id }}'>{{ language.localized_name }}</option>
                         {% endfor %}
                     </select>
                 </div>

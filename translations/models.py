@@ -160,6 +160,17 @@ class TextTranslation(models.Model):
         else:
             return [0, 0]
 
+    def get_progress_counts(self):
+        """
+        Get progress of the current text and return Int from 0 to 100
+
+        entries_approved/(entries_total/100.0)
+        """
+        entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
+        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).count()
+        entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+        return [int(entries_total), int(entries_translated), int(entries_approved)]
+
 
 class TextEntry(models.Model):
     body = models.TextField(default="")
