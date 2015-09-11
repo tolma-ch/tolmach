@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from tolmach.models import UserMeta
+from translations.models import TextTranslation
 
 
 def entry_to_json(entry):
@@ -29,4 +30,34 @@ def user_to_json(user):
         'id': user.id,
         'name': username,
         'avatar': avatar
+    }
+
+
+def text_to_json(text, locale):
+    from babel import Locale
+    translations = []
+    for translation in TextTranslation.objects.filter(text=text).all():
+        lang_name = Locale(translation.target_lang.code)
+        translations.append({
+            'targetLangId': translation.target_lang.id,
+            'lang': translation.target_lang.code,
+            'langFull': str(translation.target_lang),
+            'progress': translation.get_progress(),
+            'counts': translation.get_progress_counts(),
+            'langLocal': lang_name.get_language_name(locale),
+            'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
+            'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
+        })
+    return {
+        'id': text.id,
+        'title': text.title,
+        'subject': text.subject.id,
+        'progress': text.get_progress(),
+        'sourceLang': str(text.source_lang),
+        'sourceLangId': text.source_lang.id,
+        'targetLang': str(text.target_lang),
+        'targetLangId': text.target_lang.id,
+        'translations': translations,
+        'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
+        'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
     }
