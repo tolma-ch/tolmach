@@ -24,7 +24,7 @@ Vagrant.configure(2) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
-  config.vm.hostname = 'tolma.ch'
+#  config.vm.hostname = 'tolma.ch'
 #  config.hostmanager.enabled = true
 #  config.hostmanager.manage_host = true
 #  config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
@@ -60,7 +60,7 @@ Vagrant.configure(2) do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-    vb.memory = "256"
+    vb.memory = "1024"
     vb.name = "tolmach"
   end
   #
@@ -80,15 +80,9 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo -i
     sudo apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
     sudo echo "deb http://repo.percona.com/apt "$(lsb_release -sc)" main" | sudo tee /etc/apt/sources.list.d/percona.list
     sudo apt-get update
-    sudo debconf-set-selections >> /dev/null <<DEBCONF
-    ${DEBCONF_PREFIX}/root_password password $PERCONA_PW
-    ${DEBCONF_PREFIX}/root_password_again password $PERCONA_PW
-    DEBCONF
-    sudo apt-get install -y percona-server-server-5.6
     sudo apt-get install -y python-dev
     sudo apt-get install -y python-pip
     sudo apt-get install -y python-virtualenv
@@ -100,11 +94,15 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y screen
     sudo apt-get install -y libreoffice-writer
     sudo apt-get install -y make
+    sudo apt-get install -y git
     cd /tmp
     sudo git clone https://github.com/dagwieers/unoconv
-    cd /unoconv
+    cd unoconv
     sudo make install
 
+    echo "percona-server-server-5.6 percona-server-server/root_password password root" | sudo debconf-set-selections
+    echo "percona-server-server-5.6 percona-server-server/root_password_again password root" | sudo debconf-set-selections
+    sudo apt-get install -qq -y percona-server-server-5.6  percona-server-client-5.6
 
     virtualenv tolmach
     source /home/vagrant/tolmach/bin/activate
