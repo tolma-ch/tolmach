@@ -15,7 +15,7 @@ from tolmach.models import UserMeta, Messages
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, Text, TextTranslation
 import json
-from translations.utils_ajax import translation_to_json, user_to_json
+from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
 
 @login_required
@@ -203,43 +203,17 @@ def participant_ajax(request, project):
 @accept_project
 @login_required
 def text_ajax(request, project):
-    from babel import Locale
     if request.method == 'GET':
         texts = Text.objects.filter(project=project).all()
         result = []
         for text in texts:
-            translations = []
-            for translation in TextTranslation.objects.filter(text=text).all():
-                lang_name = Locale(translation.target_lang.code)
-                translations.append({
-                    'targetLangId': translation.target_lang.id,
-                    'lang': translation.target_lang.code,
-                    'langFull': str(translation.target_lang),
-                    'progress': translation.get_progress(),
-                    'langLocal': lang_name.get_language_name(request.LANGUAGE_CODE),
-                    'glossaries': [int(x) for x in translation.glossaries.split(',')] if translation.glossaries else [],
-                    'tmxes': [int(x) for x in translation.tmdatabases.split(',')] if translation.tmdatabases else [],
-                })
-            print translations
-            result.append({
-                'id': text.id,
-                'title': text.title,
-                'subject': text.subject.id,
-                'progress': text.get_progress(),
-                'sourceLang': str(text.source_lang),
-                'sourceLangId': text.source_lang.id,
-                'targetLang': str(text.target_lang),
-                'targetLangId': text.target_lang.id,
-                'translations': translations,
-                'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
-                'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
-            })
+            result.append(text_to_json(text, request.LANGUAGE_CODE))
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        post = json.loads(request.body)
+        post = request.POST or json.loads(request.body)
         print post
         # TODO accept file
         try:
@@ -265,7 +239,48 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+            if 'textBody' in post:
+                sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+            elif 'file' in request.FILES:
+                import os
+                f = request.FILES['file']
+                filename = request.FILES['file'].name
+                file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                          int(request.user.id),
+                                          int(project.id))
+                if not os.path.isdir(file_dir):
+                    os.makedirs(file_dir)
+                file_on_disk = '%s/%s' % (file_dir, filename)
+                if f.size > settings.GLOSSARY_FILE_SIZE:
+                    return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
+                                        status=400)
+                elif f.content_type not in utils.FORMATS.values():
+                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                        status=400)
+                with open(file_on_disk, 'w+') as fd:
+                    for chunk in f.chunks():
+                        fd.write(chunk)
+                import urllib
+                import urllib2
+
+                url = 'http://127.0.0.1:8080/convert'
+                values = {'fname': filename,
+                          'user_id': request.user.id,
+                          'project_id': project.id}
+
+                data = urllib.urlencode(values)
+                req = urllib2.Request(url, data)
+                response = urllib2.urlopen(req)
+                the_page = json.loads(response.read())
+                # TODO: добавить обработку хттп ошибок
+                if the_page['Error'] == 0:
+                    sentences, marked_text = utils.split_text(the_page['Text'], source_lang.code)
+                else:
+                    return HttpResponse(json.dumps(_(the_page['Text'])), content_type="application/json",
+                                        status=the_page['Error'])
+                print sentences
+                print marked_text
+                return True
 
             text = Text(title=post['title'],
                         body=marked_text,
@@ -287,18 +302,7 @@ def text_ajax(request, project):
                                       author=request.user,
                                       )
                 txt_entry.save()
-        result = {
-            'id': text.id,
-            'title': text.title,
-            'subject': text.subject.id,
-            'progress': text.get_progress(),
-            'sourceLang': str(text.source_lang),
-            'sourceLangId': text.source_lang.id,
-            'targetLang': str(text.target_lang),
-            'targetLangId': text.target_lang.id,
-            'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
-            'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
-        }
+        result = text_to_json(text, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'text' not in request.GET:
@@ -812,7 +816,7 @@ def entry_ajax(request, action, text):
                 entry.voters = ','.join(voters)
                 entry.save()
 
-    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json", status=400)
+    return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
 
 
 @login_required
