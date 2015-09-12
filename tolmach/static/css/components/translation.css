@@ -48,7 +48,7 @@
 .translation__sentence-translation_state_closed .translation__sentence-translation-original {
   border: none;
 }
-.translation__sentence-translation_state_closed .translation__sentence-translation-original:after {
+.translation__sentence-translation_state_closed .translation__sentence-translation-toggle:after {
   content: '\f138';
 }
 .translation__sentence-translation_state_closed .translation__sentence-translation-switcher {
@@ -64,7 +64,7 @@
 .translation__sentence-translation_state_approved {
   background: #c5ffcc;
 }
-.translation__sentence-translation_state_approved .translation__sentence-translation-original:after {
+.translation__sentence-translation_state_approved .translation__sentence-translation-toggle:after {
   content: '';
 }
 .translation__sentence-translation-original {
@@ -72,7 +72,15 @@
   padding: 10px 40px 10px 15px;
   border-bottom: 1px solid rgba(134,134,134,0.5);
 }
-.translation__sentence-translation-original:after {
+.translation__sentence-translation-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 42px;
+  cursor: pointer;
+}
+.translation__sentence-translation-toggle:after {
   position: absolute;
   top: 50%;
   right: 10px;
@@ -81,7 +89,9 @@
   font-size: 1.5em;
   font-family: FontAwesome;
   content: '\f13a';
-  cursor: pointer;
+}
+.translation__sentence-translation-toggle:hover {
+  background: #e8e8e8;
 }
 .translation__sentence-translation-result {
   overflow: hidden;

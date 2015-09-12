@@ -803,19 +803,19 @@
                 return result;
             };
             $scope.toggleGlossary = function (id) {
-                var index = $scope.text.glossaries.indexOf(id);
+                var index = $scope.options.currentTranslation.glossaries.indexOf(id);
                 if (index > -1) {
-                    $scope.text.glossaries.splice(index, 1);
+                    $scope.options.currentTranslation.glossaries.splice(index, 1);
                 } else {
-                    $scope.text.glossaries.push(id);
+                    $scope.options.currentTranslation.glossaries.push(id);
                 }
             };
             $scope.toggleTmx = function (id) {
-                var index = $scope.text.tmxes.indexOf(id);
+                var index = $scope.options.currentTranslation.tmxes.indexOf(id);
                 if (index > -1) {
-                    $scope.text.tmxes.splice(index, 1);
+                    $scope.options.currentTranslation.tmxes.splice(index, 1);
                 } else {
-                    $scope.text.tmxes.push(id);
+                    $scope.options.currentTranslation.tmxes.push(id);
                 }
             };
             $scope.ok = function () {

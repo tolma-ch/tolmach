@@ -223,11 +223,27 @@ def text_ajax(request, project):
             # return HttpResponse(json.dumps(_('Subject not found')), content_type="application/json", status=400)
 
         if 'id' in post:
-            text = Text.objects.get(id=post['id'])
+            try:
+                text = Text.objects.get(id=post['id'])
+            except Text.DoesNotExist:
+                return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
             text.title = post['title']
-            text.subject = subject
-            text.glossaries = ','.join([str(x) for x in post['glossaries']])
-            text.tmdatabases = ','.join([str(x) for x in post['tmxes']])
+            # text.subject = subject
+            for translation in post['translations']:
+                try:
+                    target_lang = Language.objects.get(id=translation['targetLangId'])
+                except Language.DoesNotExist:
+                    return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+                try:
+                    text_translation = TextTranslation.objects.get(text=text,
+                                                                   target_lang=target_lang)
+                except TextTranslation.DoesNotExist:
+                    text_translation = TextTranslation(text=text,
+                                                       target_lang=target_lang,
+                                                       )
+                text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
+                text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                text_translation.save()
             text.save()
         else:
             try:
