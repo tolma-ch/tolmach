@@ -44,13 +44,13 @@
   display: inline-block;
   position: relative;
   top: 3px;
-  min-width: 28px;
-  height: 28px;
+  min-width: 29px;
+  height: 29px;
   background: #fff;
   border: 1px solid #e5e5e5;
-  -webkit-border-radius: 28px;
-  -moz-border-radius: 28px;
-  border-radius: 28px;
+  -webkit-border-radius: 29px;
+  -moz-border-radius: 29px;
+  border-radius: 29px;
   padding: 1px;
   color: #9c9b9b;
   font-style: normal;
@@ -326,7 +326,10 @@ body {
   font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 body > .main {
-  margin-bottom: 55px;
+  padding-bottom: 55px;
+}
+.main-container {
+  min-height: 100%;
 }
 .stripy-heading {
   text-align: center;
@@ -430,6 +433,7 @@ body > .main {
 }
 .main-content {
   *zoom: 1;
+  min-height: 100%;
 }
 .main-content:after,
 .main-content:before {
@@ -1706,7 +1710,7 @@ a.user-sidebar__profile-line-data:hover {
 .translation__sentence-translation_state_closed .translation__sentence-translation-original {
   border: none;
 }
-.translation__sentence-translation_state_closed .translation__sentence-translation-original:after {
+.translation__sentence-translation_state_closed .translation__sentence-translation-toggle:after {
   content: '\f138';
 }
 .translation__sentence-translation_state_closed .translation__sentence-translation-switcher {
@@ -1722,7 +1726,7 @@ a.user-sidebar__profile-line-data:hover {
 .translation__sentence-translation_state_approved {
   background: #c5ffcc;
 }
-.translation__sentence-translation_state_approved .translation__sentence-translation-original:after {
+.translation__sentence-translation_state_approved .translation__sentence-translation-toggle:after {
   content: '';
 }
 .translation__sentence-translation-original {
@@ -1730,7 +1734,15 @@ a.user-sidebar__profile-line-data:hover {
   padding: 10px 40px 10px 15px;
   border-bottom: 1px solid rgba(134,134,134,0.5);
 }
-.translation__sentence-translation-original:after {
+.translation__sentence-translation-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 42px;
+  cursor: pointer;
+}
+.translation__sentence-translation-toggle:after {
   position: absolute;
   top: 50%;
   right: 10px;
@@ -1739,7 +1751,9 @@ a.user-sidebar__profile-line-data:hover {
   font-size: 1.5em;
   font-family: FontAwesome;
   content: '\f13a';
-  cursor: pointer;
+}
+.translation__sentence-translation-toggle:hover {
+  background: #e8e8e8;
 }
 .translation__sentence-translation-result {
   overflow: hidden;

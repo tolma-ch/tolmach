@@ -512,6 +512,9 @@
   float: right;
   padding: 3px 0 1px;
 }
+.project-list-text__item:hover .flag {
+  background-color: #e8e8e8;
+}
 .project-list-glossary {
   display: block;
   position: relative;

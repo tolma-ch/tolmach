@@ -46,6 +46,7 @@
 
 		&_state_closed &-original
 			border none
+		&_state_closed &-toggle
 			&:after
 				content '\f138'
 
@@ -62,7 +63,7 @@
 		&_state_approved
 			background #C5FFCC
 
-		&_state_approved &-original
+		&_state_approved &-toggle
 			&:after
 				content ''
 
@@ -70,6 +71,13 @@
 		position relative
 		padding 10px 40px 10px 15px
 		border-bottom 1px solid rgba(#868686, 0.5)
+	&__sentence-translation-toggle
+		position absolute
+		top 0
+		bottom 0
+		right 0
+		width 42px
+		cursor pointer
 		&:after
 			position absolute
 			top 50%
@@ -79,7 +87,8 @@
 			font-size 1.5em
 			font-family FontAwesome
 			content '\f13a'
-			cursor pointer
+		&:hover
+			background #e8e8e8
 
 	&__sentence-translation-result
 		overflow hidden

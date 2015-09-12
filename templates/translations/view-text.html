@@ -33,9 +33,10 @@
                      ng-class="{'translation__sentence-translation_state_closed': $parent.activeEntry !== entry,
                                 'translation__sentence-translation_state_approved': entry.approved}">
 
-                    <div class="translation__sentence-translation-original"
-                         ng-click="toggleEntry(entry)"
-                         html-content="entry.body">
+                    <div class="translation__sentence-translation-original">
+                        <span html-content="entry.body"></span>
+                        <div class="translation__sentence-translation-toggle"
+                             ng-click="toggleEntry(entry)"></div>
                     </div>
 
                     <div class="translation__sentence-translation-result">
