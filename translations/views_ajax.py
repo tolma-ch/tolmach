@@ -1070,22 +1070,28 @@ def message_ajax(request, all):
 def user_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        if 'firstName' in post:
-            request.user.first_name = post['firstName']
-        if 'lastName' in post:
-            request.user.last_name = post['lastName']
-        if 'username' in post:
-            request.user.username = post['username']
-        request.user.save()
-        usermeta = UserMeta.objects.get(user=request.user)
-        if 'website' in post:
-            usermeta.website = post['website']
-            usermeta.save()
-        result = {
-            'firstName': request.user.first_name,
-            'lastName': request.user.last_name,
-            'username': request.user.username,
-            'website': usermeta.website,
-            }
-        return HttpResponse(json.dumps(result), content_type="application/json")
+        if type(post) == 'unicode' and post.find('data:image/png;base64,') == 0:
+            # fh = open("imageToSave.png", "wb")
+            # fh.write(post[22:].decode('base64'))
+            # fh.close()
+            return HttpResponse(json.dumps(True), content_type="application/json")
+        else:
+            if 'firstName' in post:
+                request.user.first_name = post['firstName']
+            if 'lastName' in post:
+                request.user.last_name = post['lastName']
+            if 'username' in post:
+                request.user.username = post['username']
+            request.user.save()
+            usermeta = UserMeta.objects.get(user=request.user)
+            if 'website' in post:
+                usermeta.website = post['website']
+                usermeta.save()
+            result = {
+                'firstName': request.user.first_name,
+                'lastName': request.user.last_name,
+                'username': request.user.username,
+                'website': usermeta.website,
+                }
+            return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")

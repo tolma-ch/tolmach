@@ -9,6 +9,25 @@
     </div>
     <div class="modal-body">
         <form>
+            <image-crop
+                data-width="300"
+                data-height="300"
+                data-shape="circle"
+                data-result="imageCropResult"
+                data-step="imageCropStep"
+                ng-hide="imageCropResult"
+                ></image-crop>
+
+            <div class="image-crop-result" ng-show="imageCropResult">
+                <img ng-src="{= imageCropResult =}" alt="The Cropped Image">
+            </div>
+
+            <p ng-show="imageCropResult">
+                <a class="btn btn-default"
+                   ng-click="imageCropResult=null;imageCropStep=1"
+                   ng-disabled="busy">Загрузить другое изображение</a>
+            </p>
+
             <div class="form-group">
                 <label class="control-label no-padding-right" for="form-field-1"> {% trans "Nickname" %}: </label>
                 <div class="">
