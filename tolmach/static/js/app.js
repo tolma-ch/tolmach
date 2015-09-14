@@ -6,7 +6,8 @@
     angular.module('tolmachApp', [
         'ui.bootstrap',
         'ngFileUpload',
-        'ui.select'
+        'ui.select',
+        'ImageCropper'
     ])
         .controller('mainCtrl', function ($scope, $http, $timeout, $modal) {
             var updateMessages = function () {
@@ -366,12 +367,34 @@
         .controller('EditProfileModalCtrl', function ($scope, $modalInstance, $http, userData) {
             $scope.error = '';
             $scope.userData = userData;
+            $scope.imageCropResult = null;
+            $scope.showImageCropper = true;
+            $scope.imageCropStep = 1;
+            $scope.blah = 1;
+            $scope.$watch('imageCropResult', function(newVal) {
+                $scope.blah++;
+                if (newVal) {
+                    console.log('imageCropResult', newVal);
+                }
+                return newVal;
+            });
             $scope.ok = function () {
-                $scope.error = '';
                 $scope.busy = true;
+                $scope.error = '';
                 $http.post('/api/user/', $scope.userData)
                     .success(function(data) {
-                        $modalInstance.close(data);
+                        if ($scope.imageCropResult) {
+                            $http.post('/api/user/', JSON.stringify($scope.imageCropResult))
+                                .success(function() {
+                                    location.reload();
+                                })
+                                .error(function() {
+                                    $scope.busy = false;
+                                    $modalInstance.close(data);
+                                });
+                        } else {
+                            $modalInstance.close(data);
+                        }
                     })
                     .error(function(data) {
                         $scope.error = data;
