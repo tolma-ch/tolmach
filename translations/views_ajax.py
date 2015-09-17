@@ -241,8 +241,14 @@ def text_ajax(request, project):
                     text_translation = TextTranslation(text=text,
                                                        target_lang=target_lang,
                                                        )
-                text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
-                text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                if 'glossaries' in translation:
+                    text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
+                else:
+                    text_translation.glossaries = ''
+                if 'tmxes' in translation:
+                    text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                else:
+                    text_translation.tmdatabases = ''
                 text_translation.save()
             text.save()
         else:
