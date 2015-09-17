@@ -1,6 +1,5 @@
-html,
-body {
-  min-height: 100%;
+html {
+  height: 100%;
   font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 body > .main {
