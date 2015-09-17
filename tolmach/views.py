@@ -70,12 +70,12 @@ def index(request):
             'empty_list': empty_list,
             'entries_total': total_translated
         }
-        template = 'components/profile-data/profile-data.html'
+        template = 'tolmach/profile.html'
     else:
         data = {
             'is_index': True,
         }
-        template = 'main/main.html'
+        template = 'tolmach/landing.html'
     return render_to_response(template, data, RequestContext(request))
 
 
@@ -165,7 +165,7 @@ def user_page(request, user_id):
                        [user.username, ''],
         ],
     }
-    template = 'components/profile-data/view_user.html'
+    template = 'tolmach/view_user.html'
 
     return render_to_response(template, data, RequestContext(request))
 
