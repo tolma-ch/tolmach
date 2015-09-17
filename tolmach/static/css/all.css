@@ -1469,7 +1469,7 @@ h4 small,
   display: block;
 }
 .glossary-manual {
-  margin-bottom: 15px;
+  margin-top: 15px;
 }
 .glossary-manual:after {
   clear: both;

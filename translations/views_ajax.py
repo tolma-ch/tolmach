@@ -229,27 +229,28 @@ def text_ajax(request, project):
                 return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
             text.title = post['title']
             # text.subject = subject
-            for translation in post['translations']:
-                try:
-                    target_lang = Language.objects.get(id=translation['targetLangId'])
-                except Language.DoesNotExist:
-                    return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-                try:
-                    text_translation = TextTranslation.objects.get(text=text,
-                                                                   target_lang=target_lang)
-                except TextTranslation.DoesNotExist:
-                    text_translation = TextTranslation(text=text,
-                                                       target_lang=target_lang,
-                                                       )
-                if 'glossaries' in translation:
-                    text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
-                else:
-                    text_translation.glossaries = ''
-                if 'tmxes' in translation:
-                    text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
-                else:
-                    text_translation.tmdatabases = ''
-                text_translation.save()
+            if 'translations' in post:
+                for translation in post['translations']:
+                    try:
+                        target_lang = Language.objects.get(id=translation['targetLangId'])
+                    except Language.DoesNotExist:
+                        return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+                    try:
+                        text_translation = TextTranslation.objects.get(text=text,
+                                                                       target_lang=target_lang)
+                    except TextTranslation.DoesNotExist:
+                        text_translation = TextTranslation(text=text,
+                                                           target_lang=target_lang,
+                                                           )
+                    if 'glossaries' in translation:
+                        text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
+                    else:
+                        text_translation.glossaries = ''
+                    if 'tmxes' in translation:
+                        text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                    else:
+                        text_translation.tmdatabases = ''
+                    text_translation.save()
             text.save()
         else:
             try:
