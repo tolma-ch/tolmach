@@ -77,13 +77,13 @@
 
 	<body ng-app="tolmachApp">
         <div class="main{% if user.is_authenticated %} auth{% endif %}" ng-controller="mainCtrl">
-            {% include "components/header/header.html" %}
+            {% include "main/partial/header.html" %}
 
             {% block content %}
             {% endblock %}
         </div>
 
-        {% include "components/footer/footer.html" %}
+        {% include "main/partial/footer.html" %}
 
 		<a href="" id="btn-scroll-up" class="btn-scroll-up btn btn-small btn-inverse" title="Наверх">
 			⬆

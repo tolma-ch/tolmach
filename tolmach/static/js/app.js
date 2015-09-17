@@ -13,7 +13,7 @@
             var updateMessages = function () {
                 $http.get('/api/message/').success(function (data) {
                     $scope.messages = data;
-                    $timeout(updateMessages, 5000);
+                    $timeout(updateMessages, 15*60*1000);
                 }).error(function (data) {
                 })
             };
@@ -800,12 +800,16 @@
             $scope.tmxes = tmxes;
             $scope.tab = 0;
             $scope.addTranslation = function (targetLang) {
+                if (!targetLang) {
+                    return;
+                }
                 $scope.text.translations.push({
                     targetLangId: targetLang.id,
                     lang: targetLang.code,
                     langFull: targetLang.langFull,
                     langLocal: targetLang.langLocal
                 });
+                $scope.options.NewTranslationTargetLang = null;
                 $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
                 $scope.options.addNewTranslation = false;
             };
