@@ -185,8 +185,13 @@
             </div>
             <script>
                 var resiseContainer = function () {  //  Задержка для очистки чрезмерных срабатываний;
-                    $('#translations-container').css({height: + $('#translation__frame').height() + 'px'});
-                    console.log($('#translation__frame').height());
+                    var height = $('#translation__frame').height(),
+                        minHeight = $('#footer').offset().top - $('#translations-container').offset().top;
+                    if (height < minHeight) {
+                        height = minHeight;
+                    }
+                    $('#translations-container').css({height: + height + 'px'});
+{#                    console.log($('#translation__frame').height());#}
                 };
                 setTimeout(function(){ // Отработка задержки фрейма (для FF и ИЕ)
                     var timerResize='first';
