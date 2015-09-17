@@ -5,7 +5,7 @@ register = template.Library()
 from tolmach.models import UserMeta, Messages
 
 
-@register.inclusion_tag('main/navbar-logged-in.html', takes_context=True)
+@register.inclusion_tag('main/partial/navbar-loggedin.html', takes_context=True)
 def login_navbar(context):
     request = context['request']
     user = request.user

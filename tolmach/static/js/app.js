@@ -13,7 +13,7 @@
             var updateMessages = function () {
                 $http.get('/api/message/').success(function (data) {
                     $scope.messages = data;
-                    $timeout(updateMessages, 5000);
+                    $timeout(updateMessages, 15*60*1000);
                 }).error(function (data) {
                 })
             };
