@@ -800,12 +800,16 @@
             $scope.tmxes = tmxes;
             $scope.tab = 0;
             $scope.addTranslation = function (targetLang) {
+                if (!targetLang) {
+                    return;
+                }
                 $scope.text.translations.push({
                     targetLangId: targetLang.id,
                     lang: targetLang.code,
                     langFull: targetLang.langFull,
                     langLocal: targetLang.langLocal
                 });
+                $scope.options.NewTranslationTargetLang = null;
                 $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
                 $scope.options.addNewTranslation = false;
             };
@@ -863,7 +867,7 @@
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
                     glossaries: $scope.text.glossaries,
-                    transtations: $scope.text.translations,
+                    translations: $scope.text.translations,
                     tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
