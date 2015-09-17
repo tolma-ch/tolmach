@@ -75,7 +75,7 @@ def index(request):
         data = {
             'is_index': True,
         }
-        template = 'tolmach/landing.html'
+        template = 'tolmach/main.html'
     return render_to_response(template, data, RequestContext(request))
 
 
