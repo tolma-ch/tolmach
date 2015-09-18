@@ -150,7 +150,7 @@ class TextTranslation(models.Model):
         entries_approved/(entries_total/100.0)
         """
         entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).count()
+        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
         entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
         print self.text.title
         print [entries_total, entries_translated, entries_approved]
