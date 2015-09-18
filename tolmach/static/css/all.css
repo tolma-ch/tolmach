@@ -321,7 +321,7 @@
   background-position: -80px -40px;
 }
 html {
-  height: 100%;
+  min-height: 100%;
   font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 body > .main {

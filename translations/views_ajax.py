@@ -810,7 +810,7 @@ def entry_ajax(request, action, text):
                 'translation': approved_text or user_translation_text or entry.body
             })
         result = {
-            'lang_pair': text.source_lang.code + "-" + text.target_lang.code,
+            'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
