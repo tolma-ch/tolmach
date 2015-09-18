@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-23 17:01+0900\n"
+"POT-Creation-Date: 2015-09-18 14:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,127 +19,18 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: templates/components/footer/footer.html:3
-msgid "We're in vk.com"
-msgstr "Мы ВКонтакте"
-
-#: templates/components/footer/footer.html:4
-msgid "Tolma.ch on Google+"
-msgstr "Tolma.ch в Google+"
-
-#: templates/components/footer/footer.html:5
-msgid "Our Twitter"
-msgstr "Наш Twitter"
-
-#: templates/components/footer/footer.html:6
-msgid "Tolma.ch on Facebook"
-msgstr "Tolma.ch на Facebook"
-
-#: templates/components/main/main.html:5
-msgid "How it works?"
-msgstr "Как это работает?"
-
-#: templates/components/navbar/loggedin.html:2
-msgid "new messages"
-msgstr "новых сообщений"
-
-#: templates/components/navbar/loggedin.html:3
-msgid "invited you to the project"
-msgstr "пригласил вас в проект"
-
-#: templates/components/navbar/loggedin.html:4
-msgid "pitched you out of the project"
-msgstr "прогнал вас из проекта"
-
-#: templates/components/navbar/loggedin.html:5
-msgid "Logout"
-msgstr "Выход"
-
-#: templates/components/navbar/loggedin.html:6
-msgid "See all messages"
-msgstr "Все сообщения"
-
-#: templates/components/navbar/loggedin.html:60
-msgid "Hi,"
-msgstr "Привет,"
-
-#: templates/components/profile-data/profile-data.html:5
-#: templates/components/profile-data/view_user.html:5
-msgid "Statistics"
-msgstr "Статистика"
-
-#: templates/components/profile-data/profile-data.html:6
-#: templates/components/profile-data/view_user.html:6
-msgid "Total"
-msgstr "Всего"
-
-#: templates/components/profile-data/profile-data.html:7
-#: templates/components/profile-data/view_user.html:7
-msgid "fragments translated"
-msgstr "фрагментов переведено"
-
-#: templates/components/profile-data/profile-data.html:8
-#: templates/components/profile-data/view_user.html:8
-#: templates/main/base-logged-in.html:6
-msgid "Projects"
-msgstr "Проекты"
-
-#: templates/components/profile-data/profile-data.html:9
-#: templates/components/profile-data/view_user.html:9
-msgid "Start new"
-msgstr "Начать новый"
-
-#: templates/components/profile-data/view_user.html:10
-#: templates/translations/partial/new_project_modal.html:3
-msgid "Add project"
-msgstr "Добавить проект"
-
-#: templates/components/profile-data/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:4
-#: templates/translations/projects-main.html:382
-#: templates/translations/projects-main.html:438
-msgid "Project name"
-msgstr "Название проекта"
-
-#: templates/components/profile-data/view_user.html:12
-#: templates/translations/partial/new_project_modal.html:5
-msgid "Short project name"
-msgstr "Краткое название проекта"
-
-#: templates/components/profile-data/view_user.html:13
-#: templates/translations/partial/new_project_modal.html:6
-msgid "Short project description"
-msgstr "Краткое описание проекта"
-
-#: templates/components/profile-data/view_user.html:14
-msgid "Public"
-msgstr "Публичный"
-
-#: templates/components/profile-data/view_user.html:15
-msgid "Private"
-msgstr "Приватный"
-
-#: templates/components/profile-data/view_user.html:16
-#: templates/translations/partial/add_glossary_modal.html:81
-#: templates/translations/partial/add_participant_modal.html:28
-#: templates/translations/partial/add_tmx_modal.html:46
-#: templates/translations/partial/new_project_modal.html:9
-#: templates/translations/project.html:65
-#: templates/translations/project.html:116
-#: templates/translations/project.html:176
-#: templates/translations/projects-main.html:138
-#: templates/translations/projects-main.html:351
-#: templates/translations/view-text.html:13
-msgid "Add"
-msgstr "Добавить"
-
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
 msgstr "Табло"
 
+#: templates/main/base-logged-in.html:6 templates/tolmach/profile.html:8
+#: templates/tolmach/view_user.html:8
+msgid "Projects"
+msgstr "Проекты"
+
 #: templates/main/base-logged-in.html:7 translations/views.py:31
-#: translations/views.py:110 translations/views.py:333
-#: translations/views.py:370
+#: translations/views.py:110 translations/views.py:339
+#: translations/views.py:376
 msgid "My projects"
 msgstr "Мои проекты"
 
@@ -152,8 +43,8 @@ msgid "Community"
 msgstr "Сообщество"
 
 #: templates/main/base-logged-in.html:10 translations/views.py:44
-#: translations/views.py:116 translations/views.py:339
-#: translations/views.py:376
+#: translations/views.py:116 translations/views.py:345
+#: translations/views.py:382
 msgid "Public projects"
 msgstr "Публичные проекты"
 
@@ -185,6 +76,146 @@ msgstr "Домой"
 msgid "Search"
 msgstr "Найти"
 
+#: templates/main/partial/footer.html:3
+msgid "We're in vk.com"
+msgstr "Мы ВКонтакте"
+
+#: templates/main/partial/footer.html:4
+msgid "Tolma.ch on Google+"
+msgstr "Tolma.ch в Google+"
+
+#: templates/main/partial/footer.html:5
+msgid "Our Twitter"
+msgstr "Наш Twitter"
+
+#: templates/main/partial/footer.html:6
+msgid "Tolma.ch on Facebook"
+msgstr "Tolma.ch на Facebook"
+
+#: templates/main/partial/navbar-loggedin.html:2
+msgid "new messages"
+msgstr "новых сообщений"
+
+#: templates/main/partial/navbar-loggedin.html:3
+msgid "invited you to the project"
+msgstr "пригласил вас в проект"
+
+#: templates/main/partial/navbar-loggedin.html:4
+msgid "pitched you out of the project"
+msgstr "прогнал вас из проекта"
+
+#: templates/main/partial/navbar-loggedin.html:5
+msgid "Logout"
+msgstr "Выход"
+
+#: templates/main/partial/navbar-loggedin.html:6
+msgid "See all messages"
+msgstr "Все сообщения"
+
+#: templates/main/partial/navbar-loggedin.html:60
+msgid "Hi,"
+msgstr "Привет,"
+
+#: templates/tolmach/main.html:5
+msgid "How it works?"
+msgstr "Как это работает?"
+
+#: templates/tolmach/partial/all_messages_modal.html:8
+msgid "Messages"
+msgstr "Сообщения"
+
+#: templates/tolmach/partial/edit_profile_modal.html:8
+#: templates/tolmach/partial/profile-sidebar.html:37
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/tolmach/partial/edit_profile_modal.html:32
+#: templates/tolmach/partial/edit_profile_modal.html:36
+msgid "Nickname"
+msgstr ""
+
+#: templates/tolmach/partial/edit_profile_modal.html:42
+#: templates/tolmach/partial/edit_profile_modal.html:46
+msgid "First Name"
+msgstr "Имя"
+
+#: templates/tolmach/partial/edit_profile_modal.html:52
+#: templates/tolmach/partial/edit_profile_modal.html:56
+msgid "Last Name"
+msgstr "Фамилия"
+
+#: templates/tolmach/partial/edit_profile_modal.html:62
+#: templates/tolmach/partial/edit_profile_modal.html:66
+msgid "Website"
+msgstr "Адрес сайта"
+
+#: templates/tolmach/partial/edit_profile_modal.html:79
+#: templates/translations/partial/add_glossary_modal.html:82
+#: templates/translations/partial/add_tmx_modal.html:47
+#: templates/translations/partial/edit_text_modal.html:89
+msgid "Save"
+msgstr "Сохранить"
+
+#: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
+msgid "Statistics"
+msgstr "Статистика"
+
+#: templates/tolmach/profile.html:6 templates/tolmach/view_user.html:6
+msgid "Total"
+msgstr "Всего"
+
+#: templates/tolmach/profile.html:7 templates/tolmach/view_user.html:7
+msgid "fragments translated"
+msgstr "фрагментов переведено"
+
+#: templates/tolmach/profile.html:9 templates/tolmach/view_user.html:9
+msgid "Start new"
+msgstr "Начать новый"
+
+#: templates/tolmach/view_user.html:10
+#: templates/translations/partial/new_project_modal.html:3
+msgid "Add project"
+msgstr "Добавить проект"
+
+#: templates/tolmach/view_user.html:11
+#: templates/translations/partial/new_project_modal.html:4
+#: templates/translations/projects-main.html:382
+#: templates/translations/projects-main.html:438
+msgid "Project name"
+msgstr "Название проекта"
+
+#: templates/tolmach/view_user.html:12
+#: templates/translations/partial/new_project_modal.html:5
+msgid "Short project name"
+msgstr "Краткое название проекта"
+
+#: templates/tolmach/view_user.html:13
+#: templates/translations/partial/new_project_modal.html:6
+msgid "Short project description"
+msgstr "Краткое описание проекта"
+
+#: templates/tolmach/view_user.html:14
+msgid "Public"
+msgstr "Публичный"
+
+#: templates/tolmach/view_user.html:15
+msgid "Private"
+msgstr "Приватный"
+
+#: templates/tolmach/view_user.html:16
+#: templates/translations/partial/add_glossary_modal.html:81
+#: templates/translations/partial/add_participant_modal.html:28
+#: templates/translations/partial/add_tmx_modal.html:46
+#: templates/translations/partial/new_project_modal.html:9
+#: templates/translations/project.html:66
+#: templates/translations/project.html:119
+#: templates/translations/project.html:199
+#: templates/translations/projects-main.html:138
+#: templates/translations/projects-main.html:351
+#: templates/translations/view-text.html:13
+msgid "Add"
+msgstr "Добавить"
+
 #: templates/translations/partial/add_glossary_modal.html:8
 msgid "Add glossary"
 msgstr "Добавить глоссарий"
@@ -205,12 +236,6 @@ msgstr "Добавить вручную"
 msgid "Glossary name"
 msgstr "Название глоссария"
 
-#: templates/translations/partial/add_glossary_modal.html:82
-#: templates/translations/partial/add_tmx_modal.html:47
-#: templates/translations/partial/edit_text_modal.html:66
-msgid "Save"
-msgstr "Сохранить"
-
 #: templates/translations/partial/add_participant_modal.html:7
 msgid "Add participant"
 msgstr "Добавить участника"
@@ -230,23 +255,23 @@ msgstr "Добавить текст"
 msgid "Title"
 msgstr "Название:"
 
-#: templates/translations/partial/add_text_modal.html:33
+#: templates/translations/partial/add_text_modal.html:32
 msgid "Upload file"
 msgstr "Загрузить файл"
 
-#: templates/translations/partial/add_text_modal.html:38
+#: templates/translations/partial/add_text_modal.html:37
 msgid "Insert plain test"
 msgstr "Вставить текст"
 
-#: templates/translations/partial/add_text_modal.html:70
+#: templates/translations/partial/add_text_modal.html:69
 msgid "Source language"
 msgstr "Язык оригинала:"
 
-#: templates/translations/partial/add_text_modal.html:79
+#: templates/translations/partial/add_text_modal.html:78
 msgid "Target language"
 msgstr "Язык перевода:"
 
-#: templates/translations/partial/add_text_modal.html:95
+#: templates/translations/partial/add_text_modal.html:94
 msgid "Next"
 msgstr "Далее"
 
@@ -263,15 +288,19 @@ msgid "TMX name"
 msgstr "Название базы памяти"
 
 #: templates/translations/partial/edit_text_modal.html:7
-#: templates/translations/project.html:146
+#: templates/translations/project.html:138
 msgid "Edit text"
 msgstr "Редактировать текст"
 
-#: templates/translations/partial/edit_text_modal.html:29
+#: templates/translations/partial/edit_text_modal.html:33
+msgid "New"
+msgstr ""
+
+#: templates/translations/partial/edit_text_modal.html:50
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/partial/edit_text_modal.html:43
+#: templates/translations/partial/edit_text_modal.html:65
 msgid "TMXes"
 msgstr "Базы памяти"
 
@@ -307,35 +336,47 @@ msgstr "публичный"
 msgid "private"
 msgstr "приватный"
 
-#: templates/translations/project.html:62
+#: templates/translations/project.html:63
 msgid "Participants"
 msgstr "Участники"
 
-#: templates/translations/project.html:111
+#: templates/translations/project.html:91
+msgid "Remove participant"
+msgstr "Удалить участника"
+
+#: templates/translations/project.html:114
 msgid "Documents"
 msgstr "Документы"
 
-#: templates/translations/project.html:152
+#: templates/translations/project.html:145
 msgid "Export translation"
 msgstr "Выгрузить перевод"
 
-#: templates/translations/project.html:155
-msgid "Delete text"
-msgstr "Удалить текст"
+#: templates/translations/project.html:149
+msgid "Go to translation"
+msgstr "Перейти к переводу"
 
-#: templates/translations/project.html:170
+#: templates/translations/project.html:154
+msgid "Fragments approved:"
+msgstr "Фрагментов подтверждено:"
+
+#: templates/translations/project.html:155
+msgid "Fragments translated:"
+msgstr "Фрагментов переведено:"
+
+#: templates/translations/project.html:193
 msgid "TMX/Glossaries"
 msgstr "Базы памяти / Глоссарии"
 
-#: templates/translations/project.html:186
+#: templates/translations/project.html:209
 msgid "TMX"
-msgstr ""
+msgstr "Базы памяти"
 
-#: templates/translations/project.html:194
+#: templates/translations/project.html:217
 msgid "Glossary"
 msgstr "Глоссарий"
 
-#: templates/translations/project.html:237
+#: templates/translations/project.html:260
 msgid "Remove Project"
 msgstr "Удалить проект"
 
@@ -347,6 +388,7 @@ msgid "Sorry, you haven't created any projects yet"
 msgstr "Вы пока не создали ни одного проекта"
 
 #: templates/translations/projects-main.html:143
+#: translations/views_ajax.py:302
 msgid "Text"
 msgstr "Текст"
 
@@ -431,7 +473,7 @@ msgstr "Оригинал"
 msgid "Translation"
 msgstr "Перевод"
 
-#: templates/translations/view-text.html:112
+#: templates/translations/view-text.html:113
 msgid "No translations"
 msgstr "Нет переводов"
 
@@ -439,23 +481,24 @@ msgstr "Нет переводов"
 msgid "text id is not set"
 msgstr "Номер текста не указан"
 
-#: translations/decorators.py:20 translations/views_ajax.py:305
+#: translations/decorators.py:20 translations/views_ajax.py:229
+#: translations/views_ajax.py:336
 msgid "Text not found"
 msgstr "Текст не найден"
 
 #: translations/decorators.py:22 translations/views_ajax.py:167
-#: translations/views_ajax.py:798 translations/views_ajax.py:843
+#: translations/views_ajax.py:829 translations/views_ajax.py:874
 msgid "Not allowed"
 msgstr "Нет доступа"
 
-#: translations/decorators.py:35 translations/views_ajax.py:349
-#: translations/views_ajax.py:471
+#: translations/decorators.py:35 translations/views_ajax.py:380
+#: translations/views_ajax.py:502
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
 #: translations/decorators.py:40 translations/views_ajax.py:29
 #: translations/views_ajax.py:47 translations/views_ajax.py:51
-#: translations/views_ajax.py:353 translations/views_ajax.py:475
+#: translations/views_ajax.py:384 translations/views_ajax.py:506
 msgid "Project not found"
 msgstr "Проект не найден"
 
@@ -463,12 +506,12 @@ msgstr "Проект не найден"
 msgid "Access denied"
 msgstr "Нет доступа"
 
-#: translations/utils.py:180 translations/views_ajax.py:702
+#: translations/utils.py:199 translations/views_ajax.py:733
 msgid "TMX not found"
 msgstr "База памяти не найдена"
 
 #: translations/views.py:37 translations/views.py:113
-#: translations/views.py:336 translations/views.py:373
+#: translations/views.py:342 translations/views.py:379
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
@@ -478,93 +521,93 @@ msgid "Project \"%(project_name)s\" successfully created!"
 msgstr "Проект \"%(project_name)s\" успешно создан!"
 
 #: translations/views.py:104 translations/views.py:106
-#: translations/views.py:166
+#: translations/views.py:172
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: translations/views.py:156
+#: translations/views.py:162
 #, python-format
 msgid "Project \"%(project_name)s\" successfully deleted!"
 msgstr "Проект \"%(project_name)s\" успешно удалён!"
 
-#: translations/views.py:163
+#: translations/views.py:169
 msgid "You are not allowed to delete this project!"
 msgstr "Вы не можете удалить этот проект!"
 
-#: translations/views.py:177
+#: translations/views.py:183
 msgid "There's no such project, sorry."
 msgstr "Проект не найден"
 
-#: translations/views.py:182
+#: translations/views.py:188
 msgid "There's no such language, sorry."
 msgstr "Указаннй язык не найден"
 
-#: translations/views.py:213
+#: translations/views.py:219
 msgid "There's no such user, sorry."
 msgstr "Указанный пользователь не найден"
 
-#: translations/views.py:241
+#: translations/views.py:247
 #, python-format
 msgid "User %(user_name)s is already invited to the project %(project_name)s"
 msgstr ""
 "Пользователь %(user_name)s уже приглашён в проект \"%(project_name)s\"."
 
-#: translations/views.py:249
+#: translations/views.py:255
 #, python-format
 msgid ""
 "User %(user_name)s is already participating in the project %(project_name)s"
 msgstr ""
 "Пользователь %(user_name)s уже добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:265
+#: translations/views.py:271
 #, python-format
 msgid "User %(user_name)s added to project \"%(project_name)s\"."
 msgstr "Пользователь %(user_name)s добавлен к проекту \"%(project_name)s\"."
 
-#: translations/views.py:272
+#: translations/views.py:278
 msgid "You have no rights to delete this project!"
 msgstr "У вас нет прав на просмотр этого проекта"
 
-#: translations/views.py:293
+#: translations/views.py:299
 #, python-format
 msgid "You successfully left project \"%(project_name)s\""
 msgstr "Вы успешно покинули проект \"%(project_name)s\"."
 
-#: translations/views.py:301
+#: translations/views.py:307
 #, python-format
 msgid ""
 "User %(user_name)s was successfully removed from project \"%(project_name)s\""
 msgstr "Пользователь %(user_name)s удалён из проекта \"%(project_name)s\"."
 
-#: translations/views.py:309
+#: translations/views.py:315
 #, python-format
 msgid ""
 "Sorry, user %(user_name)s doesn't participate in project \"%(project_name)s\""
 msgstr ""
 "Пользователь %(user_name)s не участвует в проекте \"%(project_name)s\"."
 
-#: translations/views.py:316
+#: translations/views.py:322
 msgid "You are not allowed to edit this project!"
 msgstr "Вы не можете редактировать этот проект"
 
-#: translations/views.py:325 translations/views.py:362
+#: translations/views.py:331 translations/views.py:368
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:327 translations/views.py:364
-#: translations/views.py:399 translations/views.py:422
+#: translations/views.py:333 translations/views.py:370
+#: translations/views.py:405 translations/views.py:428
 msgid "Sorry, no such text here"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:430
+#: translations/views.py:436
 msgid "Sorry, no such translations here"
 msgstr "Простите, указанный перевод не найден"
 
 #: translations/views_ajax.py:34 translations/views_ajax.py:53
-#: translations/views_ajax.py:119 translations/views_ajax.py:236
-#: translations/views_ajax.py:307 translations/views_ajax.py:355
-#: translations/views_ajax.py:477 translations/views_ajax.py:890
-#: translations/views_ajax.py:913
+#: translations/views_ajax.py:119 translations/views_ajax.py:214
+#: translations/views_ajax.py:338 translations/views_ajax.py:386
+#: translations/views_ajax.py:508 translations/views_ajax.py:921
+#: translations/views_ajax.py:944
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
@@ -600,89 +643,94 @@ msgstr "Пользователь уже является участником п
 msgid "User is not a member of project"
 msgstr "Пользователь не является участником проекта"
 
-#: translations/views_ajax.py:258 translations/views_ajax.py:262
-#: translations/views_ajax.py:833
+#: translations/views_ajax.py:237 translations/views_ajax.py:259
+#: translations/views_ajax.py:263 translations/views_ajax.py:864
 msgid "Language not found"
 msgstr "Язык не найден"
 
-#: translations/views_ajax.py:301
-msgid "Text id is not set"
-msgstr "Номер текста не указан"
-
-#: translations/views_ajax.py:322 translations/views_ajax.py:385
-#: translations/views_ajax.py:417
-msgid "Glossary not found"
-msgstr "Глоссарий не найден"
-
-#: translations/views_ajax.py:358
-msgid "Glossary name is not set"
-msgstr "Название глоссария не указано"
-
-#: translations/views_ajax.py:366 translations/views_ajax.py:488
+#: translations/views_ajax.py:278 translations/views_ajax.py:397
+#: translations/views_ajax.py:519
 msgid "File is too big"
 msgstr "Файл слишком большой"
 
-#: translations/views_ajax.py:369 translations/views_ajax.py:492
+#: translations/views_ajax.py:281 translations/views_ajax.py:400
+#: translations/views_ajax.py:523
 msgid "Wrong file type"
 msgstr "Некорректный формат файла"
 
-#: translations/views_ajax.py:377
+#: translations/views_ajax.py:332
+msgid "Text id is not set"
+msgstr "Номер текста не указан"
+
+#: translations/views_ajax.py:353 translations/views_ajax.py:416
+#: translations/views_ajax.py:448
+msgid "Glossary not found"
+msgstr "Глоссарий не найден"
+
+#: translations/views_ajax.py:389
+msgid "Glossary name is not set"
+msgstr "Название глоссария не указано"
+
+#: translations/views_ajax.py:408
 msgid "Please, send file or input data manually"
 msgstr "Пожалуйста, загрузите файл или введите данные вручную"
 
-#: translations/views_ajax.py:413
+#: translations/views_ajax.py:444
 msgid "Glossary id is not set"
 msgstr "Номер глоссария не указан"
 
-#: translations/views_ajax.py:419
+#: translations/views_ajax.py:450
 msgid "It's not your glossary"
 msgstr "Это не ваш глоссарий"
 
-#: translations/views_ajax.py:444
+#: translations/views_ajax.py:475
 msgid "TMDatabase not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:480
+#: translations/views_ajax.py:511
 msgid "TMX name is not set"
 msgstr "Название базы памяти не указано"
 
-#: translations/views_ajax.py:484
+#: translations/views_ajax.py:515
 msgid "TMX file is not passed"
 msgstr "Формат базы памяти некорректный"
 
-#: translations/views_ajax.py:548 translations/views_ajax.py:580
+#: translations/views_ajax.py:579 translations/views_ajax.py:611
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/views_ajax.py:556 translations/views_ajax.py:588
+#: translations/views_ajax.py:587 translations/views_ajax.py:619
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
-#: translations/views_ajax.py:698
+#: translations/views_ajax.py:729
 msgid "TMX id is not set"
 msgstr "Номер базы памяти не указан"
 
-#: translations/views_ajax.py:704
+#: translations/views_ajax.py:735
 msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
-#: translations/views_ajax.py:726
+#: translations/views_ajax.py:757
 msgid "Target language is not set"
 msgstr "Язык перевода не указан"
 
-#: translations/views_ajax.py:820 translations/views_ajax.py:874
-#: translations/views_ajax.py:901 translations/views_ajax.py:940
+#: translations/views_ajax.py:851 translations/views_ajax.py:905
+#: translations/views_ajax.py:932 translations/views_ajax.py:971
 msgid "Id is not set"
 msgstr "Номер не указан"
 
-#: translations/views_ajax.py:825 translations/views_ajax.py:849
-#: translations/views_ajax.py:906 translations/views_ajax.py:945
+#: translations/views_ajax.py:856 translations/views_ajax.py:880
+#: translations/views_ajax.py:937 translations/views_ajax.py:976
 msgid "Not found"
 msgstr "Не найдено"
 
-#: translations/views_ajax.py:840
+#: translations/views_ajax.py:871
 msgid "Translation not found"
 msgstr "Перевод не найден"
+
+#~ msgid "Delete text"
+#~ msgstr "Удалить текст"
 
 #~ msgid "Select file"
 #~ msgstr "Выбрать файл"
@@ -704,6 +752,3 @@ msgstr "Перевод не найден"
 
 #~ msgid "Recent progress"
 #~ msgstr "Прогресс"
-
-#~ msgid "Project Name"
-#~ msgstr "Название проекта"
