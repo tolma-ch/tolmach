@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-18 14:11+0900\n"
+"POT-Creation-Date: 2015-09-18 16:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -152,7 +152,7 @@ msgstr "Адрес сайта"
 #: templates/tolmach/partial/edit_profile_modal.html:79
 #: templates/translations/partial/add_glossary_modal.html:82
 #: templates/translations/partial/add_tmx_modal.html:47
-#: templates/translations/partial/edit_text_modal.html:89
+#: templates/translations/partial/edit_text_modal.html:94
 msgid "Save"
 msgstr "Сохранить"
 
@@ -255,23 +255,23 @@ msgstr "Добавить текст"
 msgid "Title"
 msgstr "Название:"
 
-#: templates/translations/partial/add_text_modal.html:32
+#: templates/translations/partial/add_text_modal.html:33
 msgid "Upload file"
 msgstr "Загрузить файл"
 
-#: templates/translations/partial/add_text_modal.html:37
+#: templates/translations/partial/add_text_modal.html:38
 msgid "Insert plain test"
 msgstr "Вставить текст"
 
-#: templates/translations/partial/add_text_modal.html:69
+#: templates/translations/partial/add_text_modal.html:70
 msgid "Source language"
 msgstr "Язык оригинала:"
 
-#: templates/translations/partial/add_text_modal.html:78
+#: templates/translations/partial/add_text_modal.html:79
 msgid "Target language"
 msgstr "Язык перевода:"
 
-#: templates/translations/partial/add_text_modal.html:94
+#: templates/translations/partial/add_text_modal.html:95
 msgid "Next"
 msgstr "Далее"
 
@@ -296,11 +296,11 @@ msgstr "Редактировать текст"
 msgid "New"
 msgstr ""
 
-#: templates/translations/partial/edit_text_modal.html:50
+#: templates/translations/partial/edit_text_modal.html:55
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/partial/edit_text_modal.html:65
+#: templates/translations/partial/edit_text_modal.html:70
 msgid "TMXes"
 msgstr "Базы памяти"
 
@@ -473,9 +473,25 @@ msgstr "Оригинал"
 msgid "Translation"
 msgstr "Перевод"
 
-#: templates/translations/view-text.html:113
+#: templates/translations/view-text.html:40
+msgid "Collapse"
+msgstr "Свернуть"
+
+#: templates/translations/view-text.html:40
+msgid "Expand"
+msgstr "Развернуть"
+
+#: templates/translations/view-text.html:115
 msgid "No translations"
 msgstr "Нет переводов"
+
+#: templates/translations/view-text.html:135
+msgid "Disapprove translation"
+msgstr "Отклонить перевод"
+
+#: templates/translations/view-text.html:143
+msgid "Approve translation"
+msgstr "Утвердить перевод"
 
 #: translations/decorators.py:16
 msgid "text id is not set"

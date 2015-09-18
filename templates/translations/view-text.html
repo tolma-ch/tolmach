@@ -36,7 +36,9 @@
                     <div class="translation__sentence-translation-original">
                         <span html-content="entry.body"></span>
                         <div class="translation__sentence-translation-toggle"
-                             ng-click="toggleEntry(entry)"></div>
+                             ng-click="toggleEntry(entry)"
+                             tooltip="{= activeEntry == entry ? '{% trans 'Collapse' %}' : '{% trans 'Expand' %}' =}"
+                             tooltip-append-to-body="true"></div>
                     </div>
 
                     <div class="translation__sentence-translation-result">
@@ -129,13 +131,17 @@
                                 <a class="active"
                                    ng-show="translation.isApproved"
                                    ng-click="disapproveEntry(translation, entry)"
-                                   ng-disabled="translation.busy">
+                                   ng-disabled="translation.busy"
+                                   tooltip="{% trans 'Disapprove translation' %}"
+                                   tooltip-append-to-body="true">
                                     <i class="fa fa-check"></i>
                                 </a>
                                 <div ng-show="!translation.isApproved">
                                     <a ng-show="userIsManager"
                                        ng-click="approveEntry(translation, entry)"
-                                       ng-disabled="translation.busy">
+                                       ng-disabled="translation.busy"
+                                       tooltip="{% trans 'Approve translation' %}"
+                                       tooltip-append-to-body="true">
                                         <i class="fa fa-check-circle"></i>
                                     </a>
                                     <a ng-show="user == translation.author"

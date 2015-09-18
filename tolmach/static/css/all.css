@@ -1725,6 +1725,9 @@ a.user-sidebar__profile-line-data:hover {
 .translation__sentence-translation_state_approved {
   background: #c5ffcc;
 }
+.translation__sentence-translation_state_approved .translation__sentence-translation-toggle {
+  display: none;
+}
 .translation__sentence-translation_state_approved .translation__sentence-translation-toggle:after {
   content: '';
 }
