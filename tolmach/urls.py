@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^$', main_views.index, name='index'),
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
-    url(r'^populate-data/$', main_views.populate_test_data, name='alfatest_data'),
+    # url(r'^populate-data/$', main_views.populate_test_data, name='alfatest_data'),
 
     # translations
     # url(r'^parse-tmx/$', trans_views.parse_tmx),
