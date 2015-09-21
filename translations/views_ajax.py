@@ -1077,10 +1077,16 @@ def message_ajax(request, all):
 def user_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        if type(post) == 'unicode' and post.find('data:image/png;base64,') == 0:
-            # fh = open("imageToSave.png", "wb")
-            # fh.write(post[22:].decode('base64'))
-            # fh.close()
+        if isinstance(post, unicode):
+            import random
+            import string
+            filename = ''.join(random.choice(string.letters + string.digits) for _ in range(30))
+            fh = open("%s/avatar/%s" % (settings.MEDIA_ROOT, filename), "wb")
+            fh.write(post.split(',')[1].decode('base64'))
+            fh.close()
+            meta = UserMeta.objects.get(user=request.user)
+            meta.avatar = "avatar/%s" % filename
+            meta.save()
             return HttpResponse(json.dumps(True), content_type="application/json")
         else:
             if 'firstName' in post:

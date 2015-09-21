@@ -11,8 +11,8 @@ def update_user_social_data(strategy, *args, **kwargs):
     """Set the name and avatar for a user only if is new.
     """
     print 'update_user_social_data ::', strategy
-    if not kwargs['is_new']:
-        return
+    # if not kwargs['is_new']:
+    #     return
 
     full_name = ''
     backend = kwargs['backend']
@@ -30,12 +30,13 @@ def update_user_social_data(strategy, *args, **kwargs):
 
     image_name = False
     image_url = False
+    print type(backend)
     if isinstance(backend, VKOAuth2):
         print "OLOLOSHENKA", kwargs['response']
-        if kwargs['response'].get('photo'):
+        if kwargs['response'].get('photo_max'):
             id = kwargs['response']['user_id']
             image_name = 'vk_avatar_%s.jpg' % id
-            image_url = kwargs['response'].get('photo')
+            image_url = kwargs['response'].get('photo_max')
 
     elif isinstance(backend, TwitterOAuth):
         if kwargs['response'].get('profile_image_url'):
