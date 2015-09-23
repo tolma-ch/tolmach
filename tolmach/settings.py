@@ -114,6 +114,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.i18n',
+    'tolmach.context_processors.ya_metrika',
 )
 
 MIDDLEWARE_CLASSES = (
