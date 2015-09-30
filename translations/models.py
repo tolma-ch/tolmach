@@ -88,9 +88,7 @@ class Text(models.Model):
     word_price = models.IntegerField(default=0)
     subject = models.ForeignKey('entries.Subject')
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
-    target_lang = models.ForeignKey('entries.Language', related_name='target_lang')
-    glossaries = models.TextField(default="")
-    tmdatabases = models.TextField(default="")
+    document_format = models.CharField(max_length=256)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -207,7 +205,7 @@ class ProjectForm(ModelForm):
 class TextForm(ModelForm):
     class Meta:
         model = Text
-        fields = ['project', 'title', 'subject', 'source_lang', 'target_lang', 'body']
+        fields = ['project', 'title', 'subject', 'source_lang', 'body']
 
 
 class Glossary(models.Model):

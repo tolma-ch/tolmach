@@ -264,6 +264,7 @@ def text_ajax(request, project):
 
             if 'textBody' in post:
                 sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+                document_format = "text/plain"
             elif 'file' in request.FILES:
                 import os
                 f = request.FILES['file']
@@ -283,6 +284,7 @@ def text_ajax(request, project):
                 with open(file_on_disk, 'w+') as fd:
                     for chunk in f.chunks():
                         fd.write(chunk)
+                document_format = f.content_type
                 import urllib
                 import urllib2
 
@@ -303,6 +305,7 @@ def text_ajax(request, project):
                                         status=the_page['Error'])
                 print sentences
                 print marked_text
+                print document_format
                 return True
 
             text = Text(title=post['title'],
@@ -311,6 +314,7 @@ def text_ajax(request, project):
                         subject=subject,
                         source_lang=source_lang,
                         target_lang=target_lang,
+                        document_format=document_format,
                         )
             text.save()
             translation = TextTranslation(text=text,
@@ -975,17 +979,19 @@ def tmdb_search(request):
         except TextEntry.DoesNotExist:
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
+        tlang = Language.objects.get(code=post['lang_pair'].split('-')[1])
+        translation = TextTranslation.objects.get(text=text, target_lang=tlang)
         entry_source_lang = text.source_lang
-        entry_target_lang = text.target_lang
-        text_tmx_list = text.tmdatabases.split(',') if not text.tmdatabases == '' else []
+        entry_target_lang = translation.target_lang
+        translation_tmx_list = translation.tmdatabases.split(',') if not translation.tmdatabases == '' else []
 
         search_results = []
 
-        if text_tmx_list:
+        if translation_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept
             es = Elasticsearch(settings.ELASTIC_LIST)
-            for tmx_id in text_tmx_list:
+            for tmx_id in translation_tmx_list:
                 print "TMDB IS: %s" % tmx_id
                 if settings.ALFA:
                     try:
@@ -998,7 +1004,6 @@ def tmdb_search(request):
                                                                         }
                                                                     })
                     except es_exept.NotFoundError:
-                        print "Ololo, excepted!"
                         tmx = TMDatabase.objects.get(id=tmx_id)
                         tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
                         for i in tmx_entries:

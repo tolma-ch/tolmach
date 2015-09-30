@@ -23,10 +23,11 @@ def get_user_stat(user):
     stat_langpairs = {}
     for entry in translated_entries:
         text = entry.text
-        if not (text.source_lang, text.target_lang) in stat_langpairs:
-            stat_langpairs[(text.source_lang, text.target_lang)] = 1
+        translation = entry.translation
+        if not (text.source_lang, translation.target_lang) in stat_langpairs:
+            stat_langpairs[(text.source_lang, translation.target_lang)] = 1
         else:
-            stat_langpairs[(text.source_lang, text.target_lang)] += 1
+            stat_langpairs[(text.source_lang, translation.target_lang)] += 1
     total_translated = sum([i for i in stat_langpairs.values()])
     for key, value in stat_langpairs.items():
         stat_langpairs[key] = int(value/(total_translated/100.0))

@@ -73,7 +73,7 @@
                     });
                 },
                 getTmdbVariants = function (entry) {
-                    $http.post('/api/tmdb-search/', {entry_id: entry['id']}).success(function (data) {
+                    $http.post('/api/tmdb-search/', {entry_id: entry['id'], lang_pair: $scope.langPair}).success(function (data) {
                         entry.tmdbVariants = data;
                     }).error(function (a) {
                         console.error(a);
