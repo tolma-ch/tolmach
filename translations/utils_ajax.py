@@ -55,9 +55,5 @@ def text_to_json(text, locale):
         'progress': text.get_progress(),
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
-        'targetLang': str(text.target_lang),
-        'targetLangId': text.target_lang.id,
         'translations': translations,
-        'glossaries': [int(x) for x in text.glossaries.split(',')] if text.glossaries else [],
-        'tmxes': [int(x) for x in text.tmdatabases.split(',')] if text.tmdatabases else []
     }

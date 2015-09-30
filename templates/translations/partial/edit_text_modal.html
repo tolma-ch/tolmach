@@ -36,7 +36,9 @@
                    ng-class="{'switcher__button_active': textTab === 1}"
                    ng-click="options.addNewTranslation = true"
                    ng-show="!options.addNewTranslation">
-                    <span ng-show="!options.addNewTranslation"><i class="fa fa-plus"></i></span>
+                    <span ng-show="!options.addNewTranslation"><i class="fa fa-plus"
+                   tooltip="{% trans 'Add translation' %}"
+                   tooltip-append-to-body="true"></i></span>
                 </a>
                 <ui-select ng-show="options.addNewTranslation"
                            ng-model="options.NewTranslationTargetLang"

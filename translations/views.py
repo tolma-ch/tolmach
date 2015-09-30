@@ -63,8 +63,9 @@ def projects(request, proj_type):
         proj.progress = proj.get_progress()
         proj.langpairs = []
         for text in proj.texts:
-            if not {'source_lang': text.source_lang, 'target_lang': text.target_lang} in proj.langpairs:
-                proj.langpairs.append({'source_lang': text.source_lang, 'target_lang': text.target_lang})
+            for translation in TextTranslation.objects.filter(text=text):
+                if not {'source_lang': text.source_lang, 'target_lang': translation.target_lang} in proj.langpairs:
+                    proj.langpairs.append({'source_lang': text.source_lang, 'target_lang': translation.target_lang})
 
     data = {'page_title': page_title,
             'breadcrumbs': [[page_title, page_url], ],
@@ -396,29 +397,6 @@ def view_translation(request, text_id, target_lang):
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
-
-
-@login_required
-def export_text(request, text_id):
-    text = get_object_or_404(Text, id=text_id)
-    if not text.is_user_allowed_to_read(request.user):
-        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
-        return HttpResponseRedirect('/')
-    import re
-    pure_text = re.sub(r'<.*?>', "", text.body)
-
-    entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
-    for entry in entries:
-        entry_translation = TextEntry.objects.filter(parent_entry=entry, is_approved=True)
-        if entry_translation:
-            pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
-            # print pure_text
-
-    from django.utils.encoding import iri_to_uri
-    response = HttpResponse(pure_text, content_type='text/plain')
-    response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
-
-    return response
 
 
 @login_required
