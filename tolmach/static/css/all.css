@@ -601,34 +601,51 @@ h4 small,
   display: block;
   list-style-type: none;
   height: 50px;
-  padding: 0 17px;
   text-decoration: none;
   position: relative;
 }
 .navbar-nav__button.button_green {
   background: #51ce00;
 }
+.navbar-nav__button.button_green:hover {
+  background: #83ff33;
+}
 .navbar-nav__button.button_blue {
   background: #53b0e5;
+}
+.navbar-nav__button.button_blue:hover {
+  background: #4eaee4;
 }
 .navbar-nav__button.button_gray {
   background: #6b6b6b;
 }
+.navbar-nav__button.button_gray:hover {
+  background: #999;
+}
 .navbar-nav__button.button_purple {
   background: #a069c3;
+}
+.navbar-nav__button.button_purple:hover {
+  background: #a36dc5;
 }
 .navbar-nav__button.button_light-blue {
   background: #589dc7;
 }
+.navbar-nav__button.button_light-blue:hover {
+  background: #66a5cc;
+}
 .navbar-nav__button.button_dark-green {
   background: #69aa46;
+}
+.navbar-nav__button.button_dark-green:hover {
+  background: #8cc36f;
 }
 .navbar-nav__button > a {
   display: block;
   font-weight: bold;
   height: 100%;
   line-height: 50px;
-  padding: 0;
+  padding: 0 17px;
 }
 .navbar-nav > li {
   float: left;
