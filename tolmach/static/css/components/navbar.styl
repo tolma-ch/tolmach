@@ -39,35 +39,46 @@
 			display block
 			list-style-type none
 			height 50px
-			padding 0 17px
 			text-decoration none
 			position relative
 
 			&.button
 				&_green 
 					background #51ce00
+					&:hover
+						background lightness(#51ce00, 60%)
 
-				&_blue 
+				&_blue
 					background #53b0e5
+					&:hover
+						background lightness(#53b0e5, 60%)
 
 				&_gray
 					background #6b6b6b
+					&:hover
+						background lightness(#6b6b6b, 60%)
 
 				&_purple
 					background #a069c3
+					&:hover
+						background lightness(#a069c3, 60%)
 
 				&_light-blue
 					background #589dc7
+					&:hover
+						background lightness(#589dc7, 60%)
 
 				&_dark-green
 					background #69aa46
+					&:hover
+						background lightness(#69aa46, 60%)
 
-			& > a 
+			& > a
 				display block
 				font-weight bold
 				height 100%
 				line-height 50px
-				padding 0
+				padding 0 17px
 
 		& > li
 			float left
