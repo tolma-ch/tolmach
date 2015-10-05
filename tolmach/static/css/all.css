@@ -1899,3 +1899,34 @@ a.user-sidebar__profile-line-data:hover {
 .pointer {
   cursor: pointer;
 }
+.help__fadeout-block {
+  position: absolute;
+  background: #000;
+  opacity: 0.8;
+  z-index: 10000;
+}
+.help__transparent-block {
+  position: absolute;
+  z-index: 10000;
+}
+.help__text-block {
+  position: absolute;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 100;
+  text-align: right;
+  padding: 10px 40px 40px 10px;
+  background: right bottom url("/static/img/help_arr.png") no-repeat;
+}
+.help__btns {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+.help__btn {
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  margin-top: 10px;
+  padding: 10px 20px;
+}

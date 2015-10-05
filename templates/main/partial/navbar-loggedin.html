@@ -6,7 +6,12 @@
 {% trans 'See all messages' as messages %}
 <ul class="navbar-nav pull-right">
 
-	<li class="navbar-nav__button button_dark-green">
+	<li class="navbar-nav__button button_light-blue">
+        <a class="" href="#">
+			<i class="fa fa-question" ng-click="beginHelpPresentation()"></i>
+		</a>
+    </li>
+	<li class="navbar-nav__button button_dark-green" ng-cloak>
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 			<i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"></i>
 			<span class="badge badge-success" ng-show="messages.length">{= messages.length =}</span>

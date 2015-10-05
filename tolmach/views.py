@@ -126,10 +126,10 @@ def handler500(request):
     return response
 
 
-@login_required
-def done(request):
-    return render_to_response('main/done.html', {'user': request.user, 'request': request},
-                              RequestContext(request))
+# @login_required #  TODO CHECK THIS
+# def done(request):
+#     return render_to_response('main/done.html', {'user': request.user, 'request': request},
+#                               RequestContext(request))
 
 
 def logout(request):
