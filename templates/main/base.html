@@ -77,8 +77,8 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-app="tolmachApp">
-        <div class="main{% if user.is_authenticated %} auth{% endif %}" ng-controller="mainCtrl">
+	<body ng-app="tolmachApp" ng-controller="mainCtrl">
+        <div class="main{% if user.is_authenticated %} auth{% endif %}">
             {% include "main/partial/header.html" %}
 
             {% block content %}
@@ -90,6 +90,24 @@
 		<a href="" id="btn-scroll-up" class="btn-scroll-up btn btn-small btn-inverse" title="Наверх">
 			⬆
 		</a>
+
+        <div class="help" ng-show="helpShow" resize="helpResize">
+            <div class="help__fadeout-block" ng-style="helpBlockStyle1">
+                <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
+            </div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle2"></div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle4">
+                <div class="help__btns">
+                    <a class="btn btn-danger help__btn"
+                       ng-click="closeHelpPresentation()">Close</a>
+                    <a class="btn btn-success help__btn"
+                       ng-click="nextHelpStep()"
+                       ng-show="helpBlocks.length">Next</a>
+                </div>
+            </div>
+            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1"></div>
+        </div>
 
 		<!--basic scripts-->
 		<script src="/static/js/jquery-2.0.3.min.js"></script>

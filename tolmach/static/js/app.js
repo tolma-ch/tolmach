@@ -48,6 +48,82 @@
                 });
             };
             updateMessages();
+
+            $scope.redrawHelp = function () {
+                if (!$scope.currentBlock) {
+                    return;
+                }
+                var $block = $($scope.currentBlock),
+                    params = $block.offset();
+                params.width = $block.outerWidth();
+                params.right = params.left + params.width;
+                params.bottom = params.top + params.height;
+                params.height = $block.outerHeight();
+                $scope.helpBlockStyle1 = {
+                    top: '0',
+                    left: '0',
+                    height: params.top + 'px',
+                    right: '0'
+                };
+                $scope.helpBlockStyle2 = {
+                    left: '0',
+                    top: params.top + 'px',
+                    width: params.left + 'px',
+                    height: params.height + 'px'
+                };
+                $scope.helpBlockStyle3 = {
+                    left: params.left + params.width + 'px',
+                    top: params.top + 'px',
+                    height: params.height + 'px',
+                    right: 0
+                };
+                $scope.helpBlockStyle4 = {
+                    left: '0',
+                    top: params.top + params.height + 'px',
+                    bottom: '0',
+                    right: '0'
+                };
+                $scope.helpCenterBlockStyle1 = {
+                    top: params.top + 'px',
+                    left: params.left + 'px',
+                    height: params.height + 'px',
+                    width: params.width + 'px'
+                };
+                var $body = $('body'),
+                    textWidth = Math.min(200, $body.width()),
+                    textRight = params.left + params.width,
+                    textLeft = Math.max(0, textRight - textWidth);
+                textRight = Math.max(0, textLeft + textWidth);
+                textWidth = textRight - textLeft;
+                $scope.helpTextStyle1 = {
+                    'bottom': '0',
+                    'left': textLeft + 'px',
+                    'width': textWidth + 'px'
+                };
+                $scope.helpText = $block.attr('help-text');
+            };
+            $scope.beginHelpPresentation = function () {
+                $scope.helpBlocks = $('.helped-block').toArray();
+                $scope.currentBlock = $scope.helpBlocks.shift();
+                if ($scope.currentBlock) {
+                    $scope.redrawHelp();
+                    $scope.helpShow = true;
+                }
+            };
+            $scope.closeHelpPresentation = function () {
+                $scope.helpShow = false;
+                $scope.helpBlocks = [];
+                $scope.currentBlock = null;
+            };
+            $scope.nextHelpStep = function () {
+                $scope.currentBlock = $scope.helpBlocks.shift();
+                $scope.redrawHelp();
+            };
+            $scope.helpResize = function () {
+                if ($scope.helpShow) {
+                    $scope.redrawHelp();
+                }
+            };
         })
         .controller('AllMessagesModalCtrl', function ($scope, $modalInstance, $http) {
             $scope.error = '';
@@ -1091,6 +1167,28 @@
         .filter('trusted', function($sce){
             return function(text) {
                 return $sce.trustAsHtml(text);
+            };
+        })
+        .directive('resize', function ($window) {
+            return {
+                scope: {
+                    resize: "="
+                },
+                link: function (scope, element, attr) {
+                    var w = angular.element($window);
+                    scope.$watch(function () {
+                        return {
+                            'h': w.height(),
+                            'w': w.width()
+                        };
+                    }, function (newValue) {
+                        scope.resize();
+                    }, true);
+
+                    w.bind('resize', function () {
+                        scope.$apply();
+                    });
+                }
             };
         });
 })();
