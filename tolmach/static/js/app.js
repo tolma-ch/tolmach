@@ -808,7 +808,7 @@
                     $scope.error = 'Subject is lost';
                     return;
                 }
-                if (!$scope.text.sourceLang || !$scope.text.targetLang) {
+                if (!$scope.text.sourceLang) {
                     $scope.error = 'Langauges is not set?';
                     return;
                 }
@@ -930,7 +930,7 @@
                     $scope.error = 'Subject is lost';
                     return;
                 }
-                if (!$scope.text.sourceLang || !$scope.text.targetLang) {
+                if (!$scope.text.sourceLang) {
                     $scope.error = 'Langauges is not set?';
                     return;
                 }
