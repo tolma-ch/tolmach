@@ -67,12 +67,15 @@
                              tooltip-append-to-body="true"
                              ng-show="isUserManager">
                             <a href=""
+                               class="helped-block"
+                               help-text='{% trans "Click here to add member" %}'
                                ng-click="addParticipant()">
                                 <i class="fa fa-plus-circle"></i>
                             </a>
                         </div>
                     </div>
-                    <div class="widget-body" ng-init="activeParticipant = null">
+                    <div class="widget-body helped-block" ng-init="activeParticipant = null"
+                               help-text='{% trans "Here you can see all the members" %}'>
                         <div class="widget-main">
                             <div class="project-list-participant"
                                  ng-repeat="participant in participants"
@@ -116,6 +119,8 @@
                         <div class="widget-toolbar no-border"
                              ng-show="isUserManager">
                             <a href=""
+                               class="helped-block"
+                               help-text='{% trans "Click here to add new document to translate" %}'
                                tooltip="{% trans 'Add' %}"
                                tooltip-append-to-body="true"
                                ng-click="addText()">
@@ -195,7 +200,8 @@
                         <div class="widget-toolbar no-border"
                              ng-show="isUserManager">
                             <a data-toggle="dropdown"
-                               class="dropdown-toggle"
+                               class="dropdown-toggle helped-block"
+                               help-text='{% trans "Click here to translation memory or glossary" %}'
                                tooltip="{% trans 'Add' %}"
                                tooltip-append-to-body="true"
                                href="">
@@ -220,7 +226,8 @@
 							</ul>
                         </div>
                     </div>
-                    <div class="widget-body">
+                    <div class="widget-body helped-block"
+                         help-text='{% trans "Here will be TMXes and glossaries" %}'>
                         <div class="widget-main">
                             <div class="project-list-glossary" ng-repeat="tmx in tmxes">
                                 <div class="project-list-glossary__name">
