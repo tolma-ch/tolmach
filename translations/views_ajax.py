@@ -262,6 +262,10 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
+            document_format = ""
+            sentences = []
+            marked_text = ""
+
             if 'textBody' in post:
                 sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
                 document_format = "text/plain"
@@ -296,6 +300,7 @@ def text_ajax(request, project):
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
                 response = urllib2.urlopen(req)
+                # print "OLOLO", response.read()
                 the_page = json.loads(response.read())
                 # TODO: добавить обработку хттп ошибок
                 if the_page['Error'] == 0:
@@ -303,17 +308,17 @@ def text_ajax(request, project):
                 else:
                     return HttpResponse(json.dumps(_(the_page['Text'])), content_type="application/json",
                                         status=the_page['Error'])
+                print file_on_disk
                 print sentences
                 print marked_text
-                print document_format
                 return True
 
+            print document_format
             text = Text(title=post['title'],
                         body=marked_text,
                         project=project,
                         subject=subject,
                         source_lang=source_lang,
-                        target_lang=target_lang,
                         document_format=document_format,
                         )
             text.save()

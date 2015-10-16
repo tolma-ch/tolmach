@@ -28,8 +28,8 @@
                 <div class="switcher">
                     <a class="switcher__button"
                        ng-class="{'switcher__button_active': tab === 0}"
-                       ng-click="tab = 0"
-                       ng-show="0">
+                       ng-click="tab = 0">
+                       <!--ng-show="0">-->
                         <span>{% trans "Upload file" %}</span>
                     </a>
                     <a class="switcher__button"
@@ -53,7 +53,7 @@
                             <i class="fa fa-file-text-o"></i>
                         </div>
                         <span ng-show="text.files.length">{= text.files[0].name =}</span>
-                        <span ng-show="!text.files.length">Click here to upload file or drag file here to upload</span>
+                        <span ng-show="!text.files.length">{% trans "Click here to upload file or drag file here to upload.</br> Only DOC, DOCX, ODT and RTF files are supported at the moment." %}</span>
                     </div>
                 </div>
                 <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>

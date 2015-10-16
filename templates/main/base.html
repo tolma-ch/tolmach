@@ -93,11 +93,6 @@
 
         <div class="help" ng-show="helpShow" resize="helpResize">
             <div class="help__fadeout-block" ng-style="helpBlockStyle1">
-                <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
-            </div>
-            <div class="help__fadeout-block" ng-style="helpBlockStyle2"></div>
-            <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
-            <div class="help__fadeout-block" ng-style="helpBlockStyle4">
                 <div class="help__btns">
                     <a class="btn btn-danger help__btn"
                        ng-click="closeHelpPresentation()">Close</a>
@@ -105,6 +100,11 @@
                        ng-click="nextHelpStep()"
                        ng-show="helpBlocks.length">Next</a>
                 </div>
+                <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
+            </div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle2"></div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle4">
             </div>
             <div class="help__transparent-block" ng-style="helpCenterBlockStyle1"></div>
         </div>

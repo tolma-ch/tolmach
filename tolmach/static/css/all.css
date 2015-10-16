@@ -671,7 +671,6 @@ h4 small,
 .navbar-nav__user > a {
   display: inline-block;
   height: auto;
-  padding: 0 !important;
   vertical-align: middle;
 }
 .navbar-nav__user-photo {
@@ -1938,7 +1937,7 @@ a.user-sidebar__profile-line-data:hover {
 .help__btns {
   position: absolute;
   right: 10px;
-  bottom: 10px;
+  top: 10px;
 }
 .help__btn {
   color: #fff;
