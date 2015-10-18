@@ -190,7 +190,7 @@ def add_text_to_project(request):
             return HttpResponseRedirect('/project/%d/' % project_to_edit.id)
         if project_to_edit.is_user_manager(request.user):
             print lang.code
-            sentences, marked_text = utils.split_text(data['text_body'], lang.code)
+            sentences, marked_text, count_number = utils.split_text(data['text_body'], lang.code)
             new_text = Text(title=data['title'],
                             body=marked_text,
                             project=Project.objects.get(id=data['id']),

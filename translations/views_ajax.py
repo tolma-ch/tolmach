@@ -267,7 +267,7 @@ def text_ajax(request, project):
             marked_text = ""
 
             if 'textBody' in post:
-                sentences, marked_text = utils.split_text(post['textBody'], source_lang.code)
+                sentences, marked_text, count_number = utils.split_text(post['textBody'], source_lang.code)
                 document_format = "text/plain"
             elif 'file' in request.FILES:
                 import os
@@ -304,7 +304,7 @@ def text_ajax(request, project):
                 the_page = json.loads(response.read())
                 # TODO: добавить обработку хттп ошибок
                 if the_page['Error'] == 0:
-                    sentences, marked_text = utils.split_text(the_page['Text'], source_lang.code)
+                    sentences, marked_text, count_number = utils.split_text(the_page['Text'], source_lang.code)
                 else:
                     return HttpResponse(json.dumps(_(the_page['Text'])), content_type="application/json",
                                         status=the_page['Error'])
