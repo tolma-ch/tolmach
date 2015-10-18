@@ -4,8 +4,7 @@
 from __future__ import unicode_literals
 import re
 import os
-import json
-from translations.models import GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import GlossaryEntry
 
 
 FORMATS = {
@@ -27,29 +26,29 @@ FORMATS = {
 }
 
 
-RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
-RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
+RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\" "
+RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\" "
 
-EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\""
-EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\""
+EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\" "
+EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\" "
 EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\""
-DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\""
+DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\" "
+DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\" "
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\""
-FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\""
+FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\" "
+FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\" "
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
 # http://www.donquijote.org/culture/spain/languages/spanish-accents
-ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\""
-ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\""
+ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\" "
+ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\" "
 
 # http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\""
-IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\""
+IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\" "
+IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\" "
 
 KOR = "[가-힣]"
 
@@ -87,11 +86,11 @@ def escape_brackets(string):
     return re.sub(r'([()]|[\[\]]|[\*]|[\?]|[\^]|[\$]|[\+]|[\{\}]|[\\])', r'\\\1', string)
 
 
-def split_text(line_to_translate, lang='en', pattern=""):
+def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
     marked_text = line_to_translate
     # Убираем всякие палёные подобия пробелов и заменяем на кошеrные
     marked_text = marked_text.replace("\xa0", " ")
-    num_in_text = 1
+    num_in_text = num_in_text
 
     def repl_in_text(matchobj):
         # print " === " + matchobj.group(0) + " === "
@@ -140,7 +139,7 @@ def split_text(line_to_translate, lang='en', pattern=""):
                 marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                 num_in_text += 1
 
-    return out_list, marked_text
+    return out_list, marked_text, num_in_text
 
 
 def parse_glossary(file_on_disk, filetype):
@@ -191,18 +190,3 @@ def glossary_to_entry(entry_body, glossary_list):
 
     return body_to_return
 
-
-def update_tmdb(tmdb_id):
-    try:
-        tmx = TMDatabase.objects.get(id=tmdb_id)
-    except TMDatabase.DoesNotExist:
-        return _('TMX not found')
-
-    pass
-
-
-# def get_standart_lang(incoming_lang):
-#     langs = {
-#         'rus'
-#     }
-#     if incoming_lang in
