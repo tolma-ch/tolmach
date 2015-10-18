@@ -13,7 +13,7 @@ from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
-from translations.models import TextEntry, Text, TextTranslation
+from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation
 import json
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
@@ -220,7 +220,6 @@ def text_ajax(request, project):
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
             subject = Subject.objects.get(id=5)  # TODO select default subject
-            # return HttpResponse(json.dumps(_('Subject not found')), content_type="application/json", status=400)
 
         if 'id' in post:
             try:
@@ -265,6 +264,9 @@ def text_ajax(request, project):
             document_format = ""
             sentences = []
             marked_text = ""
+            is_splitted = False
+            text_meta = ""
+            document_name = ""
 
             if 'textBody' in post:
                 sentences, marked_text, count_number = utils.split_text(post['textBody'], source_lang.code)
@@ -289,6 +291,7 @@ def text_ajax(request, project):
                     for chunk in f.chunks():
                         fd.write(chunk)
                 document_format = f.content_type
+                document_name = filename
                 import urllib
                 import urllib2
 
@@ -300,18 +303,23 @@ def text_ajax(request, project):
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
                 response = urllib2.urlopen(req)
-                # print "OLOLO", response.read()
                 the_page = json.loads(response.read())
+                is_splitted = the_page['Splitted']
+
                 # TODO: добавить обработку хттп ошибок
-                if the_page['Error'] == 0:
+
+                if not is_splitted:
                     sentences, marked_text, count_number = utils.split_text(the_page['Text'], source_lang.code)
                 else:
-                    return HttpResponse(json.dumps(_(the_page['Text'])), content_type="application/json",
-                                        status=the_page['Error'])
+                    data = json.loads(the_page['Text'])
+                    marked_text = data['marked_text']
+                    sentences = data['entries']
+                    text_meta = json.dumps(data['text_meta'])
+
                 print file_on_disk
-                print sentences
-                print marked_text
-                return True
+                # print sentences
+                # print marked_text
+                # return True
 
             print document_format
             text = Text(title=post['title'],
@@ -320,20 +328,45 @@ def text_ajax(request, project):
                         subject=subject,
                         source_lang=source_lang,
                         document_format=document_format,
+                        document_name=document_name,
                         )
             text.save()
             translation = TextTranslation(text=text,
                                           target_lang=target_lang,
                                           )
             translation.save()
-            for idx, sent in enumerate(sentences, start=1):
-                print sent
-                txt_entry = TextEntry(body=sent,
-                                      text=text,
-                                      id_in_text=idx,
-                                      author=request.user,
-                                      )
-                txt_entry.save()
+
+            text_meta = TextMeta(text=text,
+                                 meta_type=document_format,
+                                 meta_data=text_meta,
+                                 )
+            text_meta.save()
+
+            if not is_splitted:
+                for idx, sent in enumerate(sentences, start=1):
+                    print sent
+                    txt_entry = TextEntry(body=sent,
+                                          text=text,
+                                          id_in_text=idx,
+                                          author=request.user,
+                                          )
+                    txt_entry.save()
+            else:
+                for sent in sentences:
+                    txt_entry = TextEntry(body=sent['entry'],
+                                          text=text,
+                                          id_in_text=sent['num'],
+                                          author=request.user,
+                                          )
+                    txt_entry.save()
+
+                    if sent['entry_meta']:
+                        txt_entry_meta = TextEntryMeta(entry=txt_entry,
+                                                       text_meta=text_meta,
+                                                       meta_data=json.dumps(sent['entry_meta']),
+                                                       )
+                        txt_entry_meta.save()
+
         result = text_to_json(text, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':

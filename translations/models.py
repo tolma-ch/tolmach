@@ -89,6 +89,7 @@ class Text(models.Model):
     subject = models.ForeignKey('entries.Subject')
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     document_format = models.CharField(max_length=256)
+    document_name = models.CharField(max_length=256, default=None, null=True)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -133,6 +134,12 @@ class Text(models.Model):
             return int(entries_approved/(entries_total/100.0))
         else:
             return 0
+
+
+class TextMeta(models.Model):
+    text = models.ForeignKey('translations.Text', related_name='text_meta')
+    meta_type = models.CharField(max_length=256, default=None, null=True)
+    meta_data = models.TextField()
 
 
 class TextTranslation(models.Model):
@@ -189,6 +196,12 @@ class TextEntry(models.Model):
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []
         return str(user.id) in voters
+
+
+class TextEntryMeta(models.Model):
+    entry = models.ForeignKey('translations.TextEntry', related_name='metas_entry')
+    text_meta = models.ForeignKey('translations.TextMeta', related_name='entry_meta_parent')
+    meta_data = models.TextField()
 
 
 class ProjectForm(ModelForm):
