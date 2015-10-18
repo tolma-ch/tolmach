@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import re
 import os
-from translations.models import GlossaryEntry
+# from translations.models import GlossaryEntry
 
 
 FORMATS = {

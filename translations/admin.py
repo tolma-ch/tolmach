@@ -3,6 +3,7 @@
 
 from django.contrib import admin
 from translations.models import Project, Text, TextEntry, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextMeta, TextEntryMeta
 
 
 class EntryInLine(admin.StackedInline):
@@ -36,7 +37,9 @@ class TMDBAdmin(admin.ModelAdmin):
 
 admin.site.register(Project)
 admin.site.register(Text, TextAdmin)
+admin.site.register(TextMeta)
 admin.site.register(TextEntry)
+admin.site.register(TextEntryMeta)
 admin.site.register(Glossary, GlossaryAdmin)
 admin.site.register(GlossaryEntry)
 admin.site.register(TMDatabase, TMDBAdmin)

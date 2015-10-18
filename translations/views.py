@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextEntry, TextTranslation
+from translations.models import Project, ProjectForm, Text, TextMeta, TextEntry, TextEntryMeta, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -405,22 +405,39 @@ def export_translation(request, text_id, target_lang):
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
-    import re
-    pure_text = re.sub(r'<.*?>', "", text.body)
+    format = text.document_format
+    if format == "text/plain":
+        import re
+        pure_text = re.sub(r'<.*?>', "", text.body)
 
-    try:
-        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
-    except TextTranslation.DoesNotExist:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
-        return HttpResponseRedirect('/')
-    entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
-    for entry in entries:
-        entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-        if entry_translation:
-            pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
+        try:
+            text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
+        except TextTranslation.DoesNotExist:
+            messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
+            return HttpResponseRedirect('/')
+        entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+        for entry in entries:
+            entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+            if entry_translation:
+                pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
 
-    from django.utils.encoding import iri_to_uri
-    response = HttpResponse(pure_text, content_type='text/plain')
-    response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
+        from django.utils.encoding import iri_to_uri
+        response = HttpResponse(pure_text, content_type='text/plain')
+        response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
 
-    return response
+        return response
+    elif format == utils.FORMATS['docx']:
+        paragraphs_list = []
+        text_meta = TextMeta.objects.get(text=text)
+        text_meta_data = json.loads(text_meta)
+        entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
+
+        # получаем список параграфов
+        for ent in entries_metas:
+            ent_data = json.loads(ent)
+            if not ent_data['paragraph'] in paragraphs_list:
+                paragraphs_list.append(ent_data['paragraph'])
+
+        # теперь проходимся по кастомным параграфам, заменяем в них текст, исключаем из общего списка
+        for par in text_meta_data:
+            pass
