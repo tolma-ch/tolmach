@@ -5,6 +5,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
+from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 
@@ -406,15 +407,17 @@ def export_translation(request, text_id, target_lang):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
     format = text.document_format
+
+    try:
+        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
+    except TextTranslation.DoesNotExist:
+        messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
+        return HttpResponseRedirect('/')
+
     if format == "text/plain":
         import re
         pure_text = re.sub(r'<.*?>', "", text.body)
 
-        try:
-            text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
-        except TextTranslation.DoesNotExist:
-            messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
-            return HttpResponseRedirect('/')
         entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
         for entry in entries:
             entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
@@ -427,17 +430,57 @@ def export_translation(request, text_id, target_lang):
 
         return response
     elif format == utils.FORMATS['docx']:
-        paragraphs_list = []
+        # открываем документ на чтение
+        from zipfile import ZipFile
+        from xml.dom import minidom
+
+        manager = text.project.manager
+        project = text.project
+        file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                  int(manager.id),
+                                  int(project.id))
+        z = ZipFile("%s/%s" % (file_dir, text.document_name), 'r')
+        doc = z.open('word/document.xml')
+        doc_str = doc.read()
+
+        xmldoc = minidom.parseString(doc_str)
+        prlist = xmldoc.getElementsByTagName('w:p')
+
+        paragraphs_list = {}
         text_meta = TextMeta.objects.get(text=text)
-        text_meta_data = json.loads(text_meta)
+        text_meta_data = json.loads(text_meta.meta_data)
         entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
 
         # получаем список параграфов
         for ent in entries_metas:
-            ent_data = json.loads(ent)
+            ent_data = json.loads(ent.meta_data)
             if not ent_data['paragraph'] in paragraphs_list:
-                paragraphs_list.append(ent_data['paragraph'])
+                paragraphs_list[ent_data['paragraph']] = [ent.entry]
+            else:
+                paragraphs_list[ent_data['paragraph']].append(ent.entry)
 
         # теперь проходимся по кастомным параграфам, заменяем в них текст, исключаем из общего списка
-        for par in text_meta_data:
-            pass
+        for par, styles in text_meta_data["paragraphs"].items():
+            for idx, pr in enumerate(prlist):
+                if int(par) == idx:
+                    for entry in paragraphs_list[int(par)]:
+                        translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+                        if translated_entries:
+                            pass
+                    # и убираем параграф из списка на обход
+                    paragraphs_list.pop(int(par), None)
+                else:
+                    continue
+
+        for par, entries in paragraphs_list.items():
+            for idx, pr in enumerate(prlist):
+                if int(par) == idx:
+                    wts = pr.getElementsByTagName('w:t')
+                    for txt in wts:
+                        for ent in entries:
+                            if ent.body in txt.firstChild.nodeValue:
+                                translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
+                                if translated_entries:
+                                    new_value = txt.firstChild.nodeValue.replace(ent.body, translated_entries[0].body)
+                                    txt.firstChild.replaceWholeText(new_value)
+        print xmldoc.toprettyxml()
