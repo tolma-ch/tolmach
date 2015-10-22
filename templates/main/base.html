@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -95,10 +96,10 @@
             <div class="help__fadeout-block" ng-style="helpBlockStyle1">
                 <div class="help__btns">
                     <a class="btn btn-danger help__btn"
-                       ng-click="closeHelpPresentation()">Close</a>
+                       ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
                     <a class="btn btn-success help__btn"
                        ng-click="nextHelpStep()"
-                       ng-show="helpBlocks.length">Next</a>
+                       ng-show="helpBlocks.length">{% trans "Next" %}</a>
                 </div>
                 <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
             </div>
