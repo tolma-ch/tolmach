@@ -408,6 +408,8 @@ def export_translation(request, text_id, target_lang):
         return HttpResponseRedirect('/')
     format = text.document_format
 
+    title = text.title
+
     try:
         text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
     except TextTranslation.DoesNotExist:
@@ -431,6 +433,7 @@ def export_translation(request, text_id, target_lang):
         return response
     elif format == utils.FORMATS['docx']:
         # открываем документ на чтение
+        from StringIO import StringIO
         from zipfile import ZipFile
         from xml.dom import minidom
 
@@ -442,6 +445,8 @@ def export_translation(request, text_id, target_lang):
         z = ZipFile("%s/%s" % (file_dir, text.document_name), 'r')
         doc = z.open('word/document.xml')
         doc_str = doc.read()
+
+        outzip = StringIO()
 
         xmldoc = minidom.parseString(doc_str)
         prlist = xmldoc.getElementsByTagName('w:p')
@@ -460,13 +465,57 @@ def export_translation(request, text_id, target_lang):
                 paragraphs_list[ent_data['paragraph']].append(ent.entry)
 
         # теперь проходимся по кастомным параграфам, заменяем в них текст, исключаем из общего списка
+        import re
+
+        def repl(matchobj):
+            return "†" + matchobj.group(0) + "†"
+
         for par, styles in text_meta_data["paragraphs"].items():
             for idx, pr in enumerate(prlist):
                 if int(par) == idx:
+
+                    # Теперь получаем переведённые
                     for entry in paragraphs_list[int(par)]:
                         translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+
+                        print "CUSTOM: ", re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
                         if translated_entries:
-                            pass
+                            # Тут удаляем все старые runs
+                            for run in pr.getElementsByTagName("w:r"):
+                                parent = run.parentNode
+                                parent.removeChild(run)
+
+                            translated_runs = re.sub("<tag.*?>.*?</tag>", repl, translated_entries[0].body).split("†")
+
+                            for run in translated_runs:
+                                if not run == "":
+                                    clear_run = ""
+                                    print "OLOLO: ", run
+                                    if run.startswith("<tag i="):
+                                        run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
+                                        taglist = run_tag_id_xml.getElementsByTagName('tag')
+                                        i_tag = taglist[0].attributes['i']
+                                        style = styles[i_tag.value]
+                                        clear_run = taglist[0].firstChild.nodeValue
+                                    else:
+                                        style = styles["default"]
+                                        clear_run = run
+
+                                    run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+            %s
+            </w:document>""" % style
+                                    params_dom = minidom.parseString(run_params_xml)
+                                    rPr = params_dom.getElementsByTagName('w:rPr')[0]
+                                    run = xmldoc.createElement("w:r")
+                                    wt = xmldoc.createElement("w:t")
+                                    text = xmldoc.createTextNode(clear_run)
+                                    wt.appendChild(text)
+                                    run.appendChild(rPr)
+                                    run.appendChild(wt)
+                                    print run.toprettyxml()
+                                    pr.appendChild(run)
+
                     # и убираем параграф из списка на обход
                     paragraphs_list.pop(int(par), None)
                 else:
@@ -483,4 +532,22 @@ def export_translation(request, text_id, target_lang):
                                 if translated_entries:
                                     new_value = txt.firstChild.nodeValue.replace(ent.body, translated_entries[0].body)
                                     txt.firstChild.replaceWholeText(new_value)
-        print xmldoc.toprettyxml()
+
+        output_doc_str = xmldoc.toxml().encode("utf-8")
+
+        # совершенно не представляю, что делает этот кусок кода
+        # но он был в скрипте, описывающем работу с docx'ами. Надеюсь, всё ок
+        out = ZipFile(outzip, 'w')
+        for zinfo in z.infolist():
+            if zinfo.filename != 'word/document.xml':
+                out.writestr(zinfo, z.read(zinfo))
+            else:
+                out.writestr(zinfo, output_doc_str)
+        out.close()
+        outzip.seek(0)
+
+        from django.utils.encoding import iri_to_uri
+        response = HttpResponse(outzip.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.docx\"" % iri_to_uri(title)
+
+        return response

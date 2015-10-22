@@ -16,6 +16,10 @@ class TextAdmin(admin.ModelAdmin):
     inlines = [EntryInLine]
 
 
+class TextEntryAdmin(admin.ModelAdmin):
+    list_display = ('body', 'text', 'parent_entry')
+
+
 class GlossaryInLine(admin.StackedInline):
     model = GlossaryEntry
     fields = ('source_entry', 'target_entry')
@@ -38,7 +42,7 @@ class TMDBAdmin(admin.ModelAdmin):
 admin.site.register(Project)
 admin.site.register(Text, TextAdmin)
 admin.site.register(TextMeta)
-admin.site.register(TextEntry)
+admin.site.register(TextEntry, TextEntryAdmin)
 admin.site.register(TextEntryMeta)
 admin.site.register(Glossary, GlossaryAdmin)
 admin.site.register(GlossaryEntry)
