@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-22 15:30+0900\n"
+"POT-Creation-Date: 2015-10-22 15:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,6 +75,15 @@ msgstr "Домой"
 #: templates/main/base-logged-in.html:17
 msgid "Search"
 msgstr "Найти"
+
+#: templates/main/base.html:98
+msgid "Close"
+msgstr "Закрыть"
+
+#: templates/main/base.html:101
+#: templates/translations/partial/add_text_modal.html:95
+msgid "Next"
+msgstr "Далее"
 
 #: templates/main/partial/footer.html:3
 msgid "We're in vk.com"
@@ -284,10 +293,6 @@ msgstr "Язык оригинала:"
 #: templates/translations/partial/add_text_modal.html:79
 msgid "Target language"
 msgstr "Язык перевода:"
-
-#: templates/translations/partial/add_text_modal.html:95
-msgid "Next"
-msgstr "Далее"
 
 #: templates/translations/partial/add_tmx_modal.html:8
 msgid "Add TMX"
