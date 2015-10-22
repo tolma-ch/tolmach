@@ -191,7 +191,7 @@ class TextEntry(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.text)
+        return unicode(self.body)
 
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []
