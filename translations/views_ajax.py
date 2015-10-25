@@ -271,6 +271,7 @@ def text_ajax(request, project):
             if 'textBody' in post:
                 sentences, marked_text, count_number = utils.split_text(post['textBody'], source_lang.code)
                 document_format = "text/plain"
+                is_splitted = False
             elif 'file' in request.FILES:
                 import os
                 f = request.FILES['file']

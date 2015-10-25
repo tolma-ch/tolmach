@@ -426,11 +426,9 @@ def export_translation(request, text_id, target_lang):
             if entry_translation:
                 pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
 
-        from django.utils.encoding import iri_to_uri
         response = HttpResponse(pure_text, content_type='text/plain')
-        response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.txt\"" % iri_to_uri(text.title)
+        doc_ext = "txt"
 
-        return response
     elif format == utils.FORMATS['docx']:
         # открываем документ на чтение
         from StringIO import StringIO
@@ -490,7 +488,7 @@ def export_translation(request, text_id, target_lang):
                             for run in translated_runs:
                                 if not run == "":
                                     clear_run = ""
-                                    print "OLOLO: ", run
+                                    # print "OLOLO: ", run
                                     if run.startswith("<tag i="):
                                         run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
                                         taglist = run_tag_id_xml.getElementsByTagName('tag')
@@ -513,7 +511,7 @@ def export_translation(request, text_id, target_lang):
                                     wt.appendChild(text)
                                     run.appendChild(rPr)
                                     run.appendChild(wt)
-                                    print run.toprettyxml()
+                                    # print run.toprettyxml()
                                     pr.appendChild(run)
 
                     # и убираем параграф из списка на обход
@@ -546,8 +544,13 @@ def export_translation(request, text_id, target_lang):
         out.close()
         outzip.seek(0)
 
-        from django.utils.encoding import iri_to_uri
         response = HttpResponse(outzip.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-        response['Content-Disposition'] = u"attachment; filename*=\"utf-8''%s.docx\"" % iri_to_uri(title)
+        doc_ext = "docx"
 
-        return response
+    from django.utils.encoding import iri_to_uri
+    if "Chrome" in request.META['HTTP_USER_AGENT']:
+        response['Content-Disposition'] = u"attachment; filename=\"%s.%s\"" % (iri_to_uri(title), doc_ext)
+    else:
+        response['Content-Disposition'] = u"attachment; filename*=\"UTF-8' '%s.%s\"" % (iri_to_uri(title), doc_ext)
+
+    return response
