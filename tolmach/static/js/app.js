@@ -484,7 +484,7 @@
             };
         })
         .controller('projectCtrl', function ($scope, $modal, $http) {
-            $scope.project = window['project']
+            $scope.project = window['project'];
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
             $scope.languages = window['languages'];
@@ -581,8 +581,13 @@
                     }
                 });
 
-                modalInstance.result.then(function (text) {
-                    //$scope.texts.push(text);
+                modalInstance.result.then(function (res) {
+                    if (res === 'removed') {
+                        var i = $scope.texts.indexOf(text);
+                        if (i > -1) {
+                            delete $scope.texts.splice(i, 1);
+                        }
+                    }
                 }, function () {
                 });
             };
@@ -799,6 +804,11 @@
                 subject: 1
             };
             $scope.tab = 0;
+            $scope.$watch('text.files', function (value) {
+                if (!$scope.text.title && angular.isArray(value) && value.length) {
+                    $scope.text.title = value[0].name;
+                }
+            });
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';
@@ -955,6 +965,23 @@
                     .error(function(data) {
                         $scope.error = data;
                         $scope.busy = false;
+                    });
+            };
+
+            $scope.remove = function () {
+                var data = {
+                    'project': window['projectId'],
+                    'text': $scope.text.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/text/', {params: data})
+                    .success(function() {
+                        $scope.busy = false;
+                        $modalInstance.close('removed');
+                    })
+                    .error(function(data) {
+                        $scope.busy = false;
+                        $scope.error = data;
                     });
             };
 
@@ -1188,6 +1215,17 @@
                     w.bind('resize', function () {
                         scope.$apply();
                     });
+                }
+            };
+        })
+        .directive('tag', function ($window) {
+            return {
+                scope: {
+                    i: "="
+                },
+                link: function (scope, element, attr) {
+                    element.prepend(angular.element('<tag-left>' + scope.i + '</tag-left>'));
+                    element.append(angular.element('<tag-right>' + scope.i + '</tag-right>'));
                 }
             };
         });

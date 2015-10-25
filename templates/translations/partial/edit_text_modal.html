@@ -91,6 +91,9 @@
         </form>
     </div>
     <div class="modal-footer">
+        <button class="btn btn-warning pull-left"
+                ng-click="remove()"
+                ng-disabled="busy">{% trans "Remove" %}</button>
         <button class="btn btn-success"
                 ng-click="ok()"
                 ng-disabled="busy">{% trans "Save" %}</button>

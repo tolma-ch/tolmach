@@ -1946,3 +1946,29 @@ a.user-sidebar__profile-line-data:hover {
   margin-top: 10px;
   padding: 10px 20px;
 }
+tag-left {
+  display: inline-block;
+  background: #c9ea6f;
+  -webkit-border-radius: 10px 0 0 10px;
+  -moz-border-radius: 10px 0 0 10px;
+  border-radius: 10px 0 0 10px;
+  font-size: 0.8em;
+  top: -3px;
+  position: relative;
+  padding: 0 2px 0 5px;
+  color: #055a15;
+  text-shadow: 1px 1px 0px #fff;
+}
+tag-right {
+  display: inline-block;
+  background: #c9ea6f;
+  -webkit-border-radius: 0 10px 10px 0;
+  -moz-border-radius: 0 10px 10px 0;
+  border-radius: 0 10px 10px 0;
+  font-size: 0.8em;
+  top: -3px;
+  position: relative;
+  padding: 0 5px 0 2px;
+  color: #055a15;
+  text-shadow: 1px 1px 0px #fff;
+}
