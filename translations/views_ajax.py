@@ -229,11 +229,14 @@ def text_ajax(request, project):
             text.title = post['title']
             # text.subject = subject
             if 'translations' in post:
+                all_text_translations = [x.target_lang for x in TextTranslation.objects.filter(text=text)]
                 for translation in post['translations']:
                     try:
                         target_lang = Language.objects.get(id=translation['targetLangId'])
                     except Language.DoesNotExist:
                         return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+                    all_text_translations.remove(target_lang)
+
                     try:
                         text_translation = TextTranslation.objects.get(text=text,
                                                                        target_lang=target_lang)
@@ -250,6 +253,14 @@ def text_ajax(request, project):
                     else:
                         text_translation.tmdatabases = ''
                     text_translation.save()
+                for target_lang in all_text_translations:
+                    try:
+                        translation = TextTranslation.objects.get(text=text,
+                                                                  target_lang=target_lang)
+                        translation.delete()
+                    except TextTranslation.DoesNotExist:
+                        pass
+
             text.save()
         else:
             try:
