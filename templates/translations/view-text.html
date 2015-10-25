@@ -20,7 +20,7 @@
         window['translationTargetLang'] = '{{ target_lang }}';
     </script>
 
-    <div class="translation" ng-controller="transCtrl">
+    <div class="translation" ng-controller="transCtrl" ng-keydown="globalKeydown($event, entry)">
         <h1 class="translation__title">{{ text.title }}</h1>
         <div class="row" ng-cloak>
             <div class="col-xs-12 col-sm-6">
@@ -70,6 +70,17 @@
                                           ng-model="entry.suggestion"
                                           ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
                                           ng-keypress="textareaKeypress($event, entry)"></textarea>
+
+                                <div contenteditable="true"
+                                     id="entry-suggestion-{= entry.id =}"
+                                     name="translation-suggestion"
+                                     class="translation__sentence-suggestion-input"
+                                     placeholder="{{ your_translation }}"
+                                     data-insert-text=""
+                                     ng-model="entry.suggestion"
+                                     ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                                     ng-keypress="textareaKeypress($event, entry)">
+                                </div>
 
                                 <div class="translation__sentence-machine-suggestions">
                                     <div ng-show="entry.tmdbVariants.length">

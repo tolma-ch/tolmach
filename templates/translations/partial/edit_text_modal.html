@@ -53,6 +53,11 @@
             </div>
 
             <div class="glossary-manual ng-scope" ng-show="!!options.currentTranslation">
+                <div class="pull-right">
+                    <a class="btn btn-warning" href=""
+                       ng-click="removeTranslation(options.currentTranslation)"
+                       ng-disabled="options.addNewTranslation">{% trans 'Remove' %}</a>
+                </div>
                 <div class="glossary-manual__input">
                     <label for="">{% trans 'Glossaries' %}:</label>
                     <div ng-repeat="glossary in glossaries">

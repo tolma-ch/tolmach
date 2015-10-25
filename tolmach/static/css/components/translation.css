@@ -21,6 +21,10 @@
   padding: 3px 0;
   margin: -3px 0;
 }
+.translation-text__text tag-left,
+.translation-text__text tag-right {
+  display: none;
+}
 .translation {
   font-weight: 300;
 }
@@ -232,4 +236,30 @@
 .glossary-word {
   background: #e1ffa2;
   cursor: pointer;
+}
+tag-left {
+  display: inline-block;
+  background: #c9ea6f;
+  border-radius: 10px 0 0 10px;
+  font-size: 0.8em;
+  top: -3px;
+  position: relative;
+  padding: 0 2px 0 5px;
+  color: #055a15;
+  text-shadow: 1px 1px 0px #fff;
+}
+tag-right {
+  display: inline-block;
+  background: #c9ea6f;
+  border-radius: 0 10px 10px 0;
+  font-size: 0.8em;
+  top: -3px;
+  position: relative;
+  padding: 0 5px 0 2px;
+  color: #055a15;
+  text-shadow: 1px 1px 0px #fff;
+}
+[contenteditable] {
+  background: #fff;
+  overflow: auto;
 }

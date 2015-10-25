@@ -7,7 +7,8 @@
         'ui.bootstrap',
         'ngFileUpload',
         'ui.select',
-        'ImageCropper'
+        'ImageCropper',
+        'contenteditable'
     ])
         .controller('mainCtrl', function ($scope, $http, $timeout, $modal) {
             var updateMessages = function () {
@@ -138,7 +139,24 @@
             };
         })
         .controller('transCtrl', function ($rootScope, $scope, $http) {
-            var textId = window['textId'],
+            var clearTags = function (text) {
+                    var div = document.createElement("div");
+                    div.innerHTML = text;
+                    return div.textContent || div.innerText || "";
+                },
+                updateTranslation = function (entry) {
+                    if (!entry.isApproved) {
+                        entry.translation = clearTags(entry['rawBody']);
+                        for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
+                            var translation = entry.translations[i];
+                            if (translation.author.id === $scope.user) {
+                                entry.translation = clearTags(translation['body']);
+                                break;
+                            }
+                        }
+                    }
+                },
+                textId = window['textId'],
                 getYaMachines = function (entry) {
                     $http.post('/api/ya-translate/', {lang_pair: $scope.langPair, entry_body: entry['rawBody']}).success(function (data) {
                         entry.yaMachines = [{
@@ -168,6 +186,7 @@
                     i, entry;
                 for(i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
+                    updateTranslation(entry);
                     entry.mode = (angular.isArray(entry['translations']) && !!entry['translations'].length)
                                 || !$scope.translationAllowed ? 0 : 1;
                     entriesById[entry['idInText']] = entry;
@@ -263,18 +282,6 @@
                         }
                     }
                 })
-            };
-            var updateTranslation = function (entry) {
-                if (!entry.isApproved && entry.translations.length) {
-                    entry.translation = entry['rawBody'];
-                    for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
-                        var translation = entry.translations[i];
-                        if (translation.author.id === $scope.user) {
-                            entry.translation = translation['body'];
-                            break;
-                        }
-                    }
-                }
             };
             $scope.disapproveEntry = function (entry, parent) {
                 $http.post('/api/entry-disapprove/', {id: entry.id}).success(function () {
@@ -376,7 +383,44 @@
                         }
                     }
                 }
-            }
+            };
+            $scope.globalKeydown = function (event, entry) {
+                var code = event.keyCode ? event.keyCode : event.which;
+                if (event.ctrlKey) {
+                    if ((code === 38 || code === 40) && $scope.entries.length) {
+                        var index = $scope.entries.indexOf($scope.activeEntry),
+                            entry;
+                        if (code === 38) {
+                            //up
+                            if (index === -1) {
+                                entry = $scope.entries[$scope.entries.length - 1];
+                            } else {
+                                if (index === 0) {
+                                    entry = $scope.entries[$scope.entries.length - 1];
+                                } else {
+                                    entry = $scope.entries[index - 1];
+                                }
+                            }
+                        }
+                        if (code === 40) {
+                            //down
+                            if (index === -1) {
+                                entry = $scope.entries[0];
+                            } else {
+                                if (index < $scope.entries.length - 1) {
+                                    entry = $scope.entries[index + 1];
+                                } else {
+                                    entry = $scope.entries[0];
+                                }
+                            }
+                        }
+                        $scope.focusEntry(entry.idInText);
+                    }
+                }
+            };
+            $scope.taggedSelected = function () {
+
+            };
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {
@@ -983,6 +1027,13 @@
                         $scope.busy = false;
                         $scope.error = data;
                     });
+            };
+            $scope.removeTranslation = function (translation) {
+                var i = $scope.text.translations.indexOf(translation);
+                if (i === -1) {
+                    return;
+                }
+                delete $scope.text.translations.splice(i, 1);
             };
 
             $scope.cancel = function () {
