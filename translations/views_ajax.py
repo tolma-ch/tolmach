@@ -309,13 +309,16 @@ def text_ajax(request, project):
 
                 # TODO: добавить обработку хттп ошибок
 
-                if not is_splitted:
-                    sentences, marked_text, count_number = utils.split_text(the_page['Text'], source_lang.code)
+                if the_page['Error'] == 0:
+                    if not is_splitted:
+                        sentences, marked_text, count_number = utils.split_text(the_page['Text'], source_lang.code)
+                    else:
+                        data = json.loads(the_page['Text'])
+                        marked_text = data['marked_text']
+                        sentences = data['entries']
+                        text_meta = json.dumps(data['text_meta'])
                 else:
-                    data = json.loads(the_page['Text'])
-                    marked_text = data['marked_text']
-                    sentences = data['entries']
-                    text_meta = json.dumps(data['text_meta'])
+                    return HttpResponse(json.dumps(the_page['Text']), content_type="application/json", status=the_page['Error'])
 
                 print file_on_disk
                 # print sentences
