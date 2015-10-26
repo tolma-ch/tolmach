@@ -499,17 +499,19 @@ def export_translation(request, text_id, target_lang):
                                         style = styles["default"]
                                         clear_run = run
 
-                                    run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
-            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
-            %s
-            </w:document>""" % style
-                                    params_dom = minidom.parseString(run_params_xml)
-                                    rPr = params_dom.getElementsByTagName('w:rPr')[0]
+                                    if not style == "":
+                                        run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
+                <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+                %s
+                </w:document>""" % style
+                                        params_dom = minidom.parseString(run_params_xml)
+                                        rPr = params_dom.getElementsByTagName('w:rPr')[0]
                                     run = xmldoc.createElement("w:r")
                                     wt = xmldoc.createElement("w:t")
                                     text = xmldoc.createTextNode(clear_run)
                                     wt.appendChild(text)
-                                    run.appendChild(rPr)
+                                    if not style == "":
+                                        run.appendChild(rPr)
                                     run.appendChild(wt)
                                     # print run.toprettyxml()
                                     pr.appendChild(run)
