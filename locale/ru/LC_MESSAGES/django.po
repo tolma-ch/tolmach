@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-22 15:42+0900\n"
+"POT-Creation-Date: 2015-10-27 18:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,11 +76,11 @@ msgstr "Домой"
 msgid "Search"
 msgstr "Найти"
 
-#: templates/main/base.html:98
+#: templates/main/base.html:99
 msgid "Close"
 msgstr "Закрыть"
 
-#: templates/main/base.html:101
+#: templates/main/base.html:102
 #: templates/translations/partial/add_text_modal.html:95
 msgid "Next"
 msgstr "Далее"
@@ -161,7 +161,7 @@ msgstr "Адрес сайта"
 #: templates/tolmach/partial/edit_profile_modal.html:79
 #: templates/translations/partial/add_glossary_modal.html:82
 #: templates/translations/partial/add_tmx_modal.html:47
-#: templates/translations/partial/edit_text_modal.html:96
+#: templates/translations/partial/edit_text_modal.html:104
 msgid "Save"
 msgstr "Сохранить"
 
@@ -321,13 +321,21 @@ msgstr ""
 msgid "Add translation"
 msgstr "Нет переводов"
 
-#: templates/translations/partial/edit_text_modal.html:57
+#: templates/translations/partial/edit_text_modal.html:59
+msgid "Remove"
+msgstr "Удалить"
+
+#: templates/translations/partial/edit_text_modal.html:62
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/partial/edit_text_modal.html:72
+#: templates/translations/partial/edit_text_modal.html:77
 msgid "TMXes"
 msgstr "Базы памяти"
+
+#: templates/translations/partial/edit_text_modal.html:101
+msgid "Delete text"
+msgstr "Удалить текст"
 
 #: templates/translations/partial/glossary_remove_popover.html:4
 #: templates/translations/partial/participant_remove_popover.html:4
@@ -525,15 +533,15 @@ msgstr "Свернуть"
 msgid "Expand"
 msgstr "Развернуть"
 
-#: templates/translations/view-text.html:115
+#: templates/translations/view-text.html:126
 msgid "No translations"
 msgstr "Нет переводов"
 
-#: templates/translations/view-text.html:135
+#: templates/translations/view-text.html:146
 msgid "Disapprove translation"
 msgstr "Отклонить перевод"
 
-#: templates/translations/view-text.html:143
+#: templates/translations/view-text.html:154
 msgid "Approve translation"
 msgstr "Утвердить перевод"
 
@@ -542,23 +550,23 @@ msgid "text id is not set"
 msgstr "Номер текста не указан"
 
 #: translations/decorators.py:20 translations/views_ajax.py:228
-#: translations/views_ajax.py:378
+#: translations/views_ajax.py:393
 msgid "Text not found"
 msgstr "Текст не найден"
 
 #: translations/decorators.py:22 translations/views_ajax.py:167
-#: translations/views_ajax.py:871 translations/views_ajax.py:916
+#: translations/views_ajax.py:886 translations/views_ajax.py:931
 msgid "Not allowed"
 msgstr "Нет доступа"
 
-#: translations/decorators.py:35 translations/views_ajax.py:422
-#: translations/views_ajax.py:544
+#: translations/decorators.py:35 translations/views_ajax.py:437
+#: translations/views_ajax.py:559
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
 #: translations/decorators.py:40 translations/views_ajax.py:29
 #: translations/views_ajax.py:47 translations/views_ajax.py:51
-#: translations/views_ajax.py:426 translations/views_ajax.py:548
+#: translations/views_ajax.py:441 translations/views_ajax.py:563
 msgid "Project not found"
 msgstr "Проект не найден"
 
@@ -655,15 +663,15 @@ msgstr "Простите, указанный текст не найден"
 msgid "Sorry, no such text here"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:414
+#: translations/views.py:416
 msgid "Sorry, no such translations here"
 msgstr "Простите, указанный перевод не найден"
 
 #: translations/views_ajax.py:34 translations/views_ajax.py:53
 #: translations/views_ajax.py:119 translations/views_ajax.py:214
-#: translations/views_ajax.py:380 translations/views_ajax.py:428
-#: translations/views_ajax.py:550 translations/views_ajax.py:963
-#: translations/views_ajax.py:986
+#: translations/views_ajax.py:395 translations/views_ajax.py:443
+#: translations/views_ajax.py:565 translations/views_ajax.py:978
+#: translations/views_ajax.py:1001
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
@@ -699,98 +707,95 @@ msgstr "Пользователь уже является участником п
 msgid "User is not a member of project"
 msgstr "Пользователь не является участником проекта"
 
-#: translations/views_ajax.py:236 translations/views_ajax.py:258
-#: translations/views_ajax.py:262 translations/views_ajax.py:906
+#: translations/views_ajax.py:237 translations/views_ajax.py:269
+#: translations/views_ajax.py:273 translations/views_ajax.py:921
 msgid "Language not found"
 msgstr "Язык не найден"
 
-#: translations/views_ajax.py:285 translations/views_ajax.py:439
-#: translations/views_ajax.py:561
+#: translations/views_ajax.py:297 translations/views_ajax.py:454
+#: translations/views_ajax.py:576
 msgid "File is too big"
 msgstr "Файл слишком большой"
 
-#: translations/views_ajax.py:288 translations/views_ajax.py:442
-#: translations/views_ajax.py:565
+#: translations/views_ajax.py:300 translations/views_ajax.py:457
+#: translations/views_ajax.py:580
 msgid "Wrong file type"
 msgstr "Некорректный формат файла"
 
-#: translations/views_ajax.py:374
+#: translations/views_ajax.py:389
 msgid "Text id is not set"
 msgstr "Номер текста не указан"
 
-#: translations/views_ajax.py:395 translations/views_ajax.py:458
-#: translations/views_ajax.py:490
+#: translations/views_ajax.py:410 translations/views_ajax.py:473
+#: translations/views_ajax.py:505
 msgid "Glossary not found"
 msgstr "Глоссарий не найден"
 
-#: translations/views_ajax.py:431
+#: translations/views_ajax.py:446
 msgid "Glossary name is not set"
 msgstr "Название глоссария не указано"
 
-#: translations/views_ajax.py:450
+#: translations/views_ajax.py:465
 msgid "Please, send file or input data manually"
 msgstr "Пожалуйста, загрузите файл или введите данные вручную"
 
-#: translations/views_ajax.py:486
+#: translations/views_ajax.py:501
 msgid "Glossary id is not set"
 msgstr "Номер глоссария не указан"
 
-#: translations/views_ajax.py:492
+#: translations/views_ajax.py:507
 msgid "It's not your glossary"
 msgstr "Это не ваш глоссарий"
 
-#: translations/views_ajax.py:517
+#: translations/views_ajax.py:532
 msgid "TMDatabase not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:553
+#: translations/views_ajax.py:568
 msgid "TMX name is not set"
 msgstr "Название базы памяти не указано"
 
-#: translations/views_ajax.py:557
+#: translations/views_ajax.py:572
 msgid "TMX file is not passed"
 msgstr "Формат базы памяти некорректный"
 
-#: translations/views_ajax.py:621 translations/views_ajax.py:653
+#: translations/views_ajax.py:636 translations/views_ajax.py:668
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/views_ajax.py:629 translations/views_ajax.py:661
+#: translations/views_ajax.py:644 translations/views_ajax.py:676
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
-#: translations/views_ajax.py:771
+#: translations/views_ajax.py:786
 msgid "TMX id is not set"
 msgstr "Номер базы памяти не указан"
 
-#: translations/views_ajax.py:775
+#: translations/views_ajax.py:790
 msgid "TMX not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:777
+#: translations/views_ajax.py:792
 msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
-#: translations/views_ajax.py:799
+#: translations/views_ajax.py:814
 msgid "Target language is not set"
 msgstr "Язык перевода не указан"
 
-#: translations/views_ajax.py:893 translations/views_ajax.py:947
-#: translations/views_ajax.py:974 translations/views_ajax.py:1013
+#: translations/views_ajax.py:908 translations/views_ajax.py:962
+#: translations/views_ajax.py:989 translations/views_ajax.py:1028
 msgid "Id is not set"
 msgstr "Номер не указан"
 
-#: translations/views_ajax.py:898 translations/views_ajax.py:922
-#: translations/views_ajax.py:979 translations/views_ajax.py:1018
+#: translations/views_ajax.py:913 translations/views_ajax.py:937
+#: translations/views_ajax.py:994 translations/views_ajax.py:1033
 msgid "Not found"
 msgstr "Не найдено"
 
-#: translations/views_ajax.py:913
+#: translations/views_ajax.py:928
 msgid "Translation not found"
 msgstr "Перевод не найден"
-
-#~ msgid "Delete text"
-#~ msgstr "Удалить текст"
 
 #~ msgid "Select file"
 #~ msgstr "Выбрать файл"
