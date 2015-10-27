@@ -308,7 +308,7 @@ def text_ajax(request, project):
                 import urllib2
 
                 url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': filename,
+                values = {'fname': filename.encode('utf-8'),
                           'user_id': request.user.id,
                           'project_id': project.id}
 
