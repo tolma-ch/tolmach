@@ -7,6 +7,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Bystrofix to make uwsgi daemonize work properly
+# http://itekblog.com/ascii-codec-cant-encode-characters-in-position/
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
