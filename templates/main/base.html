@@ -99,7 +99,7 @@
                        ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
                     <a class="btn btn-success help__btn"
                        ng-click="nextHelpStep()"
-                       ng-show="helpBlocks.length">{% trans "Next" %}</a>
+                       ng-show="hasNext">{% trans "Next" %}</a>
                 </div>
                 <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
             </div>
@@ -107,7 +107,7 @@
             <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
             <div class="help__fadeout-block" ng-style="helpBlockStyle4">
             </div>
-            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1"></div>
+            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()"></div>
         </div>
 
 		<!--basic scripts-->

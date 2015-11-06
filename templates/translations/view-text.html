@@ -51,7 +51,7 @@
                                 <i class="fa fa-user switcher__button-icon"></i>
                                 <span class="switcher__button-content">{{ users_trans }}</span>
                             </span>
-                            <span class="switcher__button"
+                            <span class="switcher__button switcher__button_make-translate"
                                   ng-class="{'switcher__button_active': entry.mode === 1}"
                                   ng-click="entry.mode = 1">
                                 <i class="fa fa-pencil switcher__button-icon"></i>
@@ -178,17 +178,19 @@
                 </div>
             </div>
 
-            <div class="col-sm-6 hidden-xs">
+            <div class="col-sm-6 hidden-xs" id="translation-text">
                 <iframe id="translation__frame" name="translation__frame" height=100% style="position:absolute;z-index:-1;width: 1px;"></iframe>
                 <div class="translation-text">
                     <div class="translation-text__switcher">
                         <div class="switcher">
                             <a class="switcher__button"
+                               id="switcher__button_original-text"
                                ng-class="{'switcher__button_active': textTab === 0}"
                                ng-click="textTab = 0">
                                 <span>{{ original_text }}</span>
                             </a>
                             <a class="switcher__button"
+                               id="switcher__button_translated-text"
                                ng-class="{'switcher__button_active': textTab === 1}"
                                ng-click="textTab = 1">
                                 <span>{{ translated_text }}</span>
@@ -221,4 +223,16 @@
             </script>
         </div>
     </div>
+    <script>
+        var helpTexts = {
+            'translations-container': '{% trans 'Здесь фрагменты для перевода, на которые был разбит текст' %}',
+            'translation__sentence-translation-toggle': '{% trans 'Нажмите, чтобы развернуть фрагмент для начала перевода' %}',
+            'translation__sentence-commitance': '{% trans 'Поле ввода, варианты машинного перевода и баз памяти' %}',
+            'switcher__button_make-translate': '{% trans 'Нажмите, чтобы добавить перевод' %}',
+            'translation-text': '{% trans 'Здесь отображается весь текст целиком' %}',
+            'data-entry': '{% trans 'Кликните на предложение в тексте, чтобы быстро перейти к его переводу' %}',
+            'switcher__button_original-text': '{% trans 'Исходный текст' %}',
+            'switcher__button_translated-text': '{% trans 'Весь текст с включёнными в него сделанными переводами' %}'
+        };
+    </script>
 {% endblock %}

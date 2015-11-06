@@ -91,9 +91,9 @@
                     width: params.width + 'px'
                 };
                 var $body = $('body'),
-                    textWidth = Math.min(200, $body.width()),
+                    textWidth = Math.min(300, $body.width()),
                     textRight = params.left + params.width,
-                    textLeft = Math.max(0, textRight - textWidth);
+                    textLeft = $scope.leftAlign ? Math.max(0, params.left - textWidth + 40) : Math.max(0, textRight - textWidth);
                 textRight = Math.max(0, textLeft + textWidth);
                 textWidth = textRight - textLeft;
                 $scope.helpTextStyle1 = {
@@ -101,12 +101,19 @@
                     'left': textLeft + 'px',
                     'width': textWidth + 'px'
                 };
-                $scope.helpText = $block.attr('help-text');
             };
             $scope.beginHelpPresentation = function () {
+                var event = $scope.$broadcast('helpPresentationStart');
+                if (event.preventDefault) {
+                    return;
+                }
                 $scope.helpBlocks = $('.helped-block').toArray();
                 $scope.currentBlock = $scope.helpBlocks.shift();
+                $scope.clickBlock = function () {};
+                $scope.leftAlign = false;
+                $scope.hasNext = !!$scope.helpBlocks.length;
                 if ($scope.currentBlock) {
+                    $scope.helpText = $($scope.currentBlock).attr('help-text');
                     $scope.redrawHelp();
                     $scope.helpShow = true;
                 }
@@ -114,10 +121,20 @@
             $scope.closeHelpPresentation = function () {
                 $scope.helpShow = false;
                 $scope.helpBlocks = [];
+                $scope.hasNext = false;
                 $scope.currentBlock = null;
+                $scope.clickBlock = function () {};
+                $scope.leftAlign = false;
             };
             $scope.nextHelpStep = function () {
+                var event = $scope.$broadcast('helpPresentationNext');
+                if (event.preventDefault) {
+                    return;
+                }
                 $scope.currentBlock = $scope.helpBlocks.shift();
+                $scope.clickBlock = function () {};
+                $scope.leftAlign = false;
+                $scope.hasNext = !!$scope.helpBlocks.length;
                 $scope.redrawHelp();
             };
             $scope.helpResize = function () {
@@ -138,7 +155,7 @@
                 $modalInstance.dismiss('cancel');
             };
         })
-        .controller('transCtrl', function ($rootScope, $scope, $http) {
+        .controller('transCtrl', function ($rootScope, $scope, $http, $timeout) {
             var clearTags = function (text) {
                     var div = document.createElement("div");
                     div.innerHTML = text;
@@ -163,14 +180,14 @@
                             text: data
                         }];
                     }).error(function (a) {
-                        console.error(a);
+                        //console.error(a);
                     });
                 },
                 getTmdbVariants = function (entry) {
                     $http.post('/api/tmdb-search/', {entry_id: entry['id'], lang_pair: $scope.langPair}).success(function (data) {
                         entry.tmdbVariants = data;
                     }).error(function (a) {
-                        console.error(a);
+                        //console.error(a);
                     });
                 };
             $scope.activeEntry = null;
@@ -421,6 +438,147 @@
             $scope.taggedSelected = function () {
 
             };
+            (function (scope) {
+                var steps,
+                    nextStep = function (event) {
+                        event.preventDefault = true;
+                        steps.length && steps.shift()(event.targetScope);
+                    };
+                scope.$on('helpPresentationStart', function (event) {
+                    var focusedEntry;
+                    steps = [
+                        function (helper) {
+                            helper.currentBlock = $('#translations-container');
+                            helper.clickBlock = function () {};
+                            helper.leftAlign = false;
+                            var i = 0,
+                                len = scope.entries.length;
+                            for (i; i < len; i++) {
+                                var entry = scope.entries[i];
+                                if (!entry.isApproved && (scope.activeEntry !== entry)) {
+                                    focusedEntry = entry;
+                                    break;
+                                }
+                            }
+                            helper.hasNext = !!focusedEntry;
+                            if (helper.currentBlock) {
+                                helper.helpText = window['helpTexts']['translations-container'];
+                                helper.redrawHelp();
+                                helper.helpShow = true;
+                            } else {
+                                helper.closeHelpPresentation();
+                            }
+                        },
+                        function (helper) {
+                            if (focusedEntry) {
+                                helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-translation-toggle');
+                                helper.helpText = window['helpTexts']['translation__sentence-translation-toggle'];
+                                helper.hasNext = false;
+                                helper.leftAlign = false;
+                                helper.clickBlock = function () {
+                                    if (scope.activeEntry !== focusedEntry) {
+                                        expandEntry(focusedEntry);
+                                        if (focusedEntry.mode === 0) {
+                                            helper.hasNext = false;
+                                            helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.switcher__button_make-translate');
+                                            helper.helpText = window['helpTexts']['switcher__button_make-translate'];
+                                            helper.leftAlign = false;
+                                            helper.clickBlock = function () {
+                                                focusedEntry.mode = 1;
+                                                helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
+                                                helper.helpText = window['helpTexts']['translation__sentence-commitance'];
+                                                helper.hasNext = true;
+                                                helper.leftAlign = false;
+                                                helper.clickBlock = function () {};
+                                                $timeout(function () {
+                                                    if (helper.currentBlock) {
+                                                        helper.redrawHelp();
+                                                    } else {
+                                                        helper.closeHelpPresentation();
+                                                    }
+                                                }, 100);
+                                            };
+                                        } else {
+                                            helper.hasNext = true;
+                                            helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
+                                            helper.helpText = window['helpTexts']['translation__sentence-commitance'];
+                                            helper.leftAlign = false;
+                                            helper.clickBlock = function () {};
+                                        }
+                                        $timeout(function () {
+                                            if (helper.currentBlock) {
+                                                helper.redrawHelp();
+                                            } else {
+                                                helper.closeHelpPresentation();
+                                            }
+                                        }, 1000);
+                                    }
+                                };
+                                helper.redrawHelp();
+                            }
+                        },
+                        function (helper) {
+                            helper.currentBlock = $('#translation-text');
+                            helper.clickBlock = function () {};
+                            helper.leftAlign = true;
+                            helper.hasNext = true;
+                            if (helper.currentBlock) {
+                                helper.helpText = window['helpTexts']['translation-text'];
+                                helper.redrawHelp();
+                            } else {
+                                helper.closeHelpPresentation();
+                            }
+                        },
+                        function (helper) {
+                            if (scope.entries.length) {
+                                var entry = scope.entries[scope.entries.length > 3 ? 3 : scope.entries.length];
+                                helper.currentBlock = $('[data-entry="' + entry.idInText + '"]');
+                                helper.leftAlign = false;
+                                helper.clickBlock = function () {
+                                    helper.helpShow = false;
+                                    scope.focusEntry(entry.idInText);
+                                    $timeout(function () {
+                                        helper.currentBlock = $('#switcher__button_original-text');
+                                        helper.leftAlign = false;
+                                        helper.clickBlock = function () {};
+                                        helper.hasNext = true;
+                                        if (helper.currentBlock) {
+                                            helper.helpText = window['helpTexts']['switcher__button_original-text'];
+                                            helper.redrawHelp();
+                                            helper.helpShow = true;
+                                        } else {
+                                            helper.closeHelpPresentation();
+                                        }
+                                    }, 1000);
+                                };
+                                helper.hasNext = false;
+                                if (helper.currentBlock) {
+                                    helper.helpText = window['helpTexts']['data-entry'];
+                                    helper.redrawHelp();
+                                } else {
+                                    helper.closeHelpPresentation();
+                                }
+                            } else {
+                                helper.closeHelpPresentation();
+                            }
+                        },
+                        function (helper) {
+                            helper.currentBlock = $('#switcher__button_translated-text');
+                            helper.clickBlock = function () {};
+                            helper.leftAlign = false;
+                            helper.hasNext = false;
+                            if (helper.currentBlock) {
+                                helper.helpText = window['helpTexts']['switcher__button_translated-text'];
+                                helper.redrawHelp();
+                            } else {
+                                helper.closeHelpPresentation();
+                            }
+                        }
+                    ];
+                    nextStep(event);
+                });
+                scope.$on('helpPresentationNext', nextStep);
+            }($scope));
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {
