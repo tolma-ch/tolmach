@@ -104,7 +104,7 @@
             };
             $scope.beginHelpPresentation = function () {
                 var event = $scope.$broadcast('helpPresentationStart');
-                if (event.preventDefault) {
+                if (event.customized) {
                     return;
                 }
                 $scope.helpBlocks = $('.helped-block').toArray();
@@ -116,6 +116,8 @@
                     $scope.helpText = $($scope.currentBlock).attr('help-text');
                     $scope.redrawHelp();
                     $scope.helpShow = true;
+                } else {
+                    $scope.closeHelpPresentation();
                 }
             };
             $scope.closeHelpPresentation = function () {
@@ -128,14 +130,19 @@
             };
             $scope.nextHelpStep = function () {
                 var event = $scope.$broadcast('helpPresentationNext');
-                if (event.preventDefault) {
+                if (event.customized) {
                     return;
                 }
                 $scope.currentBlock = $scope.helpBlocks.shift();
                 $scope.clickBlock = function () {};
                 $scope.leftAlign = false;
                 $scope.hasNext = !!$scope.helpBlocks.length;
-                $scope.redrawHelp();
+                if ($scope.currentBlock) {
+                    $scope.helpText = $($scope.currentBlock).attr('help-text');
+                    $scope.redrawHelp();
+                } else {
+                    $scope.closeHelpPresentation();
+                }
             };
             $scope.helpResize = function () {
                 if ($scope.helpShow) {
@@ -441,7 +448,7 @@
             (function (scope) {
                 var steps,
                     nextStep = function (event) {
-                        event.preventDefault = true;
+                        event.customized = true;
                         steps.length && steps.shift()(event.targetScope);
                     };
                 scope.$on('helpPresentationStart', function (event) {
