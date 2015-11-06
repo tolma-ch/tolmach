@@ -6,12 +6,19 @@
 {% trans 'See all messages' as messages %}
 <ul class="navbar-nav pull-right">
 
-	<li class="navbar-nav__button button_light-blue">
+	<li class="navbar-nav__button button_light-blue"
+        tooltip="{% trans 'Help' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
         <a class="" href="#" ng-click="beginHelpPresentation()">
 			<i class="fa fa-question" ></i>
 		</a>
     </li>
-	<li class="navbar-nav__button button_dark-green" ng-cloak>
+	<li class="navbar-nav__button button_dark-green"
+        ng-cloak
+        tooltip="{% trans 'Messages' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
 		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 			<i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"></i>
 			<span class="badge badge-success" ng-show="messages.length">{= messages.length =}</span>

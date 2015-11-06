@@ -138,6 +138,8 @@
   cursor: pointer;
   font-size: 1.5em;
   color: #9c9b9b;
+  margin: -5px 0;
+  display: inline-block;
 }
 .translation__sentence-suggestion-icons a:hover {
   color: #02c14f;
