@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-27 18:05+0900\n"
+"POT-Creation-Date: 2015-11-19 22:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,17 +121,22 @@ msgstr "Выход"
 msgid "See all messages"
 msgstr "Все сообщения"
 
-#: templates/main/partial/navbar-loggedin.html:65
+#: templates/main/partial/navbar-loggedin.html:10
+msgid "Help"
+msgstr "Помощь"
+
+#: templates/main/partial/navbar-loggedin.html:19
+#: templates/tolmach/partial/all_messages_modal.html:8
+msgid "Messages"
+msgstr "Сообщения"
+
+#: templates/main/partial/navbar-loggedin.html:72
 msgid "Hi,"
 msgstr "Привет,"
 
 #: templates/tolmach/main.html:5
 msgid "How it works?"
 msgstr "Как это работает?"
-
-#: templates/tolmach/partial/all_messages_modal.html:8
-msgid "Messages"
-msgstr "Сообщения"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
@@ -544,6 +549,38 @@ msgstr "Отклонить перевод"
 #: templates/translations/view-text.html:154
 msgid "Approve translation"
 msgstr "Утвердить перевод"
+
+#: templates/translations/view-text.html:228
+msgid "Here we can see all the fragments text was splitted to"
+msgstr "Здесь фрагменты для перевода, на которые был разбит текст"
+
+#: templates/translations/view-text.html:229
+msgid "Click to expand fragment and begin translation"
+msgstr "Нажмите, чтобы развернуть фрагмент для начала перевода"
+
+#: templates/translations/view-text.html:230
+msgid "Translation entry form, translation memory variants and machine translations"
+msgstr "Поле ввода, варианты машинного перевода и баз памяти"
+
+#: templates/translations/view-text.html:231
+msgid "Click to add new translation"
+msgstr "Нажмите, чтобы добавить перевод"
+
+#: templates/translations/view-text.html:232
+msgid "Here we can see the whole text"
+msgstr "Здесь отображается весь текст целиком"
+
+#: templates/translations/view-text.html:233
+msgid "Click on the fragment in text to move to its translation form"
+msgstr "Кликните на предложение в тексте, чтобы быстро перейти к его переводу"
+
+#: templates/translations/view-text.html:234
+msgid "Source text"
+msgstr "Исходный текст"
+
+#: templates/translations/view-text.html:235
+msgid "All the text with translated fragments"
+msgstr "Весь текст с включёнными в него сделанными переводами"
 
 #: translations/decorators.py:16
 msgid "text id is not set"

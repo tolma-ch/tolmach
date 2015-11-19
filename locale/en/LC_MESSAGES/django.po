@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-27 18:05+0900\n"
+"POT-Creation-Date: 2015-11-19 22:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,16 +118,21 @@ msgstr ""
 msgid "See all messages"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:65
+#: templates/main/partial/navbar-loggedin.html:10
+msgid "Help"
+msgstr ""
+
+#: templates/main/partial/navbar-loggedin.html:19
+#: templates/tolmach/partial/all_messages_modal.html:8
+msgid "Messages"
+msgstr ""
+
+#: templates/main/partial/navbar-loggedin.html:72
 msgid "Hi,"
 msgstr ""
 
 #: templates/tolmach/main.html:5
 msgid "How it works?"
-msgstr ""
-
-#: templates/tolmach/partial/all_messages_modal.html:8
-msgid "Messages"
 msgstr ""
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
@@ -559,6 +564,38 @@ msgstr "Users translations"
 #| msgid "Users translations"
 msgid "Approve translation"
 msgstr "Users translations"
+
+#: templates/translations/view-text.html:228
+msgid "Здесь фрагменты для перевода, на которые был разбит текст"
+msgstr ""
+
+#: templates/translations/view-text.html:229
+msgid "Нажмите, чтобы развернуть фрагмент для начала перевода"
+msgstr ""
+
+#: templates/translations/view-text.html:230
+msgid "Поле ввода, варианты машинного перевода и баз памяти"
+msgstr ""
+
+#: templates/translations/view-text.html:231
+msgid "Нажмите, чтобы добавить перевод"
+msgstr ""
+
+#: templates/translations/view-text.html:232
+msgid "Здесь отображается весь текст целиком"
+msgstr ""
+
+#: templates/translations/view-text.html:233
+msgid "Кликните на предложение в тексте, чтобы быстро перейти к его переводу"
+msgstr ""
+
+#: templates/translations/view-text.html:234
+msgid "Исходный текст"
+msgstr ""
+
+#: templates/translations/view-text.html:235
+msgid "Весь текст с включёнными в него сделанными переводами"
+msgstr ""
 
 #: translations/decorators.py:16
 msgid "text id is not set"

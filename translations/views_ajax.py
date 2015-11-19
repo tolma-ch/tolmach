@@ -235,7 +235,11 @@ def text_ajax(request, project):
                         target_lang = Language.objects.get(id=translation['targetLangId'])
                     except Language.DoesNotExist:
                         return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-                    all_text_translations.remove(target_lang)
+
+                    try:
+                        all_text_translations.remove(target_lang)
+                    except:
+                        pass
 
                     try:
                         text_translation = TextTranslation.objects.get(text=text,
