@@ -125,7 +125,7 @@
                 $scope.helpBlocks = [];
                 $scope.hasNext = false;
                 $scope.currentBlock = null;
-                $scope.clickBlock = function () {};
+                $scope.clickBlock = false;
                 $scope.leftAlign = false;
             };
             $scope.nextHelpStep = function () {
@@ -134,7 +134,7 @@
                     return;
                 }
                 $scope.currentBlock = $scope.helpBlocks.shift();
-                $scope.clickBlock = function () {};
+                $scope.clickBlock = false;
                 $scope.leftAlign = false;
                 $scope.hasNext = !!$scope.helpBlocks.length;
                 if ($scope.currentBlock) {
@@ -241,46 +241,49 @@
                     entry.suggestion = machine.text;
                 }
             };
-            var expandEntry = function (entry) {
-                if (!entry.approved) {
-                    if (typeof entry['machines'] === 'undefined') {
-                        getYaMachines(entry);
-                        getTmdbVariants(entry);
-                    }
-                    $scope.activeEntry = entry;
-                    if (entry.mode === 1) {
-                        setTimeout(function () {
-                            $('#entry-' + entry.idInText).find('textarea').focus();
-                        }, 10);
-                    }
-                }
-                setTimeout(function () {
-                    var $body = $('html, body'),
-                        $container = $('#translations-container'),
-                        $elem = $('#entry-' + entry.id),
-                        $resElem = $('#res-entry-' + entry.id),
-                        bodyTop = $body.scrollTop(),
-                        containerShift = $container.scrollTop() + $elem.offset()['top'] - Math.max($container.offset()['top'], bodyTop),
-                        resTop = $resElem.offset()['top'] - bodyTop,
-                        minTop = 10,
-                        maxTop = Math.max(0, $(window).height() - $resElem.height()) - 20,
-                        bodyShift = 0;
-                    if (resTop < minTop) {
-                        bodyShift = resTop - minTop;
-                    }
-                    if (resTop > maxTop) {
-                        bodyShift = resTop - maxTop;
-                    }
-                    if (bodyShift) {
-                        $body.stop().animate({
-                            scrollTop: bodyTop + bodyShift
+            var scrollToEntry = function (entry) {
+                    setTimeout(function () {
+                        var $body = $('html, body'),
+                            $container = $('#translations-container'),
+                            $elem = $('#entry-' + entry.idInText),
+                            $resElem = $('#res-entry-' + entry.idInText),
+                            bodyTop = $body.scrollTop(),
+                            containerShift = $container.scrollTop() + $elem.offset()['top'] - Math.max($container.offset()['top'], bodyTop),
+                            resTop = $resElem.offset()['top'] - bodyTop,
+                            minTop = 10,
+                            maxTop = Math.max(0, $(window).height() - $resElem.height()) - 20,
+                            bodyShift = 0;
+                        if (resTop < minTop) {
+                            bodyShift = resTop - minTop;
+                        }
+                        if (resTop > maxTop) {
+                            bodyShift = resTop - maxTop;
+                        }
+                        if (bodyShift) {
+                            $body.stop().animate({
+                                scrollTop: bodyTop + bodyShift
+                            }, 500);
+                        }
+                        $container.stop().animate({
+                            scrollTop: containerShift - bodyShift
                         }, 500);
+                    }, 100);
+                },
+                expandEntry = function (entry) {
+                    if (!entry.approved) {
+                        if (typeof entry['machines'] === 'undefined') {
+                            getYaMachines(entry);
+                            getTmdbVariants(entry);
+                        }
+                        $scope.activeEntry = entry;
+                        if (entry.mode === 1) {
+                            setTimeout(function () {
+                                $('#entry-' + entry.idInText).find('textarea').focus();
+                            }, 10);
+                        }
                     }
-                    $container.stop().animate({
-                        scrollTop: containerShift - bodyShift
-                    }, 500);
-                }, 100);
-            };
+                    scrollToEntry(entry);
+                };
             $scope.toggleEntry = function (entry) {
                 if ($scope.activeEntry === entry) {
                     $scope.activeEntry = null;
@@ -449,25 +452,32 @@
                 var steps,
                     nextStep = function (event) {
                         event.customized = true;
-                        steps.length && steps.shift()(event.targetScope);
+                        if (event.targetScope.clickBlock) {
+                            event.targetScope.clickBlock();
+                        } else {
+                            steps.length && steps.shift()(event.targetScope);
+                        }
                     };
                 scope.$on('helpPresentationStart', function (event) {
                     var focusedEntry;
                     steps = [
                         function (helper) {
                             helper.currentBlock = $('#translations-container');
-                            helper.clickBlock = function () {};
+                            helper.clickBlock = false;
                             helper.leftAlign = false;
                             var i = 0,
                                 len = scope.entries.length;
                             for (i; i < len; i++) {
                                 var entry = scope.entries[i];
-                                if (!entry.isApproved && (scope.activeEntry !== entry)) {
+                                if (!entry.approved && (scope.activeEntry !== entry)) {
                                     focusedEntry = entry;
                                     break;
                                 }
                             }
                             helper.hasNext = !!focusedEntry;
+                            if (focusedEntry) {
+                                scrollToEntry(focusedEntry);
+                            }
                             if (helper.currentBlock) {
                                 helper.helpText = window['helpTexts']['translations-container'];
                                 helper.redrawHelp();
@@ -480,26 +490,27 @@
                             if (focusedEntry) {
                                 helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-translation-toggle');
                                 helper.helpText = window['helpTexts']['translation__sentence-translation-toggle'];
-                                helper.hasNext = false;
+                                helper.hasNext = true;
                                 helper.leftAlign = false;
                                 helper.clickBlock = function () {
                                     if (scope.activeEntry !== focusedEntry) {
                                         expandEntry(focusedEntry);
+                                        helper.helpText = '';
                                         if (focusedEntry.mode === 0) {
-                                            helper.hasNext = false;
+                                            helper.hasNext = true;
                                             helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.switcher__button_make-translate');
-                                            helper.helpText = window['helpTexts']['switcher__button_make-translate'];
                                             helper.leftAlign = false;
                                             helper.clickBlock = function () {
                                                 focusedEntry.mode = 1;
                                                 helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
-                                                helper.helpText = window['helpTexts']['translation__sentence-commitance'];
+                                                helper.helpText = '';
                                                 helper.hasNext = true;
                                                 helper.leftAlign = false;
-                                                helper.clickBlock = function () {};
+                                                helper.clickBlock = false;
                                                 $timeout(function () {
                                                     if (helper.currentBlock) {
                                                         helper.redrawHelp();
+                                                        helper.helpText = window['helpTexts']['translation__sentence-commitance'];
                                                     } else {
                                                         helper.closeHelpPresentation();
                                                     }
@@ -508,13 +519,17 @@
                                         } else {
                                             helper.hasNext = true;
                                             helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
-                                            helper.helpText = window['helpTexts']['translation__sentence-commitance'];
                                             helper.leftAlign = false;
-                                            helper.clickBlock = function () {};
+                                            helper.clickBlock = false;
                                         }
                                         $timeout(function () {
                                             if (helper.currentBlock) {
                                                 helper.redrawHelp();
+                                                if (focusedEntry.mode === 0) {
+                                                    helper.helpText = window['helpTexts']['switcher__button_make-translate'];
+                                                } else {
+                                                    helper.helpText = window['helpTexts']['translation__sentence-commitance'];
+                                                }
                                             } else {
                                                 helper.closeHelpPresentation();
                                             }
@@ -526,7 +541,7 @@
                         },
                         function (helper) {
                             helper.currentBlock = $('#translation-text');
-                            helper.clickBlock = function () {};
+                            helper.clickBlock = false;
                             helper.leftAlign = true;
                             helper.hasNext = true;
                             if (helper.currentBlock) {
@@ -547,7 +562,7 @@
                                     $timeout(function () {
                                         helper.currentBlock = $('#switcher__button_original-text');
                                         helper.leftAlign = false;
-                                        helper.clickBlock = function () {};
+                                        helper.clickBlock = false;
                                         helper.hasNext = true;
                                         if (helper.currentBlock) {
                                             helper.helpText = window['helpTexts']['switcher__button_original-text'];
@@ -558,7 +573,7 @@
                                         }
                                     }, 1000);
                                 };
-                                helper.hasNext = false;
+                                helper.hasNext = true;
                                 if (helper.currentBlock) {
                                     helper.helpText = window['helpTexts']['data-entry'];
                                     helper.redrawHelp();
@@ -571,7 +586,7 @@
                         },
                         function (helper) {
                             helper.currentBlock = $('#switcher__button_translated-text');
-                            helper.clickBlock = function () {};
+                            helper.clickBlock = false;
                             helper.leftAlign = false;
                             helper.hasNext = false;
                             if (helper.currentBlock) {
