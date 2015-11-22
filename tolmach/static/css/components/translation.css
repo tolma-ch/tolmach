@@ -265,3 +265,9 @@ tag-right {
   background: #fff;
   overflow: auto;
 }
+.translation-popup {
+  position: absolute;
+  background: #ccc;
+  left: 10px;
+  top: 10px;
+}

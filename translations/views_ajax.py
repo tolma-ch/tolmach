@@ -872,6 +872,7 @@ def entry_ajax(request, action, text):
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
+            '639_3': [text.source_lang.code3, text_translation.target_lang.code3],
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,

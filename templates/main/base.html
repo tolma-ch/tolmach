@@ -78,7 +78,7 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-app="tolmachApp" ng-controller="mainCtrl">
+	<body ng-app="tolmachApp" ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)">
         <div class="main{% if user.is_authenticated %} auth{% endif %}">
             {% include "main/partial/header.html" %}
 
@@ -108,6 +108,15 @@
             <div class="help__fadeout-block" ng-style="helpBlockStyle4">
             </div>
             <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()"></div>
+        </div>
+
+        <div class="popover fade bottom in" class="translation-popup" ng-show="showTranslatePopup" ng-style="translatePopupStyle">
+            <div class="arrow"></div>
+            <div class="popover-content">
+                <div ng-repeat="res in translationResults">
+                    {= res =}
+                </div>
+            </div>
         </div>
 
 		<!--basic scripts-->
