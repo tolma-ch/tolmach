@@ -5,7 +5,7 @@ from django.db import models
 class Language(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=3)
-    code3 = models.CharField(max_length=3)
+    code_639_3 = models.CharField(max_length=3)
 
     def __str__(self):
         return self.name
