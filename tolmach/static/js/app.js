@@ -149,6 +149,9 @@
                     $scope.redrawHelp();
                 }
             };
+            $scope.globalKeydown = function (event) {
+                $scope.$broadcast('GlobalKeydown', event);
+            };
         })
         .controller('AllMessagesModalCtrl', function ($scope, $modalInstance, $http) {
             $scope.error = '';
@@ -205,6 +208,7 @@
                 $scope.userIsManager = !!data['user_is_manager'];
                 $scope.translationAllowed = !!data['translation_allowed'];
                 $scope.langPair = data['lang_pair'];
+                $scope.langPair3 = data['639_3'];
                 $scope.user = data['user'];
                 var entriesById = {},
                     i, entry;
@@ -411,8 +415,14 @@
                     }
                 }
             };
-            $scope.globalKeydown = function (event, entry) {
+            $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
+                if (event.ctrlKey && event.altKey) {
+                    if (code === 84) {
+                        translate();
+                    }
+                    return;
+                }
                 if (event.ctrlKey) {
                     if ((code === 38 || code === 40) && $scope.entries.length) {
                         var index = $scope.entries.indexOf($scope.activeEntry),
@@ -443,8 +453,9 @@
                         }
                         $scope.focusEntry(entry.idInText);
                     }
+
                 }
-            };
+            });
             $scope.taggedSelected = function () {
 
             };
@@ -601,6 +612,99 @@
                 });
                 scope.$on('helpPresentationNext', nextStep);
             }($scope));
+            $scope.$parent.showTranslatePopup = false;
+            $scope.$parent.translatedPhrase = '';
+            $scope.$parent.translationResults = [];
+            var getSelectionText = function () {
+                    var text = "";
+                    if (window.getSelection) {
+                        text = window.getSelection().toString();
+                    } else if (document.selection && document.selection.type != "Control") {
+                        text = document.selection.createRange().text;
+                    }
+                    return text;
+                },
+                getSelectionCoords = function (win) {
+                    win = win || window;
+                    var doc = win.document;
+                    var sel = doc.selection, range, rects, rect;
+                    var x = 0, y = 0;
+                    if (sel) {
+                        if (sel.type != "Control") {
+                            range = sel.createRange();
+                            range.collapse(true);
+                            x = range.boundingLeft;
+                            y = range.boundingTop;
+                        }
+                    } else if (win.getSelection) {
+                        sel = win.getSelection();
+                        if (sel.rangeCount) {
+                            range = sel.getRangeAt(0).cloneRange();
+                            if (range.getClientRects) {
+                                range.collapse(true);
+                                rects = range.getClientRects();
+                                if (rects.length > 0) {
+                                    rect = rects[0];
+                                }
+                                x = rect.left;
+                                y = rect.top;
+                            }
+                            // Fall back to inserting a temporary element
+                            if (x == 0 && y == 0) {
+                                var span = doc.createElement("span");
+                                if (span.getClientRects) {
+                                    // Ensure span has dimensions and position by
+                                    // adding a zero-width space character
+                                    span.appendChild( doc.createTextNode("\u200b") );
+                                    range.insertNode(span);
+                                    rect = span.getClientRects()[0];
+                                    x = rect.left;
+                                    y = rect.top;
+                                    var spanParent = span.parentNode;
+                                    spanParent.removeChild(span);
+
+                                    // Glue any broken text nodes back together
+                                    spanParent.normalize();
+                                }
+                            }
+                        }
+                    }
+                    return { x: x, y: y };
+                },
+                translate = function () {
+                    var phrase = getSelectionText().trim().toLowerCase(),
+                        coords = getSelectionCoords();
+                    if (!phrase) {
+                        return;
+                    }
+                    if (phrase === $scope.translatedPhrase) {
+                        $scope.$parent.showTranslatePopup = false;
+                    }
+                    $scope.translatedPhrase = phrase;
+                    $http.jsonp('https://glosbe.com/gapi/translate', {params: {
+                        from: $scope.langPair3[0],
+                        dest: $scope.langPair3[1],
+                        phrase: encodeURIComponent(phrase),
+                        callback: 'JSON_CALLBACK',
+                        format: 'json'
+                    }}).success(function (res) {
+                        var results = [];
+                        if (angular.isArray(res['tuc'])) {
+                            angular.forEach(res['tuc'], function (elem) {
+                                if (elem['phrase'] && elem['phrase']['text']) {
+                                    results.push(elem['phrase']['text']);
+                                }
+                            });
+                        }
+                        $scope.$parent.translationResults = results;
+                        $scope.$parent.translatePopupStyle = {
+                            display: 'block',
+                            left: coords['x'] + 'px',
+                            top: coords['y'] + 'px'
+                        };
+                        $scope.$parent.showTranslatePopup = results.length > 0;
+                    })
+                }
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {

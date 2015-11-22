@@ -1484,6 +1484,7 @@ h4 small,
   display: block;
 }
 .glossary-manual {
+  position: relative;
   margin-top: 15px;
 }
 .glossary-manual:after {
@@ -1508,6 +1509,12 @@ h4 small,
   height: 34px;
   line-height: 32px;
   text-align: center;
+}
+.glossary-manual__remove {
+  position: absolute;
+  right: 10px;
+  top: -42px;
+  font-size: 15px;
 }
 .drop-box {
   border: 1px dashed #ddd;
@@ -1947,6 +1954,12 @@ tag-right {
 [contenteditable] {
   background: #fff;
   overflow: auto;
+}
+.translation-popup {
+  position: absolute;
+  background: #ccc;
+  left: 10px;
+  top: 10px;
 }
 .pointer {
   cursor: pointer;
