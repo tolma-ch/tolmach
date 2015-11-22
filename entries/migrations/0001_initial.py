@@ -4,6 +4,24 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 
 
+def add_base_languages(apps, schema_editor):
+    Language = apps.get_model('entries', 'Language')
+    langlist = {'en': 'English',
+                'ru': 'Russian',
+                'zh': 'Chinese',
+                'es': 'Spanish',
+                'ko': 'Korean',
+                'ja': 'Japanese',
+                'fr': 'French',
+                'de': 'German',
+                'it': 'Italian'}
+    for key, value in langlist.iteritems():
+        new_lang = Language(name=value,
+                            code=key,
+                            )
+        new_lang.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -25,6 +43,7 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(max_length=3)),
             ],
         ),
+        migrations.RunPython(add_base_languages),
         migrations.CreateModel(
             name='Subject',
             fields=[
