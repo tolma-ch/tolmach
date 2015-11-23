@@ -684,7 +684,7 @@
                     $http.jsonp('https://glosbe.com/gapi/translate', {params: {
                         from: $scope.langPair3[0],
                         dest: $scope.langPair3[1],
-                        phrase: encodeURIComponent(phrase),
+                        phrase: phrase,
                         callback: 'JSON_CALLBACK',
                         format: 'json'
                     }}).success(function (res) {
