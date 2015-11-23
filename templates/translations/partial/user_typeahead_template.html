@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="userTypeaheadTemplate.html">
     <a>
-        <span bind-html-unsafe="match.model.username | typeaheadHighlight:query"></span>
+        <span ng-bind-html="match.model.username | typeaheadHighlight:query"></span>
     </a>
 </script>
