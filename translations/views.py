@@ -424,7 +424,7 @@ def export_translation(request, text_id, target_lang):
         for entry in entries:
             entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
             if entry_translation:
-                pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text)
+                pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text, 1)
 
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
