@@ -6,9 +6,9 @@ import re
 import os
 from django.utils.translation import ugettext as _
 from entries.models import Language
-from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextMeta, TextTranslation, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
-import json
+import datetime
 
 
 FORMATS = {
@@ -405,3 +405,73 @@ def parse_tmx(filename, tmdb_name, project, request):
         pass
 
     return {'error': error_code, 'message': error_message, 'result': result}
+
+def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
+    text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
+    current_tmdbs = text_translation.tmdatabases.split(",")
+    try:
+        tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
+    except:
+        pair = "%s-%s" % (source_lang.code, target_lang.code)
+        new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
+                      owner=request.user,
+                      projects=str(project.id),
+                      source_lang=source_lang,
+                      target_lang=target_lang
+                      )
+        new_tmdb.save()
+
+        if not str(new_tmdb.id) in current_tmdbs:
+            current_tmdbs.append(str(new_tmdb.id))
+            text_translation.tmdatabases = ",".join(current_tmdbs)
+            text_translation.save()
+
+        tmdb_to_write = TextMeta(text=text, meta_type="tmdb_to_write", meta_data=str(new_tmdb.id))
+        tmdb_to_write.save()
+    tmdbs = tmdb_to_write.meta_data.split(",")
+
+    if not tmdbs:
+        pair = "%s-%s" % (source_lang.code, target_lang.code)
+        new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
+                      owner=request.user,
+                      projects=str(project.id),
+                      source_lang=source_lang,
+                      target_lang=target_lang
+                      )
+        new_tmdb.save()
+
+        tmdbs = [new_tmdb.id]
+        tmdb_to_write.meta_data = str(new_tmdb.id)
+        tmdb_to_write.save()
+
+    for tmdb in tmdbs:
+        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb),
+                                                 orig_lang=source_lang,
+                                                 orig_text=source_text,
+                                                 target_lang=target_lang,
+                                                 target_text=target_text,
+                                                 target_author=request.user.username,
+                                                 target_created=datetime.datetime.now(),
+                                                 target_editor=None,
+                                                 target_edited=None,
+                                                 )
+        new_tmdb_entry.save()
+
+        from elasticsearch import Elasticsearch
+        es = Elasticsearch(settings.ELASTIC_LIST)
+
+        doc = {
+            'db_id': new_tmdb_entry.id,
+            source_lang.code: source_text,
+            target_lang.code: target_text,
+        }
+
+        res = es.index(
+            index=tmdb,
+            doc_type='tmx1',
+            body=doc
+        )
+
+        print "ELASTICSEARCH: ", res['created']
+
+        return True
