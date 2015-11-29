@@ -115,5 +115,7 @@ Vagrant.configure(2) do |config|
     mysql -uroot -p123 -e "GRANT ALL PRIVILEGES ON * . * TO 'vagrant'@'%' WITH GRANT OPTION;"
     mysql -e "CREATE DATABASE tolmach CHARACTER SET utf8;"
     mysql tolmach < tolmach_alfa.sql
+    cd /var/www/chtec
+    pip install -r requirements.txt
   SHELL
 end

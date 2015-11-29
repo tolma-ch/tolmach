@@ -31,7 +31,8 @@
                      ng-repeat="entry in entries"
                      id="entry-{= entry.idInText =}"
                      ng-class="{'translation__sentence-translation_state_closed': $parent.activeEntry !== entry,
-                                'translation__sentence-translation_state_approved': entry.approved}">
+                                'translation__sentence-translation_state_approved': entry.approved,
+                                'translation__sentence-translation_state_editing': entry.mode === 1 && ($parent.activeEntry === entry)}">
 
                     <div class="translation__sentence-translation-original">
                         <span html-content="entry.body"></span>
@@ -71,16 +72,18 @@
                                           ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
                                           ng-keypress="textareaKeypress($event, entry)"></textarea>
 
-                                <!--<div contenteditable="true"-->
-                                     <!--id="entry-suggestion-{= entry.id =}"-->
-                                     <!--name="translation-suggestion"-->
-                                     <!--class="translation__sentence-suggestion-input"-->
-                                     <!--placeholder="{{ your_translation }}"-->
-                                     <!--data-insert-text=""-->
-                                     <!--ng-model="entry.suggestion"-->
-                                     <!--ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"-->
-                                     <!--ng-keypress="textareaKeypress($event, entry)">-->
-                                <!--</div>-->
+                                <div contenteditable="true"
+                                     id="entry-suggestion-{= entry.id =}"
+                                     name="translation-suggestion"
+                                     class="translation__sentence-suggestion-input"
+                                     placeholder="{{ your_translation }}"
+                                     data-insert-text=""
+                                     ng-model="entry.suggestion"
+                                     ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                                     ng-blur="textareaBlur($event, entry)"
+                                     ng-keypress="textareaKeypress($event, entry)"
+                                     ng-keydown="textareaKeydown($event, entry)">
+                                </div>
 
                                 <div class="translation__sentence-machine-suggestions">
                                     <div ng-show="entry.tmdbVariants.length">
@@ -107,7 +110,8 @@
                                             <li class="translation__sentence-machine-suggestions-item"
                                                 ng-repeat="machine in entry.yaMachines"
                                                 ng-click="addMachineSuggestion(entry, machine)">
-                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}&nbsp;&nbsp;&nbsp;<img src="/static/img/yandex_logo.svg"> </span>
+                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
+                                                <span class="translation__sentence-machine-logo"><img src="/static/img/yandex_logo.svg"></span>
                                             </li>
                                         </ul>
                                     </div>
@@ -122,7 +126,7 @@
                             </form>
                         </div>
 
-                        <div class="translation__sentence-suggestion" ng-show="!entry.translations.length">
+                        <div class="translation__sentence-suggestion" ng-show="!entry.translations.length && (entry.mode !== 1)">
                             {% trans 'No translations' %}
                         </div>
 
