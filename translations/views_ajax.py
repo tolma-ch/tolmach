@@ -426,13 +426,15 @@ def glossary_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            glossaries = Glossary.objects.filter(project=project).all()
+            project_owner = project.manager
+            glossaries = Glossary.objects.filter(owner=project_owner).all()
             result = []
             for glossary in glossaries:
-                result.append({
-                    'id': glossary.id,
-                    'name': glossary.name
-                })
+                if str(project.id) in glossary.projects.split(","):
+                    result.append({
+                        'id': glossary.id,
+                        'name': glossary.name
+                    })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -479,7 +481,7 @@ def glossary_ajax(request, project):
         else:
             glossary = Glossary(name=glossary_name,
                                 owner=request.user,
-                                project=project)
+                                projects=str(project.id))
             glossary.save()
         for pair in pairs_array:
             # print pair
@@ -548,13 +550,15 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            tmxes = TMDatabase.objects.filter(project=project).all()
+            project_owner = project.manager
+            tmxes = TMDatabase.objects.filter(owner=project_owner).all()
             result = []
             for tmx in tmxes:
-                result.append({
-                    'id': tmx.id,
-                    'name': tmx.name
-                })
+                if str(project.id) in tmx.projects.split(","):
+                    result.append({
+                        'id': tmx.id,
+                        'name': tmx.name
+                    })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -589,200 +593,14 @@ def tmx_ajax(request, project):
             for chunk in f.chunks():
                 fd.write(chunk)
 
-        from lxml import etree
-
-        # учитываем различия в аттрибутах языка в разных версиях спеки TMX
-        lang_11 = "lang"
-        lang_14 = "{http://www.w3.org/XML/1998/namespace}lang"
-
-        result = []
-        try:
-            with open(filename) as source:
-                context = etree.iterparse(source, events=('end',), tag='tu')
-
-                # проверяем TMX на бардак и мультиязычность
-                lang_pairs = []
-
-                # Получаем список языковых пар в tmx'е
-                for event, elem in context:
-                    tuv = elem.findall('tuv')
-                    try:
-                        source_lang = tuv[0].attrib[lang_14].lower()
-                        target_lang = tuv[1].attrib[lang_14].lower()
-                    except KeyError:
-                        source_lang = tuv[0].attrib[lang_11].lower()
-                        target_lang = tuv[1].attrib[lang_11].lower()
-
-                    # TODO: Обрабатывать обратные пары как прямые
-                    if not "%s-%s" % (source_lang, target_lang) in lang_pairs:
-                        lang_pairs.append("%s-%s" % (source_lang, target_lang))
-                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
-                    elem.clear()
-
-                    # Удалите пустые ссылки из корневого узла в <Title>
-                    while elem.getprevious() is not None:
-                        del elem.getparent()[0]
-
-                print lang_pairs
-
-                tmdb_names = {}
-                # Если языковых пар больше одной, то создаём базы памяти для каждой из них
-                # К названию базы памяти тогда добавляется суффикс "[<sl>-<tl>]" где sl и tl -
-                # - код исходного языка и целевого языка в двухбуквенном коде соответственно
-                if len(lang_pairs) > 1:
-                    for pair in lang_pairs:
-                        source_lang_name = pair.split("-")[0]
-                        target_lang_name = pair.split("-")[1]
-                        try:
-                            source_lang_obj = Language.objects.get(code=source_lang_name)
-                        except Language.DoesNotExist:
-                            print 'This source language is not supported yet'
-                            return HttpResponse(json.dumps(_('This source language is not supported yet')),
-                                                content_type="application/json",
-                                                status=400)
-
-                        try:
-                            target_lang_obj = Language.objects.get(code=target_lang_name)
-                        except Language.DoesNotExist:
-                            print 'This target language is not supported yet'
-                            return HttpResponse(json.dumps(_('This target language is not supported yet')),
-                                                content_type="application/json",
-                                                status=400)
-                        new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
-                                              owner=request.user,
-                                              project=project,
-                                              source_lang=source_lang_obj,
-                                              target_lang=target_lang_obj
-                                              )
-                        new_tmdb.save()
-                        result.append({
-                            'id': new_tmdb.id,
-                            'name': new_tmdb.name,
-                        })
-                        # Записываем соответствия языковых пар и ID'шников свежесозданных баз памяти в словарь
-                        tmdb_names[pair] = new_tmdb.id
-                # Если же языковая пара всего одна, то забиваем и создаём одну базу памяти
-                else:
-                    source_lang_name = lang_pairs[0].split("-")[0]
-                    target_lang_name = lang_pairs[0].split("-")[1]
-                    try:
-                        source_lang_obj = Language.objects.get(code=source_lang_name)
-                    except Language.DoesNotExist:
-                        print 'This source language is not supported yet'
-                        return HttpResponse(json.dumps(_('This source language is not supported yet')),
-                                            content_type="application/json",
-                                            status=400)
-
-                    try:
-                        target_lang_obj = Language.objects.get(code=target_lang_name)
-                    except Language.DoesNotExist:
-                        print 'This target language is not supported yet'
-                        return HttpResponse(json.dumps(_('This target language is not supported yet')),
-                                            content_type="application/json",
-                                            status=400)
-
-                    new_tmdb = TMDatabase(name=tmdb_name,
-                                          owner=request.user,
-                                          project=project,
-                                          source_lang=source_lang_obj,
-                                          target_lang=target_lang_obj
-                                          )
-                    new_tmdb.save()
-                    result.append({
-                        'id': new_tmdb.id,
-                        'name': new_tmdb.name,
-                    })
-                    tmdb_names[lang_pairs[0]] = new_tmdb.id
-
-            with open(filename) as source:
-                from elasticsearch import Elasticsearch
-                es = Elasticsearch(settings.ELASTIC_LIST)
-                elastic_id = 1
-                # парсим файлик и записываем пары предложений в соответствующую базу памяти
-                parse_context = etree.iterparse(source, events=('end',), tag='tu')
-                for event, elem in parse_context:
-                    tuv = elem.findall('tuv')
-                    try:
-                        source_lang = tuv[0].attrib[lang_14].lower()
-                        target_lang = tuv[1].attrib[lang_14].lower()
-                    except KeyError:
-                        source_lang = tuv[0].attrib[lang_11].lower()
-                        target_lang = tuv[1].attrib[lang_11].lower()
-
-                    lang_pair = "%s-%s" % (source_lang, target_lang)
-                    print lang_pair
-
-                    source_text = tuv[0].find('seg').text
-                    target_text = tuv[1].find('seg').text
-
-                    # print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
-                    # print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
-
-                    try:
-                        target_author = tuv[1].attrib["creationid"]
-                    except KeyError:
-                        target_author = None
-
-                    from datetime import datetime
-                    try:
-                        target_created = datetime.strptime(tuv[1].attrib["creationdate"], "%Y%m%dT%H%M%SZ")
-                    except KeyError:
-                        target_created = None
-
-                    try:
-                        target_editor = tuv[1].attrib["changeid"]
-                    except KeyError:
-                        target_editor = None
-
-                    try:
-                        target_edited = datetime.strptime(tuv[1].attrib["changedate"], "%Y%m%dT%H%M%SZ")
-                    except KeyError:
-                        target_edited = None
-                    if target_created == target_edited:
-                        target_edited = None
-                        target_editor = None
-
-                    # print "Target creator: %s" % target_author if target_author else "Target creator:"
-                    # print "Tagret created: %s" % target_created if target_created else "Tagret created:"
-                    # print "Target editor: %s" % target_editor if target_editor else "Target editor:"
-                    # print "Target edited: %s" % target_edited if target_edited else "Target edited:"
-
-                    new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
-                                                     orig_lang=source_lang.lower(),
-                                                     orig_text=source_text,
-                                                     target_lang=target_lang.lower(),
-                                                     target_text=target_text,
-                                                     target_author=target_author,
-                                                     target_created=target_created,
-                                                     target_editor=target_editor,
-                                                     target_edited=target_edited,
-                                                     )
-                    new_tmdb_entry.save()
-
-                    # doc = {
-                    #     'db_id': new_tmdb_entry.id,
-                    #     'source_lang': source_text,
-                    #     'target_lang': target_text,
-                    # }
-                    #
-                    # res = es.index(
-                    #     index=tmdb_names[lang_pair],
-                    #     doc_type='tmx1',
-                    #     id=elastic_id,
-                    #     body=doc
-                    # )
-                    #
-                    # print "ELASTICSEARCH: ", res['created']
-
-                    elastic_id += 1
-                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
-                    elem.clear()
-
-                    # Удалите пустые ссылки из корневого узла в <Title>
-                    while elem.getprevious() is not None:
-                        del elem.getparent()[0]
-        except etree.XMLSyntaxError:
-            pass
+        parse_result = utils.parse_tmx(filename, tmdb_name, project, request)
+        if not parse_result['error'] == 0:
+            return HttpResponse(json.dumps(parse_result['message'],
+                                         content_type="application/json",
+                                         status=parse_result['error']
+                                           )
+                                )
+        result = parse_result['result']
 
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
