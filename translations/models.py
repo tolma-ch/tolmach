@@ -224,7 +224,8 @@ class TextForm(ModelForm):
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
-    project = models.ForeignKey('translations.Project', related_name='glossaries')
+    is_private = models.BooleanField(default=True)
+    projects = models.TextField(default="")
 
     def __unicode__(self):
         return unicode(self.name)
@@ -239,7 +240,8 @@ class GlossaryEntry(models.Model):
 class TMDatabase(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
-    project = models.ForeignKey('translations.Project', related_name='tmxdatabases')
+    is_private = models.BooleanField(default=True)
+    projects = models.TextField(default="")
     source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
     target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
 
