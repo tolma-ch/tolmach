@@ -26,7 +26,7 @@ class GlossaryInLine(admin.StackedInline):
 
 
 class GlossaryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'project', 'owner')
+    list_display = ('name', 'projects', 'owner')
     inlines = [GlossaryInLine]
 
 
