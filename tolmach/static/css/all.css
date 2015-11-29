@@ -1883,6 +1883,16 @@ a.user-sidebar__profile-line-data:hover {
   width: 90%;
   vertical-align: middle;
 }
+.translation__sentence-machine-logo {
+  display: block;
+  width: 42px;
+  height: 17px;
+  text-align: right;
+  margin-top: -9px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+}
 .translation__sentence-machine-suggestions-relevance {
   display: block;
   width: 30px;
@@ -1925,35 +1935,47 @@ a.user-sidebar__profile-line-data:hover {
   background: #e1ffa2;
   cursor: pointer;
 }
-tag-left {
-  display: inline-block;
-  background: #c9ea6f;
-  -webkit-border-radius: 10px 0 0 10px;
-  -moz-border-radius: 10px 0 0 10px;
-  border-radius: 10px 0 0 10px;
-  font-size: 0.8em;
-  top: -3px;
-  position: relative;
-  padding: 0 2px 0 5px;
-  color: #055a15;
-  text-shadow: 1px 1px 0px #fff;
-}
-tag-right {
-  display: inline-block;
-  background: #c9ea6f;
-  -webkit-border-radius: 0 10px 10px 0;
-  -moz-border-radius: 0 10px 10px 0;
-  border-radius: 0 10px 10px 0;
-  font-size: 0.8em;
-  top: -3px;
-  position: relative;
-  padding: 0 5px 0 2px;
-  color: #055a15;
-  text-shadow: 1px 1px 0px #fff;
-}
 [contenteditable] {
   background: #fff;
   overflow: auto;
+}
+.tag-left,
+.tag-right,
+hr[i] {
+  position: relative;
+  top: -0.1em;
+  display: none;
+  background: #c9ea6f;
+  font-size: 0.7em;
+  color: #055a15;
+  text-shadow: 1px 1px 0 #fff;
+  height: auto;
+  margin: 0;
+  text-decoration: none;
+}
+.tag-left:before,
+.tag-right:before,
+hr[i]:before {
+  content: attr(i);
+}
+.tag-left,
+hr[l] {
+  -webkit-border-radius: 10px 0 0 10px;
+  -moz-border-radius: 10px 0 0 10px;
+  border-radius: 10px 0 0 10px;
+  padding: 0 1px 0 3px;
+}
+.tag-right,
+hr[r] {
+  -webkit-border-radius: 0 10px 10px 0;
+  -moz-border-radius: 0 10px 10px 0;
+  border-radius: 0 10px 10px 0;
+  padding: 0 3px 0 1px;
+}
+.translation__sentence-translation_state_editing .tag-left,
+.translation__sentence-translation_state_editing .tag-right,
+.translation__sentence-translation_state_editing hr[i] {
+  display: inline-block;
 }
 .translation-popup {
   position: absolute;
