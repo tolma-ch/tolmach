@@ -11,6 +11,8 @@
 {% trans 'Machine translations' as mtranslations %}
 {% trans 'Translation memory variants' as tmtranslations %}
 {% trans 'Add' as add_translation %}
+{% trans 'Save' as save_translation %}
+{% trans 'Remove' as remove_translation %}
 {% trans 'Cancel' as cancel_translation %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
@@ -64,14 +66,6 @@
                         <div class="translation__sentence-commitance"
                              ng-show="entry.mode === 1">
                             <form>
-                                <textarea name="translation-suggestion"
-                                          class="translation__sentence-suggestion-input"
-                                          placeholder="{{ your_translation }}"
-                                          data-insert-text=""
-                                          ng-model="entry.suggestion"
-                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
-                                          ng-keypress="textareaKeypress($event, entry)"></textarea>
-
                                 <div contenteditable="true"
                                      id="entry-suggestion-{= entry.id =}"
                                      name="translation-suggestion"
@@ -118,7 +112,10 @@
                                 </div>
 
                                 <button type="submit" class="translation__sentence-commit"
-                                        ng-click="suggestTranslation(entry)">{{ add_translation }}</button>
+                                        ng-click="suggestTranslation(entry)">
+                                    <span ng-show="!entry.suggestionId">{{ add_translation }}</span>
+                                    <span ng-show="entry.suggestionId">{{ save_translation }}</span>
+                                </button>
 
                                 <button type="submit" class="translation__sentence-commit"
                                         ng-show="entry.translations.length"
@@ -137,7 +134,7 @@
                                 'translation__sentence-suggestion_state_approved': translation.isApproved
                              }">
                             <div class="translation__sentence-suggestion-text">
-                                {= translation.body =}
+                                {= clearTags(translation.body) =}
                             </div>
                             <div class="translation__sentence-suggestion-author">
                                 <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
