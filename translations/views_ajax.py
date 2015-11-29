@@ -612,14 +612,27 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('TMX not found')), content_type="application/json", status=400)
         if not tmx.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
-        project = Project.objects.get(id=tmx.project.id)
-        project_texts_list = Text.objects.filter(project=project)
-        for text in project_texts_list:
-            tmdb_list = text.tmdatabases.split(',')
-            if str(tmx.id) in tmdb_list:
-                tmdb_list.remove(str(tmx.id))
-                text.tmdatabases = ','.join(tmdb_list)
-                text.save()
+        for project in tmx.projects.split(","):
+            project_texts_list = Text.objects.filter(project=project)
+            for text in project_texts_list:
+                try:
+                    text_translation = TextTranslation.objects.get(text=text, target_lang=tmx.target_lang)
+                except:
+                    continue
+                tmdb_list = text_translation.tmdatabases.split(',')
+                if str(tmx.id) in tmdb_list:
+                    tmdb_list.remove(str(tmx.id))
+                    text_translation.tmdatabases = ','.join(tmdb_list)
+                    text_translation.save()
+                try:
+                    text_meta = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
+                    tmdbs_to_write = json.loads(text_meta.meta_data)
+                    if tmx.id in tmdbs_to_write:
+                        tmdbs_to_write.remove(tmx.id)
+                    text_meta.meta_data = json.dumps(tmdbs_to_write)
+                    text_meta.save()
+                except TextMeta.DoesNotExist:
+                    pass
         tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -767,6 +780,11 @@ def translate_entry_ajax(request):
                                                                  is_approved=True)
                 except TextEntry.DoesNotExist:
                     set_approved = True
+
+            utils.add_pair_to_tmx(request, text, project,
+                                  source_text=entry.body, target_text=post['text'],
+                                  source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                  )
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
