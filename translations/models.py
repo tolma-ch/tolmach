@@ -90,6 +90,8 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return unicode(self.title)
