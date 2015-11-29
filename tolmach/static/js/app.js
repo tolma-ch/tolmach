@@ -328,7 +328,7 @@
                     data = {
                         id: entry.id,
                         text: entry.suggestion,
-                        target_lang: window['translationTargetLang'],
+                        target_lang: window['translationTargetLang']
                     };
                 if (suggestionId) {
                     data['translation_id'] = suggestionId;
@@ -414,6 +414,14 @@
                         }
                     }
                 }
+            };
+            $scope.textareaKeydown = function (event, entry) {
+                $timeout(function () {
+                    fixTags($('#entry-suggestion-' + entry.id)[0]);
+                },0);
+            };
+            $scope.textareaBlur = function (event, entry) {
+                fixTags($('#entry-suggestion-' + entry.id)[0]);
             };
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
@@ -704,7 +712,156 @@
                         };
                         $scope.$parent.showTranslatePopup = results.length > 0;
                     })
+                };
+            $scope.$watch('activeEntry.suggestion', function () {
+                if ($scope.activeEntry) {
+                    //fixTags($('#entry-suggestion-' + $scope.activeEntry.id)[0]);
                 }
+            });
+            var fixTags = function (element) {
+                console.log('fix');
+                var nodes = [],
+                    state,
+                    i;
+                angular.forEach(element.childNodes, function (node) {
+                    nodes.push(node);
+                });
+                for (i = 0; i < nodes.length; i++) {
+                    var node = nodes[i],
+                        j,
+                        index,
+                        type;
+                    if (node.tagName === 'HR') {
+                        for (j = 0; j < node.attributes.length; j++) {
+                            var attribute = node.attributes[j];
+                            if (attribute.name === 'l') {
+                                type = 'l';
+                            }
+                            if (attribute.name === 'r') {
+                                type = 'r';
+                            }
+                            if (attribute.name === 's') {
+                                type = 's';
+                            }
+                            if (attribute.name === 'i') {
+                                index = attribute.value;
+                            }
+                        }
+                        if (type && index) { // если это таки тег как надо
+                            if (type === 's') {
+                                // сингл-тег можем вставлять куда угодно
+                            } else {
+                                if (state) { // если у нас уже отрыт тег
+                                    if (index === state && type === 'r') { // если закрывается открытый тег
+                                        state = false; // всё ок, выходим из состояния
+                                    } else {
+                                        // пришёл вовсе не тот тег, который ждали
+                                        if (type === 'l') { // пришёл открывающий
+                                            if (state === index) {
+                                                // попытка открыть тег, который уже открыт - удалаем
+                                                element.removeChild(node);
+                                            } else {
+                                                // пришёл новый открывающий, закроем сначала предыдущий
+                                                element.insertBefore(angular.element('<hr r i="' + state + '">')[0], node);
+                                            }
+                                            state = index;
+                                        } else { // пришёл закрывающий, но не тот
+                                            // удалим
+                                            element.removeChild(node);
+                                        }
+                                    }
+                                } else {
+                                    if (type === 'l') {
+                                        // всё тип-топ, мы открываем новый тег
+                                        state = index;
+                                    } else {
+                                        // ну как так-то? мы ничего не открывали, а пришёл закрывающий тег - удаляем
+                                        element.removeChild(node);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (state) { // если у нас ещё отрыт тег
+                    element.appendChild(angular.element('<hr r i="' + state + '">')[0], node);
+                }
+            };
+            $scope.$on('tagClick', function (event, index) {
+                if (!$scope.activeEntry) {
+                    return;
+                }
+                var element = $('#entry-suggestion-' + $scope.activeEntry.id)[0],
+                    doc = element.ownerDocument || element.document,
+                    win = doc.defaultView || doc.parentWindow,
+                    sel,
+                    nodes = [];
+                angular.forEach(element.childNodes, function (node) {
+                    nodes.push(node);
+                });
+
+                if (typeof win.getSelection != "undefined") {
+                    sel = win.getSelection();
+                    if (sel.rangeCount > 0) {
+                        var range = win.getSelection().getRangeAt(0);
+                        while (nodes.length) {
+                            var node = nodes.shift();
+                            var text = node.textContent,
+                                newNodes = [];
+                            if (range.startContainer === node) {
+                                if (range.startOffset > 0) {
+                                    newNodes.push(new Text(text.substr(0, range.startOffset)));
+                                }
+                                newNodes.push(angular.element('<hr l i="'+index+'">')[0]);
+                                if (range.endContainer === node) {
+                                    if (range.endOffset > range.startOffset) {
+                                        newNodes.push(new Text(text.substr(range.startOffset, range.endOffset - range.startOffset)));
+                                    }
+                                    newNodes.push(angular.element('<hr r i="'+index+'">')[0]);
+                                    if (range.endOffset < text.length) {
+                                        newNodes.push(new Text(text.substr(range.endOffset)));
+                                    }
+                                } else {
+                                    if (range.startOffset < text.length) {
+                                        newNodes.push(new Text(text.substr(range.startOffset)));
+                                    }
+                                }
+                            } else if (range.endContainer === node) {
+                                if (range.endOffset > 0) {
+                                    newNodes.push(new Text(text.substr(0, range.endOffset)));
+                                }
+                                newNodes.push(angular.element('<hr r i="'+index+'">')[0]);
+                                if (range.endOffset < text.length) {
+                                    newNodes.push(new Text(text.substr(range.endOffset)));
+                                }
+                            }
+                            if (newNodes.length) {
+                                var nextNode = node.nextSibling;
+                                element.replaceChild(newNodes.shift(), node);
+                                angular.forEach(newNodes, function (node) {
+                                    if (nextNode) {
+                                        element.insertBefore(node, nextNode);
+                                    } else {
+                                        element.appendChild(node);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    sel.removeAllRanges();
+                } else if ( (sel = doc.selection) && sel.type != "Control") {
+                    document.selection.empty();
+                    //var textRange = sel.createRange();
+                    //var preCaretTextRange = doc.body.createTextRange();
+                    //preCaretTextRange.moveToElementText(element);
+                    //preCaretTextRange.setEndPoint("EndToEnd", textRange);
+                    //endOffset = preCaretTextRange.text.length;
+                }
+                fixTags(element);
+                $scope.$apply(function () {
+                    $scope.activeEntry.suggestion = element.innerHTML;
+                })
+            });
         })
 
         .controller('projectsCtrl', function ($scope, $modal) {
@@ -1559,8 +1716,16 @@
                     i: "="
                 },
                 link: function (scope, element, attr) {
-                    element.prepend(angular.element('<tag-left>' + scope.i + '</tag-left>'));
-                    element.append(angular.element('<tag-right>' + scope.i + '</tag-right>'));
+                     var leftTag = angular.element('<a href="#" class="tag-left" i="' + scope.i + '">'),
+                        rightTag = angular.element('<a href="#" class="tag-right" i="' + scope.i + '">'),
+                        clickTrigger = function () {
+                            scope.$emit('tagClick', scope.i);
+                        };
+                    leftTag.on("click", clickTrigger);
+                    rightTag.on("click", clickTrigger);
+                    element.prepend(leftTag);
+
+                    element.append(rightTag);
                 }
             };
         });
