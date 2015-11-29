@@ -185,7 +185,7 @@
                 },
                 textId = window['textId'],
                 getYaMachines = function (entry) {
-                    $http.post('/api/ya-translate/', {lang_pair: $scope.langPair, entry_body: entry['rawBody']}).success(function (data) {
+                    $http.post('/api/ya-translate/', {lang_pair: $scope.langPair, entry_body: clearTags(entry['rawBody'])}).success(function (data) {
                         entry.yaMachines = [{
                             text: data
                         }];
@@ -200,6 +200,7 @@
                         //console.error(a);
                     });
                 };
+            $scope.clearTags = clearTags;
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.userIsManager = false;
