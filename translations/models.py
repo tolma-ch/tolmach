@@ -90,6 +90,8 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -224,7 +226,8 @@ class TextForm(ModelForm):
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
-    project = models.ForeignKey('translations.Project', related_name='glossaries')
+    is_private = models.BooleanField(default=True)
+    projects = models.TextField(default="")
 
     def __unicode__(self):
         return unicode(self.name)
@@ -239,7 +242,8 @@ class GlossaryEntry(models.Model):
 class TMDatabase(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User')
-    project = models.ForeignKey('translations.Project', related_name='tmxdatabases')
+    is_private = models.BooleanField(default=True)
+    projects = models.TextField(default="")
     source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
     target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
 
