@@ -942,11 +942,19 @@ def translate_entry_ajax(request):
                 return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
             entry_translation.body = post['text']
         else:
+            set_approved = False
+            if project.members == "":
+                try:
+                    approved_translation = TextEntry.objects.get(parent_entry=entry,
+                                                                 is_approved=True)
+                except TextEntry.DoesNotExist:
+                    set_approved = True
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
                                           author=request.user,
-                                          translation=text_translation)
+                                          translation=text_translation,
+                                          is_approved=set_approved)
         entry_translation.save()
         from django.utils import timezone
 
