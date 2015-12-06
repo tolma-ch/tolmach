@@ -1,0 +1,615 @@
+(function () {
+    'use strict';
+
+    var module = angular.module('projectControllers', []);
+
+    module.controller('projectCtrl', ['$scope', '$modal', '$http',
+        function ($scope, $modal, $http) {
+            $scope.project = window['project'];
+            $scope.projectId = window['projectId'];
+            $scope.isUserManager = window['isUserManager'];
+            $scope.languages = window['languages'];
+            $scope.participants = [];
+            $http.get('/api/participant', {params: {project: $scope.projectId}})
+                .then(function (response) {
+                    $scope.participants = response.data;
+                });
+            $scope.texts = [];
+            $http.get('/api/text', {params: {project: $scope.projectId}})
+                .then(function (response) {
+                    $scope.texts = response.data;
+                });
+            $scope.glossaries = [];
+            $http.get('/api/glossary', {params: {project: $scope.projectId}})
+                .then(function (response) {
+                    $scope.glossaries = response.data;
+                });
+            $http.get('/api/tmx', {params: {project: $scope.projectId}})
+                .then(function (response) {
+                    $scope.tmxes = response.data;
+                });
+            $scope.addParticipant = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addParticipantModal.html',
+                    controller: 'AddParticipantModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {}
+                });
+
+                modalInstance.result.then(function (participant) {
+                    $scope.participants.push(participant);
+                }, function () {
+                });
+            };
+            $scope.removeParticipant = function (participant) {
+                var data = {
+                    'project': window['projectId'],
+                    'user': participant.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/participant/', {params: data})
+                    .success(function () {
+                        var i = $scope.participants.indexOf(participant);
+                        if (i > -1) {
+                            delete $scope.participants.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.addText = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addTextModal.html',
+                    controller: 'AddTextModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {}
+                });
+
+                modalInstance.result.then(function (text) {
+                    $scope.texts.push(text);
+                }, function () {
+                });
+            };
+            $scope.editText = function (text) {
+                if (!$scope.isUserManager) {
+                    return;
+                }
+                var modalInstance = $modal.open({
+                    templateUrl: 'editTextModal.html',
+                    controller: 'EditTextModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        text: function () {
+                            return text;
+                        },
+                        glossaries: function () {
+                            return $scope.glossaries;
+                        },
+                        tmxes: function () {
+                            return $scope.tmxes;
+                        },
+                        languages: function () {
+                            return $scope.languages;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (res) {
+                    if (res === 'removed') {
+                        var i = $scope.texts.indexOf(text);
+                        if (i > -1) {
+                            delete $scope.texts.splice(i, 1);
+                        }
+                    }
+                }, function () {
+                });
+            };
+            $scope.removeText = function (text) {
+                var data = {
+                    'project': window['projectId'],
+                    'text': text.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/text/', {params: data})
+                    .success(function () {
+                        var i = $scope.texts.indexOf(text);
+                        if (i > -1) {
+                            delete $scope.texts.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.addGlossary = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addGlossaryModal.html',
+                    controller: 'AddGlossaryModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        glossary: function () {
+                            return false;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (glossary) {
+                    $scope.glossaries.push(glossary);
+                }, function (data) {
+                });
+            };
+            $scope.addTmx = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addTmxModal.html',
+                    controller: 'AddTmxModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        tmx: function () {
+                            return false;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (tmxes) {
+                    if (angular.isArray($scope.tmxes)) {
+                        $scope.tmxes = $scope.tmxes.concat(tmxes);
+                    } else {
+                        $scope.tmxes = tmxes;
+                    }
+
+                }, function (data) {
+                });
+            };
+            $scope.editGlossary = function (glossary) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addGlossaryModal.html',
+                    controller: 'AddGlossaryModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        glossary: function () {
+                            return glossary;
+                        }
+                    }
+                });
+                $http.get('/api/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
+                    .then(function (response) {
+                        glossary.rows = response.data.rows;
+                        var lastRow = glossary.rows[glossary.rows.length - 1];
+                        if (lastRow[0] && lastRow[1]) {
+                            glossary.rows.push(['', ''])
+                        }
+                    });
+
+                modalInstance.result.then(function (glossary) {
+                }, function (data) {
+                });
+            };
+            $scope.removeGlossary = function (glossary) {
+                var data = {
+                    'project': window['projectId'],
+                    'glossary': glossary.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/glossary/', {params: data})
+                    .success(function () {
+                        var i = $scope.glossaries.indexOf(glossary);
+                        if (i > -1) {
+                            delete $scope.glossaries.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.removeTmx = function (tmx) {
+                var data = {
+                    'project': window['projectId'],
+                    'tmx': tmx.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/tmx/', {params: data})
+                    .success(function () {
+                        var i = $scope.tmxes.indexOf(tmx);
+                        if (i > -1) {
+                            delete $scope.tmxes.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.closePopover = function () {
+                $('.popover').remove();
+            };
+
+            $scope.editName = function () {
+                $scope.projectName = $scope.project.name;
+                $scope.editingName = true;
+            };
+            $scope.saveName = function () {
+                $scope.editingName = false;
+                $scope.project.name = $scope.projectName;
+                $http.post('/api/project/', {
+                        'id': $scope.project.id,
+                        'name': $scope.project.name
+                    })
+                    .success(function (data) {
+                    })
+                    .error(function (data) {
+                    });
+            };
+            $scope.cancelEditName = function () {
+                $scope.editingName = false;
+            };
+            $scope.editDescription = function () {
+                $scope.editingDescription = true;
+                $scope.projectDescription = $scope.project.description
+            };
+            $scope.saveDescription = function () {
+                $scope.project.description = $scope.projectDescription;
+                $scope.editingDescription = false;
+                $http.post('/api/project/', {
+                        'id': $scope.project.id,
+                        'description': $scope.project.description
+                    })
+                    .success(function (data) {
+                    })
+                    .error(function (data) {
+                    });
+            };
+            $scope.cancelEditDescription = function () {
+                $scope.editingDescription = false;
+            };
+
+            $scope.removeProject = function (project) {
+                $scope.busy = true;
+                $http.delete('/api/project/', {params: {id: project.id}})
+                    .success(function () {
+                        $scope.busy = false;
+                        location.href = '/projects/';
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            }
+        }
+    ]);
+
+    module.controller('AddParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
+        function ($scope, $modalInstance, $http) {
+            $scope.getUsers = function (query) {
+                return $http.get('/api/get-users', {params: {q: query}})
+                    .then(function (response) {
+                        return response.data;
+                    });
+            };
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'user': $scope.user.id
+                };
+                $scope.busy = true;
+                $http.post('/api/participant/', data)
+                    .success(function (participant) {
+                        $modalInstance.close(participant);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
+        function ($scope, $modalInstance, $http, Upload) {
+            $scope.text = {
+                subject: 1
+            };
+            $scope.tab = 0;
+            $scope.$watch('text.files', function (value) {
+                if (!$scope.text.title && angular.isArray(value) && value.length) {
+                    $scope.text.title = value[0].name;
+                }
+            });
+            $scope.ok = function () {
+                if (!$scope.text.title) {
+                    $scope.error = 'Where is the title?';
+                    return;
+                }
+                if (!$scope.text.subject) {
+                    $scope.error = 'Subject is lost';
+                    return;
+                }
+                if (!$scope.text.sourceLang) {
+                    $scope.error = 'Langauges is not set?';
+                    return;
+                }
+                $scope.error = '';
+                var data = {
+                    project: window['projectId'],
+                    title: $scope.text.title,
+                    subject: $scope.text.subject,
+                    sourceLang: $scope.text.sourceLang,
+                    targetLang: $scope.text.targetLang
+                };
+                if ($scope.tab === 0) {
+                    if (!$scope.text.files || !$scope.text.files.length) {
+                        $scope.error = 'Please, select a file';
+                        return;
+                    }
+                    Upload.upload({
+                            url: '/api/text/',
+                            fields: data,
+                            file: $scope.text.files[0]
+                        })
+                        .progress(function (evt) {
+                        })
+                        .success(function (text) {
+                            $modalInstance.close(text);
+                            $scope.busy = false;
+                        })
+                        .error(function (data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                } else {
+                    if (!$scope.text.textBody) {
+                        $scope.error = 'Empty text';
+                        return;
+                    }
+                    data.textBody = $scope.text.textBody;
+                    $scope.busy = true;
+                    $http.post('/api/text/', data)
+                        .success(function (text) {
+                            $modalInstance.close(text);
+                            $scope.busy = false;
+                        })
+                        .error(function (data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                }
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text', 'glossaries', 'tmxes', 'languages',
+        function ($scope, $modalInstance, $http, text, glossaries, tmxes, languages) {
+            $scope.text = text;
+            $scope.options = {};
+            if ($scope.text.translations.length) {
+                $scope.options.currentTranslation = $scope.text.translations[0];
+            } else {
+                $scope.options.currentTranslation = null;
+            }
+            $scope.options.addNewTranslation = false;
+            $scope.glossaries = glossaries;
+            $scope.tmxes = tmxes;
+            $scope.tab = 0;
+            $scope.addTranslation = function (targetLang) {
+                if (!targetLang) {
+                    return;
+                }
+                $scope.text.translations.push({
+                    targetLangId: targetLang.id,
+                    lang: targetLang.code,
+                    langFull: targetLang.langFull,
+                    langLocal: targetLang.langLocal
+                });
+                $scope.options.NewTranslationTargetLang = null;
+                $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
+                $scope.options.addNewTranslation = false;
+            };
+            $scope.getLanguages = function () {
+                var result = [],
+                    excludes = [],
+                    i;
+                for (i = 0; i < $scope.text.translations.length; i++) {
+                    var translation = $scope.text.translations[i];
+                    excludes.push(Number(translation.targetLangId));
+                }
+                for (i = 0; i < languages.length; i++) {
+                    var language = languages[i];
+                    if (excludes.indexOf(Number(language.id)) === -1) {
+                        result.push(language);
+                    }
+                }
+                return result;
+            };
+            $scope.toggleGlossary = function (id) {
+                var index = $scope.options.currentTranslation.glossaries.indexOf(id);
+                if (index > -1) {
+                    $scope.options.currentTranslation.glossaries.splice(index, 1);
+                } else {
+                    $scope.options.currentTranslation.glossaries.push(id);
+                }
+            };
+            $scope.toggleTmx = function (id) {
+                var index = $scope.options.currentTranslation.tmxes.indexOf(id);
+                if (index > -1) {
+                    $scope.options.currentTranslation.tmxes.splice(index, 1);
+                } else {
+                    $scope.options.currentTranslation.tmxes.push(id);
+                }
+            };
+            $scope.ok = function () {
+                if (!$scope.text.title) {
+                    $scope.error = 'Where is the title?';
+                    return;
+                }
+                if (!$scope.text.subject) {
+                    $scope.error = 'Subject is lost';
+                    return;
+                }
+                if (!$scope.text.sourceLang) {
+                    $scope.error = 'Langauges is not set?';
+                    return;
+                }
+                $scope.error = '';
+                var data = {
+                    project: window['projectId'],
+                    id: $scope.text.id,
+                    title: $scope.text.title,
+                    subject: $scope.text.subject,
+                    sourceLang: $scope.text.sourceLang,
+                    targetLang: $scope.text.targetLang,
+                    glossaries: $scope.text.glossaries,
+                    translations: $scope.text.translations,
+                    tmxes: $scope.text.tmxes
+                };
+                $scope.busy = true;
+                $http.post('/api/text/', data)
+                    .success(function (text) {
+                        $modalInstance.close(text);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.remove = function () {
+                var data = {
+                    'project': window['projectId'],
+                    'text': $scope.text.id
+                };
+                $scope.busy = true;
+                $http.delete('/api/text/', {params: data})
+                    .success(function () {
+                        $scope.busy = false;
+                        $modalInstance.close('removed');
+                    })
+                    .error(function (data) {
+                        $scope.busy = false;
+                        $scope.error = data;
+                    });
+            };
+            $scope.removeTranslation = function (translation) {
+                var i = $scope.text.translations.indexOf(translation);
+                if (i === -1) {
+                    return;
+                }
+                delete $scope.text.translations.splice(i, 1);
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddGlossaryModalCtrl', ['$scope', '$modalInstance', '$http', 'glossary', 'Upload',
+        function ($scope, $modalInstance, $http, glossary, Upload) {
+            $scope.glossary = glossary || {
+                    rows: [['', '']]
+                };
+            $scope.changeRow = function (i) {
+                if (i === $scope.glossary.rows.length - 1) {
+                    if ($scope.glossary.rows[i][0] && $scope.glossary.rows[i][1]) {
+                        $scope.glossary.rows.push(['', '']);
+                    }
+                } else if (i < $scope.glossary.rows.length - 1) {
+                    if (!$scope.glossary.rows[i][0] && !$scope.glossary.rows[i][1]) {
+                        delete $scope.glossary.rows.splice(i, 1);
+                    }
+                }
+            };
+            $scope.ok = function () {
+                $scope.error = '';
+                $scope.busy = true;
+                var data = $scope.glossary;
+                data['project'] = window['projectId'];
+                if ($scope.glossary.id || $scope.tab === 1) {
+                    delete data.file;
+                    $http.post('/api/glossary/', data)
+                        .success(function (glossary) {
+                            $modalInstance.close(glossary);
+                            $scope.busy = false;
+                        })
+                        .error(function (data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                } else {
+                    Upload.upload({
+                            url: '/api/glossary/',
+                            fields: data,
+                            file: data.files[0]
+                        })
+                        .progress(function (evt) {
+                        })
+                        .success(function (glossary) {
+                            $modalInstance.close(glossary);
+                            $scope.busy = false;
+                        })
+                        .error(function (data) {
+                            $scope.error = data;
+                            $scope.busy = false;
+                        });
+                }
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddTmxModalCtrl', ['$scope', '$modalInstance', '$http', 'tmx', 'Upload',
+        function ($scope, $modalInstance, $http, tmx, Upload) {
+            $scope.tmx = tmx || {
+                    rows: [['', '']]
+                };
+            $scope.ok = function () {
+                $scope.busy = true;
+                $scope.error = '';
+                var data = $scope.tmx;
+                data['project'] = window['projectId'];
+
+                Upload.upload({
+                        url: '/api/tmx/',
+                        fields: data,
+                        file: data.files[0]
+                    })
+                    .progress(function (evt) {
+                    })
+                    .success(function (tmxes) {
+                        $modalInstance.close(tmxes);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+}());
