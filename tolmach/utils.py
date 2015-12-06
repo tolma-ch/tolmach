@@ -2,9 +2,8 @@
 
 from collections import OrderedDict
 
-from django.db.models import Q
 from tolmach.models import Messages
-from translations.models import TMDatabase, TMDatabaseEntry, Glossary, GlossaryEntry, Text, TextEntry
+from tolmach.models import PairStats
 
 
 def send_message(originator, addressee, message, type):
@@ -18,19 +17,13 @@ def send_message(originator, addressee, message, type):
 
 
 def get_user_stat(user):
-    # Выбираем все переводы, какие сделал пользователь, не только заапрувленные
-    translated_entries = TextEntry.objects.filter(~Q(parent_entry=None), author=user)
+    user_pairs = PairStats.objects.filter(user=user)
     stat_langpairs = {}
-    for entry in translated_entries:
-        text = entry.text
-        translation = entry.translation
-        if not (text.source_lang, translation.target_lang) in stat_langpairs:
-            stat_langpairs[(text.source_lang, translation.target_lang)] = 1
-        else:
-            stat_langpairs[(text.source_lang, translation.target_lang)] += 1
+
+    for i in user_pairs:
+        stat_langpairs[(i.source_lang, i.target_lang)] = i.fragments_translated
+
     total_translated = sum([i for i in stat_langpairs.values()])
-    for key, value in stat_langpairs.items():
-        stat_langpairs[key] = int(value/(total_translated/100.0))
 
     ordered_stat = OrderedDict(sorted(stat_langpairs.items(), key=lambda t: t[1], reverse=True))
 

@@ -6,9 +6,9 @@ import re
 import os
 from django.utils.translation import ugettext as _
 from entries.models import Language
-from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextMeta, TextTranslation, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
-import json
+import datetime
 
 
 FORMATS = {
@@ -405,3 +405,99 @@ def parse_tmx(filename, tmdb_name, project, request):
         pass
 
     return {'error': error_code, 'message': error_message, 'result': result}
+
+def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
+    text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
+    current_tmdbs = text_translation.tmdatabases.split(",")
+
+    try:
+        tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
+    except:
+        tmdb_to_write = TextMeta(text=text, meta_type="tmdb_to_write", meta_data="")
+        tmdb_to_write.save()
+
+    tmdbs = filter(None, tmdb_to_write.meta_data.split(","))
+
+    if not tmdbs:
+        pair = "%s-%s" % (source_lang.code, target_lang.code)
+        new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
+                      owner=request.user,
+                      projects=str(project.id),
+                      source_lang=source_lang,
+                      target_lang=target_lang
+                      )
+        new_tmdb.save()
+
+        if not str(new_tmdb.id) in current_tmdbs:
+            current_tmdbs.append(str(new_tmdb.id))
+            text_translation.tmdatabases = ",".join(current_tmdbs)
+            text_translation.save()
+
+        tmdbs.append(str(new_tmdb.id))
+        tmdb_to_write.meta_data = str(new_tmdb.id)
+        tmdb_to_write.save()
+
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch(settings.ELASTIC_LIST)
+    for tmdb in tmdbs:
+        if not es.indices.exists(tmdb):
+            es.indices.create(index=tmdb, body={
+    "settings": {
+		"analysis": {
+			"analyzer": {
+				"my_analyzer": {
+					"type": "custom",
+					"tokenizer": "standard",
+					"filter": ["lowercase", "english_morphology", "my_stopwords"]
+				}
+			},
+			"filter": {
+				"my_stopwords": {
+					"type": "stop",
+					"stopwords": "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with"
+				}
+			}
+		}
+	}
+})
+            es.indices.put_mapping(doc_type="tmx1",
+                                   index=tmdb,
+                                   doc={
+	"tmx1": {
+        "_all" : {"analyzer" : "english_morphology"},
+    	"properties" : {
+        	"text" : { "type" : "string", "analyzer" : "my_analyzer" }
+    	}
+	}
+})
+        clean_source_text = re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text)
+        clean_target_text = re.sub('<hr [lr]="" i="[0-9]+">', '', target_text)
+        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
+                                                 orig_lang=source_lang,
+                                                 orig_text=clean_source_text,
+                                                 target_lang=target_lang,
+                                                 target_text=clean_target_text,
+                                                 target_author=request.user.username,
+                                                 target_created=datetime.datetime.now(),
+                                                 target_editor=None,
+                                                 target_edited=None,
+                                                 )
+        new_tmdb_entry.save()
+
+
+
+        doc = {
+            'db_id': new_tmdb_entry.id,
+            source_lang.code: clean_source_text,
+            target_lang.code: clean_target_text,
+        }
+
+        res = es.index(
+            index=tmdb,
+            doc_type='tmx1',
+            body=doc
+        )
+
+        print "ELASTICSEARCH: ", res['created']
+
+        return True
