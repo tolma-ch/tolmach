@@ -863,20 +863,6 @@
             }).error(function (a) {
                 console.log(a);
             });
-            $scope.machines = [
-                {
-                    'text': 'В студию графического дизайна Emil Stasovskiy Branding на постоянную работу приглашается графический дизайнер',
-                    'percent': 70
-                },
-                {
-                    'text': 'В японии полным ходом идет культовое мероприятие - rc custom body show',
-                    'percent': 50
-                },
-                {
-                    'text': 'На форуме выступят представители ведущих веб агентств  и дизайн студий: Nimax, Shishki, Astra Media Group, Журнал "Инфографика", Science, Webcom, No Comments и др.',
-                    'percent': 40
-                }
-            ];
             $scope.addMachineSuggestion = function (entry, machine) {
                 if (entry.suggestion) {
                     entry.suggestion += ' ' + machine.text;
@@ -1065,7 +1051,7 @@
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (event.ctrlKey && event.altKey) {
-                    if (code === 84) {
+                    if (code === 84) { // Ctrl- Alt - t
                         translate();
                     }
                     return;
@@ -1263,71 +1249,45 @@
             $scope.$parent.translatedPhrase = '';
             $scope.$parent.translationResults = [];
             var getSelectionText = function () {
-                    var text = "";
+                    var text = "",
+                        x = 0,
+                        y = 0,
+                        width = 0;
                     if (window.getSelection) {
-                        text = window.getSelection().toString();
+                        var sel = window.getSelection(),
+                            range = sel.rangeCount ? sel.getRangeAt(0) : false,
+                            rect = range ? range.getClientRects()[0] : false;
+                        if (rect) {
+                            y = rect.bottom;
+                            x = rect.left;
+                            width = rect.right - rect.left;
+                        }
+                        text = sel.toString();
                     } else if (document.selection && document.selection.type != "Control") {
+                        var range = sel.createRange();
+                        range.collapse(true);
+                        x = range.boundingLeft;
+                        y = range.boundingTop + range.boundingHeight;
+                        width = rande.boundingWidth;
                         text = document.selection.createRange().text;
                     }
-                    return text;
-                },
-                getSelectionCoords = function (win) {
-                    win = win || window;
-                    var doc = win.document;
-                    var sel = doc.selection, range, rects, rect;
-                    var x = 0, y = 0;
-                    if (sel) {
-                        if (sel.type != "Control") {
-                            range = sel.createRange();
-                            range.collapse(true);
-                            x = range.boundingLeft;
-                            y = range.boundingTop;
-                        }
-                    } else if (win.getSelection) {
-                        sel = win.getSelection();
-                        if (sel.rangeCount) {
-                            range = sel.getRangeAt(0).cloneRange();
-                            if (range.getClientRects) {
-                                range.collapse(true);
-                                rects = range.getClientRects();
-                                if (rects.length > 0) {
-                                    rect = rects[0];
-                                }
-                                x = rect.left;
-                                y = rect.top;
-                            }
-                            // Fall back to inserting a temporary element
-                            if (x == 0 && y == 0) {
-                                var span = doc.createElement("span");
-                                if (span.getClientRects) {
-                                    // Ensure span has dimensions and position by
-                                    // adding a zero-width space character
-                                    span.appendChild(doc.createTextNode("\u200b"));
-                                    range.insertNode(span);
-                                    rect = span.getClientRects()[0];
-                                    x = rect.left;
-                                    y = rect.top;
-                                    var spanParent = span.parentNode;
-                                    spanParent.removeChild(span);
-
-                                    // Glue any broken text nodes back together
-                                    spanParent.normalize();
-                                }
-                            }
-                        }
-                    }
-                    return {x: x, y: y};
+                    return [text, x, y, width];
                 },
                 translate = function () {
-                    var phrase = getSelectionText().trim().toLowerCase(),
-                        coords = getSelectionCoords();
+                    var selection = getSelectionText(),
+                        phrase = selection[0].trim().toLowerCase(),
+                        coords = {'x': selection[1], 'y': selection[2]},
+                        width = selection[3];
                     if (!phrase) {
                         return;
                     }
-                    if (phrase === $scope.translatedPhrase) {
-                        $scope.$parent.showTranslatePopup = false;
-                    }
+                    var prevPhrase = $scope.translatedPhrase;
                     $scope.translatedPhrase = phrase;
+                    if (phrase === prevPhrase) {
+                        $scope.$parent.showTranslatePopup = false;
+                        $scope.translatedPhrase = false;
+                        return;
+                    }
                     $http.jsonp('https://glosbe.com/gapi/translate', {
                         params: {
                             from: $scope.langPair3[0],
@@ -1352,8 +1312,28 @@
                             top: coords['y'] + 'px'
                         };
                         $scope.$parent.showTranslatePopup = results.length > 0;
+                        if ($scope.$parent.showTranslatePopup) {
+                            $timeout(function () {
+                                var elem = $('#translation-popup'),
+                                    elemWidth = elem.width(),
+                                    left = coords['x'] + (width - elemWidth) / 2;
+                                $scope.$parent.translatePopupStyle.left = left + 'px';
+                            },1);
+                        }
                     })
                 };
+            $scope.$parent.copyToClipboard = function (text) {
+                if ($scope.activeEntry && $scope.activeEntry.mode == 1) {
+                    $scope.activeEntry.suggestion = ($scope.activeEntry.suggestion || '') + ' ' + text;
+                } else {
+                    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+                }
+                $scope.$parent.showTranslatePopup = false;
+            };
+            $scope.$on('GlobalClick', function (e, event) {
+                $scope.$parent.showTranslatePopup = false;
+                $scope.translatedPhrase = false;
+            });
             $scope.$watch('activeEntry.suggestion', function () {
                 if ($scope.activeEntry) {
                     //fixTags($('#entry-suggestion-' + $scope.activeEntry.id)[0]);
@@ -1464,29 +1444,29 @@
                                 newNodes = [];
                             if (range.startContainer === node) {
                                 if (range.startOffset > 0) {
-                                    newNodes.push(new Text(text.substr(0, range.startOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(0, range.startOffset)));
                                 }
                                 newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
                                 if (range.endContainer === node) {
                                     if (range.endOffset > range.startOffset) {
-                                        newNodes.push(new Text(text.substr(range.startOffset, range.endOffset - range.startOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.startOffset, range.endOffset - range.startOffset)));
                                     }
                                     newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
                                     if (range.endOffset < text.length) {
-                                        newNodes.push(new Text(text.substr(range.endOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                     }
                                 } else {
                                     if (range.startOffset < text.length) {
-                                        newNodes.push(new Text(text.substr(range.startOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.startOffset)));
                                     }
                                 }
                             } else if (range.endContainer === node) {
                                 if (range.endOffset > 0) {
-                                    newNodes.push(new Text(text.substr(0, range.endOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(0, range.endOffset)));
                                 }
                                 newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
                                 if (range.endOffset < text.length) {
-                                    newNodes.push(new Text(text.substr(range.endOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                 }
                             }
                             if (newNodes.length) {
@@ -1694,7 +1674,7 @@
     'use strict';
 
     var module = angular.module('mainControllers', [
-        'ui.bootstrap',
+        'ui.bootstrap'
     ]);
 
     module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal',
@@ -1840,6 +1820,9 @@
             };
             $scope.globalKeydown = function (event) {
                 $scope.$broadcast('GlobalKeydown', event);
+            };
+            $scope.bodyClick = function (event) {
+                $scope.$broadcast('GlobalClick', event);
             };
         }
     ]);
