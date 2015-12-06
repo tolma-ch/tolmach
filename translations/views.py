@@ -450,7 +450,8 @@ def export_translation(request, text_id, target_lang):
         prlist = xmldoc.getElementsByTagName('w:p')
 
         paragraphs_list = {}
-        text_meta = TextMeta.objects.get(text=text)
+        text_meta = TextMeta.objects.get(text=text,
+                                         meta_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         text_meta_data = json.loads(text_meta.meta_data)
         entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
 
@@ -468,6 +469,9 @@ def export_translation(request, text_id, target_lang):
         def repl(matchobj):
             return "†" + matchobj.group(0) + "†"
 
+        def replace_left_tag(matchobj):
+            return "<tag i='%s'>" % matchobj.group(0).split('"')[3]
+
         for par, styles in text_meta_data["paragraphs"].items():
             for idx, pr in enumerate(prlist):
                 if int(par) == idx:
@@ -483,7 +487,11 @@ def export_translation(request, text_id, target_lang):
                                 parent = run.parentNode
                                 parent.removeChild(run)
 
-                            translated_runs = re.sub("<tag.*?>.*?</tag>", repl, translated_entries[0].body).split("†")
+                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
+                            tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
+                            print tag_prepared_body
+                            # return True
+                            translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
 
                             for run in translated_runs:
                                 if not run == "":

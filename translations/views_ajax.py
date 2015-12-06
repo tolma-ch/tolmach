@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.conf import settings
@@ -11,7 +11,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta, Messages
+from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation
 import json
@@ -52,6 +52,21 @@ def project_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
+        tmdatabases = TMDatabase.objects.get(owner=request.user)
+        for i in tmdatabases:
+            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
+            if project.id in projects_list:
+                projects_list.remove(project.id)
+                i.projects = ",".join(projects_list)
+                i.save()
+
+        glossaries = Glossary.objects.get(owner=request.user)
+        for i in glossaries:
+            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
+            if project.id in projects_list:
+                projects_list.remove(project.id)
+                i.projects = ",".join(projects_list)
+                i.save()
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -612,14 +627,27 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('TMX not found')), content_type="application/json", status=400)
         if not tmx.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
-        project = Project.objects.get(id=tmx.project.id)
-        project_texts_list = Text.objects.filter(project=project)
-        for text in project_texts_list:
-            tmdb_list = text.tmdatabases.split(',')
-            if str(tmx.id) in tmdb_list:
-                tmdb_list.remove(str(tmx.id))
-                text.tmdatabases = ','.join(tmdb_list)
-                text.save()
+        for project in tmx.projects.split(","):
+            project_texts_list = Text.objects.filter(project=project)
+            for text in project_texts_list:
+                try:
+                    text_translation = TextTranslation.objects.get(text=text, target_lang=tmx.target_lang)
+                except:
+                    continue
+                tmdb_list = text_translation.tmdatabases.split(',')
+                if str(tmx.id) in tmdb_list:
+                    tmdb_list.remove(str(tmx.id))
+                    text_translation.tmdatabases = ','.join(tmdb_list)
+                    text_translation.save()
+                try:
+                    text_meta = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
+                    tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
+                    if str(tmx.id) in tmdbs_to_write:
+                        tmdbs_to_write.remove(str(tmx.id))
+                    text_meta.meta_data = ",".join(tmdbs_to_write)
+                    text_meta.save()
+                except TextMeta.DoesNotExist:
+                    pass
         tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -767,12 +795,33 @@ def translate_entry_ajax(request):
                                                                  is_approved=True)
                 except TextEntry.DoesNotExist:
                     set_approved = True
+
+            # utils.add_pair_to_tmx(request, text, project,
+            #                       source_text=entry.body, target_text=post['text'],
+            #                       source_lang=text.source_lang, target_lang=text_translation.target_lang,
+            #                       )
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
                                           author=request.user,
                                           translation=text_translation,
                                           is_approved=set_approved)
+
+            # Инкрементим стату по указанной языковой паре
+            try:
+                is_pair = PairStats.objects.get(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang)
+            except:
+                is_pair = PairStats(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang)
+                is_pair.save()
+            PairStats.objects.filter(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang).update(
+                fragments_translated=F('fragments_translated')+1
+            )
         entry_translation.save()
         from django.utils import timezone
 
@@ -867,7 +916,7 @@ def tmdb_search(request):
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = translation.tmdatabases.split(',') if not translation.tmdatabases == '' else []
+        translation_tmx_list = filter(None, translation.tmdatabases.split(',')) if not translation.tmdatabases == '' else []
 
         search_results = []
 
