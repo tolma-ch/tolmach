@@ -52,6 +52,21 @@ def project_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
+        tmdatabases = TMDatabase.objects.get(owner=request.user)
+        for i in tmdatabases:
+            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
+            if project.id in projects_list:
+                projects_list.remove(project.id)
+                i.projects = ",".join(projects_list)
+                i.save()
+
+        glossaries = Glossary.objects.get(owner=request.user)
+        for i in glossaries:
+            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
+            if project.id in projects_list:
+                projects_list.remove(project.id)
+                i.projects = ",".join(projects_list)
+                i.save()
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -626,10 +641,10 @@ def tmx_ajax(request, project):
                     text_translation.save()
                 try:
                     text_meta = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
-                    tmdbs_to_write = json.loads(text_meta.meta_data)
-                    if tmx.id in tmdbs_to_write:
-                        tmdbs_to_write.remove(tmx.id)
-                    text_meta.meta_data = json.dumps(tmdbs_to_write)
+                    tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
+                    if str(tmx.id) in tmdbs_to_write:
+                        tmdbs_to_write.remove(str(tmx.id))
+                    text_meta.meta_data = ",".join(tmdbs_to_write)
                     text_meta.save()
                 except TextMeta.DoesNotExist:
                     pass
@@ -885,7 +900,7 @@ def tmdb_search(request):
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = translation.tmdatabases.split(',') if not translation.tmdatabases == '' else []
+        translation_tmx_list = filter(None, translation.tmdatabases.split(',')) if not translation.tmdatabases == '' else []
 
         search_results = []
 

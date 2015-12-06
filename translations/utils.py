@@ -409,9 +409,16 @@ def parse_tmx(filename, tmdb_name, project, request):
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
     current_tmdbs = text_translation.tmdatabases.split(",")
+
     try:
         tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
     except:
+        tmdb_to_write = TextMeta(text=text, meta_type="tmdb_to_write", meta_data="")
+        tmdb_to_write.save()
+
+    tmdbs = filter(None, tmdb_to_write.meta_data.split(","))
+
+    if not tmdbs:
         pair = "%s-%s" % (source_lang.code, target_lang.code)
         new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
                       owner=request.user,
@@ -426,30 +433,50 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
             text_translation.tmdatabases = ",".join(current_tmdbs)
             text_translation.save()
 
-        tmdb_to_write = TextMeta(text=text, meta_type="tmdb_to_write", meta_data=str(new_tmdb.id))
-        tmdb_to_write.save()
-    tmdbs = tmdb_to_write.meta_data.split(",")
-
-    if not tmdbs:
-        pair = "%s-%s" % (source_lang.code, target_lang.code)
-        new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
-                      owner=request.user,
-                      projects=str(project.id),
-                      source_lang=source_lang,
-                      target_lang=target_lang
-                      )
-        new_tmdb.save()
-
-        tmdbs = [new_tmdb.id]
+        tmdbs.append(str(new_tmdb.id))
         tmdb_to_write.meta_data = str(new_tmdb.id)
         tmdb_to_write.save()
 
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch(settings.ELASTIC_LIST)
     for tmdb in tmdbs:
-        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb),
+        if not es.indices.exists(tmdb):
+            es.indices.create(index=tmdb, body={
+    "settings": {
+		"analysis": {
+			"analyzer": {
+				"my_analyzer": {
+					"type": "custom",
+					"tokenizer": "standard",
+					"filter": ["lowercase", "english_morphology", "my_stopwords"]
+				}
+			},
+			"filter": {
+				"my_stopwords": {
+					"type": "stop",
+					"stopwords": "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with"
+				}
+			}
+		}
+	}
+})
+            es.indices.put_mapping(doc_type="tmx1",
+                                   index=tmdb,
+                                   doc={
+	"tmx1": {
+        "_all" : {"analyzer" : "english_morphology"},
+    	"properties" : {
+        	"text" : { "type" : "string", "analyzer" : "my_analyzer" }
+    	}
+	}
+})
+        clean_source_text = re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text)
+        clean_target_text = re.sub('<hr [lr]="" i="[0-9]+">', '', target_text)
+        new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
                                                  orig_lang=source_lang,
-                                                 orig_text=source_text,
+                                                 orig_text=clean_source_text,
                                                  target_lang=target_lang,
-                                                 target_text=target_text,
+                                                 target_text=clean_target_text,
                                                  target_author=request.user.username,
                                                  target_created=datetime.datetime.now(),
                                                  target_editor=None,
@@ -457,13 +484,12 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
                                                  )
         new_tmdb_entry.save()
 
-        from elasticsearch import Elasticsearch
-        es = Elasticsearch(settings.ELASTIC_LIST)
+
 
         doc = {
             'db_id': new_tmdb_entry.id,
-            source_lang.code: source_text,
-            target_lang.code: target_text,
+            source_lang.code: clean_source_text,
+            target_lang.code: clean_target_text,
         }
 
         res = es.index(
