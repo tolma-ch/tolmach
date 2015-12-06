@@ -656,29 +656,29 @@
                                 newNodes = [];
                             if (range.startContainer === node) {
                                 if (range.startOffset > 0) {
-                                    newNodes.push(new Text(text.substr(0, range.startOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(0, range.startOffset)));
                                 }
                                 newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
                                 if (range.endContainer === node) {
                                     if (range.endOffset > range.startOffset) {
-                                        newNodes.push(new Text(text.substr(range.startOffset, range.endOffset - range.startOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.startOffset, range.endOffset - range.startOffset)));
                                     }
                                     newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
                                     if (range.endOffset < text.length) {
-                                        newNodes.push(new Text(text.substr(range.endOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                     }
                                 } else {
                                     if (range.startOffset < text.length) {
-                                        newNodes.push(new Text(text.substr(range.startOffset)));
+                                        newNodes.push(document.createTextNode(text.substr(range.startOffset)));
                                     }
                                 }
                             } else if (range.endContainer === node) {
                                 if (range.endOffset > 0) {
-                                    newNodes.push(new Text(text.substr(0, range.endOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(0, range.endOffset)));
                                 }
                                 newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
                                 if (range.endOffset < text.length) {
-                                    newNodes.push(new Text(text.substr(range.endOffset)));
+                                    newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                 }
                             }
                             if (newNodes.length) {

@@ -5,3 +5,7 @@
     /etc/mysql/my.cnf
            bind-address            = 0.0.0.0
     /etc/init.d/mysql restart
+
+
+### npm install
+    grunt
