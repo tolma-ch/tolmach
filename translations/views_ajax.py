@@ -796,10 +796,10 @@ def translate_entry_ajax(request):
                 except TextEntry.DoesNotExist:
                     set_approved = True
 
-            utils.add_pair_to_tmx(request, text, project,
-                                  source_text=entry.body, target_text=post['text'],
-                                  source_lang=text.source_lang, target_lang=text_translation.target_lang,
-                                  )
+            # utils.add_pair_to_tmx(request, text, project,
+            #                       source_text=entry.body, target_text=post['text'],
+            #                       source_lang=text.source_lang, target_lang=text_translation.target_lang,
+            #                       )
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
