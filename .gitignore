@@ -17,3 +17,5 @@ local.tolmach.ini
 nginx.conf
 uwsgi.ini
 
+/node_modules
+/*.sql

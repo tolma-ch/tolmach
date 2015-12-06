@@ -1,6 +1,6 @@
 {% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="tolmachApp">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta charset="utf-8">
@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="/static/css/jquery-ui-1.10.3.custom.min.css" />
         <link rel="stylesheet" href="/static/css/jquery.gritter.css" />
         <link rel="stylesheet" href="/static/css/select2.css" />
-        <link rel="stylesheet" href="/static/css/bootstrap-editable.css" /
+        <link rel="stylesheet" href="/static/css/bootstrap-editable.css" />
 
 		<!--fonts-->
 {#		<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,400italic,500italic,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>#}
@@ -34,7 +34,7 @@
 		<![endif]-->
 
         <!--page specific plugin styles-->
-        <link rel="stylesheet" href="/static/css/all.css">
+        <link rel="stylesheet" href="/static/cssdist/all.css">
         <link rel="stylesheet" href="/static/css/image-crop-styles.css">
         <link rel="stylesheet" href="/static/assets/angular-ui-select/dist/select.css">
 
@@ -78,7 +78,7 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-app="tolmachApp" ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)">
+	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-click="bodyClick()">
         <div class="main{% if user.is_authenticated %} auth{% endif %}">
             {% include "main/partial/header.html" %}
 
@@ -110,11 +110,15 @@
             <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()"></div>
         </div>
 
-        <div class="popover fade bottom in" class="translation-popup" ng-show="showTranslatePopup" ng-style="translatePopupStyle">
+        <div class="popover fade bottom in"
+             id="translation-popup"
+             ng-show="showTranslatePopup"
+             ng-style="translatePopupStyle">
             <div class="arrow"></div>
             <div class="popover-content">
                 <div ng-repeat="res in translationResults">
-                    {= res =}
+                    <a href="" ng-click="copyToClipboard(res)">{= res =}</a>
+
                 </div>
             </div>
         </div>
@@ -144,7 +148,22 @@
         <script>
             var csrfToken = '{{ csrf_token }}';
         </script>
-		<script src="/static/js/app.js"></script>
+        {% if prod == 'true' %}
+		<script src="/static/jsdist/app.min.js"></script>
+        {% else %}
+		<script src="/static/app/components/profile/profileControllers.js"></script>
+		<script src="/static/app/components/profile/profileModule.js"></script>
+		<script src="/static/app/components/project/projectControllers.js"></script>
+		<script src="/static/app/components/project/projectModule.js"></script>
+		<script src="/static/app/components/projects/projectsControllers.js"></script>
+		<script src="/static/app/components/projects/projectsModule.js"></script>
+		<script src="/static/app/components/text/textControllers.js"></script>
+		<script src="/static/app/components/text/textDirectives.js"></script>
+		<script src="/static/app/components/text/textFilters.js"></script>
+		<script src="/static/app/components/text/textModule.js"></script>
+		<script src="/static/app/shared/main/mainControllers.js"></script>
+		<script src="/static/app/app.js"></script>
+        {%  endif %}
 
 		<!--inline scripts related to this page-->
     </body>
