@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.conf import settings
@@ -11,7 +11,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta, Messages
+from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation
 import json
@@ -806,6 +806,22 @@ def translate_entry_ajax(request):
                                           author=request.user,
                                           translation=text_translation,
                                           is_approved=set_approved)
+
+            # Инкрементим стату по указанной языковой паре
+            try:
+                is_pair = PairStats.objects.get(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang)
+            except:
+                is_pair = PairStats(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang)
+                is_pair.save()
+            PairStats.objects.filter(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang).update(
+                fragments_translated=F('fragments_translated')+1
+            )
         entry_translation.save()
         from django.utils import timezone
 

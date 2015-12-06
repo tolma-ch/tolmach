@@ -15,34 +15,6 @@ from tolmach import utils
 
 def index(request):
     if request.user.is_authenticated():
-        if settings.ALFA:
-            if not request.user.username == 'mega_venik':
-                project = Project.objects.get(id=7)
-                members = project.members.split(',') if project.members else []
-                user = request.user
-                user_meta = UserMeta.objects.get(user=user)
-                user_member_of = user_meta.member_of.split(',')
-                if str(user.id) in members or str(project.id) in user_member_of:
-                    pass
-                else:
-                    members.append(str(user.id))
-                    project.members = ','.join(members)
-                    project.save()
-
-                    user_member_of.append(str(project.id))
-                    user_meta.member_of = ','.join(user_member_of)
-                    user_meta.save()
-
-                    message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
-
-                    new_message = Messages(
-                        message_type='A',
-                        addressee=user,
-                        originator=User.objects.get(id=1),
-                        message=message
-                    )
-                    new_message.save()
-
         first_name = request.user.first_name
         last_name = request.user.last_name
         projects = Project.objects.filter(manager=request.user.id).order_by('last_modified')

@@ -22,6 +22,13 @@ class UserMeta(models.Model):
     requested_to = models.TextField(default="")
 
 
+class PairStats(models.Model):
+    user = models.ForeignKey('auth.User')
+    fragments_translated = models.IntegerField(default=0)
+    source_lang = models.ForeignKey('entries.Language', related_name='stats_source_lang')
+    target_lang = models.ForeignKey('entries.Language', related_name='stats_target_lang')
+
+
 class Messages(models.Model):
     """
     Model for different messages. Right now there a three types of messages supported:
