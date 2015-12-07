@@ -18,7 +18,7 @@ def index(request):
         first_name = request.user.first_name
         last_name = request.user.last_name
         projects = Project.objects.filter(manager=request.user.id).order_by('last_modified')
-        usermeta = UserMeta.objects.get(user=request.user)
+        usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
         # Костыль для выведения пустых столбиков статистики

@@ -4,6 +4,7 @@ from urllib2 import urlopen
 from django.core.files.base import ContentFile
 from social.backends.twitter import TwitterOAuth
 from social.backends.vk import VKOAuth2
+from social.backends.facebook import Facebook2OAuth2
 from tolmach.models import UserMeta
 
 
@@ -37,6 +38,14 @@ def update_user_social_data(strategy, *args, **kwargs):
             id = kwargs['response']['user_id']
             image_name = 'vk_avatar_%s.jpg' % id
             image_url = kwargs['response'].get('photo_max')
+
+    elif isinstance(backend, Facebook2OAuth2):
+        print "OLOLOSHENKA", kwargs['response']
+        if kwargs['response'].get('id'):
+            id = kwargs['response']['id']
+            image_name = 'fb_avatar_%s.jpg'
+            image_url = "http://graph.facebook.com/%s/picture?type=large" % \
+                      kwargs['response']['id']
 
     elif isinstance(backend, TwitterOAuth):
         if kwargs['response'].get('profile_image_url'):
