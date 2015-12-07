@@ -50,18 +50,18 @@
 		iconSize = 40px
 
 		// background-color #115770
-		background-image url('/static/images/header//social-buttons@1.png') // todo: set url to images
+		background-image url('/static/images/header/social-buttons.svg') // todo: set url to images
 		width iconSize
 		height iconSize
 		display inline-block
 
 		&.custom-icon
 			&-vk
-				background-position 0 0
+				background-position -1*iconSize 0
 
 				&:hover
 					background-color transparent
-					background-position 0 -1*iconSize
+					background-position -1*iconSize -1*iconSize
 
 			&-twitter
 				background-position -2*iconSize 0
@@ -70,3 +70,9 @@
 					background-color transparent
 					background-position -2*iconSize -1*iconSize
 
+			&-facebook
+				background-position 0 0
+
+				&:hover
+					background-color transparent
+					background-position 0 -1*iconSize
