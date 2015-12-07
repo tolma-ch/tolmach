@@ -6,9 +6,7 @@ import translations.views_ajax as trans_ajax
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-from dajaxice.core import dajaxice_autodiscover, dajaxice_config
 admin.autodiscover()
-dajaxice_autodiscover()
 
 PATH = getattr(settings, 'URL_PATH', '')
 
@@ -17,9 +15,6 @@ urlpatterns = patterns('',
     url(r'%s' % PATH, include('social.apps.django_app.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-
-    # ajax
-    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 
     # main
     url(r'^$', main_views.index, name='index'),

@@ -9,7 +9,6 @@ requests-oauthlib==0.3.3
 six==1.4.1
 uWSGI==1.9.17.1
 wsgiref==0.1.2
-django-dajaxice==0.7
 yandex.translate
 lxml
 elasticsearch
