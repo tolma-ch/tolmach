@@ -976,6 +976,7 @@ def tmdb_search(request):
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@login_required
 def message_ajax(request, all):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)

@@ -166,7 +166,7 @@ INSTALLED_APPS = (
 
 AUTHENTICATION_BACKENDS = (
     'social.backends.twitter.TwitterOAuth',
-#    'social.backends.facebook.FacebookBackend',
+    'social.backends.facebook.Facebook2OAuth2',
     'social.backends.vk.VKOAuth2',
 )
 
@@ -178,6 +178,9 @@ SOCIAL_AUTH_VK_OAUTH2_EXTRA_DATA = [
 SOCIAL_AUTH_TWITTER_KEY = '***REMOVED***'
 SOCIAL_AUTH_TWITTER_SECRET = '***REMOVED***'
 
+SOCIAL_AUTH_FACEBOOK_KEY = '***REMOVED***'
+SOCIAL_AUTH_FACEBOOK_SECRET = '***REMOVED***'
+
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 URL_PATH = ''
@@ -188,7 +191,7 @@ SOCIAL_AUTH_PROVIDERS = [
     {'id': p[0], 'name': p[1], 'icon': p[2]}
     for p in (
         ('vk-oauth2', u'Vk.com', 'icon-vk'),
-#        ('facebook', u'Login via Facebook', (0, 0)),
+        ('facebook', u'Login via Facebook', 'icon-facebook'),
         ('twitter', u'Twitter', 'icon-twitter'),
     )
 ]
