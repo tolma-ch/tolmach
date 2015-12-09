@@ -24,6 +24,8 @@ def get_user_stat(user):
         stat_langpairs[(i.source_lang, i.target_lang)] = i.fragments_translated
 
     total_translated = sum([i for i in stat_langpairs.values()])
+    for key, value in stat_langpairs.items():
+        stat_langpairs[key] = int(value/(total_translated/100.0))
 
     ordered_stat = OrderedDict(sorted(stat_langpairs.items(), key=lambda t: t[1], reverse=True))
 
