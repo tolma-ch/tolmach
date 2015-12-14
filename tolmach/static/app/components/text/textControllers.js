@@ -194,6 +194,10 @@
                     }
                     entry.mode = 0;
                     entry.suggestion = '';
+                    if (data.isApproved === true) {
+                        entry.approved = true;
+                        $scope.activeEntry = null;
+                    }
                 })
             };
             $scope.editTranslation = function (entry, translation) {
