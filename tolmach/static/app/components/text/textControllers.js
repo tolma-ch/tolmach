@@ -119,7 +119,7 @@
                         $scope.activeEntry = entry;
                         if (entry.mode === 1) {
                             setTimeout(function () {
-                                $('#entry-' + entry.idInText).find('textarea').focus();
+                                $('#entry-suggestion-' + entry.id).focus();
                             }, 10);
                         }
                     }
