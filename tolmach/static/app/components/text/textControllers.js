@@ -196,7 +196,6 @@
                     entry.suggestion = '';
                     if (data.isApproved === true) {
                         entry.approved = true;
-                        $scope.activeEntry = null;
                     }
                 })
             };
