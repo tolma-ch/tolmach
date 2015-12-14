@@ -907,7 +907,7 @@
                         $scope.activeEntry = entry;
                         if (entry.mode === 1) {
                             setTimeout(function () {
-                                $('#entry-' + entry.idInText).find('textarea').focus();
+                                $('#entry-suggestion-' + entry.id).focus();
                             }, 10);
                         }
                     }
@@ -982,6 +982,9 @@
                     }
                     entry.mode = 0;
                     entry.suggestion = '';
+                    if (data.isApproved === true) {
+                        entry.approved = true;
+                    }
                 })
             };
             $scope.editTranslation = function (entry, translation) {

@@ -32,7 +32,7 @@
                 <div class="translation__sentence-translation"
                      ng-repeat="entry in entries"
                      id="entry-{= entry.idInText =}"
-                     ng-class="{'translation__sentence-translation_state_closed': $parent.activeEntry !== entry,
+                     ng-class="{'translation__sentence-translation_state_closed': entry.approved || ($parent.activeEntry !== entry),
                                 'translation__sentence-translation_state_approved': entry.approved,
                                 'translation__sentence-translation_state_editing': entry.mode === 1 && ($parent.activeEntry === entry)}">
 
