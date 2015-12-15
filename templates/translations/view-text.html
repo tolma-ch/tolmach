@@ -66,25 +66,25 @@
                         <div class="translation__sentence-commitance"
                              ng-show="entry.mode === 1">
                             <form>
-                                <textarea name="translation-suggestion"
-                                          class="translation__sentence-suggestion-input"
-                                          placeholder="{{ your_translation }}"
-                                          data-insert-text=""
-                                          ng-model="entry.suggestion"
-                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
-                                          ng-keypress="textareaKeypress($event, entry)"></textarea>
-                                <!--<div contenteditable="true"-->
-                                     <!--id="entry-suggestion-{= entry.id =}"-->
-                                     <!--name="translation-suggestion"-->
-                                     <!--class="translation__sentence-suggestion-input"-->
-                                     <!--placeholder="{{ your_translation }}"-->
-                                     <!--data-insert-text=""-->
-                                     <!--ng-model="entry.suggestion"-->
-                                     <!--ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"-->
-                                     <!--ng-blur="textareaBlur($event, entry)"-->
-                                     <!--ng-keypress="textareaKeypress($event, entry)"-->
-                                     <!--ng-keydown="textareaKeydown($event, entry)">-->
-                                <!--</div>-->
+{#                                <textarea name="translation-suggestion"#}
+{#                                          class="translation__sentence-suggestion-input"#}
+{#                                          placeholder="{{ your_translation }}"#}
+{#                                          data-insert-text=""#}
+{#                                          ng-model="entry.suggestion"#}
+{#                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"#}
+{#                                          ng-keypress="textareaKeypress($event, entry)"></textarea>#}
+                                <div contenteditable="true"
+                                     id="entry-suggestion-{= entry.id =}"
+                                     name="translation-suggestion"
+                                     class="translation__sentence-suggestion-input"
+                                     placeholder="{{ your_translation }}"
+                                     data-insert-text=""
+                                     ng-model="entry.suggestion"
+                                     ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                                     ng-blur="textareaBlur($event, entry)"
+                                     ng-keypress="textareaKeypress($event, entry)"
+                                     ng-keydown="textareaKeydown($event, entry)">
+                                </div>
 
                                 <div class="translation__sentence-machine-suggestions">
                                     <div ng-show="entry.tmdbVariants.length">

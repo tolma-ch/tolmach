@@ -1352,11 +1352,12 @@
                 angular.forEach(element.childNodes, function (node) {
                     nodes.push(node);
                 });
-                for (i = 0; i < nodes.length; i++) {
-                    var node = nodes[i],
+                while (nodes.length) {
+                    var node = nodes.shift(),
                         j,
                         index,
                         type;
+                    console.log(node.nodeType);
                     if (node.tagName === 'HR') {
                         for (j = 0; j < node.attributes.length; j++) {
                             var attribute = node.attributes[j];
@@ -1418,6 +1419,51 @@
                                 }
                             }
                         }
+                        continue;
+                    }
+                    if (node.nodeType === 3) {
+                        //var prevNode = node.previousSibling;
+                        //if (prevNode && prevNode.nodeType === 3) {
+                        //    var sel = window.getSelection();
+                        //    if (sel.rangeCount > 0) {
+                        //        var range = win.getSelection().getRangeAt(0);
+                        //    }
+                        //    prevNode.textContent += node.textContent;
+                        //    node.remove();
+                        //}
+                        continue;
+                    }
+                    if (node.nodeType === 1) {
+                        if (node.childNodes && (node.childNodes.length > 0)) {
+                            var nextNode = node.nextSibling,
+                                childNodes = [];
+                            angular.forEach(node.childNodes, function (node) {
+                                childNodes.push(node);
+                            });
+                            var newNode = childNodes.shift();
+                            element.replaceChild(newNode, node);
+                            nodes.unshift(newNode);
+                            angular.forEach(childNodes, function (newNode) {
+                                if (nextNode) {
+                                    element.insertBefore(newNode, nextNode);
+                                } else {
+                                    element.appendChild(newNode);
+                                }
+                                nodes.unshift(newNode);
+                            });
+                        } else {
+                            if (node.textContent) {
+                                //var prevNode = node.previousSibling;
+                                //if (prevNode && prevNode.nodeType === 3) {
+                                //    prevNode.textContent += node.textContent;
+                                //    node.remove();
+                                //} else {
+                                    element.replaceChild(document.createTextNode(node.textContent), node);
+                                //}
+                            } else {
+                                node.remove();
+                            }
+                        }
                     }
                 }
                 if (state) { // если у нас ещё отрыт тег
@@ -1432,15 +1478,29 @@
                     doc = element.ownerDocument || element.document,
                     win = doc.defaultView || doc.parentWindow,
                     sel,
-                    nodes = [];
-                angular.forEach(element.childNodes, function (node) {
-                    nodes.push(node);
-                });
+                    nodes = [],
+                    checkSelectedNodes = 0;
 
                 if (typeof win.getSelection != "undefined") {
                     sel = win.getSelection();
                     if (sel.rangeCount > 0) {
                         var range = win.getSelection().getRangeAt(0);
+                        angular.forEach(element.childNodes, function (node) {
+                            nodes.push(node);
+                            if (range.startContainer === node) {
+                                checkSelectedNodes++;
+                            }
+                            if (range.endContainer === node) {
+                                checkSelectedNodes++;
+                            }
+                        });
+                        if (checkSelectedNodes < 2) {
+                            fixTags(element);
+                            nodes = [];
+                            angular.forEach(element.childNodes, function (node) {
+                                nodes.push(node);
+                            });
+                        }
                         while (nodes.length) {
                             var node = nodes.shift();
                             var text = node.textContent,
