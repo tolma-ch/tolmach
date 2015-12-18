@@ -81,9 +81,9 @@
                                      data-insert-text=""
                                      ng-model="entry.suggestion"
                                      ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
-                                     ng-blur="textareaBlur($event, entry)"
+                                     ng-drop="textareaDrop($event, entry)"
                                      ng-keypress="textareaKeypress($event, entry)"
-                                     ng-keydown="textareaKeydown($event, entry)">
+                                     text-editor>
                                 </div>
 
                                 <div class="translation__sentence-machine-suggestions">
