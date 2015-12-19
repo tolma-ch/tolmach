@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.forms import ModelForm
 from django.db import models
 from entries.models import Subject, Language
 
@@ -244,20 +243,3 @@ class TextEntryMeta(models.Model):
     entry = models.ForeignKey('translations.TextEntry', related_name='metas_entry')
     text_meta = models.ForeignKey('translations.TextMeta', related_name='entry_meta_parent')
     meta_data = models.TextField()
-
-
-# class ProjectForm(ModelForm):
-#     class Meta:
-#         model = Project
-#         fields = ['name', 'is_private']
-#
-#     def save(self, user):
-#         obj = super(ProjectForm, self).save(commit=False)
-#         obj.manager = user
-#         return obj.save()
-#
-#
-# class TextForm(ModelForm):
-#     class Meta:
-#         model = Text
-#         fields = ['project', 'title', 'subject', 'source_lang', 'body']
