@@ -60,13 +60,6 @@ def project_ajax(request):
                 i.projects = ",".join(projects_list)
                 i.save()
 
-        glossaries = Glossary.objects.get(owner=request.user)
-        for i in glossaries:
-            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
-            if project.id in projects_list:
-                projects_list.remove(project.id)
-                i.projects = ",".join(projects_list)
-                i.save()
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -264,9 +257,12 @@ def text_ajax(request, project):
                                                            target_lang=target_lang,
                                                            )
                     if 'glossaries' in translation:
-                        text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
+                        glossary_ids_list = [str(x) for x in translation['glossaries']]
+                        text_translation.glossaries_list.clear()
+                        for id in glossary_ids_list:
+                            text_translation.glossaries_list.add(Glossary.objects.get(id=id))
                     else:
-                        text_translation.glossaries = ''
+                        text_translation.glossaries_list.clear()
                     if 'tmxes' in translation:
                         text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
                     else:
@@ -442,14 +438,13 @@ def glossary_ajax(request, project):
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             project_owner = project.manager
-            glossaries = Glossary.objects.filter(owner=project_owner).all()
+            glossaries = project.glossaries_list.all()
             result = []
             for glossary in glossaries:
-                if str(project.id) in glossary.projects.split(","):
-                    result.append({
-                        'id': glossary.id,
-                        'name': glossary.name
-                    })
+                result.append({
+                    'id': glossary.id,
+                    'name': glossary.name
+                })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -495,9 +490,9 @@ def glossary_ajax(request, project):
             GlossaryEntry.objects.filter(glossary=glossary).delete()
         else:
             glossary = Glossary(name=glossary_name,
-                                owner=request.user,
-                                projects=str(project.id))
+                                owner=request.user)
             glossary.save()
+            project.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         for pair in pairs_array:
             # print pair
             # TODO: пересмотреть происходящее на трезвую голову
@@ -527,16 +522,6 @@ def glossary_ajax(request, project):
         if not glossary.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your glossary')), content_type="application/json", status=400)
 
-        # Выбираем все тексты проекта, и проверяем их на наличие подключенного глоссария,
-        # который собираемся удалить.
-        project = Project.objects.get(id=glossary.project.id)
-        project_texts_list = Text.objects.filter(project=project)
-        for text in project_texts_list:
-            glossary_list = text.glossaries.split(',')
-            if str(glossary.id) in glossary_list:
-                glossary_list.remove(str(glossary.id))
-                text.glossaries = ','.join(glossary_list)
-                text.save()
         glossary.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -677,19 +662,19 @@ def entry_ajax(request, action, text):
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
 
         # Если глоссарии привязаны к тексту, то
-        if not text_translation.glossaries == '':
+        if text_translation.glossaries_list:
             for entry in base_entries:
                 pre_glossary_text.append(entry.body)
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries.split(',')).split('†')
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
         for entry in base_entries:
-            if text_translation.glossaries == '':
+            if not text_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
             approved = False

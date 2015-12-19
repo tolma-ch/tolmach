@@ -4,6 +4,21 @@ from django.db import models
 from entries.models import Subject, Language
 
 
+class Glossary(models.Model):
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey('auth.User')
+    is_private = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class GlossaryEntry(models.Model):
+    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries')
+    source_entry = models.CharField(max_length=256)
+    target_entry = models.CharField(max_length=256)
+
+
 class Project(models.Model):
     """
     Model for users created projects.
@@ -29,6 +44,7 @@ class Project(models.Model):
     users_requested = models.TextField(default="")
     time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
+    glossaries_list = models.ManyToManyField(Glossary)
 
     def __unicode__(self):
         return self.name
@@ -147,7 +163,7 @@ class TextMeta(models.Model):
 class TextTranslation(models.Model):
     text = models.ForeignKey('translations.Text', related_name='text_translations')
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
-    glossaries = models.TextField(default="")
+    glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases = models.TextField(default="")
 
     def get_progress(self):
@@ -221,22 +237,6 @@ class TextForm(ModelForm):
     class Meta:
         model = Text
         fields = ['project', 'title', 'subject', 'source_lang', 'body']
-
-
-class Glossary(models.Model):
-    name = models.CharField(max_length=256)
-    owner = models.ForeignKey('auth.User')
-    is_private = models.BooleanField(default=True)
-    projects = models.TextField(default="")
-
-    def __unicode__(self):
-        return unicode(self.name)
-
-
-class GlossaryEntry(models.Model):
-    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries')
-    source_entry = models.CharField(max_length=256)
-    target_entry = models.CharField(max_length=256)
 
 
 class TMDatabase(models.Model):
