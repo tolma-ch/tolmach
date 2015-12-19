@@ -30,29 +30,29 @@ FORMATS = {
 }
 
 
-RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\" "
-RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\" "
+RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
+RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
 
-EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\" "
-EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\" "
+EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\""
+EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\""
 EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\" "
-DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\" "
+DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\""
+DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\""
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\" "
-FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\" "
+FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\""
+FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\""
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
 # http://www.donquijote.org/culture/spain/languages/spanish-accents
-ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\" "
-ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\" "
+ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\""
+ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\""
 
 # http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\" "
-IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\" "
+IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\""
+IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\""
 
 KOR = "[가-힣]"
 
@@ -111,7 +111,6 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
                 line = line.replace("? ", "?† ")
             return line
         elif lang in ['ru', 'fr', 'es', 'de', 'it']:
-            # print matchobj.group(0)
             line = matchobj.group(0)
             line = line.replace(". ", ".† ")
             line = line.replace("! ", "!† ")
