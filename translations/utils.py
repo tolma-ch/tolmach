@@ -188,7 +188,7 @@ def glossary_to_entry(entry_body, glossary_list):
 
     # TODO: сделать так, чтобы он перестал находить слово sci в слове lasciavano
     for glos in glossary_list:
-        gloss_entries = GlossaryEntry.objects.filter(glossary_id=glos)
+        gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
         for pair in gloss_entries:
             body_to_return = re.sub(escape_brackets(pair.source_entry), highlight_word(pair.target_entry), body_to_return)
 
