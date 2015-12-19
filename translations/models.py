@@ -19,6 +19,29 @@ class GlossaryEntry(models.Model):
     target_entry = models.CharField(max_length=256)
 
 
+class TMDatabase(models.Model):
+    name = models.CharField(max_length=256)
+    owner = models.ForeignKey('auth.User')
+    is_private = models.BooleanField(default=True)
+    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
+    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class TMDatabaseEntry(models.Model):
+    tmx = models.ForeignKey('translations.TMDatabase', related_name='tmx_entries')
+    orig_lang = models.CharField(max_length=3)
+    orig_text = models.CharField(max_length=1024)
+    target_lang = models.CharField(max_length=3)
+    target_text = models.CharField(max_length=1024)
+    target_author = models.CharField(max_length=80, null=True, blank=True, default=None)
+    target_created = models.DateTimeField(null=True, blank=True, default=None)
+    target_editor = models.CharField(max_length=80, null=True, blank=True, default=None)
+    target_edited = models.DateTimeField(null=True, blank=True, default=None)
+
+
 class Project(models.Model):
     """
     Model for users created projects.
@@ -45,6 +68,7 @@ class Project(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now_add=True)
     glossaries_list = models.ManyToManyField(Glossary)
+    tmdatabases_list = models.ManyToManyField(TMDatabase)
 
     def __unicode__(self):
         return self.name
@@ -164,7 +188,7 @@ class TextTranslation(models.Model):
     text = models.ForeignKey('translations.Text', related_name='text_translations')
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
     glossaries_list = models.ManyToManyField(Glossary)
-    tmdatabases = models.TextField(default="")
+    tmdatabases_list = models.ManyToManyField(TMDatabase)
 
     def get_progress(self):
         """
@@ -222,39 +246,18 @@ class TextEntryMeta(models.Model):
     meta_data = models.TextField()
 
 
-class ProjectForm(ModelForm):
-    class Meta:
-        model = Project
-        fields = ['name', 'is_private']
-
-    def save(self, user):
-        obj = super(ProjectForm, self).save(commit=False)
-        obj.manager = user
-        return obj.save()
-
-
-class TextForm(ModelForm):
-    class Meta:
-        model = Text
-        fields = ['project', 'title', 'subject', 'source_lang', 'body']
-
-
-class TMDatabase(models.Model):
-    name = models.CharField(max_length=256)
-    owner = models.ForeignKey('auth.User')
-    is_private = models.BooleanField(default=True)
-    projects = models.TextField(default="")
-    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
-    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
-
-
-class TMDatabaseEntry(models.Model):
-    tmx = models.ForeignKey('translations.TMDatabase', related_name='tmx_entries')
-    orig_lang = models.CharField(max_length=3)
-    orig_text = models.CharField(max_length=1024)
-    target_lang = models.CharField(max_length=3)
-    target_text = models.CharField(max_length=1024)
-    target_author = models.CharField(max_length=80, null=True, blank=True, default=None)
-    target_created = models.DateTimeField(null=True, blank=True, default=None)
-    target_editor = models.CharField(max_length=80, null=True, blank=True, default=None)
-    target_edited = models.DateTimeField(null=True, blank=True, default=None)
+# class ProjectForm(ModelForm):
+#     class Meta:
+#         model = Project
+#         fields = ['name', 'is_private']
+#
+#     def save(self, user):
+#         obj = super(ProjectForm, self).save(commit=False)
+#         obj.manager = user
+#         return obj.save()
+#
+#
+# class TextForm(ModelForm):
+#     class Meta:
+#         model = Text
+#         fields = ['project', 'title', 'subject', 'source_lang', 'body']

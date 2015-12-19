@@ -7,13 +7,13 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.conf import settings
 from django.template import RequestContext
-from django.shortcuts import render_to_response, redirect, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectForm, Text, TextMeta, TextEntry, TextEntryMeta, TextTranslation
+from translations.models import Project, Text, TextMeta, TextEntry, TextEntryMeta, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -80,22 +80,6 @@ def projects(request, proj_type):
 
 
 @login_required
-def project_add(request):
-    add_project_form = ProjectForm(request.POST or None)
-    if request.method == "POST":
-        if add_project_form.is_valid():
-            add_project_form.save(request.user)
-            messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully created!') %
-                                 {
-                                     'project_name': add_project_form.cleaned_data['name'],
-                                     }
-                                 )
-            return HttpResponseRedirect('/projects/my/')
-    else:
-        return HttpResponseRedirect('/projects/my/')
-
-
-@login_required
 def project(request, proj_id=0):
     projects_text = ''
     projects_url = ''
@@ -153,62 +137,6 @@ def project(request, proj_id=0):
     }
     template = 'translations/project.html'
     return render_to_response(template, data, RequestContext(request))
-
-
-@login_required
-def project_delete(request, proj_id=0):
-    if not proj_id == 0:
-        pr = Project.objects.get(id=proj_id)
-        if pr.is_user_manager(request.user):
-            pr.delete()
-            messages.add_message(request, messages.INFO, _('Project "%(project_name)s" successfully deleted!') %
-                                 {
-                                     'project_name': pr.name,
-                }
-            )
-            return HttpResponseRedirect('/projects/')
-        else:
-            messages.add_message(request, messages.ERROR, _('You are not allowed to delete this project!'))
-            return HttpResponseRedirect('/projects/')
-    else:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
-        return HttpResponseRedirect('/projects/')
-
-
-@login_required
-def add_text_to_project(request):
-    if request.method == "POST":
-        data = request.POST
-        try:
-            project_to_edit = Project.objects.get(id=data['id'])
-        except Project.DoesNotExist:
-            messages.add_message(request, messages.ERROR, _('There\'s no such project, sorry.'))
-            return HttpResponseRedirect('/projects/')
-        try:
-            lang = Language.objecst.get(id=data['source_lang'])
-        except Language.DoesNotExist:
-            messages.add_message(request, messages.ERROR, _('There\'s no such language, sorry.'))
-            return HttpResponseRedirect('/project/%d/' % project_to_edit.id)
-        if project_to_edit.is_user_manager(request.user):
-            print lang.code
-            sentences, marked_text, count_number = utils.split_text(data['text_body'], lang.code)
-            new_text = Text(title=data['title'],
-                            body=marked_text,
-                            project=Project.objects.get(id=data['id']),
-                            subject=Subject.objects.get(id=data['subject']),
-                            source_lang=Language.objects.get(id=data['source_lang']),
-                            target_lang=Language.objects.get(id=data['target_lang']),
-                            )
-            new_text.save()
-            for idx, sent in enumerate(sentences, start=1):
-                txt_entry = TextEntry(body=sent,
-                                      text=Text.objects.get(id=new_text.id),
-                                      id_in_text=idx,
-                                      author=request.user,
-                                      )
-                txt_entry.save()
-            return redirect('/projects/')
-        return redirect('/profile/')
 
 
 @login_required

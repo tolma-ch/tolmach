@@ -303,11 +303,11 @@ def parse_tmx(filename, tmdb_name, project, request):
 
                 new_tmdb = TMDatabase(name=tmdb_name,
                                       owner=request.user,
-                                      projects=str(project.id),
                                       source_lang=source_lang_obj,
                                       target_lang=target_lang_obj
                                       )
                 new_tmdb.save()
+                project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
                 result.append({
                     'id': new_tmdb.id,
                     'name': new_tmdb.name,
@@ -408,7 +408,7 @@ def parse_tmx(filename, tmdb_name, project, request):
 
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
-    current_tmdbs = text_translation.tmdatabases.split(",")
+    current_tmdbs = [int(x) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
 
     try:
         tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
@@ -422,16 +422,15 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         pair = "%s-%s" % (source_lang.code, target_lang.code)
         new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
                       owner=request.user,
-                      projects=str(project.id),
                       source_lang=source_lang,
                       target_lang=target_lang
                       )
         new_tmdb.save()
+        project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         if not str(new_tmdb.id) in current_tmdbs:
             current_tmdbs.append(str(new_tmdb.id))
-            text_translation.tmdatabases = ",".join(current_tmdbs)
-            text_translation.save()
+            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         tmdbs.append(str(new_tmdb.id))
         tmdb_to_write.meta_data = str(new_tmdb.id)

@@ -52,13 +52,6 @@ def project_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        tmdatabases = TMDatabase.objects.get(owner=request.user)
-        for i in tmdatabases:
-            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
-            if project.id in projects_list:
-                projects_list.remove(project.id)
-                i.projects = ",".join(projects_list)
-                i.save()
 
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
@@ -264,9 +257,12 @@ def text_ajax(request, project):
                     else:
                         text_translation.glossaries_list.clear()
                     if 'tmxes' in translation:
-                        text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                        tmdb_ids_list = [str(x) for x in translation['tmxes']]
+                        text_translation.tmdatabases_list.clear()
+                        for id in tmdb_ids_list:
+                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=id))
                     else:
-                        text_translation.tmdatabases = ''
+                        text_translation.tmdatabases_list.clear()
                     text_translation.save()
                 for target_lang in all_text_translations:
                     try:
@@ -550,15 +546,13 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            project_owner = project.manager
-            tmxes = TMDatabase.objects.filter(owner=project_owner).all()
+            tmxes = project.tmdatabases_list.all()
             result = []
             for tmx in tmxes:
-                if str(project.id) in tmx.projects.split(","):
-                    result.append({
-                        'id': tmx.id,
-                        'name': tmx.name
-                    })
+                result.append({
+                    'id': tmx.id,
+                    'name': tmx.name
+                })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -612,27 +606,14 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('TMX not found')), content_type="application/json", status=400)
         if not tmx.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
-        for project in tmx.projects.split(","):
-            project_texts_list = Text.objects.filter(project=project)
-            for text in project_texts_list:
-                try:
-                    text_translation = TextTranslation.objects.get(text=text, target_lang=tmx.target_lang)
-                except:
-                    continue
-                tmdb_list = text_translation.tmdatabases.split(',')
-                if str(tmx.id) in tmdb_list:
-                    tmdb_list.remove(str(tmx.id))
-                    text_translation.tmdatabases = ','.join(tmdb_list)
-                    text_translation.save()
-                try:
-                    text_meta = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
-                    tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
-                    if str(tmx.id) in tmdbs_to_write:
-                        tmdbs_to_write.remove(str(tmx.id))
-                    text_meta.meta_data = ",".join(tmdbs_to_write)
-                    text_meta.save()
-                except TextMeta.DoesNotExist:
-                    pass
+
+        text_meta_all = TextMeta.objects.filter(meta_type="tmdb_to_write")
+        for text_meta in text_meta_all:
+            tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
+            if str(tmx.id) in tmdbs_to_write:
+                tmdbs_to_write.remove(str(tmx.id))
+            text_meta.meta_data = ",".join(tmdbs_to_write)
+            text_meta.save()
         tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -781,10 +762,10 @@ def translate_entry_ajax(request):
                 except TextEntry.DoesNotExist:
                     set_approved = True
 
-            # utils.add_pair_to_tmx(request, text, project,
-            #                       source_text=entry.body, target_text=post['text'],
-            #                       source_lang=text.source_lang, target_lang=text_translation.target_lang,
-            #                       )
+            utils.add_pair_to_tmx(request, text, project,
+                                  source_text=entry.body, target_text=post['text'],
+                                  source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                  )
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
@@ -901,7 +882,7 @@ def tmdb_search(request):
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = filter(None, translation.tmdatabases.split(',')) if not translation.tmdatabases == '' else []
+        translation_tmx_list = [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else []
 
         search_results = []
 
