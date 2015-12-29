@@ -143,7 +143,6 @@ def participant_ajax(request, project):
         user_meta.member_of = ','.join(user_member_of)
         user_meta.save()
 
-        # TODO: отправлять сообщение об инвайте
         from django.utils import timezone
         message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
@@ -215,12 +214,10 @@ def text_ajax(request, project):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = request.POST or json.loads(request.body)
-        print post
-        # TODO accept file
         try:
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
-            subject = Subject.objects.get(id=5)  # TODO select default subject
+            subject = Subject.objects.get(id=5)
 
         if 'id' in post:
             try:
@@ -490,8 +487,6 @@ def glossary_ajax(request, project):
             glossary.save()
             project.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         for pair in pairs_array:
-            # print pair
-            # TODO: пересмотреть происходящее на трезвую голову
             try:
                 test = pair[0]
                 test1 = pair[1]
@@ -663,7 +658,6 @@ def entry_ajax(request, action, text):
             user_translation_text = ''
             for entry_translation in target_lang_entries:
                 if entry_translation.parent_entry == entry:
-                    voters = entry_translation.voters.split(',') if entry_translation.voters else []
                     translation_array = translation_to_json(entry_translation)
                     translation_array['isVoted'] = entry_translation.is_voted(request.user)
                     entry_translations.append(translation_array)
