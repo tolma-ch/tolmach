@@ -407,7 +407,7 @@ def parse_tmx(filename, tmdb_name, project, request):
 
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
-    current_tmdbs = [int(x) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
+    current_tmdbs = [int(x.id) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
 
     try:
         tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
@@ -468,8 +468,11 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     	}
 	}
 })
-        clean_source_text = re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text)
-        clean_target_text = re.sub('<hr [lr]="" i="[0-9]+">', '', target_text)
+        import HTMLParser
+        h = HTMLParser.HTMLParser()
+        clean_source_text = h.unescape(re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text))
+        clean_target_text = h.unescape(re.sub('<hr [lr]="" i="[0-9]+">', '', target_text))
+
         new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
                                                  orig_lang=source_lang,
                                                  orig_text=clean_source_text,
