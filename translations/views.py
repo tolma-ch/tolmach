@@ -230,6 +230,9 @@ def export_translation(request, text_id, target_lang):
         messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
         return HttpResponseRedirect('/')
 
+    import HTMLParser
+    h = HTMLParser.HTMLParser()
+
     if format == "text/plain":
         import re
         pure_text = re.sub(r'<.*?>', "", text.body)
@@ -238,7 +241,7 @@ def export_translation(request, text_id, target_lang):
         for entry in entries:
             entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
             if entry_translation:
-                pure_text = re.sub(utils.escape_brackets(entry.body), entry_translation[0].body, pure_text, 1)
+                pure_text = re.sub(utils.escape_brackets(entry.body), h.unescape(entry_translation[0].body), pure_text, 1)
 
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
@@ -301,7 +304,7 @@ def export_translation(request, text_id, target_lang):
                                 parent = run.parentNode
                                 parent.removeChild(run)
 
-                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
+                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', h.unescape(translated_entries[0].body))
                             tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
                             print tag_prepared_body
                             # return True
@@ -352,7 +355,7 @@ def export_translation(request, text_id, target_lang):
                             if ent.body in txt.firstChild.nodeValue:
                                 translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
                                 if translated_entries:
-                                    new_value = txt.firstChild.nodeValue.replace(ent.body, translated_entries[0].body)
+                                    new_value = txt.firstChild.nodeValue.replace(ent.body, h.unescape(translated_entries[0].body))
                                     txt.firstChild.replaceWholeText(new_value)
 
         output_doc_str = xmldoc.toxml().encode("utf-8")
