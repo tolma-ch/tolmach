@@ -14,6 +14,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 ADMINS = (
+    ('Dmitry Chumak', 'mega.venik@gmail.com')
     # ('Your Name', 'your_email@example.com'),
 )
 
