@@ -880,57 +880,65 @@ def tmdb_search(request):
 
         search_results = []
 
+        import re
         if translation_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept
             es = Elasticsearch(settings.ELASTIC_LIST)
+
+            entry_body_clean = re.sub("</?tag( i='.*?')?>", "", entry.body)
+
             for tmx_id in translation_tmx_list:
                 print "TMDB IS: %s" % tmx_id
-                if settings.ALFA:
-                    try:
-                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
-                                                                    'query': {
-                                                                        'match':
-                                                                        {
-                                                                            entry_source_lang.code: entry.body
-                                                                        }
-                                                                        }
-                                                                    })
-                    except es_exept.NotFoundError:
-                        tmx = TMDatabase.objects.get(id=tmx_id)
-                        tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
-                        for i in tmx_entries:
-                            orig_lang = tmx.source_lang.code
-                            target_lang = tmx.target_lang.code
-                            doc = {
-                                'db_id': i.id,
-                                orig_lang: i.orig_text,
-                                target_lang: i.target_text,
-                            }
+                try:
+                    res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
+                                                                'query': {
+                                                                    'match':
+                                                                    {
+                                                                        entry_source_lang.code: entry_body_clean
+                                                                    }
+                                                                    }
+                                                                })
+                except es_exept.NotFoundError:
+                    tmx = TMDatabase.objects.get(id=tmx_id)
+                    tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
+                    for i in tmx_entries:
+                        orig_lang = tmx.source_lang.code
+                        target_lang = tmx.target_lang.code
+                        doc = {
+                            'db_id': i.id,
+                            orig_lang: i.orig_text,
+                            target_lang: i.target_text,
+                        }
 
-                            res = es.index(
-                                index=tmx.id,
-                                doc_type='tmx1',
-                                id=i.id,
-                                body=doc
-                            )
+                        res = es.index(
+                            index=tmx.id,
+                            doc_type='tmx1',
+                            id=i.id,
+                            body=doc
+                        )
 
-                            print "ELASTICSEARCH: ", res['created']
-                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
-                                                                    'query': {
-                                                                        'match':
-                                                                        {
-                                                                            entry_source_lang.code: entry.body
-                                                                        }
-                                                                        }
-                                                                    })
-                    for item in res['hits']['hits']:
+                        print "ELASTICSEARCH: ", res['created']
+                    res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
+                                                                'query': {
+                                                                    'match':
+                                                                    {
+                                                                        entry_source_lang.code: entry_body_clean
+                                                                    }
+                                                                    }
+                                                                })
+
+                import difflib
+                for item in res['hits']['hits']:
+                    seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
+                    if seq.ratio() > 0.3:
                         search_results.append({
                                               'id': 123,
                                               'text': item['fields'][entry_target_lang.code][0],
-                                              'percent': int(float(item['_score'])*100)
+                                              # 'percent': int(float(item['_score'])*100),
+                                              'percent': int(seq.ratio()*100),
                                               })
-                        print "%d - %s" % (int(float(item['_score'])*100), item['fields'][entry_target_lang.code][0])
+                        print "%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0])
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
