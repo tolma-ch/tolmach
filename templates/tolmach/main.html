@@ -3,54 +3,64 @@
 
 {% block content %}
 {% trans 'How it works?' as how_works %}
+{% trans 'Uploading docs' as upload_docs %}
+{% trans 'Right now only plain text and DOCX formats are supported.' as upload_docs_details %}
+{% trans 'Extracting data' as extract_data %}
+{% trans 'Parsing uploaded documents, extracting all useful text data and splitting them into translating-comfortable segments.' as extract_data_details %}
+{% trans 'Calling for help' as calling_help %}
+{% trans 'Invite your old colleagues to help you with translating or find some new right here!' as calling_help_details %}
+{% trans 'Translating' as translating %}
+{% trans 'Translating texts using glossaries, translation memory databases, machine translations and different dictionaries.' as translating_details %}
+{% trans 'Finishing translation' as finish %}
+{% trans 'Post-translating edition and translation export with close-to-original formatting.' as finish_details %}
 <div class="area-content">
     <div class="container">
-    	<div class="stripy-heading">
-    		<span class="stripy-heading__before"></span>
-    		<span class="stripy-heading__text">{{ how_works }}</span>
-    		<span class="stripy-heading__after"></span>
-    	</div>
+        <div class="stripy-heading">
+            <span class="stripy-heading__before"></span>
+            <span class="stripy-heading__text">{{ how_works }}</span>
+            <span class="stripy-heading__after"></span>
+        </div>
 
-		<div class="iconed-features">
-			<ul class="iconed-features__list">
-				<li class="iconed-features__item">
-					<img src="/static/images/main/list-item1.png" alt="Upload your documents"/>
-					<div class="iconed-features__text">
-						<h3 class="iconed-features__item-header">Загружаем документы</h3>
-						<p class="iconed-features__item-text">На данный момент организована работа с документами в форматах DOC, DOCX, RTF, ODT, XLS, XLSX, CSV, PPT, PPTX и PDF.</p>
-					</div>
-				</li>
-				<li class="iconed-features__item">
-					<img src="/static/images/main/list-item2.png" alt="Get all the text data"/>
-					<div class="iconed-features__text">
-						<h3 class="iconed-features__item-header">Извлекаем данные</h3>
-						<p class="iconed-features__item-text">Разбираем полученные документы, извлекаем все полезные текстовые данные и разбиваем их на удобные для перевода отрывки.</p>
-					</div>
-				</li>
-				<li class="iconed-features__item">
-					<img src="/static/images/main/list-item3.png" alt="Upload your documents"/>
-					<div class="iconed-features__text">
-						<h3 class="iconed-features__item-header">Зовём коллег</h3>
-						<p class="iconed-features__item-text">Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.</p>
-					</div>
-				</li>
-				<li class="iconed-features__item">
-					<img src="/static/images/main/list-item4.png" alt="Upload your documents"/>
-					<div class="iconed-features__text">
-						<h3 class="iconed-features__item-header">Переводим</h3>
-						<p class="iconed-features__item-text">Переводим текст с использованием глоссариев, баз памяти перевода, систем машинного перевода и готовых словарей.</p>
-					</div>
-				</li>
-				<li class="iconed-features__item">
-					<img src="/static/images/main/list-item5.png" alt="Upload your documents"/>
-					<div class="iconed-features__text">
-						<h3 class="iconed-features__item-header">Получаем готовый перевод</h3>
-						<p class="iconed-features__item-text">Пост-переводная редактура документов и экспорт готовых переводов с сохранением оригинального форматирования.</p>
-					</div>
-				</li>
-			</ul>
-		</div>
+        <div class="iconed-features">
+            <ul class="iconed-features__list">
+                <li class="iconed-features__item">
+                    <img src="/static/images/main/list-item1.png" alt="Upload your documents"/>
+                    <div class="iconed-features__text">
+                        <h3 class="iconed-features__item-header">{{ upload_docs }}</h3>
+                        <p class="iconed-features__item-text">{{ upload_docs_details }}</p>
+                    </div>
+                </li>
+                <li class="iconed-features__item">
+                    <img src="/static/images/main/list-item2.png" alt="Get all the text data"/>
+                    <div class="iconed-features__text">
+                        <h3 class="iconed-features__item-header">{{ extract_data }}</h3>
+                        <p class="iconed-features__item-text">{{ extract_data_details }}</p>
+                    </div>
+                </li>
+                <li class="iconed-features__item">
+                    <img src="/static/images/main/list-item3.png" alt="Upload your documents"/>
+                    <div class="iconed-features__text">
+                        <h3 class="iconed-features__item-header">{{ calling_help }}</h3>
+                        <p class="iconed-features__item-text">{{ calling_help_details }}</p>
+                    </div>
+                </li>
+                <li class="iconed-features__item">
+                    <img src="/static/images/main/list-item4.png" alt="Upload your documents"/>
+                    <div class="iconed-features__text">
+                        <h3 class="iconed-features__item-header">{{ translating }}</h3>
+                        <p class="iconed-features__item-text">{{ translating_details }}</p>
+                    </div>
+                </li>
+                <li class="iconed-features__item">
+                    <img src="/static/images/main/list-item5.png" alt="Upload your documents"/>
+                    <div class="iconed-features__text">
+                        <h3 class="iconed-features__item-header">{{ finish }}</h3>
+                        <p class="iconed-features__item-text">{{ finish_details }}</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-	</div>	
-</div>	
+    </div>    
+</div>    
 {% endblock %}
