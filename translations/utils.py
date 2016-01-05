@@ -13,20 +13,20 @@ import datetime
 
 FORMATS = {
     # Docs
-    "doc": "application/msword",
-    "odt": "application/vnd.oasis.opendocument.text",
+    # "doc": "application/msword",
+    # "odt": "application/vnd.oasis.opendocument.text",
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "rtf": "application/rtf",
+    # "rtf": "application/rtf",
 
     # Tables
-    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
     # Presentations
-    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "ppt": "application/vnd.ms-powerpoint",
+    # "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    # "ppt": "application/vnd.ms-powerpoint",
 
     # Static docs
-    "pdf": "application/pdf",
+    # "pdf": "application/pdf",
 }
 
 
