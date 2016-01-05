@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-29 20:05+0900\n"
+"POT-Creation-Date: 2016-01-06 04:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,6 +101,18 @@ msgstr "Наш Twitter"
 msgid "Tolma.ch on Facebook"
 msgstr "Tolma.ch на Facebook"
 
+#: templates/main/partial/header.html:4
+msgid "Translating together"
+msgstr "Переводим вместе"
+
+#: templates/main/partial/header.html:5
+msgid "Better than ever!"
+msgstr "Лучше, чем когда-либо!"
+
+#: templates/main/partial/header.html:6
+msgid "Start with"
+msgstr "Войти с помощью"
+
 #: templates/main/partial/navbar-loggedin.html:2
 msgid "new messages"
 msgstr "новых сообщений"
@@ -137,6 +149,64 @@ msgstr "Привет,"
 #: templates/tolmach/main.html:5
 msgid "How it works?"
 msgstr "Как это работает?"
+
+#: templates/tolmach/main.html:6
+msgid "Uploading docs"
+msgstr "Загружаем документы"
+
+#: templates/tolmach/main.html:7
+msgid "Right now only plain text and DOCX formats are supported."
+msgstr ""
+"На данный момент организована работа с документами в формате DOCX и "
+"неформатированным текстом."
+
+#: templates/tolmach/main.html:8
+msgid "Extracting data"
+msgstr "Извлекаем данные"
+
+#: templates/tolmach/main.html:9
+msgid ""
+"Parsing uploaded documents, extracting all useful text data and splitting "
+"them into translating-comfortable segments."
+msgstr ""
+"Разбираем полученные документы, извлекаем все полезные текстовые данные и "
+"разбиваем их на удобные для перевода отрывки."
+
+#: templates/tolmach/main.html:10
+msgid "Calling for help"
+msgstr "Зовём коллег"
+
+#: templates/tolmach/main.html:11
+msgid ""
+"Invite your old colleagues to help you with translating or find some new "
+"right here!"
+msgstr ""
+"Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, "
+"не отрываясь от перевода."
+
+#: templates/tolmach/main.html:12
+msgid "Translating"
+msgstr "Переводим"
+
+#: templates/tolmach/main.html:13
+msgid ""
+"Translating texts using glossaries, translation memory databases, machine "
+"translations and different dictionaries."
+msgstr ""
+"Переводим текст с использованием глоссариев, баз памяти перевода, систем "
+"машинного перевода и готовых словарей."
+
+#: templates/tolmach/main.html:14
+msgid "Finishing translation"
+msgstr "Получаем готовый перевод"
+
+#: templates/tolmach/main.html:15
+msgid ""
+"Post-translating edition and translation export with close-to-original "
+"formatting."
+msgstr ""
+"Пост-переводная редактура документов и экспорт готовых переводов с "
+"сохранением оригинального форматирования."
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
@@ -290,7 +360,9 @@ msgstr "Вставить текст"
 msgid ""
 "Click here to upload file or drag file here to upload.</br> Only DOCX files "
 "are supported at the moment."
-msgstr "Нажмите или перетащите файл для загрузки.</br> В данный момент поддерживаются только DOCX файлы."
+msgstr ""
+"Нажмите или перетащите файл для загрузки.</br> В данный момент "
+"поддерживаются только DOCX файлы."
 
 #: templates/translations/partial/add_text_modal.html:70
 msgid "Source language"
