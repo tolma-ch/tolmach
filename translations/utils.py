@@ -474,9 +474,9 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         clean_target_text = h.unescape(re.sub('<hr [lr]="" i="[0-9]+">', '', target_text))
 
         new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
-                                                 orig_lang=source_lang,
+                                                 orig_lang=source_lang.code,
                                                  orig_text=clean_source_text,
-                                                 target_lang=target_lang,
+                                                 target_lang=target_lang.code,
                                                  target_text=clean_target_text,
                                                  target_author=request.user.username,
                                                  target_created=datetime.datetime.now(),
