@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
-from translations import utils
+from django.test import TestCase, RequestFactory
+from django.contrib.auth.models import User
+from translations import utils, views_ajax
+from translations.models import Project
+import json
 
 
 def print_results(sentences):
@@ -52,7 +55,7 @@ Let me first introduce what is MaxScale exactly. MaxScale is an open source proj
                        # TODO: Проблема с однословными предложениями. Похоже, re не умеет перекрещивающиеся совпадения
                        u"Info? After a while he stepped up, and with the spike of his staff scratched a queer sign on the hobbit's beautiful green front-door.",
                        u"Then he strode away, just about the time when Bilbo was finishing his second cake and beginning to think that he had escape adventures very well."]
-        sentences, marked_text = utils.split_text(text_to_split, 'en')
+        sentences, marked_text, count_num = utils.split_text(text_to_split, 'en')
         self.assertEqual(sentences, good_result)
 
     def test_fr_split(self):
@@ -86,7 +89,7 @@ L'OMS et les autorités nationales n'ont pas émis de restrictions aux voyages v
                        u"Ils pourraient emp\xeacher le virus de se reproduire, mais la d\xe9monstration reste \xe0 faire chez l'homme.",
                        u'Peut-on voyager vers les pays o\xf9 les premiers cas ont \xe9t\xe9 recens\xe9s?',
                        u"L'OMS et les autorit\xe9s nationales n'ont pas \xe9mis de restrictions aux voyages vers l'Arabie saoudite et les autres pays de la p\xe9ninsule Arabique ou vers la Jordanie, ni m\xeame de restrictions commerciales.",]
-        sentences, marked_text = utils.split_text(text_to_split, 'fr')
+        sentences, marked_text, count_num = utils.split_text(text_to_split, 'fr')
         self.assertEqual(sentences, good_result)
 
     def test_ru_split(self):
@@ -109,7 +112,7 @@ L'OMS et les autorités nationales n'ont pas émis de restrictions aux voyages v
                        u"У С. Ф. Платонова, А. Е. Преснякова и других авторов начала XX века термин стал использоваться в государственно-политическом смысле как именование государства всех восточных славян в эпоху, когда Киев был общим политическим центром.",
                        u"В украинской националистической историографии того же времени уточняющий термин «Киевская Русь» не был особо популярным, поскольку подразумевал существование других форм или проявлений Руси (будь то в географическом или хронологическом смысле).",
                        u"Основоположник украинской исторической школы М. С. Грушевский им почти не пользовался, предпочитая термины «Киевское государство» или «Руська держава» («Русское государство», противопоставленное в его версии государству Московскому).",]
-        sentences, marked_text = utils.split_text(text_to_split, 'ru')
+        sentences, marked_text, count_num = utils.split_text(text_to_split, 'ru')
         self.assertEqual(sentences, good_result)
 
     def test_zh_split(self):
@@ -207,7 +210,7 @@ L'OMS et les autorités nationales n'ont pas émis de restrictions aux voyages v
                        u"找到买家没有？",
                        u"今年冬天的煤价是涨还是降？",
                        u"他们都为钱焦虑，工人的工资拖欠得太久了，再不赶紧把煤发走弄回钱来，不知道哪天刨煤的大镐头就刨到他们的脑袋上了。",]
-        sentences, marked_text = utils.split_text(text_to_split, 'zh')
+        sentences, marked_text, count_num = utils.split_text(text_to_split, 'zh')
         self.assertEqual(sentences, good_result)
 
     def test_es_split(self):
@@ -257,6 +260,40 @@ Hay quien dice que nada tuvo que ver el hada y que todo fue fruto del amor de la
                        u"Deseo con todo mi corazón que os convirtáis en el príncipe más hermoso y agradable del mundo.",
                        u"Y en cuanto la princesa pronunció estas palabras Riquete el del Copete se convirtió en el hombre mejor plantado y más agradable que jamás había conocido.",
                        u"Hay quien dice que nada tuvo que ver el hada y que todo fue fruto del amor de la princesa, que fue capaz de hacerle ver todas las cualidades buenas de su amante por encima de la fealdad de su rostro y de su cuerpo.",]
-        sentences, marked_text = utils.split_text(text_to_split, 'es')
+        sentences, marked_text, count_num = utils.split_text(text_to_split, 'es')
         # print_results(sentences)
         self.assertEqual(sentences, good_result)
+
+
+class CreateProjectTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.create_user(username='jacob', email='jacob@gmail.com', password='top_secret')
+
+    def test_create_project(self):
+        request = self.factory.post('/api/project-create/',
+                                    data=json.dumps({'name': 4321, 'description': "ololo", 'type': "public"}),
+                                    content_type='application/json')
+        request.user = self.user
+        response = views_ajax.create_project_ajax(request)
+
+        all_user_projects = Project.objects.filter(manager=self.user)
+
+        self.assertEqual(len(all_user_projects), 1)
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_text_to_project(self):
+        project = Project.objects.get(manager=self.user, name=4321)
+        data = json.dumps({"project":project.id,
+                           "title":"French test",
+                           "subject":1,
+                           "sourceLang":7,
+                           "targetLang":2,
+                           "textBody":"De son côté, Clay désire toujours récupérer le marteau: il recrute des Nomades, Frankie, Greg et Gogo, auxquels il promet de l'argent en échange d'agressions qu'ils devront perpétrer à Charming. L'objectif est de déstabiliser Jax et de faire porter la suspicion sur le club. Mais Rita, la femme du chef de la police Eli Roosevelt, est accidentellement tuée lors de l'une de ces attaques. L'étau se resserre autour de Clay: il est soupçonné par Unser, et encore plus fortement par Jax et Bobby, d'autant plus lorsque Frankie le balance avant d'être tué. Eli et Jax concluent un deal: Jax doit livrer Frankie vivant au policier, et Eli lui révélera le nom de la taupe au sein du MC. Mais Jax ne peut empêcher la mort de Frankie. Eli est furieux en découvrant le cadavre de Frankie, mais Jax lui explique qu'il va trouver des preuves pour incriminer Clay, le vrai responsable. Jax, devant le refus d'Eli de livrer la taupe, explique qu'il la connaît déjà, par déduction: il s'agit de Juice."})
+
+        request = self.factory.post('/api/text/', data=data, content_type='application/json')
+        request.user = self.user
+
+        response = views_ajax.text_ajax(request)
+
+        self.assertEqual(response.status_code, 200)

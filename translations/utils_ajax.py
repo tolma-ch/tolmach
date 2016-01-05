@@ -45,8 +45,8 @@ def text_to_json(text, locale):
             'progress': translation.get_progress(),
             'counts': translation.get_progress_counts(),
             'langLocal': lang_name.get_language_name(locale),
-            'glossaries': [int(x) for x in filter(None, translation.glossaries.split(','))] if translation.glossaries else [],
-            'tmxes': [int(x) for x in filter(None, translation.tmdatabases.split(','))] if translation.tmdatabases else [],
+            'glossaries': [int(x.id) for x in filter(None, translation.glossaries_list.all())] if translation.glossaries_list.all() else [],
+            'tmxes': [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else [],
         })
     return {
         'id': text.id,
