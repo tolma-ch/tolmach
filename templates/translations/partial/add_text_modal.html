@@ -47,13 +47,13 @@
                      ngf-drag-over-class="drag-over"
                      ngf-multiple="false"
                      ngf-allow-dir="false"
-                     accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword,application/rtf,application/vnd.oasis.opendocument.text">
+                     accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
                     <div class="drop-box-inner">
                         <div class="drop-box-icon">
                             <i class="fa fa-file-text-o"></i>
                         </div>
                         <span ng-show="text.files.length">{= text.files[0].name =}</span>
-                        <span ng-show="!text.files.length">{% trans "Click here to upload file or drag file here to upload.</br> Only DOC, DOCX, ODT and RTF files are supported at the moment." %}</span>
+                        <span ng-show="!text.files.length">{% trans "Click here to upload file or drag file here to upload.</br> Only DOCX files are supported at the moment." %}</span>
                     </div>
                 </div>
                 <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
