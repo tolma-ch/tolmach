@@ -30,29 +30,29 @@ FORMATS = {
 }
 
 
-RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\" "
-RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\" "
+RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
+RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
 
-EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\" "
-EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\" "
+EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\""
+EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\""
 EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\" "
-DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\" "
+DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\""
+DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\""
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\" "
-FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\" "
+FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\""
+FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\""
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
 # http://www.donquijote.org/culture/spain/languages/spanish-accents
-ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\" "
-ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\" "
+ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\""
+ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\""
 
 # http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\" "
-IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\" "
+IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\""
+IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\""
 
 KOR = "[가-힣]"
 
@@ -111,7 +111,6 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
                 line = line.replace("? ", "?† ")
             return line
         elif lang in ['ru', 'fr', 'es', 'de', 'it']:
-            # print matchobj.group(0)
             line = matchobj.group(0)
             line = line.replace(". ", ".† ")
             line = line.replace("! ", "!† ")
@@ -188,7 +187,7 @@ def glossary_to_entry(entry_body, glossary_list):
 
     # TODO: сделать так, чтобы он перестал находить слово sci в слове lasciavano
     for glos in glossary_list:
-        gloss_entries = GlossaryEntry.objects.filter(glossary_id=glos)
+        gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
         for pair in gloss_entries:
             body_to_return = re.sub(escape_brackets(pair.source_entry), highlight_word(pair.target_entry), body_to_return)
 
@@ -303,11 +302,11 @@ def parse_tmx(filename, tmdb_name, project, request):
 
                 new_tmdb = TMDatabase(name=tmdb_name,
                                       owner=request.user,
-                                      projects=str(project.id),
                                       source_lang=source_lang_obj,
                                       target_lang=target_lang_obj
                                       )
                 new_tmdb.save()
+                project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
                 result.append({
                     'id': new_tmdb.id,
                     'name': new_tmdb.name,
@@ -408,7 +407,7 @@ def parse_tmx(filename, tmdb_name, project, request):
 
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
-    current_tmdbs = text_translation.tmdatabases.split(",")
+    current_tmdbs = [int(x.id) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
 
     try:
         tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
@@ -422,16 +421,15 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         pair = "%s-%s" % (source_lang.code, target_lang.code)
         new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
                       owner=request.user,
-                      projects=str(project.id),
                       source_lang=source_lang,
                       target_lang=target_lang
                       )
         new_tmdb.save()
+        project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         if not str(new_tmdb.id) in current_tmdbs:
             current_tmdbs.append(str(new_tmdb.id))
-            text_translation.tmdatabases = ",".join(current_tmdbs)
-            text_translation.save()
+            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         tmdbs.append(str(new_tmdb.id))
         tmdb_to_write.meta_data = str(new_tmdb.id)
@@ -470,8 +468,11 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     	}
 	}
 })
-        clean_source_text = re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text)
-        clean_target_text = re.sub('<hr [lr]="" i="[0-9]+">', '', target_text)
+        import HTMLParser
+        h = HTMLParser.HTMLParser()
+        clean_source_text = h.unescape(re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text))
+        clean_target_text = h.unescape(re.sub('<hr [lr]="" i="[0-9]+">', '', target_text))
+
         new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
                                                  orig_lang=source_lang,
                                                  orig_text=clean_source_text,

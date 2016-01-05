@@ -255,14 +255,6 @@
                     }
                 }
             };
-            $scope.textareaKeydown = function (event, entry) {
-                $timeout(function () {
-                    fixTags($('#entry-suggestion-' + entry.id)[0]);
-                }, 0);
-            };
-            $scope.textareaBlur = function (event, entry) {
-                fixTags($('#entry-suggestion-' + entry.id)[0]);
-            };
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (event.ctrlKey && event.altKey) {
@@ -549,93 +541,6 @@
                 $scope.$parent.showTranslatePopup = false;
                 $scope.translatedPhrase = false;
             });
-            $scope.$watch('activeEntry.suggestion', function () {
-                if ($scope.activeEntry) {
-                    //fixTags($('#entry-suggestion-' + $scope.activeEntry.id)[0]);
-                }
-            });
-            var fixTags = function (element) {
-                console.log('fix');
-                var nodes = [],
-                    state = false,
-                    extend = false,
-                    extendNode,
-                    i;
-                angular.forEach(element.childNodes, function (node) {
-                    nodes.push(node);
-                });
-                for (i = 0; i < nodes.length; i++) {
-                    var node = nodes[i],
-                        j,
-                        index,
-                        type;
-                    if (node.tagName === 'HR') {
-                        for (j = 0; j < node.attributes.length; j++) {
-                            var attribute = node.attributes[j];
-                            if (attribute.name === 'l') {
-                                type = 'l';
-                            }
-                            if (attribute.name === 'r') {
-                                type = 'r';
-                            }
-                            if (attribute.name === 's') {
-                                type = 's';
-                            }
-                            if (attribute.name === 'i') {
-                                index = attribute.value;
-                            }
-                        }
-                        if (type && index) { // если это таки тег как надо
-                            if (type === 's') {
-                                // сингл-тег можем вставлять куда угодно
-                            } else {
-                                if (state) { // если у нас уже отрыт тег
-                                    if (type === 'r') { // пришёл закрывающий
-                                        if (index === state) { // если закрывается открытый тег
-                                            state = false; // всё ок, выходим из состояния
-                                            if (extend === index) {
-                                                // у нас дважды был открыт один тег, а закрыли его только один раз. Запомним ноду
-                                                extendNode = node;
-                                            }
-                                        } else { // пришёл закрывающий, но не тот
-                                            // удалим
-                                            element.removeChild(node);
-                                            extend = false;
-                                        }
-                                    } else {
-                                        if (state === index) {
-                                            // попытка открыть тег, который уже открыт - удалаем
-                                            element.removeChild(node);
-                                            // это может быть случай, когда у нас пользователь пытается увеличить область выделения. запоминаем, что открыли дважды
-                                            extend = index;
-                                        } else {
-                                            // пришёл новый открывающий, закроем сначала предыдущий
-                                            element.insertBefore(angular.element('<hr r i="' + state + '">')[0], node);
-                                            extend = false;
-                                        }
-                                        state = index;
-                                    }
-                                } else {
-                                    if (type === 'l') {
-                                        // всё тип-топ, мы открываем новый тег
-                                        state = index;
-                                    } else {
-                                        if (extendNode && index === extend) { // у нас дважды закрывается один тег, удаляем предыдущий, оставляем последний
-                                            element.removeChild(extendNode);
-                                        } else {
-                                            element.removeChild(node);
-                                        }
-                                    }
-                                    extend = false;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (state) { // если у нас ещё отрыт тег
-                    element.appendChild(angular.element('<hr r i="' + state + '">')[0], node);
-                }
-            };
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;
@@ -644,15 +549,22 @@
                     doc = element.ownerDocument || element.document,
                     win = doc.defaultView || doc.parentWindow,
                     sel,
-                    nodes = [];
-                angular.forEach(element.childNodes, function (node) {
-                    nodes.push(node);
-                });
+                    nodes = [],
+                    checkSelectedNodes = 0;
 
                 if (typeof win.getSelection != "undefined") {
                     sel = win.getSelection();
                     if (sel.rangeCount > 0) {
                         var range = win.getSelection().getRangeAt(0);
+                        angular.forEach(element.childNodes, function (node) {
+                            nodes.push(node);
+                            if (range.startContainer === node) {
+                                checkSelectedNodes++;
+                            }
+                            if (range.endContainer === node) {
+                                checkSelectedNodes++;
+                            }
+                        });
                         while (nodes.length) {
                             var node = nodes.shift();
                             var text = node.textContent,
@@ -700,13 +612,7 @@
                     sel.removeAllRanges();
                 } else if ((sel = doc.selection) && sel.type != "Control") {
                     document.selection.empty();
-                    //var textRange = sel.createRange();
-                    //var preCaretTextRange = doc.body.createTextRange();
-                    //preCaretTextRange.moveToElementText(element);
-                    //preCaretTextRange.setEndPoint("EndToEnd", textRange);
-                    //endOffset = preCaretTextRange.text.length;
                 }
-                fixTags(element);
                 $scope.$apply(function () {
                     $scope.activeEntry.suggestion = element.innerHTML;
                 })

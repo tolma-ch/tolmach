@@ -52,21 +52,7 @@ def project_ajax(request):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        tmdatabases = TMDatabase.objects.get(owner=request.user)
-        for i in tmdatabases:
-            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
-            if project.id in projects_list:
-                projects_list.remove(project.id)
-                i.projects = ",".join(projects_list)
-                i.save()
 
-        glossaries = Glossary.objects.get(owner=request.user)
-        for i in glossaries:
-            projects_list = [int(x) for x in filter(None, i.projects.split(","))] if i.projects else []
-            if project.id in projects_list:
-                projects_list.remove(project.id)
-                i.projects = ",".join(projects_list)
-                i.save()
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -157,7 +143,6 @@ def participant_ajax(request, project):
         user_meta.member_of = ','.join(user_member_of)
         user_meta.save()
 
-        # TODO: отправлять сообщение об инвайте
         from django.utils import timezone
         message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
@@ -229,12 +214,10 @@ def text_ajax(request, project):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = request.POST or json.loads(request.body)
-        print post
-        # TODO accept file
         try:
             subject = Subject.objects.get(id=post['subject'])
         except Subject.DoesNotExist:
-            subject = Subject.objects.get(id=5)  # TODO select default subject
+            subject = Subject.objects.get(id=5)
 
         if 'id' in post:
             try:
@@ -264,13 +247,19 @@ def text_ajax(request, project):
                                                            target_lang=target_lang,
                                                            )
                     if 'glossaries' in translation:
-                        text_translation.glossaries = ','.join([str(x) for x in translation['glossaries']])
+                        glossary_ids_list = [str(x) for x in translation['glossaries']]
+                        text_translation.glossaries_list.clear()
+                        for id in glossary_ids_list:
+                            text_translation.glossaries_list.add(Glossary.objects.get(id=id))
                     else:
-                        text_translation.glossaries = ''
+                        text_translation.glossaries_list.clear()
                     if 'tmxes' in translation:
-                        text_translation.tmdatabases = ','.join([str(x) for x in translation['tmxes']])
+                        tmdb_ids_list = [str(x) for x in translation['tmxes']]
+                        text_translation.tmdatabases_list.clear()
+                        for id in tmdb_ids_list:
+                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=id))
                     else:
-                        text_translation.tmdatabases = ''
+                        text_translation.tmdatabases_list.clear()
                     text_translation.save()
                 for target_lang in all_text_translations:
                     try:
@@ -442,14 +431,13 @@ def glossary_ajax(request, project):
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             project_owner = project.manager
-            glossaries = Glossary.objects.filter(owner=project_owner).all()
+            glossaries = project.glossaries_list.all()
             result = []
             for glossary in glossaries:
-                if str(project.id) in glossary.projects.split(","):
-                    result.append({
-                        'id': glossary.id,
-                        'name': glossary.name
-                    })
+                result.append({
+                    'id': glossary.id,
+                    'name': glossary.name
+                })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -495,12 +483,10 @@ def glossary_ajax(request, project):
             GlossaryEntry.objects.filter(glossary=glossary).delete()
         else:
             glossary = Glossary(name=glossary_name,
-                                owner=request.user,
-                                projects=str(project.id))
+                                owner=request.user)
             glossary.save()
+            project.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         for pair in pairs_array:
-            # print pair
-            # TODO: пересмотреть происходящее на трезвую голову
             try:
                 test = pair[0]
                 test1 = pair[1]
@@ -527,16 +513,6 @@ def glossary_ajax(request, project):
         if not glossary.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your glossary')), content_type="application/json", status=400)
 
-        # Выбираем все тексты проекта, и проверяем их на наличие подключенного глоссария,
-        # который собираемся удалить.
-        project = Project.objects.get(id=glossary.project.id)
-        project_texts_list = Text.objects.filter(project=project)
-        for text in project_texts_list:
-            glossary_list = text.glossaries.split(',')
-            if str(glossary.id) in glossary_list:
-                glossary_list.remove(str(glossary.id))
-                text.glossaries = ','.join(glossary_list)
-                text.save()
         glossary.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -565,15 +541,13 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            project_owner = project.manager
-            tmxes = TMDatabase.objects.filter(owner=project_owner).all()
+            tmxes = project.tmdatabases_list.all()
             result = []
             for tmx in tmxes:
-                if str(project.id) in tmx.projects.split(","):
-                    result.append({
-                        'id': tmx.id,
-                        'name': tmx.name
-                    })
+                result.append({
+                    'id': tmx.id,
+                    'name': tmx.name
+                })
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -627,27 +601,14 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('TMX not found')), content_type="application/json", status=400)
         if not tmx.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
-        for project in tmx.projects.split(","):
-            project_texts_list = Text.objects.filter(project=project)
-            for text in project_texts_list:
-                try:
-                    text_translation = TextTranslation.objects.get(text=text, target_lang=tmx.target_lang)
-                except:
-                    continue
-                tmdb_list = text_translation.tmdatabases.split(',')
-                if str(tmx.id) in tmdb_list:
-                    tmdb_list.remove(str(tmx.id))
-                    text_translation.tmdatabases = ','.join(tmdb_list)
-                    text_translation.save()
-                try:
-                    text_meta = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
-                    tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
-                    if str(tmx.id) in tmdbs_to_write:
-                        tmdbs_to_write.remove(str(tmx.id))
-                    text_meta.meta_data = ",".join(tmdbs_to_write)
-                    text_meta.save()
-                except TextMeta.DoesNotExist:
-                    pass
+
+        text_meta_all = TextMeta.objects.filter(meta_type="tmdb_to_write")
+        for text_meta in text_meta_all:
+            tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
+            if str(tmx.id) in tmdbs_to_write:
+                tmdbs_to_write.remove(str(tmx.id))
+            text_meta.meta_data = ",".join(tmdbs_to_write)
+            text_meta.save()
         tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -677,19 +638,19 @@ def entry_ajax(request, action, text):
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
 
         # Если глоссарии привязаны к тексту, то
-        if not text_translation.glossaries == '':
+        if text_translation.glossaries_list:
             for entry in base_entries:
                 pre_glossary_text.append(entry.body)
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries.split(',')).split('†')
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
         for entry in base_entries:
-            if text_translation.glossaries == '':
+            if not text_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
             approved = False
@@ -697,7 +658,6 @@ def entry_ajax(request, action, text):
             user_translation_text = ''
             for entry_translation in target_lang_entries:
                 if entry_translation.parent_entry == entry:
-                    voters = entry_translation.voters.split(',') if entry_translation.voters else []
                     translation_array = translation_to_json(entry_translation)
                     translation_array['isVoted'] = entry_translation.is_voted(request.user)
                     entry_translations.append(translation_array)
@@ -796,10 +756,10 @@ def translate_entry_ajax(request):
                 except TextEntry.DoesNotExist:
                     set_approved = True
 
-            # utils.add_pair_to_tmx(request, text, project,
-            #                       source_text=entry.body, target_text=post['text'],
-            #                       source_lang=text.source_lang, target_lang=text_translation.target_lang,
-            #                       )
+            utils.add_pair_to_tmx(request, text, project,
+                                  source_text=entry.body, target_text=post['text'],
+                                  source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                  )
             entry_translation = TextEntry(body=post['text'],
                                           parent_entry=entry,
                                           text=text,
@@ -916,61 +876,69 @@ def tmdb_search(request):
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = filter(None, translation.tmdatabases.split(',')) if not translation.tmdatabases == '' else []
+        translation_tmx_list = [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else []
 
         search_results = []
 
+        import re
         if translation_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept
             es = Elasticsearch(settings.ELASTIC_LIST)
+
+            entry_body_clean = re.sub("</?tag( i='.*?')?>", "", entry.body)
+
             for tmx_id in translation_tmx_list:
                 print "TMDB IS: %s" % tmx_id
-                if settings.ALFA:
-                    try:
-                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
-                                                                    'query': {
-                                                                        'match':
-                                                                        {
-                                                                            entry_source_lang.code: entry.body
-                                                                        }
-                                                                        }
-                                                                    })
-                    except es_exept.NotFoundError:
-                        tmx = TMDatabase.objects.get(id=tmx_id)
-                        tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
-                        for i in tmx_entries:
-                            orig_lang = tmx.source_lang.code
-                            target_lang = tmx.target_lang.code
-                            doc = {
-                                'db_id': i.id,
-                                orig_lang: i.orig_text,
-                                target_lang: i.target_text,
-                            }
+                try:
+                    res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
+                                                                'query': {
+                                                                    'match':
+                                                                    {
+                                                                        entry_source_lang.code: entry_body_clean
+                                                                    }
+                                                                    }
+                                                                })
+                except es_exept.NotFoundError:
+                    tmx = TMDatabase.objects.get(id=tmx_id)
+                    tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
+                    for i in tmx_entries:
+                        orig_lang = tmx.source_lang.code
+                        target_lang = tmx.target_lang.code
+                        doc = {
+                            'db_id': i.id,
+                            orig_lang: i.orig_text,
+                            target_lang: i.target_text,
+                        }
 
-                            res = es.index(
-                                index=tmx.id,
-                                doc_type='tmx1',
-                                id=i.id,
-                                body=doc
-                            )
+                        res = es.index(
+                            index=tmx.id,
+                            doc_type='tmx1',
+                            id=i.id,
+                            body=doc
+                        )
 
-                            print "ELASTICSEARCH: ", res['created']
-                        res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
-                                                                    'query': {
-                                                                        'match':
-                                                                        {
-                                                                            entry_source_lang.code: entry.body
-                                                                        }
-                                                                        }
-                                                                    })
-                    for item in res['hits']['hits']:
+                        print "ELASTICSEARCH: ", res['created']
+                    res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
+                                                                'query': {
+                                                                    'match':
+                                                                    {
+                                                                        entry_source_lang.code: entry_body_clean
+                                                                    }
+                                                                    }
+                                                                })
+
+                import difflib
+                for item in res['hits']['hits']:
+                    seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
+                    if seq.ratio() > 0.3:
                         search_results.append({
                                               'id': 123,
                                               'text': item['fields'][entry_target_lang.code][0],
-                                              'percent': int(float(item['_score'])*100)
+                                              # 'percent': int(float(item['_score'])*100),
+                                              'percent': int(seq.ratio()*100),
                                               })
-                        print "%d - %s" % (int(float(item['_score'])*100), item['fields'][entry_target_lang.code][0])
+                        print "%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0])
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
