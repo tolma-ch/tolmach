@@ -301,7 +301,7 @@ def text_ajax(request, project):
                 if not os.path.isdir(file_dir):
                     os.makedirs(file_dir)
                 file_on_disk = '%s/%s' % (file_dir, filename)
-                if f.size > settings.GLOSSARY_FILE_SIZE:
+                if f.size > settings.DOCUMENT_FILE_SIZE:
                     return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
                                         status=400)
                 elif f.content_type not in utils.FORMATS.values():
