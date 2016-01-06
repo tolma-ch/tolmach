@@ -304,13 +304,20 @@ def text_ajax(request, project):
                 if f.size > settings.DOCUMENT_FILE_SIZE:
                     return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
                                         status=400)
-                elif f.content_type not in utils.FORMATS.values():
-                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
-                                        status=400)
                 with open(file_on_disk, 'w+') as fd:
                     for chunk in f.chunks():
                         fd.write(chunk)
-                document_format = f.content_type
+
+                # Проверяем тип файла
+                from mimetypes import MimeTypes
+                mime = MimeTypes()
+                file_type = mime.guess_type(file_on_disk)[0]
+                print file_type
+                if file_type not in utils.FORMATS.values():
+                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                        status=400)
+                
+                document_format = file_type
                 document_name = filename
                 import urllib
                 import urllib2
