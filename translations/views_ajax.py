@@ -316,7 +316,7 @@ def text_ajax(request, project):
                 if file_type not in utils.FORMATS.values():
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
-                
+
                 document_format = file_type
                 document_name = filename
                 import urllib
@@ -325,7 +325,8 @@ def text_ajax(request, project):
                 url = 'http://127.0.0.1:8080/convert'
                 values = {'fname': filename.encode('utf-8'),
                           'user_id': request.user.id,
-                          'project_id': project.id}
+                          'project_id': project.id,
+                          'source_lang': source_lang.code}
 
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
