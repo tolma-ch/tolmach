@@ -27,6 +27,19 @@ module.exports = function (grunt) {
             }
         },
 
+        less: {
+            dist: {
+                options: {
+                    paths: [],
+                    cleancss: true,
+                    compress: true
+                },
+                files: {
+                    "tolmach/static/cssdist/ace.css": "less/ace.less"
+                }
+            }
+        },
+
         stylus: {
             dist: {
                 compress: true,
@@ -101,6 +114,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-stylus');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
     grunt.registerTask('dev', ['clean:dist', 'connect:server', 'watch:dev']);
     grunt.registerTask('test', ['clean:dist', 'jshint', 'karma:continuous']);
