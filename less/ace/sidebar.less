@@ -669,132 +669,132 @@ li [class^="fa-"], li [class*=" icon-"]{
 }
 
 
-
+// off sidebar hiding
 /* responsive sidebar */
-@media only screen and (max-width: @screen-sm-max) {
- .sidebar:before {
-	display:none;
- }
- .sidebar {
-	display:none;
-	float:none;
-	
-	position:absolute;
-	z-index:999;
-	left:0;
-	bottom:auto;
-	top:auto !important;/*so that it's applied even if it's .sidebar-fixed */
-	margin-top:40px;
-
-	border:1px solid #CCC;
-	border-left-width:0;
-	box-shadow:2px 1px 2px 0 rgba(0,0,0,0.2);
- }
- 
- .sidebar.display {
-	display:block;
- }
-
-
- .menu-toggler {
-	display:inline-block;
-	position:absolute; left:0; z-index:998;
-	width:52px; height:32px;
-	margin-right:2px;
-	
-	line-height:normal;
-	padding-left:33px; padding-top:7px; padding-bottom:1px;
-	
-	font-size:13px; font-weight:bold;
-	text-transform:uppercase;
-
-	background-color:#444;
-	color:#F3F3F3;
-	
-	.box-sizing(content-box);
-	
- }
- .menu-toggler:hover {
-	text-decoration:none;
- }
- .menu-toggler:before {
-	border-top: 1px solid #87B87F;
-	border-bottom: 1px solid #6FB3E0;
-	height:2px; width:24px;
-	content: "";
-	position: absolute; z-index:11;
-	top: 13px; left:4px;
-
-	.transition(~"all 0.1s ease");
-	-o-transition: none;
-	
-	.box-sizing(content-box);
- }
- .menu-toggler:after {
-	border-top: 1px solid #FFA24D;
-	border-bottom: 1px solid #D15B47;
-	content: "";
-	height:2px;	width:24px;
-	position: absolute;
-	top:19px; left:4px;
-
-
-	.transition(~"all 0.1s ease");
-	-o-transition: none;
-	
-	.box-sizing(content-box);
- }
- .menu-toggler.display:before {
-	height:4px;
-	top: 8px;
-	border-width:2px;
- }
- .menu-toggler.display:after {
-	height:4px;
-	top:20px;
-	border-width:2px;
- }
-
-
- .menu-toggler > .menu-text {
-	display:block;
-	position:absolute;
-	bottom:-18px; left:0;
-	border:1px solid transparent;
-	border-width:9px 42px;
-	border-top-color:#444;
- }
- .menu-toggler > .menu-text:after {
-	display:block;
-	color:#FFF;
-	
-	content: @menu-button-text;
-	
-	position:absolute;
-	left: -8px;//change these to adjust text placement
-	top: -41px;
- }
-
- 
- 
- .nav-list > li.active:after {
-	display:none;
- }
- .nav-list  li.active > a:after {
-	display:none;
- }
-
- .nav-list li.active.open > .submenu > li.active > a:after {
-	display:none;
- }
- 
- .menu-min .nav-list > li.active:after {
-	display:block;
- }
- .menu-min .nav-list >  li.active > a:after {
-	display:block;
- }
-}
+//@media only screen and (max-width: @screen-sm-max) {
+// .sidebar:before {
+//	display:none;
+// }
+// .sidebar {
+//	display:none;
+//	float:none;
+//
+//	position:absolute;
+//	z-index:999;
+//	left:0;
+//	bottom:auto;
+//	top:auto !important;/*so that it's applied even if it's .sidebar-fixed */
+//	margin-top:40px;
+//
+//	border:1px solid #CCC;
+//	border-left-width:0;
+//	box-shadow:2px 1px 2px 0 rgba(0,0,0,0.2);
+// }
+//
+// .sidebar.display {
+//	display:block;
+// }
+//
+//
+// .menu-toggler {
+//	display:inline-block;
+//	position:absolute; left:0; z-index:998;
+//	width:52px; height:32px;
+//	margin-right:2px;
+//
+//	line-height:normal;
+//	padding-left:33px; padding-top:7px; padding-bottom:1px;
+//
+//	font-size:13px; font-weight:bold;
+//	text-transform:uppercase;
+//
+//	background-color:#444;
+//	color:#F3F3F3;
+//
+//	.box-sizing(content-box);
+//
+// }
+// .menu-toggler:hover {
+//	text-decoration:none;
+// }
+// .menu-toggler:before {
+//	border-top: 1px solid #87B87F;
+//	border-bottom: 1px solid #6FB3E0;
+//	height:2px; width:24px;
+//	content: "";
+//	position: absolute; z-index:11;
+//	top: 13px; left:4px;
+//
+//	.transition(~"all 0.1s ease");
+//	-o-transition: none;
+//
+//	.box-sizing(content-box);
+// }
+// .menu-toggler:after {
+//	border-top: 1px solid #FFA24D;
+//	border-bottom: 1px solid #D15B47;
+//	content: "";
+//	height:2px;	width:24px;
+//	position: absolute;
+//	top:19px; left:4px;
+//
+//
+//	.transition(~"all 0.1s ease");
+//	-o-transition: none;
+//
+//	.box-sizing(content-box);
+// }
+// .menu-toggler.display:before {
+//	height:4px;
+//	top: 8px;
+//	border-width:2px;
+// }
+// .menu-toggler.display:after {
+//	height:4px;
+//	top:20px;
+//	border-width:2px;
+// }
+//
+//
+// .menu-toggler > .menu-text {
+//	display:block;
+//	position:absolute;
+//	bottom:-18px; left:0;
+//	border:1px solid transparent;
+//	border-width:9px 42px;
+//	border-top-color:#444;
+// }
+// .menu-toggler > .menu-text:after {
+//	display:block;
+//	color:#FFF;
+//
+//	content: @menu-button-text;
+//
+//	position:absolute;
+//	left: -8px;//change these to adjust text placement
+//	top: -41px;
+// }
+//
+//
+//
+// .nav-list > li.active:after {
+//	display:none;
+// }
+// .nav-list  li.active > a:after {
+//	display:none;
+// }
+//
+// .nav-list li.active.open > .submenu > li.active > a:after {
+//	display:none;
+// }
+//
+// .menu-min .nav-list > li.active:after {
+//	display:block;
+// }
+// .menu-min .nav-list >  li.active > a:after {
+//	display:block;
+// }
+//}
 
 
 @media only screen and (max-width: @screen-tiny) {

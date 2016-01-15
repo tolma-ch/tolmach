@@ -11,9 +11,20 @@
                         <img src="/static/img/top-logo.svg">
                     </a><!-- /.brand -->
 				</div><!-- /.navbar-header -->
+
+
 				{% if user.is_authenticated %}
 	                {% load tolmach_tags %}
 	                {% login_navbar %}
+                    <ul class="breadcrumbs2">
+                        {% for link in breadcrumbs %}
+                        <li class="breadcrumbs2__item">
+                            {% if link.1 %}<a href="{{ link.1 }}">{{ link.0 }}</a>
+                            {% else %}{{ link.0 }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
 	            {% else %}
 				<!--<ul class="navbar-nav pull-right">-->
 					<!--<li class="navbar-nav__button button_blue">-->
