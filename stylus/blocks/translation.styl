@@ -50,7 +50,7 @@
     color $grayText
 
   &__sentence-translation
-    margin-bottom 20px
+    margin 10px 0
     position relative
     background $grayBg
     font-size 16px
@@ -70,6 +70,9 @@
     &_state_approved &-result
       display block
       background transparent
+
+    &_state_approved &-original
+      display none
 
     &_state_approved
       background #C5FFCC
@@ -161,7 +164,7 @@
 
   &__sentence-translation_state_approved &__sentence-suggestion
     border none
-    border-top 1px solid #54e47e
+    //border-top 1px solid #54e47e
 
   &__sentence-suggestion-input
     width 100%
