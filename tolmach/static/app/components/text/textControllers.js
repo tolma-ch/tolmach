@@ -84,29 +84,17 @@
             };
             var scrollToEntry = function (entry) {
                     setTimeout(function () {
-                        var $body = $('html, body'),
-                            $container = $('#translations-container'),
+                        var $container = $('#translations-container'),
+                            $resContainer = $('#result-container'),
                             $elem = $('#entry-' + entry.idInText),
                             $resElem = $('#res-entry-' + entry.idInText),
-                            bodyTop = $body.scrollTop(),
-                            containerShift = $container.scrollTop() + $elem.offset()['top'] - Math.max($container.offset()['top'], bodyTop),
-                            resTop = $resElem.offset()['top'] - bodyTop,
-                            minTop = 10,
-                            maxTop = Math.max(0, $(window).height() - $resElem.height()) - 20,
-                            bodyShift = 0;
-                        if (resTop < minTop) {
-                            bodyShift = resTop - minTop;
-                        }
-                        if (resTop > maxTop) {
-                            bodyShift = resTop - maxTop;
-                        }
-                        if (bodyShift) {
-                            $body.stop().animate({
-                                scrollTop: bodyTop + bodyShift
-                            }, 500);
-                        }
+                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'],
+                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'];
                         $container.stop().animate({
-                            scrollTop: containerShift - bodyShift
+                            scrollTop: containerShift
+                        }, 500);
+                        $resContainer.stop().animate({
+                            scrollTop: resShift
                         }, 500);
                     }, 100);
                 },

@@ -17,17 +17,40 @@
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 
+    <style>
+        footer {
+            display: none;
+        }
+        html, body, .main, .main-container, .main-container-inner, .main-content, .page-content {
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        html > body > .main {
+            padding-bottom: 0;
+            padding-top: 50px;
+        }
+        .navbar {
+            margin-top: -50px;
+        }
+        .page-content {
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-right: 12px;
+            padding-left: 12px;
+        }
+    </style>
     <script>
         window['textId'] = {{ text.id }};
         window['translationTargetLang'] = '{{ target_lang }}';
     </script>
 
     <div class="translation" ng-controller="transCtrl">
-        <h1 class="translation__title">{{ text.title }}</h1>
+{#        <h1 class="translation__title">{{ text.title }}</h1>#}
         <div class="row" ng-cloak>
             <div class="col-xs-12 col-sm-6">
                 <div class="scrollable" id="translations-container">
-                <h2 class="translation__variants-title">{{ trans_variants }}</h2>
+{#                <h2 class="translation__variants-title">{{ trans_variants }}</h2>#}
 
                 <div class="translation__sentence-translation"
                      ng-repeat="entry in entries"
@@ -187,7 +210,7 @@
             </div>
 
             <div class="col-sm-6 hidden-xs" id="translation-text">
-                <iframe id="translation__frame" name="translation__frame" height=100% style="position:absolute;z-index:-1;width: 1px;"></iframe>
+{#              <iframe id="translation__frame" name="translation__frame" height=100% style="position:absolute;z-index:-1;width: 1px;"></iframe>#}
                 <div class="translation-text">
                     <div class="translation-text__switcher">
                         <div class="switcher">
@@ -199,35 +222,37 @@
                             </a>
                             <a class="switcher__button"
                                id="switcher__button_translated-text"
-                               ng-class="{'switcher__button_active': textTab === 1}"
+                        S       ng-class="{'switcher__button_active': textTab === 1}"
                                ng-click="textTab = 1">
                                 <span>{{ translated_text }}</span>
                             </a>
                         </div>
                     </div>
-                    <div class="translation-text__text">
-                        {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                    <div class="scrollable" id="result-container">
+                        <div class="translation-text__text">
+                            {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                        </div>
                     </div>
                 </div>
             </div>
             <script>
-                var resiseContainer = function () {  //  Задержка для очистки чрезмерных срабатываний;
-                    var height = $('#translation__frame').height(),
-                        minHeight = $('#footer').offset().top - $('#translations-container').offset().top;
-                    if (height < minHeight) {
-                        height = minHeight;
-                    }
-                    $('#translations-container').css({height: + height + 'px'});
+{#                var resiseContainer = function () {  //  Задержка для очистки чрезмерных срабатываний;#}
+{#                    var height = $('#translation__frame').height(),#}
+{#                        minHeight = $('#footer').offset().top - $('#translations-container').offset().top;#}
+{#                    if (height < minHeight) {#}
+{#                        height = minHeight;#}
+{#                    }#}
+{#                    $('#translations-container').css({height: + height + 'px'});#}
 {#                    console.log($('#translation__frame').height());#}
-                };
-                setTimeout(function(){ // Отработка задержки фрейма (для FF и ИЕ)
-                    var timerResize='first';
-                    translation__frame.onresize = function () { // frame,  - Имя фрейма (name=frame)  - cм начало Кода;
-                        if (timerResize !== 'first') clearTimeout(timerResize);
-                        timerResize=setTimeout(resiseContainer, 20);
-                    };
-                    resiseContainer();
-                }, 200);
+{#                };#}
+{#                setTimeout(function(){ // Отработка задержки фрейма (для FF и ИЕ)#}
+{#                    var timerResize='first';#}
+{#                    translation__frame.onresize = function () { // frame,  - Имя фрейма (name=frame)  - cм начало Кода;#}
+{#                        if (timerResize !== 'first') clearTimeout(timerResize);#}
+{#                        timerResize=setTimeout(resiseContainer, 20);#}
+{#                    };#}
+{#                    resiseContainer();#}
+{#                }, 200);#}
             </script>
         </div>
     </div>
