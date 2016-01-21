@@ -758,10 +758,9 @@ def translate_entry_ajax(request):
         else:
             set_approved = False
             if project.members == "":
-                try:
-                    approved_translation = TextEntry.objects.get(parent_entry=entry,
-                                                                 is_approved=True)
-                except TextEntry.DoesNotExist:
+                approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                 is_approved=True).count()
+                if not approved_translation:
                     set_approved = True
 
             utils.add_pair_to_tmx(request, text, project,
