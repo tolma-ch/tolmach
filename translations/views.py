@@ -306,6 +306,9 @@ def export_translation(request, text_id, target_lang):
 
                             tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
                             tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
+
+                            # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
+                            tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
                             print tag_prepared_body
                             # return True
                             translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")

@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.db import models
+import math
 from entries.models import Subject, Language
 
 
@@ -202,7 +203,7 @@ class TextTranslation(models.Model):
         print [entries_total, entries_translated, entries_approved]
 
         if not entries_total == 0:
-            return [int(entries_translated/(entries_total/100.0)), int(entries_approved/(entries_total/100.0))]
+            return [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
         else:
             return [0, 0]
 
