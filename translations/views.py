@@ -304,8 +304,11 @@ def export_translation(request, text_id, target_lang):
                                 parent = run.parentNode
                                 parent.removeChild(run)
 
-                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', h.unescape(translated_entries[0].body))
+                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
                             tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
+
+                            # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
+                            tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
                             print tag_prepared_body
                             # return True
                             translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
@@ -333,7 +336,7 @@ def export_translation(request, text_id, target_lang):
                                         rPr = params_dom.getElementsByTagName('w:rPr')[0]
                                     run = xmldoc.createElement("w:r")
                                     wt = xmldoc.createElement("w:t")
-                                    text = xmldoc.createTextNode(clear_run)
+                                    text = xmldoc.createTextNode(h.unescape(clear_run))
                                     wt.appendChild(text)
                                     if not style == "":
                                         run.appendChild(rPr)

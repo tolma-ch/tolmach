@@ -301,16 +301,23 @@ def text_ajax(request, project):
                 if not os.path.isdir(file_dir):
                     os.makedirs(file_dir)
                 file_on_disk = '%s/%s' % (file_dir, filename)
-                if f.size > settings.GLOSSARY_FILE_SIZE:
+                if f.size > settings.DOCUMENT_FILE_SIZE:
                     return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                        status=400)
-                elif f.content_type not in utils.FORMATS.values():
-                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
                 with open(file_on_disk, 'w+') as fd:
                     for chunk in f.chunks():
                         fd.write(chunk)
-                document_format = f.content_type
+
+                # Проверяем тип файла
+                from mimetypes import MimeTypes
+                mime = MimeTypes()
+                file_type = mime.guess_type(file_on_disk)[0]
+                print file_type
+                if file_type not in utils.FORMATS.values():
+                    return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                        status=400)
+
+                document_format = file_type
                 document_name = filename
                 import urllib
                 import urllib2
@@ -318,7 +325,8 @@ def text_ajax(request, project):
                 url = 'http://127.0.0.1:8080/convert'
                 values = {'fname': filename.encode('utf-8'),
                           'user_id': request.user.id,
-                          'project_id': project.id}
+                          'project_id': project.id,
+                          'source_lang': source_lang.code}
 
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
@@ -750,10 +758,9 @@ def translate_entry_ajax(request):
         else:
             set_approved = False
             if project.members == "":
-                try:
-                    approved_translation = TextEntry.objects.get(parent_entry=entry,
-                                                                 is_approved=True)
-                except TextEntry.DoesNotExist:
+                approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                 is_approved=True).count()
+                if not approved_translation:
                     set_approved = True
 
             utils.add_pair_to_tmx(request, text, project,

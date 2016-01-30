@@ -1,4 +1,9 @@
 {% include "main/partial/navbar.html" %}
+{% load i18n %}
+
+{% trans 'Translating together' as together %}
+{% trans 'Better than ever!' as better_ever %}
+{% trans 'Start with' as start %}
 
 {% if user.is_authenticated or not is_index %}
 {% else %}
@@ -8,11 +13,11 @@
 			<div class="noise-wrapper"></div>
 			<section class="leaderboard leaderboard-style-one">
 			    <div class="container">
-			        <h1 class="animated fadeInDown">Переводим вместе</h1>
-			        <h2 class="animated fadeInDown">Лучше, чем когда-либо!</h2>
+			        <h1 class="animated fadeInDown">{{ together }}</h1>
+			        <h2 class="animated fadeInDown">{{ better_ever }}</h2>
 			        <div class="relative-w">
 		          	    <form class="form-signin">
-					        <h2 class="form-signin-heading">Войти с помощью</h2>
+					        <h2 class="form-signin-heading">{{ start }}</h2>
 							{% social_auth_widget %}
 					    </form>
 			        </div>
