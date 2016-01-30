@@ -13,20 +13,20 @@ import datetime
 
 FORMATS = {
     # Docs
-    "doc": "application/msword",
-    "odt": "application/vnd.oasis.opendocument.text",
+    # "doc": "application/msword",
+    # "odt": "application/vnd.oasis.opendocument.text",
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "rtf": "application/rtf",
+    # "rtf": "application/rtf",
 
     # Tables
-    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    # "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
     # Presentations
-    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "ppt": "application/vnd.ms-powerpoint",
+    # "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    # "ppt": "application/vnd.ms-powerpoint",
 
     # Static docs
-    "pdf": "application/pdf",
+    # "pdf": "application/pdf",
 }
 
 
@@ -438,45 +438,45 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     from elasticsearch import Elasticsearch
     es = Elasticsearch(settings.ELASTIC_LIST)
     for tmdb in tmdbs:
-        if not es.indices.exists(tmdb):
-            es.indices.create(index=tmdb, body={
-    "settings": {
-		"analysis": {
-			"analyzer": {
-				"my_analyzer": {
-					"type": "custom",
-					"tokenizer": "standard",
-					"filter": ["lowercase", "english_morphology", "my_stopwords"]
-				}
-			},
-			"filter": {
-				"my_stopwords": {
-					"type": "stop",
-					"stopwords": "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with"
-				}
-			}
-		}
-	}
-})
-            es.indices.put_mapping(doc_type="tmx1",
-                                   index=tmdb,
-                                   doc={
-	"tmx1": {
-        "_all" : {"analyzer" : "english_morphology"},
-    	"properties" : {
-        	"text" : { "type" : "string", "analyzer" : "my_analyzer" }
-    	}
-	}
-})
+#         if not es.indices.exists(tmdb):
+#             es.indices.create(index=tmdb, body={
+#     "settings": {
+# 		"analysis": {
+# 			"analyzer": {
+# 				"my_analyzer": {
+# 					"type": "custom",
+# 					"tokenizer": "standard",
+# 					"filter": ["lowercase", "english_morphology", "my_stopwords"]
+# 				}
+# 			},
+# 			"filter": {
+# 				"my_stopwords": {
+# 					"type": "stop",
+# 					"stopwords": "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with"
+# 				}
+# 			}
+# 		}
+# 	}
+# })
+#             es.indices.put_mapping(doc_type="tmx1",
+#                                    index=tmdb,
+#                                    doc={
+# 	"tmx1": {
+#         "_all" : {"analyzer" : "english_morphology"},
+#     	"properties" : {
+#         	"text" : { "type" : "string", "analyzer" : "my_analyzer" }
+#     	}
+# 	}
+# })
         import HTMLParser
         h = HTMLParser.HTMLParser()
         clean_source_text = h.unescape(re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text))
         clean_target_text = h.unescape(re.sub('<hr [lr]="" i="[0-9]+">', '', target_text))
 
         new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=int(tmdb)),
-                                                 orig_lang=source_lang,
+                                                 orig_lang=source_lang.code,
                                                  orig_text=clean_source_text,
-                                                 target_lang=target_lang,
+                                                 target_lang=target_lang.code,
                                                  target_text=clean_target_text,
                                                  target_author=request.user.username,
                                                  target_created=datetime.datetime.now(),
