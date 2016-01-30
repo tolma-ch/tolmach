@@ -35,7 +35,8 @@ module.exports = function (grunt) {
                     compress: true
                 },
                 files: {
-                    "tolmach/static/cssdist/ace.css": "less/ace.less"
+                    "tolmach/static/cssdist/ace.css": "less/ace.less",
+                    "tolmach/static/cssdist/landing.css": "less/landing.less"
                 }
             }
         },
