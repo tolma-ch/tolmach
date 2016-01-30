@@ -20,6 +20,7 @@ from translations.utils_ajax import translation_to_json, user_to_json, text_to_j
 
 @login_required
 def project_ajax(request):
+    tagged_po_string = _("Ololo, this is number %d test-%(str)s!" % (1, 'string'))
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'id' in post:
@@ -280,17 +281,33 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            document_format = ""
-            sentences = []
-            marked_text = ""
-            is_splitted = False
-            text_meta = ""
-            document_name = ""
+            import urllib
+            import urllib2
 
             if 'textBody' in post:
-                sentences, marked_text, count_number = utils.split_text(post['textBody'], source_lang.code)
-                document_format = "text/plain"
-                is_splitted = False
+                file_type = "text/plain"
+                url = 'http://127.0.0.1:8080/convert'
+                values = {'fname': "None",
+                          'format': file_type,
+                          'title': post['title'],
+                          'text_body': post['textBody'],
+                          'user_id': request.user.id,
+                          'project_id': project.id,
+                          'subject_id': subject.id,
+                          'source_lang': source_lang.code,
+                          'target_lang': target_lang.code
+                          }
+
+                data = urllib.urlencode(values)
+                req = urllib2.Request(url, data)
+                response = urllib2.urlopen(req)
+                the_page = json.loads(response.read())
+
+                if the_page["Error"] == 0:
+                    text = Text.objects.get(id=the_page["Text"])
+                else:
+                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+
             elif 'file' in request.FILES:
                 import os
                 f = request.FILES['file']
@@ -317,86 +334,26 @@ def text_ajax(request, project):
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
 
-                document_format = file_type
-                document_name = filename
-                import urllib
-                import urllib2
-
                 url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': filename.encode('utf-8'),
+                values = {'fname': filename,
+                          'format': file_type,
+                          'title': post['title'],
                           'user_id': request.user.id,
                           'project_id': project.id,
-                          'source_lang': source_lang.code}
+                          'subject_id': subject.id,
+                          'source_lang': source_lang.code,
+                          'target_lang': target_lang.code
+                          }
 
                 data = urllib.urlencode(values)
                 req = urllib2.Request(url, data)
                 response = urllib2.urlopen(req)
                 the_page = json.loads(response.read())
-                is_splitted = the_page['Splitted']
 
-                # TODO: добавить обработку хттп ошибок
-
-                if the_page['Error'] == 0:
-                    if not is_splitted:
-                        sentences, marked_text, count_number = utils.split_text(the_page['Text'], source_lang.code)
-                    else:
-                        data = json.loads(the_page['Text'])
-                        marked_text = data['marked_text']
-                        sentences = data['entries']
-                        text_meta = json.dumps(data['text_meta'])
+                if the_page["Error"] == 0:
+                    text = Text.objects.get(id=the_page["Text"])
                 else:
-                    return HttpResponse(json.dumps(the_page['Text']), content_type="application/json", status=the_page['Error'])
-
-                print file_on_disk
-                # print sentences
-                # print marked_text
-                # return True
-
-            print document_format
-            text = Text(title=post['title'],
-                        body=marked_text,
-                        project=project,
-                        subject=subject,
-                        source_lang=source_lang,
-                        document_format=document_format,
-                        document_name=document_name,
-                        )
-            text.save()
-            translation = TextTranslation(text=text,
-                                          target_lang=target_lang,
-                                          )
-            translation.save()
-
-            text_meta = TextMeta(text=text,
-                                 meta_type=document_format,
-                                 meta_data=text_meta,
-                                 )
-            text_meta.save()
-
-            if not is_splitted:
-                for idx, sent in enumerate(sentences, start=1):
-                    print sent
-                    txt_entry = TextEntry(body=sent,
-                                          text=text,
-                                          id_in_text=idx,
-                                          author=request.user,
-                                          )
-                    txt_entry.save()
-            else:
-                for sent in sentences:
-                    txt_entry = TextEntry(body=sent['entry'],
-                                          text=text,
-                                          id_in_text=sent['num'],
-                                          author=request.user,
-                                          )
-                    txt_entry.save()
-
-                    if sent['entry_meta']:
-                        txt_entry_meta = TextEntryMeta(entry=txt_entry,
-                                                       text_meta=text_meta,
-                                                       meta_data=json.dumps(sent['entry_meta']),
-                                                       )
-                        txt_entry_meta.save()
+                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
         result = text_to_json(text, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
