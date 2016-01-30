@@ -31,16 +31,14 @@
                     <div class="blur"></div>
                     <div class="white-sheet"></div>
                     <div class="glass-inner">
+                        {% load social_auth_widget %}
                         <div class="logo"></div>
                         <h1>
-                            Наконец-то дегенераты смогут <br>
-                            переводить тексты как люди
+                            Переводим вместе!
                         </h1>
                         <p class="center">Войти через социальные сети:</p>
                         <p class="center">
-                            <a class="social-btn social-btn__vk" href=""><i class="fa fa-vk"></i></a>
-                            <a class="social-btn social-btn__twitter" href=""><i class="fa fa-twitter"></i></a>
-                            <a class="social-btn social-btn__facebook" href=""><i class="fa fa-facebook"></i></a>
+                            {% social_auth_widget %}
                         </p>
                         <p class="center">или</p>
                         <p class="center"><button class="btn" type="submit">Зарегистрироваться</button></p>
@@ -59,18 +57,18 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="benefit benefit_1"></div>
-                        <p class="upper-bold">Одна голова – хорошо,а много – лучше!</p>
-                        <p>пригласите друзей или коллег и работайте над переводом вместе</p>
+                        <p class="upper-bold">Одна голова – хорошо,а много – лучше</p>
+                        <p>Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.</p>
                     </div>
                     <div class="col-sm-4">
                         <div class="benefit benefit_2"></div>
-                        <p class="upper-bold">Одна голова – хорошо,а много – лучше!</p>
-                        <p>пригласите друзей или коллег и работайте над переводом вместе</p>
+                        <p class="upper-bold">Работу с документами берём на себя</p>
+                        <p>Разбираем полученные документы, извлекаем все полезные текстовые данные и разбиваем их на удобные для перевода отрывки.</p>
                     </div>
                     <div class="col-sm-4">
                         <div class="benefit benefit_3"></div>
-                        <p class="upper-bold">Одна голова – хорошо,а много – лучше!</p>
-                        <p>пригласите друзей или коллег и работайте над переводом вместе</p>
+                        <p class="upper-bold">Переводим с комфортом</p>
+                        <p>Переводим текст с использованием глоссариев, баз памяти перевода, систем машинного перевода и готовых словарей.</p>
                     </div>
                 </div>
                 <div class="gap3"></div>
@@ -83,19 +81,13 @@
                 <div class="slider">
                     <div class="slider__img">
                         <div class="slider-img slider-img_1">
-                            <img src="/static/img/landing/screen1.png" alt="">
+                            <img src="/static/img/landing/profile.png" alt="">
                         </div>
                         <div class="slider-img slider-img_2">
-                            <img src="/static/img/landing/screen1.png" alt="">
+                            <img src="/static/img/landing/project.png" alt="">
                         </div>
                         <div class="slider-img slider-img_3">
-                            <img src="/static/img/landing/screen1.png" alt="">
-                        </div>
-                        <div class="slider-img slider-img_4">
-                            <img src="/static/img/landing/screen1.png" alt="">
-                        </div>
-                        <div class="slider-img slider-img_5">
-                            <img src="/static/img/landing/screen1.png" alt="">
+                            <img src="/static/img/landing/translation_page.png" alt="">
                         </div>
                     </div>
                     <div class="slider__content">
@@ -120,21 +112,9 @@
                                 Текст.
                             </p>
                         </div>
-                        <div class="slider-text slider-text_4">
-                            <h2>Четвёртый слайд</h2>
-                            <p>
-                                Текст.
-                            </p>
-                        </div>
-                        <div class="slider-text slider-text_5">
-                            <h2>Пятый слайд</h2>
-                            <p>
-                                Текст.
-                            </p>
-                        </div>
                         <p>
                             <span class="slider-btn" onclick="prevSlide()"><i class="fa fa-angle-left"></i></span>
-                            <span class="margered">1 из 5</span>
+                            <span class="margered">1 из 3</span>
                             <span class="slider-btn slider-btn_active" onclick="nextSlide()"><i class="fa fa-angle-right"></i></span>
                         </p>
                     </div>
@@ -176,9 +156,7 @@
                     <div class="gap4"></div>
                     <p class="center">Войти через социальные сети:</p>
                     <p class="center">
-                        <a class="social-btn social-btn__vk" href=""><i class="fa fa-vk"></i></a>
-                        <a class="social-btn social-btn__twitter" href=""><i class="fa fa-twitter"></i></a>
-                        <a class="social-btn social-btn__facebook" href=""><i class="fa fa-facebook"></i></a>
+                        {% social_auth_widget %}
                     </p>
                     <p class="center">или</p>
                     <p class="center"><button class="btn" type="submit">Зарегистрироваться</button></p>
