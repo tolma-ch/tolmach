@@ -20,7 +20,7 @@ from translations.utils_ajax import translation_to_json, user_to_json, text_to_j
 
 @login_required
 def project_ajax(request):
-    tagged_po_string = _("Ololo, this is number %d test-%(str)s!" % (1, 'string'))
+    # tagged_po_string = _("Ololo, this is number %d test-%(str)s!" % (1, 'string'))
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'id' in post:
