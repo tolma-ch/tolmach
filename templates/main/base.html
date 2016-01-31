@@ -116,6 +116,7 @@
              ng-style="translatePopupStyle">
             <div class="arrow"></div>
             <div class="popover-content">
+                <div ng-show="translationResults.length === 0">{% trans "No results" %}</div>
                 <div ng-repeat="res in translationResults">
                     <a href="" ng-click="copyToClipboard(res)">{= res =}</a>
 
