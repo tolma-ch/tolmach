@@ -243,26 +243,28 @@
         <script src="/static/assets/jquery/dist/jquery.min.js"></script>
 
         <script>
-            var currentSlide = 1,
-                countSlides = $('.slider-img').length,
-                showSlide = function (index) {
-                    $('.slider-img').fadeOut();
-                    $('.slider-img_' + index).fadeIn();
-                    $('.slider-text').slideUp();
-                    $('.slider-text_' + index).slideDown();
-                    currentSlide = index;
-                    $('#slideIndex').html(currentSlide);
+            $(function () {
+                var currentSlide = 1,
+                    countSlides = $('.slider-img').length,
+                    showSlide = function (index) {
+                        $('.slider-img').fadeOut();
+                        $('.slider-img_' + index).fadeIn();
+                        $('.slider-text').slideUp();
+                        $('.slider-text_' + index).slideDown();
+                        currentSlide = index;
+                        $('#slideIndex').html(currentSlide);
 
+                    };
+                $('#slidesCount').html(countSlides);
+                window.prevSlide = function () {
+                    var index = currentSlide === 1 ? countSlides : currentSlide - 1;
+                    showSlide(index);
                 };
-            $('#slideCount').html(countSlides);
-            window.prevSlide = function () {
-                var index = currentSlide === 1 ? countSlides : currentSlide - 1;
-                showSlide(index);
-            };
-            window.nextSlide = function () {
-                var index = currentSlide >= countSlides  ? 1 : currentSlide + 1;
-                showSlide(index);
-            };
+                window.nextSlide = function () {
+                    var index = currentSlide >= countSlides  ? 1 : currentSlide + 1;
+                    showSlide(index);
+                };
+            });
         </script>
     </body>
 </html>
