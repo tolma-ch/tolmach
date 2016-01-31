@@ -91,6 +91,13 @@
                             <img src="/static/img/landing/translation_page.png" alt="">
                         </div>
                     </div>
+                    <div class="slider__btns">
+                        <p class="center">
+                            <span class="slider-btn" onclick="prevSlide()"><i class="fa fa-angle-left"></i></span>
+                            <span class="margered"><span id="slideIndex">1</span> из <span id="slidesCount">3</span></span>
+                            <span class="slider-btn slider-btn_active" onclick="nextSlide()"><i class="fa fa-angle-right"></i></span>
+                        </p>
+                    </div>
                     <div class="slider__content">
                         <div class="slider-text slider-text_1">
                             <h2>Личная страница</h2>
@@ -113,11 +120,6 @@
                                 Текст.
                             </p>
                         </div>
-                        <p>
-                            <span class="slider-btn" onclick="prevSlide()"><i class="fa fa-angle-left"></i></span>
-                            <span class="margered">1 из 3</span>
-                            <span class="slider-btn slider-btn_active" onclick="nextSlide()"><i class="fa fa-angle-right"></i></span>
-                        </p>
                     </div>
                 </div>
             </div>
@@ -177,14 +179,17 @@
 
         <script>
             var currentSlide = 1,
-                countSlides = 5,
+                countSlides = $('.slider-img').length,
                 showSlide = function (index) {
                     $('.slider-img').fadeOut();
                     $('.slider-img_' + index).fadeIn();
                     $('.slider-text').slideUp();
                     $('.slider-text_' + index).slideDown();
                     currentSlide = index;
+                    $('#slideIndex').html(currentSlide);
+
                 };
+            $('#slideCount').html(countSlides);
             window.prevSlide = function () {
                 var index = currentSlide === 1 ? countSlides : currentSlide - 1;
                 showSlide(index);
