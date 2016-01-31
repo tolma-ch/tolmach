@@ -1292,7 +1292,7 @@
                             left: coords['x'] + 'px',
                             top: coords['y'] + 'px'
                         };
-                        $scope.$parent.showTranslatePopup = results.length > 0;
+                        $scope.$parent.showTranslatePopup = true;
                         if ($scope.$parent.showTranslatePopup) {
                             $timeout(function () {
                                 var elem = $('#translation-popup'),
@@ -1495,7 +1495,7 @@
                             domElement.selectionEnd = startPos + val.length;
                             domElement.scrollTop = scrollTop;
                         } else {
-                            result = domElement.value + val;
+                            result = domElement.innerHTML + val;
                             scope.entry.suggestion = result;
                             domElement.focus();
                         }
