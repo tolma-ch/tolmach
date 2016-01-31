@@ -1495,7 +1495,7 @@
                             domElement.selectionEnd = startPos + val.length;
                             domElement.scrollTop = scrollTop;
                         } else {
-                            result = domElement.value + val;
+                            result = domElement.innerHTML + val;
                             scope.entry.suggestion = result;
                             domElement.focus();
                         }
