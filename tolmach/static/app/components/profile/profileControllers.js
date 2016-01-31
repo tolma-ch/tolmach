@@ -30,26 +30,24 @@
 
     var controller = module.controller('EditProfileModalCtrl', ['$scope', '$modalInstance', '$http', 'userData',
         function ($scope, $modalInstance, $http, userData) {
+            $scope.cropper = {};
+            $scope.cropper.sourceImage = null;
+            $scope.cropper.croppedImage   = null;
+            $scope.bounds = {};
+            $scope.bounds.left = 0;
+            $scope.bounds.right = 0;
+            $scope.bounds.top = 0;
+            $scope.bounds.bottom = 0;
+
             $scope.error = '';
             $scope.userData = userData;
-            $scope.imageCropResult = null;
-            $scope.showImageCropper = true;
-            $scope.imageCropStep = 1;
-            $scope.blah = 1;
-            $scope.$watch('imageCropResult', function(newVal) {
-                $scope.blah++;
-                if (newVal) {
-                    console.log('imageCropResult', newVal);
-                }
-                return newVal;
-            });
             $scope.ok = function () {
                 $scope.busy = true;
                 $scope.error = '';
                 $http.post('/api/user/', $scope.userData)
                     .success(function(data) {
-                        if ($scope.imageCropResult) {
-                            $http.post('/api/user/', JSON.stringify($scope.imageCropResult))
+                        if ($scope.cropper.croppedImage) {
+                            $http.post('/api/user/', JSON.stringify($scope.cropper.croppedImage))
                                 .success(function() {
                                     location.reload();
                                 })
