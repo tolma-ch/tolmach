@@ -3,7 +3,7 @@
 
     angular.module('profileModule', [
         'ui.bootstrap',
-        'ImageCropper',
+        'angular-img-cropper',
         'profileControllers'
     ]);
 }());
