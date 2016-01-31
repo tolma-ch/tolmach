@@ -284,6 +284,8 @@ footer {
 	font-weight: bold;
 }
 .slider {
+  position: relative;
+  min-height: 469px;
   &__img {
     width: 735px;
     height: 469px;
@@ -298,6 +300,12 @@ footer {
   }
   &__content {
     padding: 0 0 0 755px;
+  }
+  &__btns {
+    position: absolute;
+    left: 50%;
+    margin-left: -32px;
+    top: 449px;
   }
 }
 .margered {
@@ -349,7 +357,7 @@ footer {
         margin: 0;
       }
       &__content {
-        padding: 0 1.1em;
+        padding: 509px 1.1em 0;
         max-width: 735px;
         margin: 0 auto;
       }

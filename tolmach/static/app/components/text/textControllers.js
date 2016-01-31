@@ -506,7 +506,7 @@
                             left: coords['x'] + 'px',
                             top: coords['y'] + 'px'
                         };
-                        $scope.$parent.showTranslatePopup = results.length > 0;
+                        $scope.$parent.showTranslatePopup = true;
                         if ($scope.$parent.showTranslatePopup) {
                             $timeout(function () {
                                 var elem = $('#translation-popup'),
