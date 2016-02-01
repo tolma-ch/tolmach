@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-06 04:11+0900\n"
+"POT-Creation-Date: 2016-02-01 22:37+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,6 +82,12 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: templates/main/base.html:119
+#, fuzzy
+#| msgid "Users translations"
+msgid "No results"
+msgstr "Users translations"
+
 #: templates/main/partial/footer.html:3
 msgid "We're in vk.com"
 msgstr ""
@@ -145,6 +151,237 @@ msgstr ""
 msgid "Hi,"
 msgstr ""
 
+#: templates/tolmach/landing.html:4
+#, fuzzy
+#| msgid "Users translations"
+msgid "Translating together!"
+msgstr "Users translations"
+
+#: templates/tolmach/landing.html:5
+msgid "Login via social networks"
+msgstr ""
+
+#: templates/tolmach/landing.html:6
+msgid "What is «Tolmach»?"
+msgstr ""
+
+#: templates/tolmach/landing.html:7
+msgid ""
+"«Tolmach» is an integrated translating environment, service that combines all "
+"necessary tools for the translator in one place — glossaries, translation "
+"memory databases, dictionaries, machine translation engines and more. All "
+"the paperwork also will be done by «Tolmach». All you have to do is to load "
+"the document into the system. All the extraction of useful text and division "
+"up into easy to translate fragments will be produced automatically."
+msgstr ""
+
+#: templates/tolmach/landing.html:8
+msgid "A problem shared is a problem halved"
+msgstr ""
+
+#: templates/tolmach/landing.html:68
+msgid ""
+"Invite old colleagues or find new ones to work on Your project not looking "
+"up from translation."
+msgstr ""
+
+#: templates/tolmach/landing.html:72
+msgid "All the paperwork is up to us."
+msgstr ""
+
+#: templates/tolmach/landing.html:73
+msgid ""
+"«Tolmach» will parse received documents, extract all the useful textual data "
+"and split it into easy to translate fragments."
+msgstr ""
+
+#: templates/tolmach/landing.html:77
+msgid "Translate comfortably"
+msgstr ""
+
+#: templates/tolmach/landing.html:78
+msgid ""
+"Translate the text using glossaries, translation memory databases, machine "
+"translation systems and prepared dictionaries."
+msgstr ""
+
+#: templates/tolmach/landing.html:88
+msgid "How it works:"
+msgstr ""
+
+#: templates/tolmach/landing.html:122
+msgid "of"
+msgstr ""
+
+#: templates/tolmach/landing.html:128
+msgid "Personal page"
+msgstr ""
+
+#: templates/tolmach/landing.html:130
+msgid ""
+"This is a user's personal page. You do not need to fill out tedious "
+"questionnaires during registration - we can get your stuff from your social "
+"network profile."
+msgstr ""
+
+#: templates/tolmach/landing.html:133
+msgid ""
+"Here you can see all the statistics that present your experience as "
+"translator: total number of translated fragments and graphs showing which "
+"language pairs do you prefer to work with."
+msgstr ""
+
+#: templates/tolmach/landing.html:137
+#, fuzzy
+#| msgid "Users translations"
+msgid "Collective translations"
+msgstr "Users translations"
+
+#: templates/tolmach/landing.html:139
+msgid ""
+"Now several interpreters can comfortably work with one document "
+"simultaneously — share the responsibility for exact pieces of text between "
+"different translators, offer different translations of the same fragments, "
+"choosing, in the end, the best offered fragments."
+msgstr ""
+
+#: templates/tolmach/landing.html:142
+msgid ""
+"Team editor now can watch the whole process live — he will not have to spend "
+"huge amount of time to wait for the results of translation, and translators "
+"will be able to get feedback almost immediately after translation "
+"publication."
+msgstr ""
+
+#: templates/tolmach/landing.html:146
+#, fuzzy
+#| msgid "Users translations"
+msgid "Multilingual translations"
+msgstr "Users translations"
+
+#: templates/tolmach/landing.html:148
+msgid ""
+"No need to upload the same document several times - it is possible to "
+"translate the same one into several languages at once."
+msgstr ""
+
+#: templates/tolmach/landing.html:152
+#, fuzzy
+#| msgid "Translation variants"
+msgid "Translation memory databases and glossaries"
+msgstr "Translation variants"
+
+#: templates/tolmach/landing.html:154
+msgid ""
+"Translation memory databases help you to translate similar documents faster, "
+"reusing previously made translations."
+msgstr ""
+
+#: templates/tolmach/landing.html:157
+msgid ""
+"Correctly formatted glossaries will help to maintain a consistent style of "
+"translation, regardless of whether you work alone or in a group."
+msgstr ""
+
+#: templates/tolmach/landing.html:161
+#, fuzzy
+#| msgid "Translation variants"
+msgid "Only translation, nothing more"
+msgstr "Translation variants"
+
+#: templates/tolmach/landing.html:163
+msgid ""
+"We put a lot of effort to make the «Tolmach» interface as easy and "
+"minimalistic as possible."
+msgstr ""
+
+#: templates/tolmach/landing.html:166
+msgid ""
+"And despite the fact that we have already achieved significant results, we "
+"are constantly looking for new opportunities to make «Tolmach» even more "
+"simple and convenient."
+msgstr ""
+
+#: templates/tolmach/landing.html:170
+msgid "Visual progress"
+msgstr ""
+
+#: templates/tolmach/landing.html:172
+msgid ""
+"Evaluate the integrity and consistency of the translated text without being "
+"distracted from the process of translation, literally by a single click."
+msgstr ""
+
+#: templates/tolmach/landing.html:176
+msgid "Advanced formatting"
+msgstr ""
+
+#: templates/tolmach/landing.html:178
+msgid ""
+"Documents with complex formatting is not a problem for the «Tolmach». You "
+"don't need to think about how the text was formatted in the original "
+"document. Was it bold, italic, or underlined. All this does not matter in "
+"the translating process and should not distract you from what is most "
+"important. And in order to save the formatting of the translated document "
+"similar to the original, «Tolmach» will tell you where to make the necessary "
+"notes."
+msgstr ""
+
+#: templates/tolmach/landing.html:182
+#, fuzzy
+#| msgid "Users translations"
+msgid "Machine translation systems"
+msgstr "Users translations"
+
+#: templates/tolmach/landing.html:184
+msgid ""
+"Despite the fact that machine translations result texts' quality is far from "
+"perfect, they can be a good help during the initial stages of translation. "
+"They help to make an initial, very rough translation on the basis of which "
+"the final, much more high-quality translation is built."
+msgstr ""
+
+#: templates/tolmach/landing.html:188
+msgid "Dictionaries"
+msgstr ""
+
+#: templates/tolmach/landing.html:190
+msgid ""
+"When you see an unfamiliar word, you don't need to interrupt the translating "
+"process to use an external dictionary. You can just select the word and "
+"translate it in one click using the «Tolmach» inner dictionary. Dictionary "
+"database is not static and is being constantly updated."
+msgstr ""
+
+#: templates/tolmach/landing.html:203
+msgid "Try «Tolmach».<br> It's great."
+msgstr ""
+
+#: templates/tolmach/landing.html:205
+msgid ""
+"Just register or log in to the service using your Vkontakte, Facebook or "
+"Twitter account."
+msgstr ""
+
+#: templates/tolmach/landing.html:208
+msgid ""
+"If you don't like it – just log out of your account. But, we think you'll "
+"like it:)"
+msgstr ""
+
+#: templates/tolmach/landing.html:214
+msgid "rubles you need to use the service."
+msgstr ""
+
+#: templates/tolmach/landing.html:220
+msgid "that's how many fragments we have already translated"
+msgstr ""
+
+#: templates/tolmach/landing.html:226
+msgid ""
+"the answer to the ultimate question of life, the universe and everything"
+msgstr ""
+
 #: templates/tolmach/main.html:5
 msgid "How it works?"
 msgstr ""
@@ -206,27 +443,27 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: templates/tolmach/partial/edit_profile_modal.html:32
-#: templates/tolmach/partial/edit_profile_modal.html:36
+#: templates/tolmach/partial/edit_profile_modal.html:27
+#: templates/tolmach/partial/edit_profile_modal.html:31
 msgid "Nickname"
 msgstr ""
 
-#: templates/tolmach/partial/edit_profile_modal.html:42
-#: templates/tolmach/partial/edit_profile_modal.html:46
+#: templates/tolmach/partial/edit_profile_modal.html:37
+#: templates/tolmach/partial/edit_profile_modal.html:41
 msgid "First Name"
 msgstr ""
 
-#: templates/tolmach/partial/edit_profile_modal.html:52
-#: templates/tolmach/partial/edit_profile_modal.html:56
+#: templates/tolmach/partial/edit_profile_modal.html:47
+#: templates/tolmach/partial/edit_profile_modal.html:51
 msgid "Last Name"
 msgstr ""
 
-#: templates/tolmach/partial/edit_profile_modal.html:62
-#: templates/tolmach/partial/edit_profile_modal.html:66
+#: templates/tolmach/partial/edit_profile_modal.html:57
+#: templates/tolmach/partial/edit_profile_modal.html:61
 msgid "Website"
 msgstr ""
 
-#: templates/tolmach/partial/edit_profile_modal.html:79
+#: templates/tolmach/partial/edit_profile_modal.html:74
 #: templates/translations/partial/add_glossary_modal.html:82
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:105
@@ -612,64 +849,64 @@ msgstr ""
 msgid "Translation"
 msgstr ""
 
-#: templates/translations/view-text.html:43
+#: templates/translations/view-text.html:66
 msgid "Collapse"
 msgstr ""
 
-#: templates/translations/view-text.html:43
+#: templates/translations/view-text.html:66
 msgid "Expand"
 msgstr ""
 
-#: templates/translations/view-text.html:134
+#: templates/translations/view-text.html:157
 #, fuzzy
 #| msgid "Users translations"
 msgid "No translations"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:154
+#: templates/translations/view-text.html:177
 #, fuzzy
 #| msgid "Users translations"
 msgid "Disapprove translation"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:162
+#: templates/translations/view-text.html:185
 #, fuzzy
 #| msgid "Users translations"
 msgid "Approve translation"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:236
+#: templates/translations/view-text.html:261
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:237
+#: templates/translations/view-text.html:262
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:238
+#: templates/translations/view-text.html:263
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:239
+#: templates/translations/view-text.html:264
 #, fuzzy
 #| msgid "Users translations"
 msgid "Click to add new translation"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:240
+#: templates/translations/view-text.html:265
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:241
+#: templates/translations/view-text.html:266
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:242
+#: templates/translations/view-text.html:267
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:243
+#: templates/translations/view-text.html:268
 msgid "All the text with translated fragments"
 msgstr ""
 
@@ -677,28 +914,28 @@ msgstr ""
 msgid "text id is not set"
 msgstr ""
 
-#: translations/decorators.py:20 translations/views_ajax.py:226
-#: translations/views_ajax.py:401
+#: translations/decorators.py:20 translations/views_ajax.py:227
+#: translations/views_ajax.py:366
 msgid "Text not found"
 msgstr ""
 
-#: translations/decorators.py:22 translations/views_ajax.py:167
-#: translations/views_ajax.py:697 translations/views_ajax.py:742
+#: translations/decorators.py:22 translations/views_ajax.py:168
+#: translations/views_ajax.py:662 translations/views_ajax.py:707
 msgid "Not allowed"
 msgstr ""
 
-#: translations/decorators.py:35 translations/views_ajax.py:446
-#: translations/views_ajax.py:556
+#: translations/decorators.py:35 translations/views_ajax.py:411
+#: translations/views_ajax.py:521
 msgid "Project id is not set"
 msgstr ""
 
-#: translations/decorators.py:40 translations/views_ajax.py:29
-#: translations/views_ajax.py:47 translations/views_ajax.py:51
-#: translations/views_ajax.py:450 translations/views_ajax.py:560
+#: translations/decorators.py:40 translations/views_ajax.py:30
+#: translations/views_ajax.py:48 translations/views_ajax.py:52
+#: translations/views_ajax.py:415 translations/views_ajax.py:525
 msgid "Project not found"
 msgstr ""
 
-#: translations/decorators.py:42 translations/views_ajax.py:31
+#: translations/decorators.py:42 translations/views_ajax.py:32
 msgid "Access denied"
 msgstr ""
 
@@ -734,125 +971,125 @@ msgstr ""
 msgid "Sorry, no such translations here"
 msgstr "Users translations"
 
-#: translations/views_ajax.py:34 translations/views_ajax.py:53
-#: translations/views_ajax.py:120 translations/views_ajax.py:214
-#: translations/views_ajax.py:403 translations/views_ajax.py:452
-#: translations/views_ajax.py:562 translations/views_ajax.py:818
-#: translations/views_ajax.py:841
+#: translations/views_ajax.py:35 translations/views_ajax.py:54
+#: translations/views_ajax.py:121 translations/views_ajax.py:215
+#: translations/views_ajax.py:368 translations/views_ajax.py:417
+#: translations/views_ajax.py:527 translations/views_ajax.py:782
+#: translations/views_ajax.py:805
 msgid "You have to be a manager of project"
 msgstr ""
 
-#: translations/views_ajax.py:65
+#: translations/views_ajax.py:66
 msgid "Project name cannot be empty"
 msgstr ""
 
-#: translations/views_ajax.py:70
+#: translations/views_ajax.py:71
 msgid "Project description cannot be empty"
 msgstr ""
 
-#: translations/views_ajax.py:75
+#: translations/views_ajax.py:76
 msgid "Project type is not set"
 msgstr ""
 
-#: translations/views_ajax.py:124 translations/views_ajax.py:161
+#: translations/views_ajax.py:125 translations/views_ajax.py:162
 msgid "User id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:128 translations/views_ajax.py:165
+#: translations/views_ajax.py:129 translations/views_ajax.py:166
 msgid "User not found"
 msgstr ""
 
-#: translations/views_ajax.py:130 translations/views_ajax.py:169
+#: translations/views_ajax.py:131 translations/views_ajax.py:170
 msgid "This user is a manager of project"
 msgstr ""
 
-#: translations/views_ajax.py:136
+#: translations/views_ajax.py:137
 msgid "User is already a member of project"
 msgstr ""
 
-#: translations/views_ajax.py:175
+#: translations/views_ajax.py:176
 msgid "User is not a member of project"
 msgstr ""
 
-#: translations/views_ajax.py:235 translations/views_ajax.py:277
-#: translations/views_ajax.py:281 translations/views_ajax.py:732
+#: translations/views_ajax.py:236 translations/views_ajax.py:278
+#: translations/views_ajax.py:282 translations/views_ajax.py:697
 msgid "Language not found"
 msgstr ""
 
-#: translations/views_ajax.py:305 translations/views_ajax.py:463
-#: translations/views_ajax.py:573
+#: translations/views_ajax.py:322 translations/views_ajax.py:428
+#: translations/views_ajax.py:538
 msgid "File is too big"
 msgstr ""
 
-#: translations/views_ajax.py:308 translations/views_ajax.py:466
-#: translations/views_ajax.py:577
+#: translations/views_ajax.py:334 translations/views_ajax.py:431
+#: translations/views_ajax.py:542
 msgid "Wrong file type"
 msgstr ""
 
-#: translations/views_ajax.py:397
+#: translations/views_ajax.py:362
 msgid "Text id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:418 translations/views_ajax.py:482
-#: translations/views_ajax.py:512
+#: translations/views_ajax.py:383 translations/views_ajax.py:447
+#: translations/views_ajax.py:477
 msgid "Glossary not found"
 msgstr ""
 
-#: translations/views_ajax.py:455
+#: translations/views_ajax.py:420
 msgid "Glossary name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:474
+#: translations/views_ajax.py:439
 msgid "Please, send file or input data manually"
 msgstr ""
 
-#: translations/views_ajax.py:508
+#: translations/views_ajax.py:473
 msgid "Glossary id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:514
+#: translations/views_ajax.py:479
 msgid "It's not your glossary"
 msgstr ""
 
-#: translations/views_ajax.py:529
+#: translations/views_ajax.py:494
 msgid "TMDatabase not found"
 msgstr ""
 
-#: translations/views_ajax.py:565
+#: translations/views_ajax.py:530
 msgid "TMX name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:569
+#: translations/views_ajax.py:534
 msgid "TMX file is not passed"
 msgstr ""
 
-#: translations/views_ajax.py:597
+#: translations/views_ajax.py:562
 msgid "TMX id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:601
+#: translations/views_ajax.py:566
 msgid "TMX not found"
 msgstr ""
 
-#: translations/views_ajax.py:603
+#: translations/views_ajax.py:568
 msgid "It's not your TMX"
 msgstr ""
 
-#: translations/views_ajax.py:625
+#: translations/views_ajax.py:590
 msgid "Target language is not set"
 msgstr ""
 
-#: translations/views_ajax.py:719 translations/views_ajax.py:802
-#: translations/views_ajax.py:829 translations/views_ajax.py:868
+#: translations/views_ajax.py:684 translations/views_ajax.py:766
+#: translations/views_ajax.py:793 translations/views_ajax.py:832
 msgid "Id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:724 translations/views_ajax.py:748
-#: translations/views_ajax.py:834 translations/views_ajax.py:873
+#: translations/views_ajax.py:689 translations/views_ajax.py:713
+#: translations/views_ajax.py:798 translations/views_ajax.py:837
 msgid "Not found"
 msgstr ""
 
-#: translations/views_ajax.py:739
+#: translations/views_ajax.py:704
 #, fuzzy
 #| msgid "Translation variants"
 msgid "Translation not found"
