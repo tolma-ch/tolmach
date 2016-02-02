@@ -1,4 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% load i18n %}
+
+{% trans "Translating together!" as trans_together %}
+{% trans "Login via social networks" as social_networks %}
+{% trans "What is «Tolmach»?" as what_is %}
+{% trans "«Tolmach» is an integrated translating environment, service that combines all necessary tools for the translator in one place — glossaries, translation memory databases, dictionaries, machine translation engines and more. All the paperwork also will be done by «Tolmach». All you have to do is to load the document into the system. All the extraction of useful text and division up into easy to translate fragments will be produced automatically." as tolmach_ite %}
+{% trans "A problem shared is a problem halved" as two_heads %}
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:svg="http://www.w3.org/2000/svg">
     <head>
         <meta xmlns="http://www.w3.org/1999/xhtml" http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -34,9 +41,9 @@
                         {% load social_auth_widget %}
                         <div class="logo"></div>
                         <h1>
-                            Переводим вместе!
+                            {{ trans_together }}
                         </h1>
-                        <p class="center">Войти через социальные сети:</p>
+                        <p class="center">{{ social_networks }}:</p>
                         <p class="center">
                             {% social_auth_widget %}
                         </p>
@@ -51,24 +58,24 @@
                 <div class="languages-poster__logo"></div>
             </div>
             <div class="container">
-                <h1>Что такое толмач?</h1>
-                <p class="center">«Толмач» - это интергированная среда перевода, сервис, объединяющий в себе все необходимые переводчику инструменты в одном месте — глоссарии, базы памяти перевода, словари, машинные переводы и многое другое. Работу с документами «Толмач» тоже возьмёт на себя. Всё, что от вас потребуется — это загрузить документ в систему, а извлечение полезного текста и разделение его на удобные для перевода фрагменты будет произведено автоматически.</p>
+                <h1>{{ what_is }}</h1>
+                <p class="center">{{ tolmach_ite }}</p>
                 <div class="gap3"></div>
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="benefit benefit_1"></div>
-                        <p class="upper-bold">Одна голова – хорошо,а много – лучше</p>
-                        <p>Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.</p>
+                        <p class="upper-bold">{{ two_heads }}</p>
+                        <p>{% trans "Invite old colleagues or find new ones to work on Your project not looking up from translation." %}</p>
                     </div>
                     <div class="col-sm-4">
                         <div class="benefit benefit_2"></div>
-                        <p class="upper-bold">Работу с документами берём на себя</p>
-                        <p>Разбираем полученные документы, извлекаем все полезные текстовые данные и разбиваем их на удобные для перевода отрывки.</p>
+                        <p class="upper-bold">{% trans "All the paperwork is up to us." %}</p>
+                        <p>{% trans "«Tolmach» will parse received documents, extract all the useful textual data and split it into easy to translate fragments." %}</p>
                     </div>
                     <div class="col-sm-4">
                         <div class="benefit benefit_3"></div>
-                        <p class="upper-bold">Переводим с комфортом</p>
-                        <p>Переводим текст с использованием глоссариев, баз памяти перевода, систем машинного перевода и готовых словарей.</p>
+                        <p class="upper-bold">{% trans "Translate comfortably" %}</p>
+                        <p>{% trans "Translate the text using glossaries, translation memory databases, machine translation systems and prepared dictionaries." %}</p>
                     </div>
                 </div>
                 <div class="gap3"></div>
@@ -78,7 +85,7 @@
             <div class="container">
                 <div class="gap4"></div>
                 <div class="gap4"></div>
-                <h1>Как это работает:</h1>
+                <h1>{% trans 'How it works:' %}</h1>
                 <div class="slider">
                     <div class="slider__img">
                         <div class="slider-img slider-img_1">
@@ -93,37 +100,94 @@
                         <div class="slider-img slider-img_4">
                             <img src="/static/img/landing/project_tm_glossaries.png" alt="">
                         </div>
+                        <div class="slider-img slider-img_5">
+                            <img src="/static/img/landing/translation_page.png" alt="">
+                        </div>
+                        <div class="slider-img slider-img_6">
+                            <img src="/static/img/landing/translation_page_trans.png" alt="">
+                        </div>
+                        <div class="slider-img slider-img_7">
+                            <img src="/static/img/landing/translation_tags.png" alt="">
+                        </div>
+                        <div class="slider-img slider-img_8">
+                            <img src="/static/img/landing/translation_tags_mt.png" alt="">
+                        </div>
+                        <div class="slider-img slider-img_9">
+                            <img src="/static/img/landing/translation_tags_dict.png" alt="">
+                        </div>
                     </div>
                     <div class="slider__btns">
                         <p class="center">
                             <span class="slider-btn" onclick="prevSlide()"><i class="fa fa-angle-left"></i></span>
-                            <span class="margered"><span id="slideIndex">1</span> из <span id="slidesCount">3</span></span>
+                            <span class="margered"><span id="slideIndex">1</span> {% trans "of" %} <span id="slidesCount">9</span></span>
                             <span class="slider-btn slider-btn_active" onclick="nextSlide()"><i class="fa fa-angle-right"></i></span>
                         </p>
                     </div>
                     <div class="slider__content">
                         <div class="slider-text slider-text_1">
-                            <h2>Личная страница</h2>
+                            <h2>{% trans "Personal page" %}</h2>
                             <p>
-                                Это личная страница пользователя. Вам не нужно заполнять нудных анкет при регистрации - мы сами все перенесем из Вашей социалочки.
+                                {% trans "This is a user's personal page. You do not need to fill out tedious questionnaires during registration - we can get your stuff from your social network profile." %}
                             </p>
                             <p>
-                                Здесь содержится список проектов, в которых вы участвуете, а также статистика, отображающая Ваш опыт переводчика: тут и общее количество переведенных Вами фрагментов текста, и графики, показывающие, с каких языков на какие вы предпочитаете переводить, и полный список Ваших проектов.
+                                {% trans "Here you can see all the statistics that present your experience as translator: total number of translated fragments and graphs showing which language pairs do you prefer to work with." %}
                             </p>
                         </div>
                         <div class="slider-text slider-text_2">
-                            <h2>Коллективные переводы</h2>
+                            <h2>{% trans "Collective translations" %}</h2>
                             <p>
-                                Теперь нескольким переводчикам можно будет комфортно работать над одним документом одновременно — разделять ответственность за отдельные фрагменты текста между разными переводчиками, предлагать разные варианты переводов одних и тех же мест, выбирая, в итоге, наиболее качественные.
+                                {% trans "Now several interpreters can comfortably work with one document simultaneously — share the responsibility for exact pieces of text between different translators, offer different translations of the same fragments, choosing, in the end, the best offered fragments." %}
                             </p>
                             <p>
-                                Редактор сможет наблюдать весь процесс вживую — ему не придётся больше тратить огромное количество времени на ожидание результатов перевода, а переводчики смогут получить обратную связь по качеству сделанного перевода буквально сразу после его публикации.
+                                {% trans "Team editor now can watch the whole process live — he will not have to spend huge amount of time to wait for the results of translation, and translators will be able to get feedback almost immediately after translation publication." %}
                             </p>
                         </div>
                         <div class="slider-text slider-text_3">
-                            <h2>Третий слайд</h2>
+                            <h2>{% trans "Multilingual translations" %}</h2>
                             <p>
-                                Текст.
+                                {% trans "No need to upload the same document several times - it is possible to translate the same one into several languages at once." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_4">
+                            <h2>{% trans "Translation memory databases and glossaries" %}</h2>
+                            <p>
+                                {% trans "Translation memory databases help you to translate similar documents faster, reusing previously made translations." %}
+                            </p>
+                            <p>
+                                {% trans "Correctly formatted glossaries will help to maintain a consistent style of translation, regardless of whether you work alone or in a group." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_5">
+                            <h2>{% trans "Only translation, nothing more" %}</h2>
+                            <p>
+                                {% trans "We put a lot of effort to make the «Tolmach» interface as easy and minimalistic as possible." %}
+                            </p>
+                            <p>
+                                {% trans "And despite the fact that we have already achieved significant results, we are constantly looking for new opportunities to make «Tolmach» even more simple and convenient." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_6">
+                            <h2>{% trans "Visual progress" %}</h2>
+                            <p>
+                                {% trans "Evaluate the integrity and consistency of the translated text without being distracted from the process of translation, literally by a single click." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_7">
+                            <h2>{% trans "Advanced formatting" %}</h2>
+                            <p>
+                                {% trans "Documents with complex formatting is not a problem for the «Tolmach». You don't need to think about how the text was formatted in the original document. Was it bold, italic, or underlined. All this does not matter in the translating process and should not distract you from what is most important. And in order to save the formatting of the translated document similar to the original, «Tolmach» will tell you where to make the necessary notes." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_8">
+                            <h2>{% trans "Machine translation systems" %}</h2>
+                            <p>
+                                {% trans "Despite the fact that machine translations result texts' quality is far from perfect, they can be a good help during the initial stages of translation. They help to make an initial, very rough translation on the basis of which the final, much more high-quality translation is built." %}
+                            </p>
+                        </div>
+                        <div class="slider-text slider-text_9">
+                            <h2>{% trans "Dictionaries" %}</h2>
+                            <p>
+                                {% trans "When you see an unfamiliar word, you don't need to interrupt the translating process to use an external dictionary. You can just select the word and translate it in one click using the «Tolmach» inner dictionary. Dictionary database is not static and is being constantly updated." %}
                             </p>
                         </div>
                     </div>
@@ -136,36 +200,35 @@
         <div class="slide slide_4">
             <div class="black-column">
                 <div class="container">
-                    <h1>Попробуйте «Толмач».
-                        Это здорово.</h1>
+                    <h1>{% trans "Try «Tolmach».<br> It's great." %}</h1>
                     <p class="center">
-                        Просто зарегистрируйтесь или войдите в сервис через Ваш аккаунт вконтакте, фэйсбуке или твиттере.
+                        {% trans "Just register or log in to the service using your Vkontakte, Facebook or Twitter account." %}
                     </p>
                     <p class="center">
-                        Если Вам не понравится – просто выйдите из своей учетной записи. Но, мы думаем, Вам понравится:)
+                        {% trans "If you don't like it – just log out of your account. But, we think you'll like it:)" %}
                     </p>
                     <div class="row">
                         <div class="col-sm-4">
                             <p class="center small">
                                 <span class="huge">0</span>
-                                рублей вам нужно, чтобы пользоваться сервисом.
+                                {% trans "rubles you need to use the service." %}
                             </p>
                         </div>
                         <div class="col-sm-4">
                             <p class="center small">
                                 <span class="huge">1488</span>
-                                вот сколько предложений мы уже перевели
+                                {% trans "that's how many fragments we have already translated" %}
                             </p>
                         </div>
                         <div class="col-sm-4">
                             <p class="center small">
                                 <span class="huge">42</span>
-                                ответ на главный вопрос жизни, вселенной и всего остального
+                                {% trans "the answer to the ultimate question of life, the universe and everything" %}
                             </p>
                         </div>
                     </div>
                     <div class="gap4"></div>
-                    <p class="center">Войти через социальные сети:</p>
+                    <p class="center">{{ social_networks }}:</p>
                     <p class="center">
                         {% social_auth_widget %}
                     </p>

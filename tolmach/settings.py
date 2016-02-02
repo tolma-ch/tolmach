@@ -253,7 +253,7 @@ DOCUMENT_FILE_SIZE = 104857600
 GLOBAL_DOCUMENTS_DIR = ""
 
 ELASTIC_LIST = [
-    {"host": "localhost", "port": 9200}
+    {"host": "localhost", "port": 9200, "timeout": 30}
 ]
 
 try:
