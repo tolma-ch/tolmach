@@ -119,7 +119,9 @@
                 } else {
                     expandEntry(entry);
                 }
-                $event.stopPropagation();
+                if ($event) {
+                    $event.stopPropagation();
+                }
             };
             $scope.focusEntry = function (id) {
                 var entry = $scope.entriesById[id];
@@ -148,6 +150,27 @@
                     parent.translation = '';
                     updateTranslation(parent);
                 })
+            };
+            $scope.removeTranslation = function (entry) {
+                if (!entry.suggestionId) {
+                    return;
+                }
+                $http.post('/api/remove-translate/', {
+                    'entry': entry.id,
+                    'translation': entry.suggestionId
+                }).success(function () {
+                    var i;
+                    for (i = 0; i < entry.translations.length; i++) {
+                        var translation = entry.translations[i];
+                        if (translation.id === entry.suggestionId) {
+                            delete entry.translations.splice(i, 1);
+                            $scope.cancelEditing(entry);
+                            $scope.toggleEntry(entry);
+                            break;
+                        }
+                    }
+                    updateTranslation(entry);
+                });
             };
             $scope.suggestTranslation = function (entry) {
                 var suggestionId = entry['suggestionId'],
@@ -211,7 +234,7 @@
 
             };
             $scope.cancelEditing = function (entry) {
-                entry.mode = 0;
+                entry.mode = (angular.isArray(entry['translations']) && !!entry['translations'].length);
                 entry.suggestion = '';
                 entry.suggestionId = false;
             };
