@@ -797,7 +797,7 @@
                     return div.textContent || div.innerText || "";
                 },
                 updateTranslation = function (entry) {
-                    if (!entry.isApproved) {
+                    if (!entry.approved) {
                         entry.translation = clearTags(entry['rawBody']);
                         for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
                             var translation = entry.translations[i];
