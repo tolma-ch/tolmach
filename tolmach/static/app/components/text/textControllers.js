@@ -113,12 +113,13 @@
                     }
                     scrollToEntry(entry);
                 };
-            $scope.toggleEntry = function (entry) {
+            $scope.toggleEntry = function (entry, $event) {
                 if ($scope.activeEntry === entry) {
                     $scope.activeEntry = null;
                 } else {
                     expandEntry(entry);
                 }
+                $event.stopPropagation();
             };
             $scope.focusEntry = function (id) {
                 var entry = $scope.entriesById[id];

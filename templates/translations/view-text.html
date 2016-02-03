@@ -55,14 +55,16 @@
                 <div class="translation__sentence-translation"
                      ng-repeat="entry in entries"
                      id="entry-{= entry.idInText =}"
+                     ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
                      ng-class="{'translation__sentence-translation_state_closed': entry.approved || ($parent.activeEntry !== entry),
                                 'translation__sentence-translation_state_approved': entry.approved,
-                                'translation__sentence-translation_state_editing': entry.mode === 1 && ($parent.activeEntry === entry)}">
+                                'translation__sentence-translation_state_editing': entry.mode === 1 && ($parent.activeEntry === entry),
+                                'translation__sentence-translation_state_translated': !entry.approved && (entry.translations.length > 0)}">
 
                     <div class="translation__sentence-translation-original">
                         <span html-content="entry.body"></span>
                         <div class="translation__sentence-translation-toggle"
-                             ng-click="toggleEntry(entry)"
+                             ng-click="($parent.activeEntry === entry) && toggleEntry(entry, $event)"
                              tooltip="{= activeEntry == entry ? '{% trans 'Collapse' %}' : '{% trans 'Expand' %}' =}"
                              tooltip-append-to-body="true"></div>
                     </div>
