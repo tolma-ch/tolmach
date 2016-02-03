@@ -755,6 +755,37 @@ def translate_entry_ajax(request):
         translation_array['isVoted'] = entry_translation.is_voted(request.user)
         return HttpResponse(json.dumps(translation_array), content_type="application/json")
 
+def remove_entry_ajax(request):
+    if not request.method == 'POST':
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    post = json.loads(request.body)
+    if 'entry' not in post:
+        return HttpResponse(json.dumps(_('entry is not set')), content_type="application/json", status=400)
+    entry_id = post['entry']
+    try:
+        entry = TextEntry.objects.get(id=entry_id)
+    except TextEntry.DoesNotExist:
+        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+
+    text = entry.text
+
+    if not text.is_user_allowed_to_write(request.user):
+        return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+
+    if 'translation' not in post:
+        return HttpResponse(json.dumps(_('translation is not set')), content_type="application/json", status=400)
+
+    translation_id = post['translation']
+
+    try:
+        entry_translation = TextEntry.objects.get(id=translation_id)
+    except TextEntry.DoesNotExist:
+        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+
+    entry_translation.delete()
+
+    return HttpResponse(json.dumps(True), content_type="application/json")
+
 
 @login_required
 def approve_entry_ajax(request):
