@@ -152,6 +152,12 @@
                                 <button type="submit" class="translation__sentence-commit"
                                         ng-show="entry.translations.length"
                                         ng-click="cancelEditing(entry)">{{ cancel_translation }}</button>
+
+                                <button type="submit" class="translation__sentence-commit"
+                                        ng-show="entry.suggestionId"
+                                        ng-click="removeTranslation(entry)">
+                                    {{ remove_translation }}
+                                </button>
                             </form>
                         </div>
 
