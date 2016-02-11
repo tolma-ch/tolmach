@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import json
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http.response import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from django.conf import settings
-from tolmach.models import UserMeta, Messages
+from tolmach.models import UserMeta, PairStats
 from django.contrib.auth.models import User
+from django.db.models import Sum
 from translations.models import Project
 from tolmach import utils
 
@@ -45,6 +44,7 @@ def index(request):
         template = 'tolmach/profile.html'
     else:
         data = {
+            'fragments_translated': PairStats.objects.aggregate(Sum('fragments_translated'))['fragments_translated__sum']
         }
         template = 'tolmach/landing.html'
     return render_to_response(template, data, RequestContext(request))
