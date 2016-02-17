@@ -32,7 +32,7 @@
             <li ng-repeat="message in messages">
                 <a href="/project/{= message.project_id =}/" ng-click="readMessage(message)">
                     <div class="user-avatar">
-                        <img src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
+                        <img ng-src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
                     </div>
                     <span class="msg-body">
                         <span class="msg-title" ng-if="message.type == 'invite'">

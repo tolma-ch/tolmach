@@ -1,7 +1,7 @@
 {
   "name": "tolmach",
   "dependencies": {
-    "angular": "1.4",
+    "angular": "1.5",
     "angular-bootstrap": "~0.13",
     "angular-elastic": "~2.4.2",
     "jquery": "~2.1.4",
@@ -9,6 +9,9 @@
     "angular-ui-select": "~0.12.1",
     "angular-image-crop": "~2.0.0",
     "angular-contenteditable": "~0.3.8",
-    "angular-img-cropper": "~1.1.0"
+    "angular-img-cropper": "~1.1.0",
+    "less": "^2.6.0",
+    "bootstrap": "^3.3.6",
+    "font-awesome": "^4.5.0"
   }
 }
