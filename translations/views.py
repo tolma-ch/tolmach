@@ -235,13 +235,42 @@ def export_translation(request, text_id, target_lang):
 
     if format == "text/plain":
         import re
-        pure_text = re.sub(r'<.*?>', "", text.body)
+        pure_text = ""
+        try:
+            text_meta = TextMeta.objects.get(text=text,
+                                         meta_type="text/plain")
+        except:
+            text_meta = False
+        if not text_meta:
+            pure_text = re.sub(r'<.*?>', "", text.body)
 
-        entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
-        for entry in entries:
-            entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-            if entry_translation:
-                pure_text = re.sub(utils.escape_brackets(entry.body), h.unescape(entry_translation[0].body), pure_text, 1)
+            entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+            for entry in entries:
+                entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+                if entry_translation:
+                    pure_text = re.sub(utils.escape_brackets(entry.body), h.unescape(entry_translation[0].body), pure_text, 1)
+        else:
+            paragraphs_list = {}
+            entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
+
+            # получаем список параграфов
+            for ent in entries_metas:
+                ent_data = json.loads(ent.meta_data)
+                if not ent_data['paragraph'] in paragraphs_list:
+                    paragraphs_list[ent_data['paragraph']] = [ent.entry]
+                else:
+                    paragraphs_list[ent_data['paragraph']].append(ent.entry)
+
+            print paragraphs_list
+
+            for key, value in paragraphs_list.items():
+                for entry in value:
+                    entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+                    if entry_translation:
+                        pure_text += h.unescape(entry_translation[0].body) + " "
+                    else:
+                        pure_text += entry.body + " "
+                pure_text += "\n"
 
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
