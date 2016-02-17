@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
 import tolmach.views as main_views
 import translations.views as trans_views
 import translations.views_ajax as trans_ajax
@@ -46,4 +47,4 @@ urlpatterns = patterns('',
     url(r'^api/user/$', trans_ajax.user_ajax, name='user_ajax'),
 
     # temporarily added urls for developing purpuses
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

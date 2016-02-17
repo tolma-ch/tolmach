@@ -1,7 +1,6 @@
 {% extends "main/base-logged-in.html" %}
 {% load i18n %}
 
-
 {% block innercontent %}
 
 {% trans 'Translation variants' as trans_variants %}
@@ -18,6 +17,12 @@
 {% trans 'Translation' as translated_text %}
 
     <style>
+        .sidebar {
+            display: none;
+        }
+        .main-content {
+            margin-left: 0;
+        }
         footer {
             display: none;
         }
@@ -45,223 +50,172 @@
         window['translationTargetLang'] = '{{ target_lang }}';
     </script>
 
-    <div class="translation" ng-controller="transCtrl">
-{#        <h1 class="translation__title">{{ text.title }}</h1>#}
-        <div class="row" ng-cloak>
-            <div class="col-xs-12 col-sm-6">
-                <div class="scrollable" id="translations-container">
-{#                <h2 class="translation__variants-title">{{ trans_variants }}</h2>#}
+    <div class="workbench-layout" ng-controller="transCtrl">
+        <div class="workbench-layout__row row" ng-cloak>
+            <div class="workbench-layout__col col-xs-12 col-sm-6">
+                <div class="text-pieces" id="translations-container">
+                    <div class="text-piece"
+                         ng-repeat="entry in entries"
+                         id="entry-{= entry.idInText =}"
+                         ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
+                         ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
+                                    'text-piece_approved': entry.approved,
+                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0)}">
 
-                <div class="translation__sentence-translation"
-                     ng-repeat="entry in entries"
-                     id="entry-{= entry.idInText =}"
-                     ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
-                     ng-class="{'translation__sentence-translation_state_closed': entry.approved || ($parent.activeEntry !== entry),
-                                'translation__sentence-translation_state_approved': entry.approved,
-                                'translation__sentence-translation_state_editing': entry.mode === 1 && ($parent.activeEntry === entry),
-                                'translation__sentence-translation_state_translated': !entry.approved && (entry.translations.length > 0)}">
-
-                    <div class="translation__sentence-translation-original">
-                        <span html-content="entry.body"></span>
-                        <div class="translation__sentence-translation-toggle"
-                             ng-click="($parent.activeEntry === entry) && toggleEntry(entry, $event)"
-                             tooltip="{= activeEntry == entry ? '{% trans 'Collapse' %}' : '{% trans 'Expand' %}' =}"
-                             tooltip-append-to-body="true"></div>
-                    </div>
-
-                    <div class="translation__sentence-translation-result">
-                        <div class="translation__sentence-translation-switcher"
-                             ng-show="translationAllowed && !!entry.translations.length">
-                            <div class="switcher">
-                            <span class="switcher__button"
-                                  ng-class="{'switcher__button_active': entry.mode !== 1}"
-                                  ng-click="cancelEditing(entry)">
-                                <i class="fa fa-user switcher__button-icon"></i>
-                                <span class="switcher__button-content">{{ users_trans }}</span>
-                            </span>
-                            <span class="switcher__button switcher__button_make-translate"
-                                  ng-class="{'switcher__button_active': entry.mode === 1}"
-                                  ng-click="entry.mode = 1">
-                                <i class="fa fa-pencil switcher__button-icon"></i>
-                                <span class="switcher__button-content">{{ make_translation }}</span>
-                            </span>
-                            </div>
+                        <div class="text-piece__original">
+                            <span html-content="entry.body"></span>
                         </div>
 
-                        <div class="translation__sentence-commitance"
-                             ng-show="entry.mode === 1">
-                            <form>
-{#                                <textarea name="translation-suggestion"#}
-{#                                          class="translation__sentence-suggestion-input"#}
-{#                                          placeholder="{{ your_translation }}"#}
-{#                                          data-insert-text=""#}
-{#                                          ng-model="entry.suggestion"#}
-{#                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"#}
-{#                                          ng-keypress="textareaKeypress($event, entry)"></textarea>#}
-                                <div contenteditable="true"
-                                     id="entry-suggestion-{= entry.id =}"
-                                     name="translation-suggestion"
-                                     class="translation__sentence-suggestion-input"
-                                     placeholder="{{ your_translation }}"
-                                     data-insert-text=""
-                                     ng-model="entry.suggestion"
-                                     ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
-                                     ng-drop="textareaDrop($event, entry)"
-                                     ng-keypress="textareaKeypress($event, entry)"
-                                     text-editor>
+                        <div class="text-piece__editor">
+                            <div class="translation-editor"
+                                 ng-class="{'translation-editor_active': entry.editing}">
+                                <div class="translation-editor__input-wrapper">
+                                    <div contenteditable="true"
+                                         id="entry-suggestion-{= entry.id =}"
+                                         class="translation-editor__input"
+                                         placeholder="{{ your_translation }}"
+                                         data-insert-text=""
+                                         ng-model="entry.suggestion"
+                                         ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                                         ng-drop="textareaDrop($event, entry)"
+                                         ng-focus="startEditing(entry)"
+                                         ng-keypress="textareaKeypress($event, entry)"
+                                         text-editor>
+                                    </div>
                                 </div>
-
-                                <div class="translation__sentence-machine-suggestions">
-                                    <div ng-show="entry.tmdbVariants.length">
-                                        <h4 class="translation__sentence-suggestions-title">{{ tmtranslations }}</h4>
-
-                                        <ul class="translation__sentence-machine-suggestions-list">
-                                            <li class="translation__sentence-machine-suggestions-item"
+                                <div class="translation-editor__btns">
+                                    <i class="fa fa-floppy-o"
+                                       ng-click="suggestTranslation(entry)"
+                                       tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
+                                       tooltip-append-to-body="true"></i>
+                                    <i class="fa fa-trash-o"
+                                       ng-show="entry.suggestionId"
+                                       ng-click="removeTranslation(entry)"
+                                       tooltip="{{ remove_translation }}"
+                                       tooltip-append-to-body="true"></i>
+                                    <i class="fa fa-times"
+                                       ng-click="cancelEditing(entry)"
+                                       tooltip="{{ cancel_translation }}"
+                                       tooltip-append-to-body="true"></i>
+                                </div>
+                                <div class="translation-editor__machine-suggestions">
+                                    <div class="machine-suggestions"
+                                         ng-show="entry.tmdbVariants.length">
+                                        <h4 class="machine-suggestions__title">{{ tmtranslations }}</h4>
+                                        <ul class="machine-suggestions__list">
+                                            <li class="machine-suggestions__item"
                                                 ng-repeat="machine in entry.tmdbVariants"
                                                 ng-click="addMachineSuggestion(entry, machine)">
-                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
-                                                <span class="translation__sentence-machine-suggestions-relevance"
-                                                      ng-class="{
-                                                        'translation__sentence-machine-suggestions-relevance_high': machine.percent >= 70,
-                                                        'translation__sentence-machine-suggestions-relevance_medium': machine.percent> 40 && machine.percent < 70,
-                                                        'translation__sentence-machine-suggestions-relevance_low': machine.percent <= 40
-                                                      }">{= machine.percent =}%</span>
+                                                <div class="machine-suggestion">
+                                                    <span class="machine-suggestion__text">{= machine.text =}</span>
+                                                    <span class="machine-suggestion__relevance"
+                                                          ng-class="{
+                                                            'machine-suggestion__relevance_high': machine.percent >= 70,
+                                                            'machine-suggestion__relevance_medium': machine.percent> 40 && machine.percent < 70,
+                                                            'machine-suggestion__relevance_low': machine.percent <= 40
+                                                          }">{= machine.percent =}%</span>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
-                                    <div ng-show="entry.yaMachines.length">
-                                        <h4 class="translation__sentence-suggestions-title">{{ mtranslations }}</h4>
-
-                                        <ul class="translation__sentence-machine-suggestions-list">
-                                            <li class="translation__sentence-machine-suggestions-item"
+                                    <div class="machine-suggestions"
+                                         ng-show="entry.yaMachines.length">
+                                        <h4 class="machine-suggestions__title">{{ mtranslations }}</h4>
+                                        <ul class="machine-suggestions__list">
+                                            <li class="machine-suggestions__item"
                                                 ng-repeat="machine in entry.yaMachines"
                                                 ng-click="addMachineSuggestion(entry, machine)">
-                                                <span class="translation__sentence-machine-suggestions-text">{= machine.text =}</span>
-                                                <span class="translation__sentence-machine-logo"><img src="/static/img/yandex_logo.svg"></span>
+                                                <div class="machine-suggestion">
+                                                    <span class="machine-suggestion__text">{= machine.text =}</span>
+                                                    <span class="machine-suggestion__logo"><img src="/static/img/yandex_logo.svg"></span>
+                                                </div>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
-
-                                <button type="submit" class="translation__sentence-commit"
-                                        ng-click="suggestTranslation(entry)">
-                                    <span ng-show="!entry.suggestionId">{{ add_translation }}</span>
-                                    <span ng-show="entry.suggestionId">{{ save_translation }}</span>
-                                </button>
-
-                                <button type="submit" class="translation__sentence-commit"
-                                        ng-show="entry.translations.length"
-                                        ng-click="cancelEditing(entry)">{{ cancel_translation }}</button>
-
-                                <button type="submit" class="translation__sentence-commit"
-                                        ng-show="entry.suggestionId"
-                                        ng-click="removeTranslation(entry)">
-                                    {{ remove_translation }}
-                                </button>
-                            </form>
+                            </div>
                         </div>
 
-                        <div class="translation__sentence-suggestion" ng-show="!entry.translations.length && (entry.mode !== 1)">
-                            {% trans 'No translations' %}
-                        </div>
-
-                        <div class="translation__sentence-suggestion"
-                             ng-show="entry.mode === 0"
-                             ng-repeat="translation in entry.translations"
-                             ng-class="{
-                                'translation__sentence-suggestion_state_approved': translation.isApproved
-                             }">
-                            <div class="translation__sentence-suggestion-text">
-                                {= clearTags(translation.body) =}
-                            </div>
-                            <div class="translation__sentence-suggestion-author">
-                                <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
-                            </div>
-                            <div class="translation__sentence-suggestion-icons">
-                                <a class="active"
-                                   ng-show="translation.isApproved"
-                                   ng-click="disapproveEntry(translation, entry)"
-                                   ng-disabled="translation.busy"
-                                   tooltip="{% trans 'Disapprove translation' %}"
-                                   tooltip-append-to-body="true">
-                                    <i class="fa fa-check"></i>
-                                </a>
-                                <div ng-show="!translation.isApproved">
-                                    <a ng-show="userIsManager"
-                                       ng-click="approveEntry(translation, entry)"
+                        <div class="text-piece__versions"
+                             ng-if="entry.approved || ($parent.activeEntry === entry)">
+                            <div class="translation-version"
+                                 ng-repeat="translation in entry.translations"
+                                 ng-class="{
+                                    'translation-version_approved': translation.isApproved
+                                 }">
+                                <div class="translation-version__text">
+                                    {= clearTags(translation.body) =}
+                                </div>
+                                <div class="translation-version__author">
+                                    <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
+                                </div>
+                                <div class="translation-version__icons">
+                                    <a class="active"
+                                       ng-show="translation.isApproved"
+                                       ng-click="disapproveEntry(translation, entry)"
                                        ng-disabled="translation.busy"
-                                       tooltip="{% trans 'Approve translation' %}"
+                                       tooltip="{% trans 'Disapprove translation' %}"
                                        tooltip-append-to-body="true">
-                                        <i class="fa fa-check-circle"></i>
+                                        <i class="fa fa-check"></i>
                                     </a>
-                                    <a ng-show="userIsManager || (user == translation.author.id)"
-                                       ng-click="editTranslation(entry, translation)"
-                                       ng-disabled="translation.busy">
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
-                                    <a ng-class="{'active': translation.isVoted}"
-                                       ng-show="!userIsManager && user !== translation.author.id"
-                                       ng-click="voteTranslation(entry, translation)"
-                                       ng-disabled="translation.busy">
-                                        <i class="fa fa-plus-square-o"></i>
-                                    </a>
-                                    <span class="translation__sentence-suggestion-vote"
-                                          ng-show="userIsManager && translation.vote">
-                                        <i class="fa fa-plus"></i> {= translation.vote =}
-                                    </span>
+                                    <div ng-show="!translation.isApproved">
+                                        <a ng-show="userIsManager"
+                                           ng-click="approveEntry(translation, entry)"
+                                           ng-disabled="translation.busy"
+                                           tooltip="{% trans 'Approve translation' %}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-check-circle"></i>
+                                        </a>
+                                        <a ng-show="userIsManager || (user == translation.author.id)"
+                                           ng-click="editTranslation(entry, translation)"
+                                           ng-disabled="translation.busy">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a ng-class="{'active': translation.isVoted}"
+                                           ng-show="!userIsManager && user !== translation.author.id"
+                                           ng-click="voteTranslation(entry, translation)"
+                                           ng-disabled="translation.busy">
+                                            <i class="fa fa-plus-square-o"></i>
+                                        </a>
+                                        <span class="translation-version__vote"
+                                              ng-show="userIsManager && translation.vote">
+                                            <i class="fa fa-plus"></i> {= translation.vote =}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
 
-            <div class="col-sm-6 hidden-xs" id="translation-text">
-{#              <iframe id="translation__frame" name="translation__frame" height=100% style="position:absolute;z-index:-1;width: 1px;"></iframe>#}
-                <div class="translation-text">
-                    <div class="translation-text__switcher">
-                        <div class="switcher">
-                            <a class="switcher__button"
-                               id="switcher__button_original-text"
-                               ng-class="{'switcher__button_active': textTab === 0}"
-                               ng-click="textTab = 0">
-                                <span>{{ original_text }}</span>
-                            </a>
-                            <a class="switcher__button"
-                               id="switcher__button_translated-text"
-                        S       ng-class="{'switcher__button_active': textTab === 1}"
-                               ng-click="textTab = 1">
-                                <span>{{ translated_text }}</span>
-                            </a>
+            <div class="workbench-layout__col col-sm-6 hidden-xs" id="translation-text">
+                <div class="text-overview">
+                    <div class="text-overview__row text-overview__row_thin">
+                        <div class="text-overview__switcher">
+                            <div class="switcher">
+                                <a class="switcher__button"
+                                   id="switcher__button_original-text"
+                                   ng-class="{'switcher__button_active': textTab === 0}"
+                                   ng-click="textTab = 0">
+                                    <span>{{ original_text }}</span>
+                                </a>
+                                <a class="switcher__button"
+                                   id="switcher__button_translated-text"
+                                   S       ng-class="{'switcher__button_active': textTab === 1}"
+                                   ng-click="textTab = 1">
+                                    <span>{{ translated_text }}</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="scrollable" id="result-container">
-                        <div class="translation-text__text">
+                    <div class="text-overview__row">
+                        <div class="text-overview__content" id="result-container">
                             {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
                         </div>
                     </div>
                 </div>
             </div>
-            <script>
-{#                var resiseContainer = function () {  //  Задержка для очистки чрезмерных срабатываний;#}
-{#                    var height = $('#translation__frame').height(),#}
-{#                        minHeight = $('#footer').offset().top - $('#translations-container').offset().top;#}
-{#                    if (height < minHeight) {#}
-{#                        height = minHeight;#}
-{#                    }#}
-{#                    $('#translations-container').css({height: + height + 'px'});#}
-{#                    console.log($('#translation__frame').height());#}
-{#                };#}
-{#                setTimeout(function(){ // Отработка задержки фрейма (для FF и ИЕ)#}
-{#                    var timerResize='first';#}
-{#                    translation__frame.onresize = function () { // frame,  - Имя фрейма (name=frame)  - cм начало Кода;#}
-{#                        if (timerResize !== 'first') clearTimeout(timerResize);#}
-{#                        timerResize=setTimeout(resiseContainer, 20);#}
-{#                    };#}
-{#                    resiseContainer();#}
-{#                }, 200);#}
-            </script>
         </div>
     </div>
     <script>

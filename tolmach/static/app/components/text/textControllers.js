@@ -66,8 +66,6 @@
                 for (i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
                     updateTranslation(entry);
-                    entry.mode = (angular.isArray(entry['translations']) && !!entry['translations'].length)
-                    || !$scope.translationAllowed ? 0 : 1;
                     entriesById[entry['idInText']] = entry;
                 }
                 $scope.entries = entries;
@@ -100,12 +98,10 @@
                 },
                 expandEntry = function (entry) {
                     if (!entry.approved) {
-                        if (typeof entry['machines'] === 'undefined') {
-                            getYaMachines(entry);
-                            getTmdbVariants(entry);
-                        }
                         $scope.activeEntry = entry;
-                        if (entry.mode === 1) {
+                        if (!entry.approved
+                        && (!angular.isArray(entry['translations']) || !entry['translations'].length)
+                        && $scope.translationAllowed) {
                             setTimeout(function () {
                                 $('#entry-suggestion-' + entry.id).focus();
                             }, 10);
@@ -204,7 +200,7 @@
                         entry['translations'].push(data);
                         updateTranslation(entry);
                     }
-                    entry.mode = 0;
+                    entry.editing = false;
                     entry.suggestion = '';
                     if (data.isApproved === true) {
                         entry.approved = true;
@@ -212,7 +208,7 @@
                 })
             };
             $scope.editTranslation = function (entry, translation) {
-                entry.mode = 1;
+                entry.editing = true;
                 entry.suggestion = translation.body;
                 entry.suggestionId = translation.id;
             };
@@ -233,13 +229,20 @@
                 })
 
             };
+            $scope.startEditing = function (entry) {
+                entry.editing = true;
+                if (typeof entry['machines'] === 'undefined') {
+                    getYaMachines(entry);
+                    getTmdbVariants(entry);
+                }
+            };
             $scope.cancelEditing = function (entry) {
-                entry.mode = (angular.isArray(entry['translations']) && !!entry['translations'].length);
+                entry.editing = false;
                 entry.suggestion = '';
                 entry.suggestionId = false;
             };
             $scope.insertText = function (e, entry, text) {
-                if (entry !== $scope.activeEntry && entry.mode !== 1) {
+                if (entry !== $scope.activeEntry || !entry.editing) {
                     return;
                 }
                 e.stopPropagation();
@@ -359,12 +362,12 @@
                                     if (scope.activeEntry !== focusedEntry) {
                                         expandEntry(focusedEntry);
                                         helper.helpText = '';
-                                        if (focusedEntry.mode === 0) {
+                                        if (!focusedEntry.editing) {
                                             helper.hasNext = true;
                                             helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.switcher__button_make-translate');
                                             helper.leftAlign = false;
                                             helper.clickBlock = function () {
-                                                focusedEntry.mode = 1;
+                                                $scope.startEditing(focusedEntry);
                                                 helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
                                                 helper.helpText = '';
                                                 helper.hasNext = true;
@@ -388,7 +391,7 @@
                                         $timeout(function () {
                                             if (helper.currentBlock) {
                                                 helper.redrawHelp();
-                                                if (focusedEntry.mode === 0) {
+                                                if (!focusedEntry.editing) {
                                                     helper.helpText = window['helpTexts']['switcher__button_make-translate'];
                                                 } else {
                                                     helper.helpText = window['helpTexts']['translation__sentence-commitance'];
@@ -542,7 +545,7 @@
                     })
                 };
             $scope.$parent.copyToClipboard = function (text) {
-                if ($scope.activeEntry && $scope.activeEntry.mode == 1) {
+                if ($scope.activeEntry && $scope.activeEntry.editing) {
                     $scope.activeEntry.suggestion = ($scope.activeEntry.suggestion || '') + ' ' + text;
                 } else {
                     window.prompt("Copy to clipboard: Ctrl+C, Enter", text);

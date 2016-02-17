@@ -10,7 +10,7 @@ module.exports = function (grunt) {
         uglify: {
             dist: {
                 files: {
-                    'tolmach/static/jsdist/app.min.js': ['tolmach/static/jsdist/app.js']
+                    'tolmach/static/dist/app.min.js': ['tolmach/static/dist/app.js']
                 },
                 options: {
                     mangle: false
@@ -19,11 +19,11 @@ module.exports = function (grunt) {
         },
 
         clean: {
-            temp: {
+            tmp: {
                 src: ['tmp']
             },
             dist: {
-                src: ['tolmach/static/jsdist']
+                src: ['tolmach/static/dist']
             }
         },
 
@@ -35,8 +35,9 @@ module.exports = function (grunt) {
                     compress: true
                 },
                 files: {
-                    "tolmach/static/cssdist/ace.css": "less/ace.less",
-                    "tolmach/static/cssdist/landing.css": "less/landing.less"
+                    "tolmach/static/dist/ace.css": "tolmach/static/less/ace.less",
+                    "tolmach/static/dist/landing.css": "tolmach/static/less/landing.less",
+                    "tmp/tolmach.css": "tolmach/static/less/tolmach.less"
                 }
             }
         },
@@ -45,7 +46,7 @@ module.exports = function (grunt) {
             dist: {
                 compress: true,
                 files: {
-                    'tolmach/static/cssdist/all.css': ['stylus/all.styl']
+                    'tolmach/static/dist/all.css': ['stylus/all.styl']
                 }
             }
         },
@@ -54,9 +55,17 @@ module.exports = function (grunt) {
             options: {
                 separator: ';'
             },
-            dist: {
-                src: ['tolmach/static/app/*.js', 'tolmach/static/app/**/*.js', 'tmp/*.js'],
-                dest: 'tolmach/static/jsdist/app.js'
+            js: {
+                src: ['tolmach/static/app/*.js', 'tolmach/static/app/**/*.js'],
+                dest: 'tolmach/static/dist/app.js'
+            },
+            css: {
+                src: [
+                    'tmp/tolmach.css',
+                    'tolmach/static/assets/bootstrap/dist/css/bootstrap.css'
+
+                ],
+                dest: 'tolmach/static/dist/tolmach.css'
             }
         },
 
@@ -64,67 +73,67 @@ module.exports = function (grunt) {
             all: ['Gruntfile.js', 'tolmach/static/app/*.js', 'tolmach/static/app/**/*.js']
         },
 
-        connect: {
-            server: {
-                options: {
-                    hostname: 'localhost',
-                    port: 8080
-                }
-            }
-        },
-
-        watch: {
-            dev: {
-                files: ['Gruntfile.js', 'app/*.js', '*.html', 'assets/**/*.less'],
-                tasks: ['jshint', 'karma:unit', 'html2js:dist', 'concat:dist', 'less:dev', 'clean:temp'],
-                options: {
-                    atBegin: true
-                }
-            },
-            min: {
-                files: ['Gruntfile.js', 'app/*.js', '*.html', 'assets/**/*.less'],
-                tasks: ['jshint', 'karma:unit', 'html2js:dist', 'concat:dist', 'less:dist', 'clean:temp', 'uglify:dist'],
-                options: {
-                    atBegin: true
-                }
-            }
-        },
-
-        karma: {
+        cssmin: {
             options: {
-                configFile: 'config/karma.conf.js'
+                shorthandCompacting: false,
+                roundingPrecision: -1
             },
-            unit: {
-                singleRun: true
+            target: {
+                files: {
+                    'tolmach/static/dist/tolmach.min.css': ['tolmach/static/dist/tolmach.css']
+                }
+            }
+        },
+
+        includeSource: {
+            options: {
+                basePath: 'tolmach/static/app/',
+                baseUrl: '',
+                templates: {
+                    html: {
+                        js: '<script src="/static/app/{filePath}"></script>'
+                    }
+                },
+                typeMappings: {
+                    'php': 'html'
+                }
             },
-            junit: {
-                singleRun: true,
-                reporters: ['junit', 'coverage']
-            },
-            continuous: {
-                singleRun: false,
-                autoWatch: true
+            myTarget: {
+                files: {
+                    'templates/main/partial/include-js.html': 'templates/main/partial/include-js-template.html'
+                }
             }
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-stylus');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-include-source');
 
-    grunt.registerTask('dev', ['clean:dist', 'connect:server', 'watch:dev']);
-    grunt.registerTask('test', ['clean:dist', 'jshint', 'karma:continuous']);
-    grunt.registerTask('junit', ['clean:dist', 'jshint', 'karma:junit']);
-    grunt.registerTask('minified', ['clean:dist', 'connect:server', 'watch:min']);
+    grunt.registerTask('dev', [
+        'includeSource'
+    ]);
+    grunt.registerTask('css', [
+        'less:dist',
+        'concat:css',
+        'cssmin',
+        'stylus:dist',
+        'clean:tmp'
+    ]);
+    grunt.registerTask('js', [
+        'concat:js',
+        'uglify:dist'
+    ]);
     grunt.registerTask('package', [
         'clean:dist',
-        'concat:dist',
-        'uglify:dist'
+        'css',
+        'js'
     ]);
     grunt.registerTask('default', ['package']);
 };
