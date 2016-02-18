@@ -19,6 +19,7 @@
   padding: 15px;
   height: 100%;
   display: table;
+  font-weight: 300;
 
   &__row {
     display: table-row;
@@ -58,6 +59,7 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  font-weight: 300;
   & > .text-piece {
     border-bottom: 1px dashed grey;
     &:last-child {
@@ -158,6 +160,19 @@
     right: 0;
     width: 20px;
     text-align: right;
+    font-size: 18px;
+    margin-top: -6px;
+    a {
+      cursor: pointer;
+      color: #777676;
+      display: block;
+      &:hover {
+        color: #02c14f;
+      }
+      &.active {
+        color: #02c14f;
+      }
+    }
   }
   &__input-wrapper {
 
@@ -185,7 +200,7 @@
     display: block;
   }
   &_active &__input-wrapper {
-    padding-right: 20px;
+    padding-right: 24px;
   }
   &_active &__input {
     height: 130px;
