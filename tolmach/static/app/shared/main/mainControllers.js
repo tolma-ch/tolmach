@@ -92,6 +92,7 @@
                     textLeft = $scope.leftAlign ? Math.max(0, params.left - textWidth + 40) : Math.max(0, textRight - textWidth);
                 textRight = Math.max(0, textLeft + textWidth);
                 textWidth = textRight - textLeft;
+                //$scope.showInnerText =
                 $scope.helpTextStyle1 = {
                     'bottom': '0',
                     'left': textLeft + 'px',
@@ -126,6 +127,12 @@
                 $scope.leftAlign = false;
             };
             $scope.nextHelpStep = function () {
+                $scope.currentBlock = false;
+                $scope.helpText = false;
+                $scope.hasNext = false;
+                $scope.clickBlock = false;
+                $scope.leftAlign = false;
+                $scope.showInnerText = false;
                 var event = $scope.$broadcast('helpPresentationNext');
                 if (event.customized) {
                     return;

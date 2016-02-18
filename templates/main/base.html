@@ -87,20 +87,35 @@
 
         <div class="help" ng-show="helpShow" resize="helpResize">
             <div class="help__fadeout-block" ng-style="helpBlockStyle1">
-                <div class="help__btns">
+                <div class="help__btns"
+                     ng-hide="showInnerText">
                     <a class="btn btn-danger help__btn"
                        ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
                     <a class="btn btn-success help__btn"
                        ng-click="nextHelpStep()"
                        ng-show="hasNext">{% trans "Next" %}</a>
                 </div>
-                <div class="help__text-block" ng-style="helpTextStyle1">{= helpText =}</div>
+                <div class="help__text-block"
+                     ng-style="helpTextStyle1"
+                     ng-hide="showInnerText">{= helpText =}</div>
             </div>
             <div class="help__fadeout-block" ng-style="helpBlockStyle2"></div>
             <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
             <div class="help__fadeout-block" ng-style="helpBlockStyle4">
             </div>
-            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()"></div>
+            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()">
+                <div class="help__text-block-inner" ng-show="showInnerText">
+                    {= helpText =}
+                    <div class="help__btns-inner">
+                        <a class="btn btn-danger help__btn"
+                           ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
+                        <a class="btn btn-success help__btn"
+                           ng-click="nextHelpStep()"
+                           ng-show="hasNext">{% trans "Next" %}</a>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <div class="popover fade bottom in"

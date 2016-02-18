@@ -281,34 +281,43 @@
                 if (event.ctrlKey) {
                     if ((code === 38 || code === 40) && $scope.entries.length) {
                         var index = $scope.entries.indexOf($scope.activeEntry),
-                            entry;
+                            entry,
+                            someEntry,
+                            found = false;
                         if (code === 38) {
                             //up
-                            if (index === -1) {
-                                entry = $scope.entries[$scope.entries.length - 1];
-                            } else {
-                                if (index === 0) {
-                                    entry = $scope.entries[$scope.entries.length - 1];
-                                } else {
-                                    entry = $scope.entries[index - 1];
+                            for (--index; index >= 0; index--) {
+                                someEntry = $scope.entries[index];
+                                if (!someEntry.approved) {
+                                    entry = someEntry;
+                                    break;
                                 }
                             }
                         }
                         if (code === 40) {
                             //down
-                            if (index === -1) {
-                                entry = $scope.entries[0];
-                            } else {
-                                if (index < $scope.entries.length - 1) {
-                                    entry = $scope.entries[index + 1];
-                                } else {
-                                    entry = $scope.entries[0];
+                            for (index++; index < $scope.entries.length; index++) {
+                                someEntry = $scope.entries[index];
+                                if (!someEntry.approved) {
+                                    entry = someEntry;
+                                    break;
                                 }
                             }
                         }
-                        $scope.focusEntry(entry.idInText);
+                        if (entry) {
+                            $scope.focusEntry(entry.idInText);
+                        }
                     }
-
+                    return;
+                }
+                if (code === 27) {
+                    if ($scope.activeEntry) {
+                        if ($scope.activeEntry.editing) {
+                            $scope.cancelEditing($scope.activeEntry);
+                        } else {
+                            $scope.toggleEntry($scope.activeEntry);
+                        }
+                    }
                 }
             });
             $scope.taggedSelected = function () {
@@ -329,8 +338,7 @@
                     steps = [
                         function (helper) {
                             helper.currentBlock = $('#translations-container');
-                            helper.clickBlock = false;
-                            helper.leftAlign = false;
+                            helper.showInnerText = true;
                             var i = 0,
                                 len = scope.entries.length;
                             for (i; i < len; i++) {
@@ -357,7 +365,7 @@
                                 helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-translation-toggle');
                                 helper.helpText = window['helpTexts']['translation__sentence-translation-toggle'];
                                 helper.hasNext = true;
-                                helper.leftAlign = false;
+                                helper.showInnerText = true;
                                 helper.clickBlock = function () {
                                     if (scope.activeEntry !== focusedEntry) {
                                         expandEntry(focusedEntry);
@@ -365,14 +373,11 @@
                                         if (!focusedEntry.editing) {
                                             helper.hasNext = true;
                                             helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.switcher__button_make-translate');
-                                            helper.leftAlign = false;
                                             helper.clickBlock = function () {
                                                 $scope.startEditing(focusedEntry);
                                                 helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
                                                 helper.helpText = '';
                                                 helper.hasNext = true;
-                                                helper.leftAlign = false;
-                                                helper.clickBlock = false;
                                                 $timeout(function () {
                                                     if (helper.currentBlock) {
                                                         helper.redrawHelp();
@@ -385,8 +390,6 @@
                                         } else {
                                             helper.hasNext = true;
                                             helper.currentBlock = $('#entry-' + focusedEntry.idInText).find('.translation__sentence-commitance');
-                                            helper.leftAlign = false;
-                                            helper.clickBlock = false;
                                         }
                                         $timeout(function () {
                                             if (helper.currentBlock) {
@@ -407,7 +410,6 @@
                         },
                         function (helper) {
                             helper.currentBlock = $('#translation-text');
-                            helper.clickBlock = false;
                             helper.leftAlign = true;
                             helper.hasNext = true;
                             if (helper.currentBlock) {
@@ -421,14 +423,11 @@
                             if (scope.entries.length) {
                                 var entry = scope.entries[scope.entries.length > 3 ? 3 : scope.entries.length];
                                 helper.currentBlock = $('[data-entry="' + entry.idInText + '"]');
-                                helper.leftAlign = false;
                                 helper.clickBlock = function () {
                                     helper.helpShow = false;
                                     scope.focusEntry(entry.idInText);
                                     $timeout(function () {
                                         helper.currentBlock = $('#switcher__button_original-text');
-                                        helper.leftAlign = false;
-                                        helper.clickBlock = false;
                                         helper.hasNext = true;
                                         if (helper.currentBlock) {
                                             helper.helpText = window['helpTexts']['switcher__button_original-text'];
@@ -452,9 +451,6 @@
                         },
                         function (helper) {
                             helper.currentBlock = $('#switcher__button_translated-text');
-                            helper.clickBlock = false;
-                            helper.leftAlign = false;
-                            helper.hasNext = false;
                             if (helper.currentBlock) {
                                 helper.helpText = window['helpTexts']['switcher__button_translated-text'];
                                 helper.redrawHelp();

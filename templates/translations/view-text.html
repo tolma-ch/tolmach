@@ -6,13 +6,13 @@
 {% trans 'Translation variants' as trans_variants %}
 {% trans 'Users translations' as users_trans %}
 {% trans 'Translate' as make_translation %}
-{% trans 'Your translation' as your_translation %}
+{% trans 'Add your translation' as your_translation %}
 {% trans 'Machine translations' as mtranslations %}
 {% trans 'Translation memory variants' as tmtranslations %}
-{% trans 'Add' as add_translation %}
-{% trans 'Save' as save_translation %}
+{% trans 'Add (Ctrl + Enter)' as add_translation %}
+{% trans 'Save (Ctrl + Enter)' as save_translation %}
 {% trans 'Remove' as remove_translation %}
-{% trans 'Cancel' as cancel_translation %}
+{% trans 'Cancel (Esc)' as cancel_translation %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 
@@ -84,19 +84,25 @@
                                     </div>
                                 </div>
                                 <div class="translation-editor__btns">
-                                    <i class="fa fa-floppy-o"
+                                    <a href=""
                                        ng-click="suggestTranslation(entry)"
                                        tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
-                                       tooltip-append-to-body="true"></i>
-                                    <i class="fa fa-trash-o"
+                                       tooltip-append-to-body="true">
+                                        <i class="fa fa-fw fa-floppy-o"></i>
+                                    </a>
+                                    <a href=""
                                        ng-show="entry.suggestionId"
                                        ng-click="removeTranslation(entry)"
                                        tooltip="{{ remove_translation }}"
-                                       tooltip-append-to-body="true"></i>
-                                    <i class="fa fa-times"
+                                       tooltip-append-to-body="true">
+                                        <i class="fa fa-fw fa-trash-o"></i>
+                                    </a>
+                                    <a href=""
                                        ng-click="cancelEditing(entry)"
                                        tooltip="{{ cancel_translation }}"
-                                       tooltip-append-to-body="true"></i>
+                                       tooltip-append-to-body="true">
+                                        <i class="fa fa-fw fa-times"></i>
+                                    </a>
                                 </div>
                                 <div class="translation-editor__machine-suggestions">
                                     <div class="machine-suggestions"
