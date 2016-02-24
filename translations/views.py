@@ -381,14 +381,30 @@ def export_translation(request, text_id, target_lang):
         for par, entries in paragraphs_list.items():
             for idx, pr in enumerate(prlist):
                 if int(par) == idx:
-                    wts = pr.getElementsByTagName('w:t')
-                    for txt in wts:
-                        for ent in entries:
-                            if ent.body in txt.firstChild.nodeValue:
-                                translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
-                                if translated_entries:
-                                    new_value = txt.firstChild.nodeValue.replace(ent.body, h.unescape(translated_entries[0].body))
-                                    txt.firstChild.replaceWholeText(new_value)
+                    new_txt_value = ""
+                    for ent in entries:
+                        translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
+                        if translated_entries:
+                            new_txt_value += h.unescape(translated_entries[0].body) + " "
+                        else:
+                            new_txt_value += ent.body + " "
+
+                    wrs = pr.getElementsByTagName('w:r')
+                    run_style = wrs[0].getElementsByTagName('w:rPr')[0]
+                    for i in wrs:
+                        try:
+                            parent = i.parentNode
+                            parent.removeChild(i)
+                        except:
+                            pass
+                    run = xmldoc.createElement("w:r")
+                    wt = xmldoc.createElement("w:t")
+                    text = xmldoc.createTextNode(h.unescape(new_txt_value))
+                    wt.appendChild(text)
+                    run.appendChild(run_style)
+                    run.appendChild(wt)
+                    # print run.toprettyxml()
+                    pr.appendChild(run)
 
         output_doc_str = xmldoc.toxml().encode("utf-8")
 
