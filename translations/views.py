@@ -299,6 +299,10 @@ def export_translation(request, text_id, target_lang):
         text_meta = TextMeta.objects.get(text=text,
                                          meta_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
         text_meta_data = json.loads(text_meta.meta_data)
+        try:
+            parse_version = text_meta_data['parse_version']
+        except:
+            parse_version = 0
         entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
 
         # получаем список параграфов
@@ -318,29 +322,35 @@ def export_translation(request, text_id, target_lang):
         def replace_left_tag(matchobj):
             return "<tag i='%s'>" % matchobj.group(0).split('"')[3]
 
-        for par, styles in text_meta_data["paragraphs"].items():
-            for idx, pr in enumerate(prlist):
-                if int(par) == idx:
+        if parse_version == 1.0:
+            for par, styles in text_meta_data["paragraphs"].items():
+                for idx, pr in enumerate(prlist):
+                    if int(par) == idx:
+                        # удалить все runs из параграфа
+                        wrs = pr.getElementsByTagName('w:r')
+                        for i in wrs:
+                            try:
+                                parent = i.parentNode
+                                parent.removeChild(i)
+                            except:
+                                pass
 
-                    # Теперь получаем переведённые
-                    for entry in paragraphs_list[int(par)]:
-                        translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+                        # теперь проходим все энтрисы параграфа и проверяем, переведены ли они
+                        for entry in paragraphs_list[int(par)]:
+                            translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+                            translated_runs = []
+                            if not translated_entries:
+                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
 
-                        print "CUSTOM: ", re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
-                        if translated_entries:
-                            # Тут удаляем все старые runs
-                            for run in pr.getElementsByTagName("w:r"):
-                                parent = run.parentNode
-                                parent.removeChild(run)
+                            else:
+                                tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
+                                tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
 
-                            tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
-                            tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
-
-                            # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
-                            tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
-                            print tag_prepared_body
-                            # return True
-                            translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
+                                # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
+                                tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
+                                print tag_prepared_body
+                                # return True
+                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
 
                             for run in translated_runs:
                                 if not run == "":
@@ -372,11 +382,67 @@ def export_translation(request, text_id, target_lang):
                                     run.appendChild(wt)
                                     # print run.toprettyxml()
                                     pr.appendChild(run)
+                        paragraphs_list.pop(int(par), None)
+        else:
+            for par, styles in text_meta_data["paragraphs"].items():
+                for idx, pr in enumerate(prlist):
+                    if int(par) == idx:
 
-                    # и убираем параграф из списка на обход
-                    paragraphs_list.pop(int(par), None)
-                else:
-                    continue
+                        # Теперь получаем переведённые
+                        for entry in paragraphs_list[int(par)]:
+                            translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+
+                            print "CUSTOM: ", re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
+                            if translated_entries:
+                                # Тут удаляем все старые runs
+                                for run in pr.getElementsByTagName("w:r"):
+                                    parent = run.parentNode
+                                    parent.removeChild(run)
+
+                                tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
+                                tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
+
+                                # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
+                                tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
+                                print tag_prepared_body
+                                # return True
+                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
+
+                                for run in translated_runs:
+                                    if not run == "":
+                                        clear_run = ""
+                                        # print "OLOLO: ", run
+                                        if run.startswith("<tag i="):
+                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
+                                            taglist = run_tag_id_xml.getElementsByTagName('tag')
+                                            i_tag = taglist[0].attributes['i']
+                                            style = styles[i_tag.value]
+                                            clear_run = taglist[0].firstChild.nodeValue
+                                        else:
+                                            style = styles["default"]
+                                            clear_run = run
+
+                                        if not style == "":
+                                            run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
+                    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+                    %s
+                    </w:document>""" % style
+                                            params_dom = minidom.parseString(run_params_xml)
+                                            rPr = params_dom.getElementsByTagName('w:rPr')[0]
+                                        run = xmldoc.createElement("w:r")
+                                        wt = xmldoc.createElement("w:t")
+                                        text = xmldoc.createTextNode(h.unescape(clear_run))
+                                        wt.appendChild(text)
+                                        if not style == "":
+                                            run.appendChild(rPr)
+                                        run.appendChild(wt)
+                                        # print run.toprettyxml()
+                                        pr.appendChild(run)
+
+                        # и убираем параграф из списка на обход
+                        paragraphs_list.pop(int(par), None)
+                    else:
+                        continue
 
         for par, entries in paragraphs_list.items():
             for idx, pr in enumerate(prlist):
