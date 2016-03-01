@@ -16,7 +16,7 @@ def index(request):
     if request.user.is_authenticated():
         first_name = request.user.first_name
         last_name = request.user.last_name
-        projects = Project.objects.filter(manager=request.user.id).order_by('last_modified')
+        projects = Project.objects.filter(manager=request.user.id).order_by('-last_modified')
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
@@ -55,9 +55,9 @@ def user_page(request, user_id):
     first_name = user.first_name
     last_name = user.last_name
     if request.user == user or request.user.is_staff == 1:
-        projects = Project.objects.filter(manager=user).order_by('last_modified')
+        projects = Project.objects.filter(manager=user).order_by('-last_modified')
     else:
-        projects = Project.objects.filter(manager=user, is_private=False).order_by('last_modified')
+        projects = Project.objects.filter(manager=user, is_private=False).order_by('-last_modified')
     usermeta = UserMeta.objects.get(user=user)
     ordered_stat, total_translated = utils.get_user_stat(user)
 
