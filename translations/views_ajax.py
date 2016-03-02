@@ -423,16 +423,23 @@ def glossary_ajax(request, project):
         if 'file' in request.FILES:
             f = request.FILES['file']
             import uuid
-            file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
+            file_on_disk = '/tmp/glossary_%s.%s' % (uuid.uuid4(), request.FILES['file'].name.split('.')[-1])
             if f.size > settings.GLOSSARY_FILE_SIZE:
                 return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                    status=400)
-            elif f.content_type not in ['text/plain', 'application/octet-stream', 'text/csv']:
-                return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                     status=400)
             with open(file_on_disk, 'w+') as fd:
                 for chunk in f.chunks():
                     fd.write(chunk)
+
+            from mimetypes import MimeTypes
+            mime = MimeTypes()
+            file_type = mime.guess_type(file_on_disk)[0]
+            print "FILETYPE:", file_type
+
+            if file_type not in ['text/csv']:
+                return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                    status=400)
+
             pairs_array = utils.parse_glossary(file_on_disk, f.content_type)
         else:
             if 'rows' not in post:
