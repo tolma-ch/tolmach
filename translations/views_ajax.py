@@ -440,7 +440,7 @@ def glossary_ajax(request, project):
                 return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                     status=400)
 
-            pairs_array = utils.parse_glossary(file_on_disk, f.content_type)
+            pairs_array = utils.parse_glossary(file_on_disk, file_type)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
