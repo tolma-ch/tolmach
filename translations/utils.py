@@ -492,7 +492,10 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
                                                  target_editor=None,
                                                  target_edited=None,
                                                  )
-        new_tmdb_entry.save()
+        try:
+            new_tmdb_entry.save()
+        except:
+            pass
 
 
 
