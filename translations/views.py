@@ -280,6 +280,7 @@ def export_translation(request, text_id, target_lang):
         from StringIO import StringIO
         from zipfile import ZipFile
         from xml.dom import minidom
+        from string import maketrans
 
         manager = text.project.manager
         project = text.project
@@ -348,6 +349,12 @@ def export_translation(request, text_id, target_lang):
 
                                 # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
                                 tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
+
+                                # а это чтобы всякое говно ваще убрать
+                                # http://stackoverflow.com/questions/8115261/how-to-remove-all-the-escape-sequences-from-a-list-of-strings
+                                escapes = ''.join([chr(char) for char in range(1, 32)])
+                                tag_prepared_body = re.sub('[%s]' % escapes, '', tag_prepared_body)
+
                                 print tag_prepared_body
                                 # return True
                                 translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
@@ -404,6 +411,12 @@ def export_translation(request, text_id, target_lang):
 
                                 # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
                                 tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
+
+                                # а это чтобы всякое говно ваще убрать
+                                # http://stackoverflow.com/questions/8115261/how-to-remove-all-the-escape-sequences-from-a-list-of-strings
+                                escapes = ''.join([chr(char) for char in range(1, 32)])
+                                tag_prepared_body = re.sub('[%s]' % escapes, '', tag_prepared_body)
+
                                 print tag_prepared_body
                                 # return True
                                 translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
