@@ -279,3 +279,43 @@
     top: 50%;
   }
 }
+
+
+.glossary-word {
+  background: #e1ffa2;
+  cursor: pointer;
+}
+
+[contenteditable] {
+  background: white;
+  overflow: auto;
+}
+
+.tag-left, .tag-right, hr[i] {
+  position: relative;
+  top: -.1em;
+  display: inline-block;
+  background: #C9EA6F;
+  font-size: .7em;
+  color: #055A15;
+  text-shadow: 1px 1px 0 #fff;
+  height: auto;
+  margin: 0;
+  text-decoration: none;
+  &:before {
+    content: attr(i);
+  }
+}
+.tag-left, hr[l] {
+  border-radius: 10px 0 0 10px;
+  padding: 0 1px 0 3px;
+}
+.tag-right, hr[r] {
+  border-radius: 0 10px 10px 0;
+  padding: 0 3px 0 1px;
+}
+.text-piece_closed, .text-overview {
+  .tag-left, .tag-right, hr[i] {
+    display: none;
+  }
+}
