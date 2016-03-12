@@ -44,6 +44,9 @@
             padding-right: 12px;
             padding-left: 12px;
         }
+        .main-content {
+            margin-left: 0 !important;
+        }
     </style>
     <script>
         window['textId'] = {{ text.id }};
@@ -57,6 +60,7 @@
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
+                         ng-if="(page - 1)*countPerPage < entry.idInText && entry.idInText <= page * countPerPage"
                          ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
                                     'text-piece_approved': entry.approved,
@@ -66,7 +70,8 @@
                             <span html-content="entry.body"></span>
                         </div>
 
-                        <div class="text-piece__editor">
+                        <div class="text-piece__editor"
+                             ng-if="entry.approved || ($parent.activeEntry === entry)">
                             <div class="translation-editor"
                                  ng-class="{'translation-editor_active': entry.editing}">
                                 <div class="translation-editor__input-wrapper">
@@ -197,27 +202,42 @@
 
             <div class="workbench-layout__col col-sm-6 hidden-xs" id="translation-text">
                 <div class="text-overview">
-                    <div class="text-overview__row text-overview__row_thin">
-                        <div class="text-overview__switcher">
-                            <div class="switcher">
-                                <a class="switcher__button"
-                                   id="switcher__button_original-text"
-                                   ng-class="{'switcher__button_active': textTab === 0}"
-                                   ng-click="textTab = 0">
-                                    <span>{{ original_text }}</span>
-                                </a>
-                                <a class="switcher__button"
-                                   id="switcher__button_translated-text"
-                                   S       ng-class="{'switcher__button_active': textTab === 1}"
-                                   ng-click="textTab = 1">
-                                    <span>{{ translated_text }}</span>
-                                </a>
+                    <div class="text-overview__table">
+                        <div class="text-overview__row text-overview__row_thin">
+                            <div class="text-overview__paginator"
+                                 ng-show="pagesCount > 1">
+                                <a href="" ng-click="page = page > 1 ? page - 1 : 1"><i class="fa fa-chevron-left"></i></a>
+                                <span class="text-overview__paginator-text"
+                                      ng-show="!editPage"
+                                      ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
+                                <input type="text"
+                                       ng-show="editPage"
+                                       focus-me="focusPaginator"
+                                       ng-model="page"
+                                       ng-blur="editPage = false; page = Number(page) || 1; page = page > pagesCount ? pagesCount : (page < 1 ? 1 : page)">
+                                <a href="" ng-click="page = page < pagesCount ? page + 1 : pagesCount"><i class="fa fa-chevron-right"></i></a>
+                            </div>
+                            <div class="text-overview__switcher">
+                                <div class="switcher">
+                                    <a class="switcher__button"
+                                       id="switcher__button_original-text"
+                                       ng-class="{'switcher__button_active': textTab === 0}"
+                                       ng-click="textTab = 0">
+                                        <span>{{ original_text }}</span>
+                                    </a>
+                                    <a class="switcher__button"
+                                       id="switcher__button_translated-text"
+                                       ng-class="{'switcher__button_active': textTab === 1}"
+                                       ng-click="textTab = 1">
+                                        <span>{{ translated_text }}</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-overview__row">
-                        <div class="text-overview__content" id="result-container">
-                            {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                        <div class="text-overview__row">
+                            <div class="text-overview__content" id="result-container">
+                                {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                            </div>
                         </div>
                     </div>
                 </div>
