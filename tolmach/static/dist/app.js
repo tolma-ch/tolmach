@@ -834,6 +834,9 @@
             $scope.clearTags = clearTags;
             $scope.activeEntry = null;
             $scope.textTab = 0;
+            $scope.page = 1;
+            $scope.countPerPage = 100;
+            $scope.pagesCount = 1;
             $scope.userIsManager = false;
             $http.get('/api/entry/', {
                 params: {
@@ -855,6 +858,7 @@
                     entriesById[entry['idInText']] = entry;
                 }
                 $scope.entries = entries;
+                $scope.pagesCount = Math.ceil(entries.length / $scope.countPerPage);
                 $scope.entriesById = entriesById;
             }).error(function (a) {
                 console.log(a);
@@ -1473,6 +1477,19 @@
             }
         };
     }]);
+    module.directive('entryPage', [function () {
+        return {
+            template: function (elem, attr) {
+                var page = attr['entryPage'];
+                return '<span ng-show="page == ' + page + '">' +
+                    elem.html() +
+                    '</span>';
+            },
+            link: function (scope, element, attrs) {
+
+            }
+        };
+    }]);
     module.directive('glossaryWord', [function () {
         return {
             template: function (elem, attr) {
@@ -1791,6 +1808,23 @@
                 });
             }
         };
+    }]);
+
+    module.directive('focusMe', ['$timeout', function($timeout) {
+      return {
+        link: function(scope, element, attrs) {
+          scope.$watch(attrs.focusMe, function(value) {
+            if(value === true) {
+              console.log('value=',value);
+                $timeout(function () {
+                    element[0].focus();
+                    element[0].setSelectionRange(0, element[0].value.length)
+                }, 100);
+                scope[attrs.focusMe] = false;
+            }
+          });
+        }
+      };
     }]);
 }());;(function () {
     'use strict';

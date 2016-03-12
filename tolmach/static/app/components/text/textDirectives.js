@@ -42,6 +42,19 @@
             }
         };
     }]);
+    module.directive('entryPage', [function () {
+        return {
+            template: function (elem, attr) {
+                var page = attr['entryPage'];
+                return '<span ng-show="page == ' + page + '">' +
+                    elem.html() +
+                    '</span>';
+            },
+            link: function (scope, element, attrs) {
+
+            }
+        };
+    }]);
     module.directive('glossaryWord', [function () {
         return {
             template: function (elem, attr) {
@@ -360,5 +373,22 @@
                 });
             }
         };
+    }]);
+
+    module.directive('focusMe', ['$timeout', function($timeout) {
+      return {
+        link: function(scope, element, attrs) {
+          scope.$watch(attrs.focusMe, function(value) {
+            if(value === true) {
+              console.log('value=',value);
+                $timeout(function () {
+                    element[0].focus();
+                    element[0].setSelectionRange(0, element[0].value.length)
+                }, 100);
+                scope[attrs.focusMe] = false;
+            }
+          });
+        }
+      };
     }]);
 }());

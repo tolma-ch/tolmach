@@ -48,6 +48,9 @@
             $scope.clearTags = clearTags;
             $scope.activeEntry = null;
             $scope.textTab = 0;
+            $scope.page = 1;
+            $scope.countPerPage = 100;
+            $scope.pagesCount = 1;
             $scope.userIsManager = false;
             $http.get('/api/entry/', {
                 params: {
@@ -69,6 +72,7 @@
                     entriesById[entry['idInText']] = entry;
                 }
                 $scope.entries = entries;
+                $scope.pagesCount = Math.ceil(entries.length / $scope.countPerPage);
                 $scope.entriesById = entriesById;
             }).error(function (a) {
                 console.log(a);
