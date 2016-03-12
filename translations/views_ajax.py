@@ -423,17 +423,24 @@ def glossary_ajax(request, project):
         if 'file' in request.FILES:
             f = request.FILES['file']
             import uuid
-            file_on_disk = '/tmp/glossary_%s' % uuid.uuid4()
+            file_on_disk = '/tmp/glossary_%s.%s' % (uuid.uuid4(), request.FILES['file'].name.split('.')[-1])
             if f.size > settings.GLOSSARY_FILE_SIZE:
                 return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                    status=400)
-            elif f.content_type not in ['text/plain', 'application/octet-stream', 'text/csv']:
-                return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                     status=400)
             with open(file_on_disk, 'w+') as fd:
                 for chunk in f.chunks():
                     fd.write(chunk)
-            pairs_array = utils.parse_glossary(file_on_disk, f.content_type)
+
+            from mimetypes import MimeTypes
+            mime = MimeTypes()
+            file_type = mime.guess_type(file_on_disk)[0]
+            print "FILETYPE:", file_type
+
+            if file_type not in ['text/csv']:
+                return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
+                                    status=400)
+
+            pairs_array = utils.parse_glossary(file_on_disk, file_type)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
@@ -720,11 +727,16 @@ def translate_entry_ajax(request):
                 if not approved_translation:
                     set_approved = True
 
+            try:
+                entry_target_text = target_text=post['text']
+            except KeyError:
+                return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
+
             utils.add_pair_to_tmx(request, text, project,
-                                  source_text=entry.body, target_text=post['text'],
+                                  source_text=entry.body, target_text=entry_target_text,
                                   source_lang=text.source_lang, target_lang=text_translation.target_lang,
                                   )
-            entry_translation = TextEntry(body=post['text'],
+            entry_translation = TextEntry(body=entry_target_text,
                                           parent_entry=entry,
                                           text=text,
                                           author=request.user,
@@ -844,10 +856,13 @@ def yandex_translate_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
         print post
-        from yandex_translate import YandexTranslate
+        from yandex_translate import YandexTranslate, YandexTranslateException
 
         translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
-        translated_body = translate.translate(post['entry_body'], post['lang_pair'])
+        try:
+            translated_body = translate.translate(post['entry_body'], post['lang_pair'])
+        except YandexTranslateException:
+            return HttpResponse(json.dumps(_('Something went wrong')), content_type="application/json", status=400)
 
         return HttpResponse(json.dumps(translated_body['text'][0]), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
