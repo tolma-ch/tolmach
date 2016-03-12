@@ -84,11 +84,22 @@
 		<a href="" id="btn-scroll-up" class="btn-scroll-up btn btn-small btn-inverse" title="Наверх">
 			⬆
 		</a>
-
+        <script type="text/ng-template" id="helpTextBlock.html">
+            <div class="help__text-block-inner">
+                {= helpText =}
+                <div class="help__btns-inner">
+                    <a class="btn btn-danger help__btn"
+                       ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
+                    <a class="btn btn-success help__btn"
+                       ng-click="nextHelpStep()"
+                       ng-show="hasNext">{% trans "Next" %}</a>
+                </div>
+            </div>
+        </script>
         <div class="help" ng-show="helpShow" resize="helpResize" ng-cloak>
             <div class="help__fadeout-block" ng-style="helpBlockStyle1">
                 <div class="help__btns"
-                     ng-hide="showInnerText">
+                     ng-show="position === 'top'">
                     <a class="btn btn-danger help__btn"
                        ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
                     <a class="btn btn-success help__btn"
@@ -97,24 +108,19 @@
                 </div>
                 <div class="help__text-block"
                      ng-style="helpTextStyle1"
-                     ng-hide="showInnerText">{= helpText =}</div>
+                     ng-show="position === 'top'">{= helpText =}</div>
             </div>
-            <div class="help__fadeout-block" ng-style="helpBlockStyle2"></div>
-            <div class="help__fadeout-block" ng-style="helpBlockStyle3"></div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle2">
+                <div ng-if="position === 'left'" ng-include="'helpTextBlock.html'"></div>
+            </div>
+            <div class="help__fadeout-block" ng-style="helpBlockStyle3">
+                <div ng-if="position === 'right'" ng-include="'helpTextBlock.html'"></div>
+            </div>
             <div class="help__fadeout-block" ng-style="helpBlockStyle4">
+                <div ng-if="position === 'bottom'" ng-include="'helpTextBlock.html'"></div>
             </div>
-            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock()">
-                <div class="help__text-block-inner" ng-show="showInnerText">
-                    {= helpText =}
-                    <div class="help__btns-inner">
-                        <a class="btn btn-danger help__btn"
-                           ng-click="closeHelpPresentation()">{% trans "Close" %}</a>
-                        <a class="btn btn-success help__btn"
-                           ng-click="nextHelpStep()"
-                           ng-show="hasNext">{% trans "Next" %}</a>
-                    </div>
-                </div>
-
+            <div class="help__transparent-block" ng-style="helpCenterBlockStyle1" ng-click="clickBlock && clickBlock()">
+                <div ng-if="position === 'inner'" ng-include="'helpTextBlock.html'"></div>
             </div>
         </div>
 

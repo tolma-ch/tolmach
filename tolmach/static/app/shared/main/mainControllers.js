@@ -80,6 +80,17 @@
                     bottom: '0',
                     right: '0'
                 };
+                switch ($scope.position) {
+                    case 'top':
+                        $scope.helpBlockStyle1['z-index'] = 10001;
+                        break;
+                    case 'left':
+                        $scope.helpBlockStyle2['z-index'] = 10001;
+                        break;
+                    case 'right':
+                        $scope.helpBlockStyle3['z-index'] = 10001;
+                        break;
+                }
                 $scope.helpCenterBlockStyle1 = {
                     top: params.top + 'px',
                     left: params.left + 'px',
@@ -92,7 +103,6 @@
                     textLeft = $scope.leftAlign ? Math.max(0, params.left - textWidth + 40) : Math.max(0, textRight - textWidth);
                 textRight = Math.max(0, textLeft + textWidth);
                 textWidth = textRight - textLeft;
-                //$scope.showInnerText =
                 $scope.helpTextStyle1 = {
                     'bottom': '0',
                     'left': textLeft + 'px',
@@ -106,8 +116,7 @@
                 }
                 $scope.helpBlocks = $('.helped-block').toArray();
                 $scope.currentBlock = $scope.helpBlocks.shift();
-                $scope.clickBlock = function () {
-                };
+                $scope.clickBlock = false;
                 $scope.leftAlign = false;
                 $scope.hasNext = !!$scope.helpBlocks.length;
                 if ($scope.currentBlock) {
@@ -125,6 +134,7 @@
                 $scope.currentBlock = null;
                 $scope.clickBlock = false;
                 $scope.leftAlign = false;
+                $scope.position = 'top';
             };
             $scope.nextHelpStep = function () {
                 $scope.currentBlock = false;
@@ -132,7 +142,7 @@
                 $scope.hasNext = false;
                 $scope.clickBlock = false;
                 $scope.leftAlign = false;
-                $scope.showInnerText = false;
+                $scope.position = 'top';
                 var event = $scope.$broadcast('helpPresentationNext');
                 if (event.customized) {
                     return;
