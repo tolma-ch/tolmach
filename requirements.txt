@@ -13,3 +13,4 @@ yandex.translate
 lxml
 elasticsearch
 babel
+srt

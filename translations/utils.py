@@ -27,6 +27,7 @@ FORMATS = {
 
     # Static docs
     # "pdf": "application/pdf",
+    "srt": "text/srt",
 }
 
 
@@ -146,7 +147,16 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
 
 
 def parse_glossary(file_on_disk, filetype):
+    def decode(s, encodings=('ascii', 'utf-8', 'cp1251')):
+        for encoding in encodings:
+            try:
+                return s.decode(encoding)
+            except UnicodeDecodeError:
+                pass
+        return s.decode('ascii', 'ignore')
+
     array = []
+
     with open(file_on_disk, 'r') as file_to_show:
         # открываем файл
         for line in file_to_show:
@@ -158,7 +168,7 @@ def parse_glossary(file_on_disk, filetype):
                     print line.decode('utf-8').rstrip().split('\t', 1)
                     array.append(line.decode('utf-8').rstrip().split('\t', 1))
                 elif filetype == "text/csv":
-                    array.append(line.decode('utf-8').rstrip().split(',', 1))
+                    array.append(decode(line).rstrip().split(',', 1))
 
     os.remove(file_on_disk)
 
@@ -483,7 +493,10 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
                                                  target_editor=None,
                                                  target_edited=None,
                                                  )
-        new_tmdb_entry.save()
+        try:
+            new_tmdb_entry.save()
+        except:
+            pass
 
 
 
