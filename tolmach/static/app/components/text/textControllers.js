@@ -51,6 +51,10 @@
             $scope.page = 1;
             $scope.countPerPage = 100;
             $scope.pagesCount = 1;
+            $scope.paginatorBlur = function () {
+                $scope.page = parseInt($scope.page) || 1;
+                $scope.page = $scope.page > $scope.pagesCount ? $scope.pagesCount : ($scope.page < 1 ? 1 : $scope.page);
+            };
             $scope.userIsManager = false;
             $http.get('/api/entry/', {
                 params: {
