@@ -52,8 +52,15 @@
             $scope.countPerPage = 100;
             $scope.pagesCount = 1;
             $scope.paginatorBlur = function () {
+                $scope.editPage = false;
                 $scope.page = parseInt($scope.page) || 1;
                 $scope.page = $scope.page > $scope.pagesCount ? $scope.pagesCount : ($scope.page < 1 ? 1 : $scope.page);
+            };
+            $scope.paginatorKeypress = function (event) {
+                var code = event.keyCode ? event.keyCode : event.which;
+                if (code === 13 || code === 10) {
+                    $scope.paginatorBlur();
+                }
             };
             $scope.userIsManager = false;
             $http.get('/api/entry/', {
