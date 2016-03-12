@@ -275,6 +275,31 @@ def export_translation(request, text_id, target_lang):
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
 
+    elif format == utils.FORMATS['srt']:
+        import srt
+        import datetime
+
+        subtitles_list = []
+
+        entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+        for entry in entries:
+            entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+            sub_object = srt.Subtitle(index=entry_meta['index'],
+                                      start=datetime.timedelta(seconds=entry_meta['start']),
+                                      end=datetime.timedelta(seconds=entry_meta['end']),
+                                      content=str(''),
+                                      proprietary=entry_meta['proprietary'],
+            )
+            entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+            if entry_translation:
+                sub_object.content = entry_translation[0].body.encode('utf8')
+            else:
+                sub_object.content = entry.body
+
+            subtitles_list.append(sub_object)
+        response = HttpResponse(srt.compose(subtitles_list), content_type='text/srt')
+        doc_ext = "srt"
+
     elif format == utils.FORMATS['docx']:
         # открываем документ на чтение
         from StringIO import StringIO

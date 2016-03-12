@@ -27,6 +27,7 @@ FORMATS = {
 
     # Static docs
     # "pdf": "application/pdf",
+    "srt": "text/srt",
 }
 
 
