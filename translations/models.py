@@ -113,7 +113,7 @@ class Project(models.Model):
             translations = TextTranslation.objects.filter(text=text)
             for translation in translations:
                 translations_num += 1
-                common_progress += translation.get_progress()[1]
+                common_progress += translation.get_progress()[1][1]
 
         if not texts.count() == 0:
             return common_progress / translations_num
@@ -201,20 +201,9 @@ class TextTranslation(models.Model):
         entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
 
         if not entries_total == 0:
-            return [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
+            return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
         else:
-            return [0, 0]
-
-    def get_progress_counts(self):
-        """
-        Get progress of the current text and return Int from 0 to 100
-
-        entries_approved/(entries_total/100.0)
-        """
-        entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
-        entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
-        return [int(entries_total), int(entries_translated), int(entries_approved)]
+            return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
 
 
 class TextEntry(models.Model):
