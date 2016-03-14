@@ -33,17 +33,18 @@ def user_to_json(user):
     }
 
 
-def text_to_json(text, locale):
+def text_to_json(text, text_translations, locale):
     from babel import Locale
     translations = []
-    for translation in TextTranslation.objects.filter(text=text).all():
+    for translation in text_translations:
         lang_name = Locale(translation.target_lang.code)
+        translation_counts, translation_progress = translation.get_progress()
         translations.append({
             'targetLangId': translation.target_lang.id,
             'lang': translation.target_lang.code,
             'langFull': str(translation.target_lang),
-            'progress': translation.get_progress(),
-            'counts': translation.get_progress_counts(),
+            'progress': translation_progress,
+            'counts': translation_counts,
             'langLocal': lang_name.get_language_name(locale),
             'glossaries': [int(x.id) for x in filter(None, translation.glossaries_list.all())] if translation.glossaries_list.all() else [],
             'tmxes': [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else [],
@@ -52,7 +53,6 @@ def text_to_json(text, locale):
         'id': text.id,
         'title': text.title,
         'subject': text.subject.id,
-        'progress': text.get_progress(),
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translations': translations,
