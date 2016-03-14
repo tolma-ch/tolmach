@@ -60,9 +60,9 @@
             template: function (elem, attr) {
                 var word = attr['glossaryWord'];
 
-                return '<span ng-show="entry !== activeEntry || entry.mode !== 1">'
+                return '<span ng-show="entry !== activeEntry || !entry.editing">'
                     + elem.html() + '</span>' +
-                    '<span ng-show="entry === activeEntry && entry.mode === 1" ' +
+                    '<span ng-show="entry === activeEntry && entry.editing" ' +
                     'class="glossary-word" ' +
                     'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                     'tooltip-append-to-body="true" ' +
@@ -188,6 +188,9 @@
                         index,
                         type;
                     console.log(node.nodeType);
+                    if (node.tagName === 'BR') {
+                        continue;
+                    }
                     if (node.tagName === 'HR') {
                         for (j = 0; j < node.attributes.length; j++) {
                             var attribute = node.attributes[j];
@@ -267,6 +270,9 @@
                         continue;
                     }
                     if (node.nodeType === 1) {
+                        if (node.tagName === 'DIV') {
+                            node.insertBefore(document.createElement("br"));
+                        }
                         if (node.childNodes && (node.childNodes.length > 0)) {
                             var nextNode = node.nextSibling,
                                 childNodes = [];

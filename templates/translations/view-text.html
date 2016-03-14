@@ -63,6 +63,7 @@
                          ng-if="(page - 1)*countPerPage < entry.idInText && entry.idInText <= page * countPerPage"
                          ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
+                                    'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
                                     'text-piece_approved': entry.approved,
                                     'text-piece_translated': !entry.approved && (entry.translations.length > 0)}">
 
