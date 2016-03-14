@@ -88,12 +88,27 @@
             }).error(function (a) {
                 console.log(a);
             });
+            var moveCursorToEnd = function (elem) {
+                var caretPos = elem.innerHTML.length;
+                var range = document.createRange();
+                var sel = window.getSelection();
+                range.setStart(elem.childNodes[0], caretPos);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            };
             $scope.addMachineSuggestion = function (entry, machine) {
                 if (entry.suggestion) {
                     entry.suggestion += ' ' + machine.text;
                 } else {
                     entry.suggestion = machine.text;
                 }
+                var input = $('#entry-suggestion-' + entry.id);
+                input.focus();
+                var len = entry.suggestion.length * 2;
+                setTimeout(function () {
+                    moveCursorToEnd(input[0]);
+                }, 10);
             };
             var scrollToEntry = function (entry) {
                     scrollLeftEntry(entry.idInText);
