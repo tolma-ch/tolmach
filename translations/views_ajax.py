@@ -205,10 +205,17 @@ def participant_ajax(request, project):
 @login_required
 def text_ajax(request, project):
     if request.method == 'GET':
-        texts = Text.objects.filter(project=project).all()
+        texts = Text.objects.filter(project=project)
+        translations = TextTranslation.objects.filter(text__in=texts)
+        text_dict = {}
+        for i in translations:
+            if not i.text in text_dict:
+                text_dict[i.text] = [i]
+            else:
+                text_dict[i.text].append(i)
         result = []
         for text in texts:
-            result.append(text_to_json(text, request.LANGUAGE_CODE))
+            result.append(text_to_json(text, text_dict[text], request.LANGUAGE_CODE))
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         if not project.is_user_manager(request.user):
@@ -355,7 +362,8 @@ def text_ajax(request, project):
                 else:
                     return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
-        result = text_to_json(text, request.LANGUAGE_CODE)
+        translations = TextTranslation.objects.filter(text=text)
+        result = text_to_json(text, translations, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'text' not in request.GET:
@@ -732,10 +740,11 @@ def translate_entry_ajax(request):
             except KeyError:
                 return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
 
-            utils.add_pair_to_tmx(request, text, project,
-                                  source_text=entry.body, target_text=entry_target_text,
-                                  source_lang=text.source_lang, target_lang=text_translation.target_lang,
-                                  )
+            if settings.PROD:
+                utils.add_pair_to_tmx(request, text, project,
+                                      source_text=entry.body, target_text=entry_target_text,
+                                      source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                      )
             entry_translation = TextEntry(body=entry_target_text,
                                           parent_entry=entry,
                                           text=text,
