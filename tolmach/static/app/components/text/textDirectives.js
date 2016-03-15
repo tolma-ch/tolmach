@@ -34,7 +34,7 @@
                     'approved: entriesById[' + id + '].approved}">' +
                     '<span ng-show="textTab === 0">' + elem.html() + '</span>' +
                     '<span ng-show="textTab === 1" ' +
-                    'ng-bind="entriesById[' + id + '].translation"></span>' +
+                    'ng-bind-html="entriesById[' + id + '].translation | trusted"></span>' +
                     '</span>';
             },
             link: function (scope, element, attrs) {
@@ -271,7 +271,7 @@
                     }
                     if (node.nodeType === 1) {
                         if (node.tagName === 'DIV') {
-                            node.insertBefore(document.createElement("br"));
+                            element.insertBefore(document.createElement("br"), node);
                         }
                         if (node.childNodes && (node.childNodes.length > 0)) {
                             var nextNode = node.nextSibling,

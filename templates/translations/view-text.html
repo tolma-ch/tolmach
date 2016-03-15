@@ -148,20 +148,20 @@
                             </div>
                         </div>
 
-                        <div class="text-piece__versions"
+                        <div class="text-piece__variants"
                              ng-if="entry.approved || ($parent.activeEntry === entry)">
-                            <div class="translation-version"
+                            <div class="translation-variant"
                                  ng-repeat="translation in entry.translations"
                                  ng-class="{
-                                    'translation-version_approved': translation.isApproved
+                                    'translation-variant_approved': translation.isApproved
                                  }">
-                                <div class="translation-version__text">
-                                    {= clearTags(translation.body) =}
+                                <div class="translation-variant__text"
+                                     ng-bind-html="translation.body | trusted">
                                 </div>
-                                <div class="translation-version__author">
+                                <div class="translation-variant__author">
                                     <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                                 </div>
-                                <div class="translation-version__icons">
+                                <div class="translation-variant__icons">
                                     <a class="active"
                                        ng-show="translation.isApproved"
                                        ng-click="disapproveEntry(translation, entry)"
@@ -189,7 +189,7 @@
                                            ng-disabled="translation.busy">
                                             <i class="fa fa-plus-square-o"></i>
                                         </a>
-                                        <span class="translation-version__vote"
+                                        <span class="translation-variant__vote"
                                               ng-show="userIsManager && translation.vote">
                                             <i class="fa fa-plus"></i> {= translation.vote =}
                                         </span>
