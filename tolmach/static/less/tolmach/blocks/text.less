@@ -72,6 +72,8 @@
       background: #C5FFCC;
       padding: 3px 0;
       margin: -3px 0;
+      padding-right: 3px;
+      margin-right: -3px;
     }
     tag-left, tag-right {
       display: none;
@@ -104,7 +106,7 @@
   &__editor {
 
   }
-  &__versions {
+  &__variants {
 
   }
   &_closed {
@@ -116,14 +118,14 @@
   }
   &_closed&_approved {
     background: #C5FFCC;
-    .translation-version {
+    .translation-variant {
       display: none;
       &_approved {
         display: block;
       }
     }
   }
-  &_closed &__versions {
+  &_closed &__variants {
     display: none;
   }
   &_closed &__editor {
@@ -132,13 +134,14 @@
   &_approved &__original {
     display: none;
   }
-  &_approved &__versions {
+  &_approved &__variants {
     display: block;
   }
 }
 
-.translation-version {
+.translation-variant {
   position: relative;
+  min-height: 60px;
   &__text {
     margin-right: 30px;
   }
