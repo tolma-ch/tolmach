@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
@@ -57,7 +58,20 @@ def projects(request, proj_type):
                 pr.list_button = 'enter'
     else:
         raise Http404("Poll does not exist")
-    for proj in user_projects_list:
+
+    paginator = Paginator(user_projects_list, 15)
+
+    page = request.GET.get('page')
+    try:
+        result_proj_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result_proj_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result_proj_list = paginator.page(paginator.num_pages)
+
+    for proj in result_proj_list:
         proj_manager_meta = UserMeta.objects.get(user=proj.manager)
         proj.manager_avatar = proj_manager_meta.avatar
         proj.texts = Text.objects.filter(project=proj)
@@ -70,7 +84,7 @@ def projects(request, proj_type):
 
     data = {'page_title': page_title,
             'breadcrumbs': [[page_title, page_url], ],
-            'user_projects': user_projects_list,
+            'user_projects': result_proj_list,
             'projects_page_active': True,
             'messages': messages.get_messages(request)
             }
