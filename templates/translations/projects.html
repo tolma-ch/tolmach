@@ -3,6 +3,21 @@
 
 {% block innercontent %}
                 <!--<h1>Projects list</h1>-->
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if user_projects.has_previous %}
+                            <a href="?page={{ user_projects.previous_page_number }}"><i class="fa fa-chevron-left"></i></a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ user_projects.number }} of {{ user_projects.paginator.num_pages }}
+                        </span>
+
+                        {% if user_projects.has_next %}
+                            <a href="?page={{ user_projects.next_page_number }}"><i class="fa fa-chevron-right"></i></a>
+                        {% endif %}
+                    </span>
+                </div>
                 {% for project in user_projects %}
                 <div class="widget-box">
                     <div class="widget-header widget-header-flat widget-header-large">
