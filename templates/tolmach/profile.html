@@ -41,6 +41,7 @@
                                     <i class="flag flag-{{ key.1 }}"></i>
                                 </div>
                             </div>
+                            {% if value.1 > 0 %}
                             <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
                                 <div class="languages">
                                     <i class="flag flag-{{ key.1 }}"></i>
@@ -48,6 +49,7 @@
                                     <i class="flag flag-{{ key.0 }}"></i>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </li>
                     {% endfor %}

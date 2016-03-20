@@ -28,10 +28,10 @@
             <div class="user-sidebar__info">
                 <div class="user-sidebar__nickname">{{ username }}</div>
                 <div class="user-sidebar__username">{{ first_name }} {{ last_name }}</div>
-                <div class="user-sidebar__location">
-                    <i class="fa fa-map"></i>
-                    Irkutsk, Russia
-                </div>
+                <!--<div class="user-sidebar__location">-->
+                    <!--<i class="fa fa-map"></i>-->
+                    <!--Irkutsk, Russia-->
+                <!--</div>-->
             </div>
 
             <!--<div class="user-sidebar__socials">-->
@@ -68,6 +68,7 @@
                                     <i class="flag flag-{{ key.1 }}"></i>
                                 </div>
                             </div>
+                            {% if value.1 > 0 %}
                             <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
                                 <div class="languages">
                                     <i class="flag flag-{{ key.1 }}"></i>
@@ -75,6 +76,7 @@
                                     <i class="flag flag-{{ key.0 }}"></i>
                                 </div>
                             </div>
+                            {% endif %}
                         </div>
                     </li>
                     {% endfor %}
