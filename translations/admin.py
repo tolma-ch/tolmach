@@ -16,6 +16,10 @@ class TextAdmin(admin.ModelAdmin):
     inlines = [EntryInLine]
 
 
+class TextMetaAdmin(admin.ModelAdmin):
+    list_display = ('text', 'meta_type')
+
+
 class TextEntryAdmin(admin.ModelAdmin):
     list_display = ('body', 'text', 'parent_entry')
 
@@ -47,7 +51,7 @@ class TMDBAdmin(admin.ModelAdmin):
 admin.site.register(Project)
 admin.site.register(Text, TextAdmin)
 admin.site.register(TextTranslation, TextTranslationAdmin)
-admin.site.register(TextMeta)
+admin.site.register(TextMeta, TextMetaAdmin)
 admin.site.register(TextEntry, TextEntryAdmin)
 admin.site.register(TextEntryMeta)
 admin.site.register(Glossary, GlossaryAdmin)
