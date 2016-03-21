@@ -950,14 +950,15 @@ def tmdb_search(request):
                 import difflib
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
-                    if seq.ratio() > 0.3:
-                        search_results.append({
-                                              'id': 123,
-                                              'text': item['fields'][entry_target_lang.code][0],
-                                              # 'percent': int(float(item['_score'])*100),
-                                              'percent': int(seq.ratio()*100),
-                                              })
-                        print "%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0])
+                    if seq.ratio() > 0.5:
+                        obj = {
+                              'id': 123,
+                              'text': item['fields'][entry_target_lang.code][0],
+                              'percent': int(seq.ratio()*100),
+                              }
+                        if not obj in search_results:
+                            search_results.append(obj)
+                            print "%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0])
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
