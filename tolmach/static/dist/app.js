@@ -430,6 +430,8 @@
     ]);
     module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
         function ($scope, $modalInstance, $http, Upload) {
+            $scope.busy = false;
+            $scope.progress = 0;
             $scope.text = {
                 subject: 1
             };
@@ -465,12 +467,14 @@
                         $scope.error = 'Please, select a file';
                         return;
                     }
+                    $scope.busy = true;
                     Upload.upload({
                             url: '/api/text/',
                             fields: data,
                             file: $scope.text.files[0]
                         })
                         .progress(function (evt) {
+                            $scope.progress = 100.0 * evt.loaded / evt.total;
                         })
                         .success(function (text) {
                             $modalInstance.close(text);
@@ -865,6 +869,7 @@
                     i, entry;
                 for (i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
+                    entry.body = entry.body.replace("\n", '<br>');
                     updateTranslation(entry);
                     entriesById[entry['idInText']] = entry;
                 }
@@ -996,7 +1001,7 @@
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
-                        text: entry.suggestion,
+                        text: entry.suggestion.replace('<br>', "\n"),
                         target_lang: window['translationTargetLang']
                     };
                 if (suggestionId) {
@@ -1633,12 +1638,13 @@
                 if (lastFixed === element.innerHTML) {
                     return;
                 }
-                console.log('fix');
                 var nodes = [],
                     state = false,
                     extend = false,
                     modified = false,
                     extendNode,
+                    lastBr,
+                    allowBr = false,
                     i;
                 angular.forEach(element.childNodes, function (node) {
                     nodes.push(node);
@@ -1648,8 +1654,8 @@
                         j,
                         index,
                         type;
-                    console.log(node.nodeType);
-                    if (node.tagName === 'BR') {
+                    if (allowBr && (node.tagName === 'BR')) {
+                        lastBr = node;
                         continue;
                     }
                     if (node.tagName === 'HR') {
@@ -1728,11 +1734,19 @@
                         //    prevNode.textContent += node.textContent;
                         //    node.remove();
                         //}
+                        lastBr = false;
                         continue;
                     }
                     if (node.nodeType === 1) {
-                        if (node.tagName === 'DIV') {
-                            element.insertBefore(document.createElement("br"), node);
+                        if (allowBr && (node.tagName === 'DIV')) {
+                            if (node.childNodes
+                                && (node.childNodes.length === 1)
+                                && node.childNodes[0].nodeType === 1
+                                && node.childNodes[0].tagName === 'BR') {
+                                continue;
+                            }
+                            lastBr = document.createElement("br");
+                            element.insertBefore(lastBr, node);
                         }
                         if (node.childNodes && (node.childNodes.length > 0)) {
                             var nextNode = node.nextSibling,
@@ -1760,6 +1774,7 @@
                                 //    node.remove();
                                 //} else {
                                     element.replaceChild(document.createTextNode(node.textContent), node);
+                                    lastBr = false;
                                 //}
                             } else {
                                 node.remove();

@@ -172,12 +172,13 @@
                 if (lastFixed === element.innerHTML) {
                     return;
                 }
-                console.log('fix');
                 var nodes = [],
                     state = false,
                     extend = false,
                     modified = false,
                     extendNode,
+                    lastBr,
+                    allowBr = false,
                     i;
                 angular.forEach(element.childNodes, function (node) {
                     nodes.push(node);
@@ -187,8 +188,8 @@
                         j,
                         index,
                         type;
-                    console.log(node.nodeType);
-                    if (node.tagName === 'BR') {
+                    if (allowBr && (node.tagName === 'BR')) {
+                        lastBr = node;
                         continue;
                     }
                     if (node.tagName === 'HR') {
@@ -267,11 +268,19 @@
                         //    prevNode.textContent += node.textContent;
                         //    node.remove();
                         //}
+                        lastBr = false;
                         continue;
                     }
                     if (node.nodeType === 1) {
-                        if (node.tagName === 'DIV') {
-                            element.insertBefore(document.createElement("br"), node);
+                        if (allowBr && (node.tagName === 'DIV')) {
+                            if (node.childNodes
+                                && (node.childNodes.length === 1)
+                                && node.childNodes[0].nodeType === 1
+                                && node.childNodes[0].tagName === 'BR') {
+                                continue;
+                            }
+                            lastBr = document.createElement("br");
+                            element.insertBefore(lastBr, node);
                         }
                         if (node.childNodes && (node.childNodes.length > 0)) {
                             var nextNode = node.nextSibling,
@@ -299,6 +308,7 @@
                                 //    node.remove();
                                 //} else {
                                     element.replaceChild(document.createTextNode(node.textContent), node);
+                                    lastBr = false;
                                 //}
                             } else {
                                 node.remove();

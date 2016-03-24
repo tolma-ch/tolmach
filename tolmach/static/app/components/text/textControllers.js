@@ -79,6 +79,7 @@
                     i, entry;
                 for (i = entries.length - 1; i >= 0; i--) {
                     entry = entries[i];
+                    entry.body = entry.body.replace("\n", '<br>');
                     updateTranslation(entry);
                     entriesById[entry['idInText']] = entry;
                 }
@@ -210,7 +211,7 @@
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
-                        text: entry.suggestion,
+                        text: entry.suggestion.replace('<br>', "\n"),
                         target_lang: window['translationTargetLang']
                     };
                 if (suggestionId) {

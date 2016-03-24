@@ -324,6 +324,8 @@
     ]);
     module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
         function ($scope, $modalInstance, $http, Upload) {
+            $scope.busy = false;
+            $scope.progress = 0;
             $scope.text = {
                 subject: 1
             };
@@ -359,12 +361,14 @@
                         $scope.error = 'Please, select a file';
                         return;
                     }
+                    $scope.busy = true;
                     Upload.upload({
                             url: '/api/text/',
                             fields: data,
                             file: $scope.text.files[0]
                         })
                         .progress(function (evt) {
+                            $scope.progress = 100.0 * evt.loaded / evt.total;
                         })
                         .success(function (text) {
                             $modalInstance.close(text);
