@@ -10,9 +10,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/static/img/favicon.ico" rel="shortcut icon">
 
+        {% with front_version="1.1" %}
 
         {% if prod == 'true' %}
-            <link rel="stylesheet" href="/static/dist/tolmach.min.css">
+            <link rel="stylesheet" href="/static/dist/tolmach.min.css?v={{ front_version }}">
         {% else %}
             <link rel="stylesheet" href="/static/assets/bootstrap/dist/css/bootstrap.css">
             <link rel="stylesheet/less" type="text/css" href="/static/less/tolmach.less" />
@@ -20,17 +21,16 @@
         {%  endif %}
 
 		<!--fonts-->
-        <link rel="stylesheet" href="/static/assets/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="/static/assets/font-awesome/css/font-awesome.min.css?v={{ front_version }}">
 
         <!--ace styles-->
-        <link rel="stylesheet" href="/static/dist/ace.css">
-        <link rel="stylesheet" href="/static/css/ace-rtl.min.css">
+        <link rel="stylesheet" href="/static/dist/ace.css?v={{ front_version }}">
+        <link rel="stylesheet" href="/static/css/ace-rtl.min.css?v={{ front_version }}">
 
         <!--page specific plugin styles-->
-        <link rel="stylesheet" href="/static/dist/all.css">
-        <link rel="stylesheet" href="/static/css/image-crop-styles.css">
-        <link rel="stylesheet" href="/static/assets/angular-ui-select/dist/select.css">
-
+        <link rel="stylesheet" href="/static/dist/all.css?v={{ front_version }}">
+        <link rel="stylesheet" href="/static/css/image-crop-styles.css?v={{ front_version }}">
+        <link rel="stylesheet" href="/static/assets/angular-ui-select/dist/select.css?v={{ front_version }}">
         <style>
             [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
               display: none !important;
@@ -144,28 +144,28 @@
 		<script type="text/javascript">
 			if("ontouchend" in document) document.write("<script src='/static/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
 		</script>
-		<script src="/static/js/bootstrap.min.js"></script>
+		<script src="/static/js/bootstrap.min.js?v={{ front_version }}"></script>
 
 		<!--page specific plugin scripts-->
 
 		<!--ace scripts-->
 
-		<script src="/static/js/ace-elements.min.js"></script>
-        <script src="/static/js/ace.js"></script>
-        <script src="/static/js/ace-extra.js"></script>
-        <script src="/static/assets/angular/angular.min.js"></script>
-        <script src="/static/assets/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-        <script src="/static/assets/angular-elastic/elastic.js"></script>
-        <script src="/static/assets/angular-ui-select/dist/select.min.js"></script>
-        <script src="/static/assets/ng-file-upload/ng-file-upload.js"></script>
-        <script src="/static/assets/angular-image-crop/image-crop.js"></script>
-        <script src="/static/assets/angular-contenteditable/angular-contenteditable.js"></script>
-        <script src="/static/assets/angular-img-cropper/dist/angular-img-cropper.min.js"></script>
+		<script src="/static/js/ace-elements.min.js?v={{ front_version }}"></script>
+        <script src="/static/js/ace.js?v={{ front_version }}"></script>
+        <script src="/static/js/ace-extra.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular/angular.min.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-bootstrap/ui-bootstrap-tpls.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-elastic/elastic.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-ui-select/dist/select.min.js?v={{ front_version }}"></script>
+        <script src="/static/assets/ng-file-upload/ng-file-upload.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-image-crop/image-crop.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-contenteditable/angular-contenteditable.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-img-cropper/dist/angular-img-cropper.min.js?v={{ front_version }}"></script>
         <script>
             var csrfToken = '{{ csrf_token }}';
         </script>
         {% if prod == 'true' %}
-		    <script src="/static/jsdist/app.min.js"></script>
+		    <script src="/static/jsdist/app.min.js?v={{ front_version }}"></script>
         {% else %}
 		    {% include "main/partial/include-js.html" %}
         {%  endif %}
@@ -190,6 +190,7 @@
                 else {window.attachEvent('onload', _onload)}
             }());
         </script>
+        {% endwith %}
 
 		<!--inline scripts related to this page-->
     </body>

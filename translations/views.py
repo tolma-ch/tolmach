@@ -205,9 +205,11 @@ def view_translation(request, text_id, target_lang):
     body = text.body
     page = 1
     start = 101
+    prefix = ''
     while body:
         splited = body.split('<span data-entry="%d">' % start, 1)
-        res += ('<div entry-page="%d">' % page) + splited[0] + '</div>'
+        res += ('<div entry-page="%d">' % page) + prefix + splited[0] + '</div>'
+        prefix = '<span data-entry="%d">' % start
         page += 1
         start += 100
         body = splited[1] if len(splited) > 1 else False
