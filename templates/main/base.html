@@ -165,7 +165,7 @@
             var csrfToken = '{{ csrf_token }}';
         </script>
         {% if prod == 'true' %}
-		    <script src="/static/jsdist/app.min.js?v={{ front_version }}"></script>
+		    <script src="/static/dist/app.min.js?v={{ front_version }}"></script>
         {% else %}
 		    {% include "main/partial/include-js.html" %}
         {%  endif %}
