@@ -740,6 +740,9 @@ def translate_entry_ajax(request):
             except KeyError:
                 return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
 
+            import re
+            entry_target_text = re.sub('&nbsp;', ' ', entry_target_text)
+
             if settings.PROD:
                 utils.add_pair_to_tmx(request, text, project,
                                       source_text=entry.body, target_text=entry_target_text,
