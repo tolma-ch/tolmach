@@ -89,6 +89,12 @@
         </form>
     </div>
     <div class="modal-footer">
+        <div class="progress-bar"
+             ng-show="busy">
+            <div class="progress-bar__gauge"
+                 style="width: 1%;background:rgb(255, 217, 121)"
+                 ng-style="{width: progress + '%'}"></div>
+        </div>
         <button class="btn btn-success"
                 ng-click="ok()"
                 ng-disabled="busy">{% trans "Next" %}</button>
