@@ -424,7 +424,7 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         print "TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data
     except:
         print "ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one..."
-        tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
+        tmdb_to_write = TextTranslationMeta(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
         tmdb_to_write.save()
 
     tmdbs = filter(None, tmdb_to_write.meta_data.split(","))
