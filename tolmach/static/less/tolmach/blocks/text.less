@@ -269,9 +269,14 @@
 }
 .machine-suggestion {
   &__text {
-    display: inline-block;
-    width: 90%;
+    //display: inline-block;
     vertical-align: middle;
+  }
+  &__from {
+    float: right;
+    background: #ECECEC;
+    padding: 3px 5px;
+    margin: 2px 0 0 10px;
   }
   &__relevance {
     display:  block;
@@ -284,10 +289,10 @@
     font-size: 11px;
     vertical-align:  middle;
     color: #fff;
-    margin-top: -15px;
+    //margin-top: -15px;
     position: absolute;
     right: 0;
-    top: 50%;
+    top: 0;
 
     &_high {
       background: #02c14f;
