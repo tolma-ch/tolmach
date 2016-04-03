@@ -950,6 +950,7 @@ def tmdb_search(request):
                                                                     }
                                                                 })
 
+                tmx = TMDatabase.objects.get(id=tmx_id)
                 import difflib
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
@@ -958,6 +959,7 @@ def tmdb_search(request):
                               'id': 123,
                               'text': item['fields'][entry_target_lang.code][0],
                               'percent': int(seq.ratio()*100),
+                              'tmx': tmx.name,
                               }
                         if not obj in search_results:
                             search_results.append(obj)
