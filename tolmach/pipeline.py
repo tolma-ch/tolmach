@@ -12,8 +12,8 @@ def update_user_social_data(strategy, *args, **kwargs):
     """Set the name and avatar for a user only if is new.
     """
     print 'update_user_social_data ::', strategy
-    # if not kwargs['is_new']:
-    #     return
+    if not kwargs['is_new']:
+        return
 
     full_name = ''
     backend = kwargs['backend']
