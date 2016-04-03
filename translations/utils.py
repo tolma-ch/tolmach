@@ -6,7 +6,7 @@ import re
 import os
 from django.utils.translation import ugettext as _
 from entries.models import Language
-from translations.models import TextMeta, TextTranslation, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextMeta, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
 import datetime
 
@@ -420,9 +420,11 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     current_tmdbs = [int(x.id) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
 
     try:
-        tmdb_to_write = TextMeta.objects.get(text=text, meta_type="tmdb_to_write")
+        tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write")
+        print "TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data
     except:
-        tmdb_to_write = TextMeta(text=text, meta_type="tmdb_to_write", meta_data="")
+        print "ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one..."
+        tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
         tmdb_to_write.save()
 
     tmdbs = filter(None, tmdb_to_write.meta_data.split(","))
