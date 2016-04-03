@@ -119,6 +119,7 @@
                                                 ng-repeat="machine in entry.tmdbVariants"
                                                 ng-click="addMachineSuggestion(entry, machine)">
                                                 <div class="machine-suggestion">
+                                                    <span class="machine-suggestion__from">{= machine.tmx | limitTo:15 =}</span>
                                                     <span class="machine-suggestion__text">{= machine.text =}</span>
                                                     <span class="machine-suggestion__relevance"
                                                           ng-class="{
