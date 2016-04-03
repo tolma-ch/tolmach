@@ -206,6 +206,12 @@ class TextTranslation(models.Model):
             return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
 
 
+class TextTranslationMeta(models.Model):
+    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_meta')
+    meta_type = models.CharField(max_length=256, default=None, null=True)
+    meta_data = models.TextField()
+
+
 class TextEntry(models.Model):
     body = models.TextField(default="")
     parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True)
