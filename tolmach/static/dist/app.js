@@ -2013,6 +2013,7 @@
                 $scope.currentBlock = $scope.helpBlocks.shift();
                 $scope.clickBlock = false;
                 $scope.leftAlign = false;
+                $scope.position = 'top';
                 $scope.hasNext = !!$scope.helpBlocks.length;
                 if ($scope.currentBlock) {
                     $scope.helpText = $($scope.currentBlock).attr('help-text');
