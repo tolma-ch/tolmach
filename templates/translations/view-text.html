@@ -206,42 +206,46 @@
                 <div class="text-overview">
                     <div class="text-overview__table">
                         <div class="text-overview__row text-overview__row_thin">
-                            <div class="text-overview__paginator"
-                                 ng-show="pagesCount > 1">
-                                <a href=""
-                                   ng-click="page = page > 1 ? page - 1 : 1"><i class="fa fa-chevron-left"></i></a>
+                            <div class="text-overview__cell">
+                                <div class="text-overview__paginator"
+                                     ng-show="pagesCount > 1">
+                                    <a href=""
+                                       ng-click="page = page > 1 ? page - 1 : 1"><i class="fa fa-chevron-left"></i></a>
                                 <span class="text-overview__paginator-text"
                                       ng-show="!editPage"
                                       ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
-                                <input type="text"
-                                       ng-show="editPage"
-                                       focus-me="focusPaginator"
-                                       ng-model="page"
-                                       ng-keypress="paginatorKeypress($event)"
-                                       ng-blur="paginatorBlur()">
-                                <a href=""
-                                   ng-click="page = page < pagesCount ? page + 1 : pagesCount"><i class="fa fa-chevron-right"></i></a>
-                            </div>
-                            <div class="text-overview__switcher">
-                                <div class="switcher">
-                                    <a class="switcher__button"
-                                       id="switcher__button_original-text"
-                                       ng-class="{'switcher__button_active': textTab === 0}"
-                                       ng-click="textTab = 0">
-                                        <span>{{ original_text }}</span>
-                                    </a>
-                                    <a class="switcher__button"
-                                       id="switcher__button_translated-text"
-                                       ng-class="{'switcher__button_active': textTab === 1}"
-                                       ng-click="textTab = 1">
-                                        <span>{{ translated_text }}</span>
-                                    </a>
+                                    <input type="text"
+                                           ng-show="editPage"
+                                           focus-me="focusPaginator"
+                                           ng-model="page"
+                                           ng-keypress="paginatorKeypress($event)"
+                                           ng-blur="paginatorBlur()">
+                                    <a href=""
+                                       ng-click="page = page < pagesCount ? page + 1 : pagesCount"><i class="fa fa-chevron-right"></i></a>
+                                </div>
+                                <div class="text-overview__switcher">
+                                    <div class="switcher">
+                                        <a class="switcher__button"
+                                           id="switcher__button_original-text"
+                                           ng-class="{'switcher__button_active': textTab === 0}"
+                                           ng-click="textTab = 0">
+                                            <span>{{ original_text }}</span>
+                                        </a>
+                                        <a class="switcher__button"
+                                           id="switcher__button_translated-text"
+                                           ng-class="{'switcher__button_active': textTab === 1}"
+                                           ng-click="textTab = 1">
+                                            <span>{{ translated_text }}</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="text-overview__row">
-                            <div class="text-overview__content" id="result-container">
-                                {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                            <div class="text-overview__cell">
+                                <div class="text-overview__content" id="result-container">
+                                    {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                                </div>
                             </div>
                         </div>
                     </div>
