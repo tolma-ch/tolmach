@@ -417,7 +417,17 @@ def export_translation(request, text_id, target_lang):
                                     clear_run = ""
                                     # print "OLOLO: ", run
                                     if run.startswith("<tag i="):
-                                        run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
+                                        def cdata_start_repl(matchobj):
+                                            return matchobj.group(0) +"<![CDATA["
+                                        def cdata_end_repl(matchobj):
+                                            return "]]>" + matchobj.group(0)
+
+                                        try:
+                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
+                                        except:
+                                            run = re.sub("<tag i='.*'>", cdata_start_repl, run)
+                                            run = re.sub("</tag>", cdata_end_repl, run)
+                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
                                         taglist = run_tag_id_xml.getElementsByTagName('tag')
                                         i_tag = taglist[0].attributes['i']
                                         style = styles[i_tag.value]
@@ -510,9 +520,20 @@ def export_translation(request, text_id, target_lang):
                     else:
                         continue
 
+        from lxml import etree
         for par, entries in paragraphs_list.items():
             for idx, pr in enumerate(prlist):
                 if int(par) == idx:
+                    test_xml = """<?xml version="1.0"?>
+                <w:document xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
+                %s
+                </w:document>""" % pr.toprettyxml()
+                    tree = etree.XML(test_xml)
+                    try:
+                        tree.xpath('/w:document/w:p/w:r/w:t/text()', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})[0]
+                    except:
+                        continue
+
                     new_txt_value = ""
                     for ent in entries:
                         translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
