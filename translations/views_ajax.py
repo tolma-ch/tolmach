@@ -316,9 +316,11 @@ def text_ajax(request, project):
                     return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
             elif 'file' in request.FILES:
-                import os
+                import os, random, string
                 f = request.FILES['file']
-                filename = request.FILES['file'].name
+                # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
+                rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
+                filename = rand_string + "." + request.FILES['file'].name.split(".")[-1]
                 file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
                                           int(request.user.id),
                                           int(project.id))
@@ -338,6 +340,7 @@ def text_ajax(request, project):
                 file_type = mime.guess_type(file_on_disk)[0]
                 print file_type
                 if file_type not in utils.FORMATS.values():
+                    os.remove(file_on_disk)
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
 
