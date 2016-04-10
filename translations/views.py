@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.models import Project, Text, TextMeta, TextEntry, TextEntryMeta, TextTranslation
 from entries.models import Language, Subject
-import translations.utils as utils
+import translations.utils as utils, export_utils
 
 
 @login_required
@@ -303,6 +303,8 @@ def export_translation(request, text_id, target_lang):
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
 
+    elif format == utils.FORMATS['po']:
+        response, doc_ext = export_utils.export_po(text_id, target_lang, text_translation)
     elif format == utils.FORMATS['srt']:
         import srt
         import datetime

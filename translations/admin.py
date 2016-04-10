@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from translations.models import Project, Text, TextEntry, TextTranslation, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, Text, TextEntry, TextTranslation, TextTranslationMeta, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextMeta, TextEntryMeta
 
 
@@ -29,6 +29,10 @@ class TextTranslationAdmin(admin.ModelAdmin):
     inlines = [EntryInLine]
 
 
+class TextTranslationMetaAdmin(admin.ModelAdmin):
+    list_display = ('translation', 'meta_type')
+
+
 class GlossaryInLine(admin.StackedInline):
     model = GlossaryEntry
     fields = ('source_entry', 'target_entry')
@@ -52,6 +56,7 @@ admin.site.register(Project)
 admin.site.register(Text, TextAdmin)
 admin.site.register(TextTranslation, TextTranslationAdmin)
 admin.site.register(TextMeta, TextMetaAdmin)
+admin.site.register(TextTranslationMeta, TextTranslationMetaAdmin)
 admin.site.register(TextEntry, TextEntryAdmin)
 admin.site.register(TextEntryMeta)
 admin.site.register(Glossary, GlossaryAdmin)
