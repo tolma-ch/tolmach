@@ -4,7 +4,6 @@
 {% block innercontent %}
 {% trans 'Statistics' as statistics_header %}
 {% trans 'Total' as total_label %}
-{% trans 'fragments translated' as sentences_translated_label %}
 {% trans 'Projects' as projects_label %}
 {% trans 'Start new' as start_new_label %}
 {% trans 'Add project' as add_project_header %}
@@ -95,7 +94,7 @@
                 <div class="user-statistics__total">
                     <div class="user-statistics__total-title">{{ total_label }}:</div>
                     <div class="user-statistics__total-number">{{ entries_total }}</div>
-                    <div class="user-statistics__total-sentences">{{ sentences_translated_label }}</div>
+                    <div class="user-statistics__total-sentences">{% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}</div>
                 </div>
             </div>
         </div>
