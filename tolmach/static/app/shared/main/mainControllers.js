@@ -170,6 +170,11 @@
             $scope.bodyClick = function (event) {
                 $scope.$broadcast('GlobalClick', event);
             };
+
+            $scope.showChatroom = false;
+            $scope.toggleChat = function () {
+                $scope.showChatroom = !$scope.showChatroom;
+            };
         }
     ]);
 
