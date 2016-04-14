@@ -1,0 +1,84 @@
+.chatroom {
+  position: fixed;
+  top: 50px;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  &__history {
+    border-left: 1px solid #D5D5D5;
+    border-right: 1px solid #D5D5D5;
+    flex-basis: 100%;
+    overflow-y: scroll;
+  }
+  &__input {
+    flex-basis: 29px;
+  }
+}
+.chat-input {
+  height: 29px;
+  width: 100%;
+}
+.chat-item {
+  background: paleturquoise;
+  padding: 4px;
+  margin: 10px 10px 10px 60px;
+  position: relative;
+
+  &:before {
+    content: " ";
+    display: block;
+    border: 7px solid transparent;
+    border-right: 5px solid paleturquoise;
+    position: absolute;
+    left: -12px;
+    top: 13px;
+  }
+  &__ava {
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: block;
+    //float: left;
+  }
+  &__time {
+    color: @grayText;
+    float: right;
+    margin-left: 10px;
+  }
+  &__name {
+    color: @darkBlue;
+  }
+  &__text {
+  }
+  &_own {
+    background: palegreen;
+    margin-left: 90px;
+  }
+  &_own:before {
+    display: none;
+  }
+  &_own &__ava {
+    display: none;
+  }
+  &_own &__name {
+    display: none;
+  }
+  &_short &__ava {
+    display: none;
+  }
+  &_short &__name {
+    display: none;
+  }
+  &_short:before {
+    display: none;
+  }
+  &_wo-time &__time {
+    display: none;
+  }
+}
