@@ -170,6 +170,9 @@
             $scope.bodyClick = function (event) {
                 $scope.$broadcast('GlobalClick', event);
             };
+            $scope.mouseup = function (event) {
+                $scope.$broadcast('GlobalMouseup', event);
+            };
         }
     ]);
 

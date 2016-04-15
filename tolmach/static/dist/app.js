@@ -1386,6 +1386,9 @@
                 $scope.$parent.showTranslatePopup = false;
                 $scope.translatedPhrase = false;
             });
+            $scope.$on('GlobalMouseup', function (e, event) {
+                translate();
+            });
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;
@@ -2064,6 +2067,9 @@
             };
             $scope.bodyClick = function (event) {
                 $scope.$broadcast('GlobalClick', event);
+            };
+            $scope.mouseup = function (event) {
+                $scope.$broadcast('GlobalMouseup', event);
             };
         }
     ]);
