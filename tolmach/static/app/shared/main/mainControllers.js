@@ -175,6 +175,10 @@
             $scope.toggleChat = function () {
                 $scope.showChatroom = !$scope.showChatroom;
             };
+            
+            $scope.mouseup = function (event) {
+                $scope.$broadcast('GlobalMouseup', event);
+            };
         }
     ]);
 
