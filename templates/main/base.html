@@ -71,8 +71,8 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-click="bodyClick()">
-        <div class="main{% if user.is_authenticated %} auth{% endif %}">
+	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event)" ng-click="bodyClick($event)">
+        <div class="main{% if user.is_authenticated %} auth{% endif %}" resize="globalResize">
             {% include "main/partial/header.html" %}
 
             {% block content %}
@@ -96,7 +96,16 @@
                 </div>
             </div>
         </script>
-        <div class="chatroom" ng-if="showChatroom" ng-cloak>
+        <div class="chatroom"
+             ng-if="showChatroom"
+             ng-cloak
+             ng-controller="ChatCtrl"
+             ng-style="style"
+             data-drag="true"
+             jqyoui-draggable>
+            <div class="chatroom__title">
+                Chat
+            </div>
             <div class="chatroom__history">
                 <div class="chat-item">
                     <img class="chat-item__ava" src="/media/avatar/vk_avatar_110946620_UQUgNLv.jpg" alt="User">
@@ -172,7 +181,14 @@
                     <div class="chat-item__text">Cretins...</div>
                 </div>
             </div>
-            <div class="chatroom__input"><textarea class="chat-input" name="" id="" placeholder="Write a message..."></textarea></div>
+            <div class="chatroom__input">
+                <textarea class="chat-input"
+                          name=""
+                          id=""
+                          placeholder="Write a message..."
+                          msd-elastic
+                          ng-keypress="textareaKeypress($event)"></textarea>
+            </div>
         </div>
         <div class="help" ng-show="helpShow" resize="helpResize" ng-cloak>
             <div class="help__fadeout-block" ng-style="helpBlockStyle1">
@@ -239,6 +255,7 @@
         <script src="/static/assets/angular-image-crop/image-crop.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-contenteditable/angular-contenteditable.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-img-cropper/dist/angular-img-cropper.min.js?v={{ front_version }}"></script>
+        <script src="/static/assets/angular-dragdrop/src/angular-dragdrop.js?v={{ front_version }}"></script>
         <script>
             var csrfToken = '{{ csrf_token }}';
         </script>
