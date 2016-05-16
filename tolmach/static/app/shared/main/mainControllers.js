@@ -176,6 +176,9 @@
             $scope.globalResize = function (window) {
                 $scope.$broadcast('GlobalResize', window);
             };
+            $scope.mouseup = function (event) {
+                $scope.$broadcast('GlobalMouseup', event);
+            };
         }
     ]);
 

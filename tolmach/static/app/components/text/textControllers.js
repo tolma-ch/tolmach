@@ -596,6 +596,9 @@
                 $scope.$parent.showTranslatePopup = false;
                 $scope.translatedPhrase = false;
             });
+            $scope.$on('GlobalMouseup', function (e, event) {
+                translate();
+            });
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;

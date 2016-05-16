@@ -13,7 +13,7 @@ from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
-from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation
+from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
@@ -632,10 +632,21 @@ def entry_ajax(request, action, text):
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
+        if text.document_format == utils.FORMATS["po"]:
+            has_plurals = True
+        else:
+            has_plurals = False
+
         for entry in base_entries:
             if not text_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
+            if has_plurals:
+                entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+                translation_meta = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)
+                entry_meta["plural_examples"] = translation_meta["plural_examples"]
+            else:
+                entry_meta = ""
             approved = False
             approved_text = ''
             user_translation_text = ''
@@ -655,6 +666,7 @@ def entry_ajax(request, action, text):
                 'idInText': entry.id_in_text,
                 'rawBody': entry.body,
                 'body': entry.glossary_body,
+                'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
                 'translation': approved_text or user_translation_text or entry.body
