@@ -71,7 +71,7 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event)" ng-click="bodyClick($event)">
+	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-click="bodyClick()" ng-mouseup="mouseup($event)">
         <div class="main{% if user.is_authenticated %} auth{% endif %}" resize="globalResize">
             {% include "main/partial/header.html" %}
 
