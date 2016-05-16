@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'tolmach',
     'translations',
     'entries',
+    'chat',
     'social_auth_widget',
     'social.apps.django_app.default',
     'django.contrib.auth',

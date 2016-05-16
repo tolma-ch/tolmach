@@ -1,15 +1,20 @@
 .chatroom {
   position: fixed;
-  top: 50px;
+  width: 320px;
+  height: 450px;
+  //top: 0;
   right: 0;
   bottom: 0;
-  left: 50%;
+  //left: 0;
   background: white;
   display: flex;
   flex-direction: column;
+  border: 1px solid #D5D5D5;
+  &__title {
+    border-bottom: 1px solid #D5D5D5;
+    padding: 4px 10px;
+  }
   &__history {
-    border-left: 1px solid #D5D5D5;
-    border-right: 1px solid #D5D5D5;
     flex-basis: 100%;
     overflow-y: scroll;
   }

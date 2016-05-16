@@ -1,9 +1,7 @@
 (function () {
     'use strict';
 
-    var module = angular.module('mainControllers', [
-        'ui.bootstrap'
-    ]);
+    var module = angular.module('mainControllers', []);
 
     module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal',
         function ($scope, $http, $timeout, $modal) {
@@ -174,6 +172,9 @@
             $scope.showChatroom = false;
             $scope.toggleChat = function () {
                 $scope.showChatroom = !$scope.showChatroom;
+            };
+            $scope.globalResize = function (window) {
+                $scope.$broadcast('GlobalResize', window);
             };
         }
     ]);
