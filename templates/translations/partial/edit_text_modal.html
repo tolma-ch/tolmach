@@ -61,6 +61,18 @@
                 </div>
                 <div class="glossary-manual__input">
                     <label for="">{% trans 'Glossaries' %}:</label>
+                    <div>
+                        <label class="middle" for="input_glossary_all">
+                            <input class="ace"
+                                   type="checkbox"
+                                   id="input_glossary_all"
+                                   ng-click="toggleGlossary()"
+                                   ng-checked="options.currentTranslation.allGlossaries"/>
+                            <span class="lbl huge grey">
+                                {% trans "All glossaries" %}
+                            </span>
+                        </label>
+                    </div>
                     <div ng-repeat="glossary in glossaries">
                         <label class="middle" for="input_glossary_{= glossary.id =}">
                             <input class="ace"
@@ -76,6 +88,18 @@
                 </div>
                 <div class="glossary-manual__input">
                     <label for="">{% trans 'TMXes' %}:</label>
+                    <div>
+                        <label class="middle" for="input_tmx_all">
+                            <input class="ace"
+                                   type="checkbox"
+                                   id="input_tmx_all"
+                                   ng-click="toggleTmx()"
+                                   ng-checked="options.currentTranslation.allTmxes"/>
+                            <span class="lbl huge grey">
+                                {% trans "All tmxes" %}
+                            </span>
+                        </label>
+                    </div>
                     <div ng-repeat="tmx in tmxes">
                         <label class="middle" for="input_tmx_{= tmx.id =}">
                             <input class="ace"

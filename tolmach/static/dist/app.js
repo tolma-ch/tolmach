@@ -552,19 +552,39 @@
                 return result;
             };
             $scope.toggleGlossary = function (id) {
-                var index = $scope.options.currentTranslation.glossaries.indexOf(id);
-                if (index > -1) {
-                    $scope.options.currentTranslation.glossaries.splice(index, 1);
+                if (typeof id === 'undefined') {
+                    $scope.options.currentTranslation.allGlossaries = !$scope.options.currentTranslation.allGlossaries;
+                    if ($scope.options.currentTranslation.allGlossaries) {
+                        $scope.options.currentTranslation.glossaries = $scope.glossaries.map(function (item) {return item.id;});
+                    } else {
+                        $scope.options.currentTranslation.glossaries = [];
+                    }
                 } else {
-                    $scope.options.currentTranslation.glossaries.push(id);
+                    var index = $scope.options.currentTranslation.glossaries.indexOf(id);
+                    if (index > -1) {
+                        $scope.options.currentTranslation.glossaries.splice(index, 1);
+                    } else {
+                        $scope.options.currentTranslation.glossaries.push(id);
+                    }
+                    $scope.options.currentTranslation.allGlossaries = $scope.options.currentTranslation.glossaries.length === $scope.glossaries.length;
                 }
             };
             $scope.toggleTmx = function (id) {
-                var index = $scope.options.currentTranslation.tmxes.indexOf(id);
-                if (index > -1) {
-                    $scope.options.currentTranslation.tmxes.splice(index, 1);
+                if (typeof id === 'undefined') {
+                    $scope.options.currentTranslation.allTmxes = !$scope.options.currentTranslation.allTmxes;
+                    if ($scope.options.currentTranslation.allTmxes) {
+                        $scope.options.currentTranslation.tmxes = $scope.tmxes.map(function (item) {return item.id;});
+                    } else {
+                        $scope.options.currentTranslation.tmxes = [];
+                    }
                 } else {
-                    $scope.options.currentTranslation.tmxes.push(id);
+                    var index = $scope.options.currentTranslation.tmxes.indexOf(id);
+                    if (index > -1) {
+                        $scope.options.currentTranslation.tmxes.splice(index, 1);
+                    } else {
+                        $scope.options.currentTranslation.tmxes.push(id);
+                    }
+                    $scope.options.currentTranslation.allTmxes = $scope.options.currentTranslation.tmxes.length === $scope.tmxes.length;
                 }
             };
             $scope.ok = function () {
