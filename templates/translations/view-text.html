@@ -75,6 +75,13 @@
                              ng-if="entry.approved || ($parent.activeEntry === entry)">
                             <div class="translation-editor"
                                  ng-class="{'translation-editor_active': entry.editing}">
+                                <div class="translation-editor__tabs">
+                                    <div class="switcher2">
+                                        <a href="" class="switcher2__button switcher2__button_active">1, 21, 31, ...</a>
+                                        <a href="" class="switcher2__button">2&ndash;4</a>
+                                        <a href="" class="switcher2__button">5&ndash;20</a>
+                                    </div>
+                                </div>
                                 <div class="translation-editor__input-wrapper">
                                     <div contenteditable="true"
                                          id="entry-suggestion-{= entry.id =}"
