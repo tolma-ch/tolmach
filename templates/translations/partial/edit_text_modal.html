@@ -68,10 +68,14 @@
                                    id="input_glossary_all"
                                    ng-click="toggleGlossary()"
                                    ng-checked="options.currentTranslation.allGlossaries"/>
-                            <span class="lbl huge grey">
+                            <span class="lbl grey">
                                 {% trans "All glossaries" %}
                             </span>
                         </label>
+                            <hr style="
+                                margin-bottom: 5px;
+                                margin-top: 5px;
+                            ">
                     </div>
                     <div ng-repeat="glossary in glossaries">
                         <label class="middle" for="input_glossary_{= glossary.id =}">
@@ -95,10 +99,14 @@
                                    id="input_tmx_all"
                                    ng-click="toggleTmx()"
                                    ng-checked="options.currentTranslation.allTmxes"/>
-                            <span class="lbl huge grey">
+                            <span class="lbl grey">
                                 {% trans "All tmxes" %}
                             </span>
                         </label>
+                        <hr style="
+                            margin-bottom: 5px;
+                            margin-top: 5px;
+                        ">
                     </div>
                     <div ng-repeat="tmx in tmxes">
                         <label class="middle" for="input_tmx_{= tmx.id =}">
