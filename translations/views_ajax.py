@@ -634,8 +634,10 @@ def entry_ajax(request, action, text):
 
         if text.document_format == utils.FORMATS["po"]:
             has_plurals = True
+            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)["plural_examples"]
         else:
             has_plurals = False
+            plural_examples = {}
 
         for entry in base_entries:
             if not text_translation.glossaries_list:
@@ -643,8 +645,6 @@ def entry_ajax(request, action, text):
             entry_translations = []
             if has_plurals:
                 entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
-                translation_meta = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)
-                entry_meta["plural_examples"] = translation_meta["plural_examples"]
             else:
                 entry_meta = ""
             approved = False
@@ -674,6 +674,7 @@ def entry_ajax(request, action, text):
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
             '639_3': [text.source_lang.code_639_3, text_translation.target_lang.code_639_3],
+            'plural_examples': plural_examples,
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
