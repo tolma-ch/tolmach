@@ -669,7 +669,7 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': approved_text or user_translation_text or entry.body
+                'translation': approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body # todo переделать по-нормальному
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
