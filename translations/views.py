@@ -303,8 +303,8 @@ def export_translation(request, text_id, target_lang):
         response = HttpResponse(pure_text, content_type='text/plain')
         doc_ext = "txt"
 
-    elif format == utils.FORMATS['po']:
-        response, doc_ext = export_utils.export_po(text_id, target_lang, text_translation)
+    elif format in [utils.FORMATS['po'], utils.FORMATS['mo'], utils.FORMATS['pot']]:
+        response, doc_ext = export_utils.export_po(text_id, format, target_lang, text_translation)
     elif format == utils.FORMATS['srt']:
         import srt
         import datetime

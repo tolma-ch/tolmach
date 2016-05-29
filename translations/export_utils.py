@@ -5,11 +5,18 @@ from translations.models import TextEntry, TextEntryMeta, TextTranslationMeta
 from django.http import HttpResponse
 import json, os
 
-def export_po(text_id, target_lang, text_translation):
+def export_po(text_id, format, target_lang, text_translation):
     import polib
 
     trans_meta = TextTranslationMeta.objects.get(translation=text_translation)
-    po = polib.POFile()
+    if format == "application/x-gettext-translation":
+        po = polib.MOFile()
+        doc_ext = "mo"
+        content_type = "application/x-gettext-translation"
+    else:
+        po = polib.POFile()
+        doc_ext = "po"
+        content_type = "text/x-gettext-translation"
     print json.loads(trans_meta.meta_data)
     po.metadata = json.loads(trans_meta.meta_data)['all_meta']
 
@@ -32,6 +39,10 @@ def export_po(text_id, target_lang, text_translation):
                 comment=entry_meta['comment'],
             )
         else:
+            str_plural = {}
+            for num, i in enumerate(ent_msgstr.split("‡")):
+                str_plural[num] = i
+
             ent = polib.POEntry(
                 msgid=ent_msgid,
                 msgstr=ent_msgstr,
@@ -39,7 +50,7 @@ def export_po(text_id, target_lang, text_translation):
                 tcomment=entry_meta['tcomment'],
                 comment=entry_meta['comment'],
                 msgid_plural = entry_meta['msgid_plural'],
-                msgstr_plural = entry_meta['msgstr_plural']
+                msgstr_plural = str_plural,
             )
         po.append(ent)
 
@@ -49,6 +60,5 @@ def export_po(text_id, target_lang, text_translation):
     text_to_return = f.readlines()
     os.remove(tmp_path)
 
-    response = HttpResponse(text_to_return, content_type='text/x-gettext-translation')
-    doc_ext = "po"
+    response = HttpResponse(text_to_return, content_type=content_type)
     return response, doc_ext
