@@ -632,7 +632,7 @@ def entry_ajax(request, action, text):
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
-        if text.document_format == utils.FORMATS["po"]:
+        if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
             has_plurals = True
             plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)["plural_examples"]
         else:
@@ -661,6 +661,11 @@ def entry_ajax(request, action, text):
                         user_translation_text = entry_translation.body
                     approved = approved or entry_translation.is_approved
 
+            if has_plurals:
+                entry_translation = approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body
+            else:
+                entry_translation = approved_text or user_translation_text or entry.body
+
             entries.append({
                 'id': entry.id,
                 'idInText': entry.id_in_text,
@@ -669,7 +674,7 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body # todo переделать по-нормальному
+                'translation': entry_translation
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
