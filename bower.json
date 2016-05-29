@@ -12,6 +12,8 @@
     "angular-img-cropper": "~1.1.0",
     "less": "^2.6.0",
     "bootstrap": "^3.3.6",
-    "font-awesome": "^4.5.0"
+    "font-awesome": "^4.5.0",
+    "ngDraggable": "^0.1.8",
+    "angular-dragdrop": "^1.0.13"
   }
 }

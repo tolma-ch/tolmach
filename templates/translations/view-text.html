@@ -67,14 +67,49 @@
                                     'text-piece_approved': entry.approved,
                                     'text-piece_translated': !entry.approved && (entry.translations.length > 0)}">
 
-                        <div class="text-piece__original">
-                            <span html-content="entry.body"></span>
+                        <div class="text-piece__original" ng-mouseup="mouseup()">
+                            <div ng-if="$parent.activeEntry !== entry">
+                                <div ng-if="!entry.approved">
+                                    <span html-content="entry.body"></span>
+                                </div>
+                                <div ng-if="entry.approved">
+                                    <div class="text-piece__icons">
+                                        <a class="active"
+                                           ng-click="disapproveEntry(entry)"
+                                           ng-disabled="entry.busy"
+                                           tooltip="{% trans 'Disapprove translation' %}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-check"></i>
+                                        </a>
+                                    </div>
+                                    <span html-content="entry.translation"></span>
+                                </div>
+                            </div>
+                            <div ng-if="$parent.activeEntry === entry">
+                                <div ng-if="!entry.meta.msgid_plural">
+                                    <span html-content="entry.body"></span>
+                                </div>
+                                <div ng-if="entry.meta.msgid_plural">
+                                    <span class="grey">{% trans 'singular:' %}</span> <span html-content="entry.body"></span> <br>
+                                    <span class="grey">{% trans 'plural:' %}</span> <span html-content="entry.meta.msgid_plural"></span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-piece__editor"
-                             ng-if="entry.approved || ($parent.activeEntry === entry)">
+                             ng-if="($parent.activeEntry === entry)">
                             <div class="translation-editor"
                                  ng-class="{'translation-editor_active': entry.editing}">
+                                <div class="translation-editor__tabs"
+                                     ng-if="entry.meta.msgid_plural && entry.editing">
+                                    <div class="switcher2">
+                                        <a href=""
+                                           class="switcher2__button"
+                                           ng-repeat="pluralExample in pluralExamples track by $index"
+                                           ng-class="{'switcher2__button_active': entry.plural == $index}"
+                                           ng-click="switchPlural(entry, $index)">{= pluralExample =}</a>
+                                    </div>
+                                </div>
                                 <div class="translation-editor__input-wrapper">
                                     <div contenteditable="true"
                                          id="entry-suggestion-{= entry.id =}"
@@ -150,51 +185,38 @@
                         </div>
 
                         <div class="text-piece__variants"
-                             ng-if="entry.approved || ($parent.activeEntry === entry)">
+                             ng-if="($parent.activeEntry === entry)">
                             <div class="translation-variant"
-                                 ng-repeat="translation in entry.translations"
-                                 ng-class="{
-                                    'translation-variant_approved': translation.isApproved
-                                 }">
+                                 ng-repeat="translation in entry.translations">
                                 <div class="translation-variant__text"
-                                     ng-bind-html="translation.body | trusted">
+                                     ng-bind-html="clearTranslation(entry, translation) | trusted">
                                 </div>
                                 <div class="translation-variant__author">
                                     <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                                 </div>
                                 <div class="translation-variant__icons">
-                                    <a class="active"
-                                       ng-show="translation.isApproved"
-                                       ng-click="disapproveEntry(translation, entry)"
+                                    <a ng-show="userIsManager"
+                                       ng-click="approveEntry(translation, entry)"
                                        ng-disabled="translation.busy"
-                                       tooltip="{% trans 'Disapprove translation' %}"
+                                       tooltip="{% trans 'Approve translation' %}"
                                        tooltip-append-to-body="true">
-                                        <i class="fa fa-check"></i>
+                                        <i class="fa fa-check-circle"></i>
                                     </a>
-                                    <div ng-show="!translation.isApproved">
-                                        <a ng-show="userIsManager"
-                                           ng-click="approveEntry(translation, entry)"
-                                           ng-disabled="translation.busy"
-                                           tooltip="{% trans 'Approve translation' %}"
-                                           tooltip-append-to-body="true">
-                                            <i class="fa fa-check-circle"></i>
-                                        </a>
-                                        <a ng-show="userIsManager || (user == translation.author.id)"
-                                           ng-click="editTranslation(entry, translation)"
-                                           ng-disabled="translation.busy">
-                                            <i class="fa fa-pencil"></i>
-                                        </a>
-                                        <a ng-class="{'active': translation.isVoted}"
-                                           ng-show="!userIsManager && user !== translation.author.id"
-                                           ng-click="voteTranslation(entry, translation)"
-                                           ng-disabled="translation.busy">
-                                            <i class="fa fa-plus-square-o"></i>
-                                        </a>
-                                        <span class="translation-variant__vote"
-                                              ng-show="userIsManager && translation.vote">
-                                            <i class="fa fa-plus"></i> {= translation.vote =}
-                                        </span>
-                                    </div>
+                                    <a ng-show="userIsManager || (user == translation.author.id)"
+                                       ng-click="editTranslation(entry, translation)"
+                                       ng-disabled="translation.busy">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a ng-class="{'active': translation.isVoted}"
+                                       ng-show="!userIsManager && user !== translation.author.id"
+                                       ng-click="voteTranslation(entry, translation)"
+                                       ng-disabled="translation.busy">
+                                        <i class="fa fa-plus-square-o"></i>
+                                    </a>
+                                    <span class="translation-variant__vote"
+                                          ng-show="userIsManager && translation.vote">
+                                        <i class="fa fa-plus"></i> {= translation.vote =}
+                                    </span>
                                 </div>
                             </div>
                         </div>

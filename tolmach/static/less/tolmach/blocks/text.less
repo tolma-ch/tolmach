@@ -118,6 +118,26 @@
   &__variants {
 
   }
+  &__icons {
+    width: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+    a {
+      cursor: pointer;
+      font-size: 1.5em;
+      color: #9c9b9b;
+      margin: -5px 0;
+      display: inline-block;
+      &:hover {
+        color: #02c14f;
+      }
+      &.active {
+        color: #02c14f;
+      }
+    }
+  }
   &_closed {
     background: @grayBg;
     cursor: pointer;
@@ -141,7 +161,7 @@
     display: none;
   }
   &_approved &__original {
-    display: none;
+    //display: none;
   }
   &_approved &__variants {
     display: block;
