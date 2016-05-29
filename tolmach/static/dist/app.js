@@ -5,7 +5,7 @@
 
     var module = angular.module('tolmachApp', [
         'ui.select',
-        'mainControllers',
+        'mainModule',
         'profileModule',
         'projectModule',
         'projectsModule',
@@ -23,6 +23,49 @@
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     });
+}());;(function () {
+    'use strict';
+
+    var module = angular.module('chatControllers', []);
+
+    module.controller('ChatCtrl', ['$scope', '$window', 'Chat',
+        function ($scope, $window, Chat) {
+            $scope.style = {};
+            $scope.$on('GlobalResize', function (e, w) {
+                var height = w.h,
+                    width = w.w;
+                //$scope.style.right = width + 'px';
+                //$scope.style.right = width + 'px';
+            });
+            $scope.textareaKeypress = function (event) {
+                var code = event.keyCode ? event.keyCode : event.which;
+                if (event.ctrlKey && (code === 13 || code === 10)) {
+                    Chat.sendMessage(this.value);
+                }
+            };
+        }
+    ]);
+}());;(function () {
+    'use strict';
+
+    angular.module('chatModule', [
+        'chatServices',
+        'chatControllers'
+    ]);
+}());;(function () {
+    'use strict';
+
+    var module = angular.module('chatServices', []);
+
+    module.factory('Chat', ['$http',
+        function ($http) {
+            var self = {};
+            self.sendMessage = function () {
+
+            };
+            return self;
+        }
+    ]);
 }());;(function () {
     'use strict';
 
@@ -820,17 +863,33 @@
                     div.innerHTML = text;
                     return div.textContent || div.innerText || "";
                 },
+                applyTranslation = function (entry, translation) {
+                    entry.translation = clearTags(clearTranslation(entry, translation));
+                },
                 updateTranslation = function (entry) {
                     if (!entry.approved) {
                         entry.translation = clearTags(entry['rawBody']);
                         for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
                             var translation = entry.translations[i];
                             if (translation.author.id === $scope.user) {
-                                entry.translation = clearTags(translation['body']);
+                                applyTranslation(entry, translation);
                                 break;
                             }
                         }
                     }
+                },
+                clearTranslation = function (entry, translation) {
+                    var translationBody;
+                    if (entry['meta'] && entry['meta']['msgid_plural']) {
+                        try {
+                            translationBody = translation.body.split("‡")[0];
+                        } catch (e) {
+                            translationBody = '';
+                        }
+                    } else {
+                        translationBody = translation['body'];
+                    }
+                    return translationBody;
                 },
                 textId = window['textId'],
                 getYaMachines = function (entry) {
@@ -856,6 +915,7 @@
                     });
                 };
             $scope.clearTags = clearTags;
+            $scope.clearTranslation = clearTranslation;
             $scope.activeEntry = null;
             $scope.textTab = 0;
             $scope.page = 1;
@@ -884,6 +944,7 @@
                 $scope.translationAllowed = !!data['translation_allowed'];
                 $scope.langPair = data['lang_pair'];
                 $scope.langPair3 = data['639_3'];
+                $scope.pluralExamples = data['plural_examples'];
                 $scope.user = data['user'];
                 var entriesById = {},
                     i, entry;
@@ -976,7 +1037,7 @@
                 $http.post('/api/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
                     entry.approved = true;
-                    entry.translation = translation.body;
+                    applyTranslation(entry, translation);
                     $scope.activeEntry = null;
                     var t;
                     for (var i = entry['translations'].length - 1; i >= 0; i--) {
@@ -987,14 +1048,25 @@
                     }
                 })
             };
-            $scope.disapproveEntry = function (entry, parent) {
-                $http.post('/api/entry-disapprove/', {id: entry.id}).success(function () {
-                    entry.isApproved = false;
-                    parent.approved = false;
-                    $scope.activeEntry = parent;
-                    parent.translation = '';
-                    updateTranslation(parent);
-                })
+            $scope.disapproveEntry = function (entry) {
+                var i,
+                    someTranslation,
+                    translation;
+                for (i = 0; i < entry.translations.length; i++) {
+                    someTranslation = entry.translations[i];
+                    if (someTranslation.isApproved) {
+                        translation = someTranslation;
+                    }
+                }
+                if (translation) {
+                    $http.post('/api/entry-disapprove/', {id: translation.id}).success(function () {
+                        translation.isApproved = false;
+                        entry.approved = false;
+                        $scope.activeEntry = entry;
+                        entry.translation = '';
+                        updateTranslation(entry);
+                    })
+                }
             };
             $scope.removeTranslation = function (entry) {
                 if (!entry.suggestionId) {
@@ -1018,6 +1090,10 @@
                 });
             };
             $scope.suggestTranslation = function (entry) {
+                if (entry['meta'] && entry['meta']['msgid_plural']) {
+                    entry.pluralVariants[entry.plural] = entry.suggestion;
+                    entry.suggestion = entry.pluralVariants.join("‡");
+                }
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
@@ -1038,7 +1114,7 @@
                                 translation.body = data.body;
                                 if (translation.isApproved === true) {
                                     entry.approved = true;
-                                    entry.translation = translation.body;
+                                    applyTranslation(entry, translation);
                                 } else {
                                     updateTranslation(entry);
                                 }
@@ -1058,7 +1134,13 @@
             };
             $scope.editTranslation = function (entry, translation) {
                 entry.editing = true;
-                entry.suggestion = translation.body;
+                if (entry['meta'] && entry['meta']['msgid_plural']) {
+                    entry.plural = 0;
+                    entry.pluralVariants = (translation.body || '').split("‡");
+                    entry.suggestion = entry.pluralVariants.length ? entry.pluralVariants[0] : '';
+                } else {
+                    entry.suggestion = translation.body;
+                }
                 entry.suggestionId = translation.id;
             };
             $scope.voteTranslation = function (entry, translation) {
@@ -1078,11 +1160,22 @@
                 })
 
             };
+            $scope.switchPlural = function (entry, index) {
+                entry.pluralVariants[entry.plural] = entry.suggestion;
+                entry.plural = index;
+                entry.suggestion = entry.pluralVariants[index];
+            };
             $scope.startEditing = function (entry) {
-                entry.editing = true;
-                if (typeof entry['machines'] === 'undefined') {
-                    getYaMachines(entry);
-                    getTmdbVariants(entry);
+                if (!entry.editing) {
+                    if (entry['meta'] && entry['meta']['msgid_plural']) {
+                        entry.plural = 0;
+                        entry.pluralVariants = [];
+                    }
+                    entry.editing = true;
+                    if (typeof entry['machines'] === 'undefined') {
+                        getYaMachines(entry);
+                        getTmdbVariants(entry);
+                    }
                 }
             };
             $scope.cancelEditing = function (entry) {
@@ -1406,9 +1499,12 @@
                 $scope.$parent.showTranslatePopup = false;
                 $scope.translatedPhrase = false;
             });
-            $scope.$on('GlobalMouseup', function (e, event) {
+            $scope.mouseup = function () {
                 translate();
-            });
+            };
+            //$scope.$on('GlobalMouseup', function (e, event) {
+            //    translate();
+            //});
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;
@@ -1610,28 +1706,6 @@
                 }
             }
         }
-    }]);
-    module.directive('resize', ['$window', function ($window) {
-        return {
-            scope: {
-                resize: "="
-            },
-            link: function (scope, element, attr) {
-                var w = angular.element($window);
-                scope.$watch(function () {
-                    return {
-                        'h': w.height(),
-                        'w': w.width()
-                    };
-                }, function (newValue) {
-                    scope.resize();
-                }, true);
-
-                w.bind('resize', function () {
-                    scope.$apply();
-                });
-            }
-        };
     }]);
     module.directive('tag', [function () {
         return {
@@ -1919,9 +1993,7 @@
 }());;(function () {
     'use strict';
 
-    var module = angular.module('mainControllers', [
-        'ui.bootstrap'
-    ]);
+    var module = angular.module('mainControllers', []);
 
     module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal',
         function ($scope, $http, $timeout, $modal) {
@@ -2088,6 +2160,14 @@
             $scope.bodyClick = function (event) {
                 $scope.$broadcast('GlobalClick', event);
             };
+
+            $scope.showChatroom = false;
+            $scope.toggleChat = function () {
+                $scope.showChatroom = !$scope.showChatroom;
+            };
+            $scope.globalResize = function (window) {
+                $scope.$broadcast('GlobalResize', window);
+            };
             $scope.mouseup = function (event) {
                 $scope.$broadcast('GlobalMouseup', event);
             };
@@ -2107,5 +2187,63 @@
                 $modalInstance.dismiss('cancel');
             };
         }
+    ]);
+}());;(function () {
+    'use strict';
+
+    var module = angular.module('mainDirectives', []);
+
+    //module.directive('resize', ['$window', function ($window) {
+    //    return {
+    //        scope: {
+    //            resize: "="
+    //        },
+    //        link: function (scope, element, attr) {
+    //            var w = angular.element($window);
+    //            scope.$watch(function () {
+    //                return {
+    //                    'h': w.height(),
+    //                    'w': w.width()
+    //                };
+    //            }, function (newValue) {
+    //                scope.resize();
+    //            }, true);
+    //
+    //            w.bind('resize', function () {
+    //                scope.$apply();
+    //            });
+    //        }
+    //    };
+    //}]);
+    module.directive('resize', ['$window', function ($window) {
+        return {
+            scope: {
+                resize: "="
+            },
+            link: function (scope, element, attr) {
+                var w = angular.element($window);
+                scope.$watch(function () {
+                    return {
+                        'h': w.height(),
+                        'w': w.width()
+                    };
+                }, function (newValue) {
+                    scope.resize(newValue);
+                }, true);
+
+                w.bind('resize', function () {
+                    scope.$apply();
+                });
+            }
+        };
+    }]);
+}());;(function () {
+    'use strict';
+
+    angular.module('mainModule', [
+        'ui.bootstrap',
+        'ngDragDrop',
+        'mainControllers',
+        'mainDirectives'
     ]);
 }());

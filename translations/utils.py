@@ -29,6 +29,8 @@ FORMATS = {
     # "pdf": "application/pdf",
     "srt": "text/srt",
     "po": "text/x-gettext-translation",
+    "pot": "text/x-gettext-translation-template",
+    "mo": "application/x-gettext-translation",
 }
 
 

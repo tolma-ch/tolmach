@@ -46,5 +46,7 @@ urlpatterns = patterns('',
     url(r'^api/message/(?:(?P<all>\w+)/)?$', trans_ajax.message_ajax, name='message_ajax'),
     url(r'^api/user/$', trans_ajax.user_ajax, name='user_ajax'),
 
+    url('', include('chat.urls')),
+
     # temporarily added urls for developing purpuses
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

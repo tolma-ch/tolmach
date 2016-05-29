@@ -13,7 +13,7 @@ from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
-from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation
+from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
@@ -632,10 +632,21 @@ def entry_ajax(request, action, text):
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
+        if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
+            has_plurals = True
+            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)["plural_examples"]
+        else:
+            has_plurals = False
+            plural_examples = {}
+
         for entry in base_entries:
             if not text_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
+            if has_plurals:
+                entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+            else:
+                entry_meta = ""
             approved = False
             approved_text = ''
             user_translation_text = ''
@@ -650,18 +661,25 @@ def entry_ajax(request, action, text):
                         user_translation_text = entry_translation.body
                     approved = approved or entry_translation.is_approved
 
+            if has_plurals:
+                entry_translation = approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body
+            else:
+                entry_translation = approved_text or user_translation_text or entry.body
+
             entries.append({
                 'id': entry.id,
                 'idInText': entry.id_in_text,
                 'rawBody': entry.body,
                 'body': entry.glossary_body,
+                'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': approved_text or user_translation_text or entry.body
+                'translation': entry_translation
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
             '639_3': [text.source_lang.code_639_3, text_translation.target_lang.code_639_3],
+            'plural_examples': plural_examples,
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
