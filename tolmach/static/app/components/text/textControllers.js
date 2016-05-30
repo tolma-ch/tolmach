@@ -259,23 +259,22 @@
                             translation = entry['translations'][i];
                             if (translation.id == suggestionId) {
                                 translation.body = data.body;
-                                if (translation.isApproved === true) {
-                                    entry.approved = true;
-                                    applyTranslation(entry, translation);
-                                } else {
-                                    updateTranslation(entry);
-                                }
+                                translation.isApproved = data.isApproved;
+
                                 break;
                             }
                         }
                     } else {
                         entry['translations'].push(data);
-                        updateTranslation(entry);
                     }
                     entry.editing = false;
                     entry.suggestion = '';
                     if (data.isApproved === true) {
+                        $scope.activeEntry = null;
                         entry.approved = true;
+                        applyTranslation(entry, data);
+                    } else {
+                        updateTranslation(entry);
                     }
                 })
             };
