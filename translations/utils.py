@@ -94,6 +94,15 @@ def escape_brackets(string):
     return re.sub(r'([()]|[\[\]]|[\*]|[\?]|[\^]|[\$]|[\+]|[\{\}]|[\\])', r'\\\1', string)
 
 
+def escape_html(string):
+    html_escape_table = {
+       "&": "&amp;",
+       ">": "&gt;",
+       "<": "&lt;",
+       }
+    return "".join(html_escape_table.get(c,c) for c in string)
+
+
 def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
     marked_text = line_to_translate
     # Убираем всякие палёные подобия пробелов и заменяем на кошеrные

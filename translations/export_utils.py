@@ -5,6 +5,10 @@ from translations.models import TextEntry, TextEntryMeta, TextTranslationMeta
 from django.http import HttpResponse
 import json, os
 
+def unescape_html(string):
+    import HTMLParser
+    return HTMLParser.HTMLParser().unescape(string)
+
 def export_po(text_id, format, target_lang, text_translation):
     import polib
 
@@ -23,12 +27,12 @@ def export_po(text_id, format, target_lang, text_translation):
     all_entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
     for entry in all_entries:
         entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
-        ent_msgid = entry.body
+        ent_msgid = unescape_html(entry.body)
         ent_msgstr = ""
 
         entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
         if entry_translation:
-            ent_msgstr = entry_translation[0].body.encode('utf8')
+            ent_msgstr = unescape_html(entry_translation[0].body.encode('utf8'))
 
         if entry_meta['msgid_plural'] == "":
             ent = polib.POEntry(
