@@ -890,14 +890,48 @@ def yandex_translate_ajax(request):
         post = json.loads(request.body)
         print post
         from yandex_translate import YandexTranslate, YandexTranslateException
+        import re
+
+        string1 = post['entry_body']
+
+        match_dict = {}
+        num_in_text = 1
+
+        def repl_in_text(matchobj):
+            # print " === " + matchobj.group(0) + " === "
+            return " ᐛ%d " % (num_in_text)
+
+        match = re.search('<[^<]+?>', string1)
+        while not isinstance(match, type(None)):
+            string1 = re.sub('<[^<]+?>', repl_in_text, string1, 1)
+            match_dict[num_in_text] = match.group(0)
+            match = re.search('<[^<]+?>', string1)
+            num_in_text += 1
+
+        all_result = re.findall("(%(\(\S+\))?([ -+#0\.\*]+)?[dfsux])", string1)
+        for i in all_result:
+            string = " ᐛ%d " % num_in_text
+            string1 = re.sub("(%(\(\S+\))?([ -+#0\.\*]+)?[dfsux])", string, string1, 1)
+            match_dict[num_in_text] = i[0]
+            num_in_text += 1
+
+        print "=== ", string1, " ==="
+
 
         translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
         try:
-            translated_body = translate.translate(post['entry_body'], post['lang_pair'])
+            translated_body = translate.translate(string1, post['lang_pair'])
         except YandexTranslateException:
             return HttpResponse(json.dumps(_('Something went wrong')), content_type="application/json", status=400)
 
-        return HttpResponse(json.dumps(translated_body['text'][0]), content_type="application/json")
+        str_to_return = translated_body['text'][0]
+
+        for key, value in match_dict.items():
+            print str_to_return
+            print key, value
+            str_to_return = re.sub(' ?ᐛ%s ?' % key, value, str_to_return)
+
+        return HttpResponse(json.dumps(utils.escape_html(str_to_return)), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
