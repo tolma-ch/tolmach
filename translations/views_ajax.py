@@ -634,7 +634,7 @@ def entry_ajax(request, action, text):
 
         if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
             has_plurals = True
-            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation).meta_data)["plural_examples"]
+            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
         else:
             has_plurals = False
             plural_examples = {}
