@@ -12,7 +12,7 @@ def unescape_html(string):
 def export_po(text_id, format, target_lang, text_translation):
     import polib
 
-    trans_meta = TextTranslationMeta.objects.get(translation=text_translation)
+    trans_meta = TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata")
     if format == "application/x-gettext-translation":
         po = polib.MOFile()
         doc_ext = "mo"
