@@ -6,16 +6,17 @@
     module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout',
         function ($rootScope, $scope, $http, $timeout) {
             var clearTags = function (text) {
+                    //return text;
                     var div = document.createElement("div");
                     div.innerHTML = text;
                     return div.textContent || div.innerText || "";
                 },
                 applyTranslation = function (entry, translation) {
-                    entry.translation = clearTags(clearTranslation(entry, translation));
+                    entry.translation = (clearTranslation(entry, translation));
                 },
                 updateTranslation = function (entry) {
                     if (!entry.approved) {
-                        entry.translation = clearTags(entry['rawBody']);
+                        entry.translation = (entry['rawBody']);
                         for (var i = entry.translations.length - 1; i >= 0; i -= 1) {
                             var translation = entry.translations[i];
                             if (translation.author.id === $scope.user) {
