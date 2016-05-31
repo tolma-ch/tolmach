@@ -766,7 +766,7 @@ def translate_entry_ajax(request):
 
             if settings.PROD:
                 utils.add_pair_to_tmx(request, text, project,
-                                      source_text=entry.body, target_text=entry_target_text,
+                                      source_text=entry.body, target_text=entry_target_text.split("‡")[0],
                                       source_lang=text.source_lang, target_lang=text_translation.target_lang,
                                       )
             entry_translation = TextEntry(body=entry_target_text,
