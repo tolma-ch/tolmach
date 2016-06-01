@@ -6,7 +6,7 @@ import re
 import os
 from django.utils.translation import ugettext as _
 from entries.models import Language
-from translations.models import TextMeta, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
 import datetime
 
@@ -34,60 +34,6 @@ FORMATS = {
 }
 
 
-RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\""
-RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\""
-
-EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\""
-EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\""
-EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
-
-# http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\""
-DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\""
-
-# http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\""
-FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\""
-
-# http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
-# http://www.donquijote.org/culture/spain/languages/spanish-accents
-ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\""
-ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\""
-
-# http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\""
-IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\""
-
-KOR = "[가-힣]"
-
-# +----+----------+------+
-# | id | name     | code |
-# +----+----------+------+
-# |  1 | English  | en   |
-# |  2 | Russian  | ru   |
-# |  3 | Chinese  | zh   |
-# |  4 | Spanish  | es   |
-# |  5 | Korean   | ko   |
-# |  6 | Japanese | ja   |
-# |  7 | French   | fr   |
-# |  8 | German   | de   |
-# |  9 | Italian  | it   |
-# +----+----------+------+
-
-SPLIT_PATTERN = {
-        #'en': " [a-zA-Z]+\\)?! [A-Z]+| [a-zA-Z]+\\)?\\. [A-Z]+| [a-zA-Z]+\\)?\\? [A-Z]+",  # eng
-        'en': " [%(EN_L)s%(EN_U)s]+! [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\. [%(EN_U)s]+| [%(EN_L)s%(EN_U)s]+\\? [%(EN_U)s]+" % locals(),  # eng
-        'ru': " [%(RU_L)s%(RU_U)s]{2,}! [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\. [%(RU_U)s]+| [%(RU_L)s%(RU_U)s]{2,}\\? [%(RU_U)s]+| [a-zA-Z]{2,}! [A-Z]+| [a-zA-Z]{2,}\\. [A-Z]+| [a-zA-Z]{2,}\\? [A-Z]+" % locals(),  # rus
-        'zh': "？!”|？!|。”|。|？”|？|\\. |\\! |\\?",  # zho
-        'es': " [%(ES_L)s%(ES_U)s]+! ¿?¡?[%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\. ¿?¡?[%(ES_U)s]+| [%(ES_L)s%(ES_U)s]+\\? ¿?¡?[%(ES_U)s]+" % locals(),  # spa
-        'ko': "\\. |\\! |\\?",  # kor
-        'ja': "。”|。",  # jpn
-        'fr': " [%(FR_L)s%(FR_U)s]+! [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\. [%(FR_U)s]+| [%(FR_L)s%(FR_U)s]+\\? [%(FR_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        'de': " [%(DE_L)s%(DE_U)s]+! [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\. [%(DE_U)s]+| [%(DE_L)s%(DE_U)s]+\\? [%(DE_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        'it': " [%(IT_L)s%(IT_U)s]+! [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\. [%(IT_U)s]+| [%(IT_L)s%(IT_U)s]+\\? [%(IT_U)s]+| [a-zA-Z]+! [A-Z]+| [a-zA-Z]+\\. [A-Z]+| [a-zA-Z]+\\? [A-Z]+" % locals(),  # fra
-        }
-
-
 def escape_brackets(string):
     # бэкслешим скобки круглые и квадратные, звёздочку и вопросительный знак
     # чтобы не ломался re.sub далее
@@ -103,59 +49,31 @@ def escape_html(string):
     return "".join(html_escape_table.get(c,c) for c in string)
 
 
-def split_text(line_to_translate, lang='en', pattern="", num_in_text=1):
-    marked_text = line_to_translate
-    # Убираем всякие палёные подобия пробелов и заменяем на кошеrные
-    marked_text = marked_text.replace("\xa0", " ")
-    num_in_text = num_in_text
+def get_plural_examples(p):
+    matcher = re.compile('plural=(.*);')
+    match = matcher.search(p)
+    rule = match.expand("\\1")
 
-    def repl_in_text(matchobj):
-        # print " === " + matchobj.group(0) + " === "
-        return "<span data-entry=\"%d\">" % num_in_text + matchobj.group(0) + "</span>"
+    # convert rule to python syntax
+    oldrule = None
+    while oldrule != rule:
+        oldrule = rule
+        rule = re.sub('(.*)\?(.*):(.*)', r'(\1) and (\2) or (\3)', oldrule)
 
-    def repl(matchobj):
-        if lang == 'en':
-            # print matchobj.group(0)
-            line = matchobj.group(0)
-            # Игнорируем популярные сокращения, которые не являются концом предложения сами по себе
-            if line.split(".")[0].lstrip().lower() not in ["mr", "mrs", "ms", "dr", "sr", "jr"]:
-                line = line.replace(". ", ".† ")
-                line = line.replace("! ", "!† ")
-                line = line.replace("? ", "?† ")
-            return line
-        elif lang in ['ru', 'fr', 'es', 'de', 'it']:
-            line = matchobj.group(0)
-            line = line.replace(". ", ".† ")
-            line = line.replace("! ", "!† ")
-            line = line.replace("? ", "?† ")
-            return line
+    rule = re.sub('&&', 'and', rule)
+    rule = re.sub('\|\|', 'or', rule)
+    rule = re.sub(' 0 ', ' "0" ', rule)
+
+    num_dict = {}
+
+    for n in xrange(0, 1000):
+        result = int(eval(rule))
+        if not result in num_dict:
+            num_dict[result] = [n]
         else:
-            return matchobj.group(0) + '†'
-
-    # Убираем лишние пустые строки
-    text = re.sub("\n{2,}", "\n", marked_text)
-    out_list = []
-    for new_line in text.split("\n"):
-        new_line = new_line.strip()
-
-        # добавляем после конца предложения спец.символ для разделения
-        new_line = re.sub(SPLIT_PATTERN[lang], repl, new_line)
-        # делим по заданному спец.символу
-        new_line = re.split('†', new_line)
-        for i in new_line:
-            if not i == '':
-                # removing extra spaces/tabs from beginning/end of the line
-                out_list.append(i.strip("　     "))
-                # берём предложение i, с помощью escape_brackets бэкслешим скобки круглые и квадратные,
-                # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как
-                # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
-                # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip("　     ")) + "(?!</span>)"
-                # print sent_to_mark
-                marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
-                num_in_text += 1
-
-    return out_list, marked_text, num_in_text
+            if len(num_dict[result]) < 4:
+                num_dict[result].append(n)
+    return num_dict
 
 
 def parse_glossary(file_on_disk, filetype):
