@@ -71,6 +71,7 @@ def user_page(request, user_id):
         'usermeta': usermeta,
         'first_name': first_name,
         'last_name': last_name,
+        'website': usermeta.website,
         'stat': ordered_stat,
         'empty_list': empty_list,
         'entries_total': total_translated,
