@@ -8,13 +8,37 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-22 10:39+0400\n"
+"POT-Creation-Date: 2016-06-01 11:41+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: chat/views.py:17 chat/views.py:34
+msgid "Project not set"
+msgstr ""
+
+#: chat/views.py:21 chat/views.py:38 translations/decorators.py:40
+#: translations/views_ajax.py:30 translations/views_ajax.py:48
+#: translations/views_ajax.py:52 translations/views_ajax.py:456
+#: translations/views_ajax.py:573
+msgid "Project not found"
+msgstr ""
+
+#: chat/views.py:23 chat/views.py:40 translations/decorators.py:42
+#: translations/views_ajax.py:32
+msgid "Access denied"
+msgstr ""
+
+#: chat/views.py:28 chat/views.py:45
+msgid "Chat not found"
+msgstr ""
+
+#: chat/views.py:48
+msgid "Text is empty"
+msgstr ""
 
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
@@ -73,16 +97,16 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: templates/main/base.html:92 templates/main/base.html.py:104
+#: templates/main/base.html:92 templates/main/base.html.py:198
 msgid "Close"
 msgstr ""
 
-#: templates/main/base.html:95 templates/main/base.html.py:107
+#: templates/main/base.html:95 templates/main/base.html.py:201
 #: templates/translations/partial/add_text_modal.html:100
 msgid "Next"
 msgstr ""
 
-#: templates/main/base.html:133
+#: templates/main/base.html:227
 msgid "No results"
 msgstr ""
 
@@ -143,7 +167,11 @@ msgstr ""
 msgid "Messages"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:72
+#: templates/main/partial/navbar-loggedin.html:64
+msgid "Chat"
+msgstr ""
+
+#: templates/main/partial/navbar-loggedin.html:80
 msgid "Hi,"
 msgstr ""
 
@@ -563,7 +591,7 @@ msgid "Upload file"
 msgstr ""
 
 #: templates/translations/partial/add_text_modal.html:38
-msgid "Insert plain test"
+msgid "Insert plain text"
 msgstr ""
 
 #: templates/translations/partial/add_text_modal.html:55
@@ -829,44 +857,52 @@ msgstr ""
 msgid "Translation"
 msgstr ""
 
-#: templates/translations/view-text.html:170
+#: templates/translations/view-text.html:80
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:178
+#: templates/translations/view-text.html:93
+msgid "singular:"
+msgstr ""
+
+#: templates/translations/view-text.html:94
+msgid "plural:"
+msgstr ""
+
+#: templates/translations/view-text.html:203
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:258
+#: templates/translations/view-text.html:282
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:259
+#: templates/translations/view-text.html:283
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:260
+#: templates/translations/view-text.html:284
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:261
+#: templates/translations/view-text.html:285
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:262
+#: templates/translations/view-text.html:286
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:263
+#: templates/translations/view-text.html:287
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:264
+#: templates/translations/view-text.html:288
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:265
+#: templates/translations/view-text.html:289
 msgid "All the text with translated fragments"
 msgstr ""
 
@@ -875,36 +911,26 @@ msgid "text id is not set"
 msgstr ""
 
 #: translations/decorators.py:20 translations/views_ajax.py:234
-#: translations/views_ajax.py:377
+#: translations/views_ajax.py:407
 msgid "Text not found"
 msgstr ""
 
 #: translations/decorators.py:22 translations/views_ajax.py:168
-#: translations/views_ajax.py:680 translations/views_ajax.py:725
-#: translations/views_ajax.py:800
+#: translations/views_ajax.py:728 translations/views_ajax.py:773
+#: translations/views_ajax.py:848
 msgid "Not allowed"
 msgstr ""
 
-#: translations/decorators.py:35 translations/views_ajax.py:422
-#: translations/views_ajax.py:539
+#: translations/decorators.py:35 translations/views_ajax.py:452
+#: translations/views_ajax.py:569
 msgid "Project id is not set"
 msgstr ""
 
-#: translations/decorators.py:40 translations/views_ajax.py:30
-#: translations/views_ajax.py:48 translations/views_ajax.py:52
-#: translations/views_ajax.py:426 translations/views_ajax.py:543
-msgid "Project not found"
-msgstr ""
-
-#: translations/decorators.py:42 translations/views_ajax.py:32
-msgid "Access denied"
-msgstr ""
-
-#: translations/utils.py:259 translations/utils.py:297
+#: translations/utils.py:188 translations/utils.py:226
 msgid "This source language is not supported yet"
 msgstr ""
 
-#: translations/utils.py:270 translations/utils.py:308
+#: translations/utils.py:199 translations/utils.py:237
 msgid "This target language is not supported yet"
 msgstr ""
 
@@ -932,9 +958,9 @@ msgstr ""
 
 #: translations/views_ajax.py:35 translations/views_ajax.py:54
 #: translations/views_ajax.py:121 translations/views_ajax.py:222
-#: translations/views_ajax.py:379 translations/views_ajax.py:428
-#: translations/views_ajax.py:545 translations/views_ajax.py:840
-#: translations/views_ajax.py:863
+#: translations/views_ajax.py:409 translations/views_ajax.py:458
+#: translations/views_ajax.py:575 translations/views_ajax.py:888
+#: translations/views_ajax.py:911
 msgid "You have to be a manager of project"
 msgstr ""
 
@@ -970,102 +996,102 @@ msgstr ""
 msgid "User is not a member of project"
 msgstr ""
 
-#: translations/views_ajax.py:243 translations/views_ajax.py:285
-#: translations/views_ajax.py:289 translations/views_ajax.py:715
+#: translations/views_ajax.py:243 translations/views_ajax.py:315
+#: translations/views_ajax.py:319 translations/views_ajax.py:763
 msgid "Language not found"
 msgstr ""
 
-#: translations/views_ajax.py:331 translations/views_ajax.py:439
-#: translations/views_ajax.py:556
+#: translations/views_ajax.py:361 translations/views_ajax.py:469
+#: translations/views_ajax.py:586
 msgid "File is too big"
 msgstr ""
 
-#: translations/views_ajax.py:344 translations/views_ajax.py:451
-#: translations/views_ajax.py:560
+#: translations/views_ajax.py:374 translations/views_ajax.py:481
+#: translations/views_ajax.py:590
 msgid "Wrong file type"
 msgstr ""
 
-#: translations/views_ajax.py:373
+#: translations/views_ajax.py:403
 msgid "Text id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:394 translations/views_ajax.py:465
-#: translations/views_ajax.py:495
+#: translations/views_ajax.py:424 translations/views_ajax.py:495
+#: translations/views_ajax.py:525
 msgid "Glossary not found"
 msgstr ""
 
-#: translations/views_ajax.py:431
+#: translations/views_ajax.py:461
 msgid "Glossary name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:457
+#: translations/views_ajax.py:487
 msgid "Please, send file or input data manually"
 msgstr ""
 
-#: translations/views_ajax.py:491
+#: translations/views_ajax.py:521
 msgid "Glossary id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:497
+#: translations/views_ajax.py:527
 msgid "It's not your glossary"
 msgstr ""
 
-#: translations/views_ajax.py:512
+#: translations/views_ajax.py:542
 msgid "TMDatabase not found"
 msgstr ""
 
-#: translations/views_ajax.py:548
+#: translations/views_ajax.py:578
 msgid "TMX name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:552
+#: translations/views_ajax.py:582
 msgid "TMX file is not passed"
 msgstr ""
 
-#: translations/views_ajax.py:580
+#: translations/views_ajax.py:610
 msgid "TMX id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:584
+#: translations/views_ajax.py:614
 msgid "TMX not found"
 msgstr ""
 
-#: translations/views_ajax.py:586
+#: translations/views_ajax.py:616
 msgid "It's not your TMX"
 msgstr ""
 
-#: translations/views_ajax.py:608
+#: translations/views_ajax.py:638
 msgid "Target language is not set"
 msgstr ""
 
-#: translations/views_ajax.py:702 translations/views_ajax.py:824
-#: translations/views_ajax.py:851 translations/views_ajax.py:893
+#: translations/views_ajax.py:750 translations/views_ajax.py:872
+#: translations/views_ajax.py:899 translations/views_ajax.py:975
 msgid "Id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:707 translations/views_ajax.py:731
-#: translations/views_ajax.py:795 translations/views_ajax.py:810
-#: translations/views_ajax.py:856 translations/views_ajax.py:898
+#: translations/views_ajax.py:755 translations/views_ajax.py:779
+#: translations/views_ajax.py:843 translations/views_ajax.py:858
+#: translations/views_ajax.py:904 translations/views_ajax.py:980
 msgid "Not found"
 msgstr ""
 
-#: translations/views_ajax.py:722
+#: translations/views_ajax.py:770
 msgid "Translation not found"
 msgstr ""
 
-#: translations/views_ajax.py:744
+#: translations/views_ajax.py:792
 msgid "Entry translation text is not set"
 msgstr ""
 
-#: translations/views_ajax.py:790
+#: translations/views_ajax.py:838
 msgid "entry is not set"
 msgstr ""
 
-#: translations/views_ajax.py:803
+#: translations/views_ajax.py:851
 msgid "translation is not set"
 msgstr ""
 
-#: translations/views_ajax.py:880
+#: translations/views_ajax.py:955
 msgid "Something went wrong"
 msgstr ""
 
