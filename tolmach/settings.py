@@ -167,6 +167,7 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
     'social.backends.twitter.TwitterOAuth',
     'social.backends.facebook.Facebook2OAuth2',
     'social.backends.vk.VKOAuth2',
