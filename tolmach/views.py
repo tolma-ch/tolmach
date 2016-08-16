@@ -2,7 +2,7 @@
 
 import json
 from django.contrib.auth import logout
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from tolmach.models import UserMeta, PairStats
@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from translations.models import Project
 from tolmach import utils
+from django.conf import settings
 
 
 def index(request):
@@ -102,6 +103,55 @@ def handler500(request):
 # def done(request):
 #     return render_to_response('main/done.html', {'user': request.user, 'request': request},
 #                               RequestContext(request))
+
+
+def register(request):
+    from django.contrib.auth import login
+
+    username = request.POST["username"]
+    password = request.POST["password"]
+    email = request.POST["email"]
+
+    status = "0"
+
+    try:
+        new_user = User.objects.create_user(username, email, password)
+        login(request, new_user)
+        return HttpResponseRedirect("/")
+        # Redirect to a success page.
+    except:
+        status = "1"
+
+    answer = {
+        'status': status,
+    }
+
+    return HttpResponse(json.dumps(answer), content_type='application/json')
+
+
+def login(request):
+    from django.contrib.auth import authenticate
+
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            status = "0"
+        else:
+            status = "1"
+            # Return a 'disabled account' error message
+    else:
+        status = "2"
+        # Return an 'invalid login' error message.
+
+    some_data_to_dump = {'status': status}
+
+    answer = json.dumps(some_data_to_dump)
+
+    return HttpResponse(answer, content_type='application/json')
+
 
 
 def logout(request):

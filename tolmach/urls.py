@@ -18,12 +18,14 @@ urlpatterns = patterns('',
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
     # django-registration
-    url(r'^accounts/', include('registration.backends.simple.urls')),
+    # url(r'^accounts/', include('registration.backends.simple.urls')),
 
     # main
     url(r'^$', main_views.index, name='index'),
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
+    url(r'^register/', main_views.register, name="register_user"),
+    url(r'^login/', main_views.login, name="login_user"),
 
     # translations
     url(r'^projects/(?P<proj_type>\w+)/$', trans_views.projects),
