@@ -135,8 +135,8 @@ def register(request):
     return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
 
 
-def login(request):
-    from django.contrib.auth import authenticate
+def login_user(request):
+    from django.contrib.auth import authenticate, login
 
     username = request.POST['username']
     password = request.POST['password']
