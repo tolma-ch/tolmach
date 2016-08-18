@@ -113,6 +113,7 @@ def register(request):
     email = request.POST["email"]
 
     status = "0"
+    message = ""
 
     try:
         new_user = User.objects.create_user(username, email, password)
@@ -121,12 +122,17 @@ def register(request):
         # Redirect to a success page.
     except:
         status = "1"
+        message = "Some wrong"
 
     answer = {
         'status': status,
+        'message': message,
     }
 
-    return HttpResponse(json.dumps(answer), content_type='application/json')
+    response_status = 200
+    if status != "0":
+        response_status = 400;
+    return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
 
 
 def login(request):
@@ -135,22 +141,32 @@ def login(request):
     username = request.POST['username']
     password = request.POST['password']
     user = authenticate(username=username, password=password)
+    message = ''
     if user is not None:
         if user.is_active:
             login(request, user)
             status = "0"
+            message = 'ok'
         else:
             status = "1"
+            message = 'User is not active'
             # Return a 'disabled account' error message
     else:
         status = "2"
+        message = 'Wrong username or password'
         # Return an 'invalid login' error message.
 
-    some_data_to_dump = {'status': status}
+    some_data_to_dump = {
+        'status': status,
+        'message': message,
+    }
 
     answer = json.dumps(some_data_to_dump)
 
-    return HttpResponse(answer, content_type='application/json')
+    response_status = 200
+    if status != "0":
+        response_status = 400;
+    return HttpResponse(answer, content_type="application/json", status=response_status)
 
 
 

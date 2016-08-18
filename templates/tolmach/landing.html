@@ -108,7 +108,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <input class="form-control"
-                                                       type="text"
+                                                       type="password"
                                                        id="password"
                                                        name="password"
                                                        placeholder="{% trans "Password" %}">
@@ -146,14 +146,14 @@
                                             </div>
                                             <div class="form-group">
                                                 <input class="form-control"
-                                                       type="text"
+                                                       type="password"
                                                        id="password1"
                                                        name="password1"
                                                        placeholder="{% trans "Password" %}">
                                             </div>
                                             <div class="form-group">
                                                 <input class="form-control"
-                                                       type="text"
+                                                       type="password"
                                                        id="password2"
                                                        name="password2"
                                                        placeholder="{% trans "Password confirmation" %}">
@@ -194,7 +194,7 @@
                                                 <button class="btn btn-info" type="submit">{% trans "Сбросить пароль" %}</button>
                                             </div>
                                         </form>
-                                        <p class="form-error" style="display:none"></p>
+                                        <p class="form-error" style="display:none; color: #ff6e00;"></p>
                                     </div>
                                 </div>
                             </div>
@@ -433,7 +433,7 @@
                             if (tempIterator === showErrorIterator) {
                                 $('.form-error').hide();
                             }
-                        }, 2000);
+                        }, 3000);
 
                     };
                 $('.login-link').click(function (e) {
@@ -471,7 +471,7 @@
                     }
                     $('input', $loginForm).attr('disabled', true);
                     $.ajax({
-                        url: '/accounts/login/',
+                        url: '/login/',
                         method: 'post',
                         data: {
                             username: username,
@@ -479,11 +479,54 @@
                             csrfmiddlewaretoken: csrfmiddlewaretoken
                         }
                     }).done(function (data) {
-
+                        location.href = "/";
                     }).fail(function (data) {
-
+                        if (data['responseJSON'] && data['responseJSON']['message']) {
+                            showError(data['responseJSON']['message']);
+                        }
                     }).always(function() {
                         $('input', $loginForm).removeAttr('disabled');
+                    });
+                });
+                $registerForm.submit(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var username = $('#username', $registerForm).val(),
+                        email = $('#email', $registerForm).val();
+                        password1 = $('#password1', $registerForm).val();
+                        password2 = $('#password2', $registerForm).val();
+                        csrfmiddlewaretoken = $('[name="csrfmiddlewaretoken"]', $registerForm).val();
+                    if (!username) {
+                        showError('{% trans "Username is required field" %}');
+                        return;
+                    }
+                    if (!email) {
+                        showError('{% trans "Email is required field" %}');
+                        return;
+                    }
+                    if (password1 !== password2) {
+                        showError('{% trans "Password is required field" %}');
+                        return;
+                    }
+                    $('input', $registerForm).attr('disabled', true);
+                    $.ajax({
+                        url: '/register/',
+                        method: 'post',
+                        data: {
+                            username: username,
+                            email: email,
+                            password: password1,
+                            csrfmiddlewaretoken: csrfmiddlewaretoken
+                        }
+                    }).done(function (data) {
+                        location.href = "/";
+                    }).fail(function (data) {
+                        if (data['responseJSON'] && data['responseJSON']['message']) {
+                            showError(data['responseJSON']['message']);
+                        }
+                    }).always(function() {
+                        $('input', $registerForm).removeAttr('disabled');
                     });
                 });
             });
