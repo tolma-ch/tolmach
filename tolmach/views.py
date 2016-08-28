@@ -5,10 +5,12 @@ from django.contrib.auth import logout
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from tolmach.models import UserMeta, PairStats
 from django.contrib.auth.models import User
 from django.db.models import Sum
+
 from translations.models import Project
+
+from tolmach.models import UserMeta, PairStats
 from tolmach import utils
 
 
@@ -167,7 +169,7 @@ def login_user(request):
     return HttpResponse(answer, content_type="application/json", status=response_status)
 
 
-def reset_password(request):
+def reset_password_approve(request):
     status = 0
     message = "Everything's ok"
 
@@ -197,19 +199,46 @@ def reset_password(request):
     import string
     import random
 
-    new_pass = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(10))
-    user.set_password(new_pass)
-    user.save()
+    reset_token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(10))
+    meta, p = UserMeta.objects.get_or_create(user=user)
+
+    meta.password_reset_token = reset_token
+    meta.save()
+
 
 
     dynamic_data_dict = {"{{username}}": username,
-                         "{{newpass}}": new_pass}
-    utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+                         "{{reset_token}}": reset_token}
+    utils.email_send('password-reset-url', dynamic_data_dict, user.email, 'multilang-welcome')
 
     answer = json.dumps(some_data_to_dump)
     response_status = 200
     return HttpResponse(answer, content_type="application/json", status=response_status)
 
+
+def reset_password(request, token):
+    try:
+        meta = UserMeta.objects.get(password_reset_token=token)
+    except:
+        return HttpResponseRedirect("/")
+
+    import string
+    import random
+
+    user = meta.user
+    new_pass = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(10))
+    user.set_password(new_pass)
+    user.save()
+
+    meta.password_reset_token = ""
+    meta.save()
+
+    dynamic_data_dict = {"{{username}}": user.username,
+                         "{{newpass}}": new_pass}
+
+    utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+
+    return HttpResponseRedirect("/")
 
 
 def logout(request):

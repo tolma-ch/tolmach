@@ -21,6 +21,8 @@ class UserMeta(models.Model):
     invited_to = models.TextField(default="")
     requested_to = models.TextField(default="")
 
+    password_reset_token = models.TextField(default="")
+
 
 class PairStats(models.Model):
     user = models.ForeignKey('auth.User')
