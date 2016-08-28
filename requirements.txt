@@ -13,3 +13,4 @@ lxml
 elasticsearch
 babel
 srt
+sparkpost
