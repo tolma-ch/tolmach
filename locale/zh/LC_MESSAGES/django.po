@@ -443,11 +443,11 @@ msgstr ""
 
 #: templates/tolmach/landing.html:366
 msgid "rubles you need to use the service."
-msgstr ""
+msgstr "为开始翻译一毛也不须"
 
 #: templates/tolmach/landing.html:372
 msgid "that's how many fragments we have already translated"
-msgstr "碎片我们已经翻译了"
+msgstr "我们已经翻译了这么多碎片"
 
 #: templates/tolmach/landing.html:378
 msgid ""

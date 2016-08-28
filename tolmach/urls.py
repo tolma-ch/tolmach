@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
+    url(r'password-reset/$', main_views.reset_password, name="reset_password"),
     url(r'^login/', main_views.login_user, name="login_user"),
 
     # translations

@@ -531,6 +531,34 @@
                         $('input', $registerForm).removeAttr('disabled');
                     });
                 });
+                $resetForm.submit(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var username = $('#username', $resetForm).val(),
+                        csrfmiddlewaretoken = $('[name="csrfmiddlewaretoken"]', $resetForm).val();
+                    if (!username) {
+                        showError('{% trans "Username is required field" %}');
+                        return;
+                    }
+                    $('input', $resetForm).attr('disabled', true);
+                    $.ajax({
+                        url: '/password-reset/',
+                        method: 'post',
+                        data: {
+                            username: username,
+                            csrfmiddlewaretoken: csrfmiddlewaretoken
+                        }
+                    }).done(function (data) {
+                        location.href = "/";
+                    }).fail(function (data) {
+                        if (data['responseJSON'] && data['responseJSON']['message']) {
+                            showError(data['responseJSON']['message']);
+                        }
+                    }).always(function() {
+                        $('input', $resetForm).removeAttr('disabled');
+                    });
+                });
             });
         </script>
     </body>
