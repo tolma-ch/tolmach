@@ -77,26 +77,26 @@
                             <a href=""
                                class="btn btn-default"
                                data-toggle="modal"
-                               data-target="#myModal">{% trans "Регистрация и вход" %}</a>
+                               data-target="#myModal">{% trans "Sign up and login" %}</a>
                         </p>
                         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel">{% trans "Регистрация и вход" %}</h4>
+                                        <h4 class="modal-title" id="myModalLabel">{% trans "Sign up and login" %}</h4>
                                     </div>
                                     <div class="modal-body">
                                         <p class="center">
-                                            {% trans "Войти в один клик:" %}
+                                            {% trans "One-click sign up and login:" %}
                                         </p>
                                         <p class="center">
                                             {% social_auth_widget %}
                                         </p>
-                                        <div class="hr"><span>{% trans "или" %}</span></div>
+                                        <div class="hr"><span>{% trans "or" %}</span></div>
                                         <form action="/login/" id="login-form">
                                             <p class="center">
-                                                {% trans "Войти по паролю:" %}
+                                                {% trans "Log in using password:" %}
                                             </p>
                                             {% csrf_token %}
                                             <div class="form-group">
@@ -116,18 +116,18 @@
                                             <div class="form-group">
                                                 <div class="pull-right">
                                                     <p>
-                                                        <a href="" class="reset-password-link">{% trans "Забыли пароль?" %}</a>
+                                                        <a href="" class="reset-password-link">{% trans "Forgot your password?" %}</a>
                                                     </p>
                                                     <p>
-                                                        <a href="" class="register-link">{% trans "Регистрация" %}</a>
+                                                        <a href="" class="register-link">{% trans "Sign up" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Войти" %}</button>
+                                                <button class="btn btn-info" type="submit">{% trans "Log in" %}</button>
                                             </div>
                                         </form>
                                         <form action="" id="register-form" style="display: none;">
                                             <p class="center">
-                                                {% trans "Зарегистрироваться:" %}
+                                                {% trans "Sign up" %}:
                                             </p>
                                             {% csrf_token %}
                                             <div class="form-group">
@@ -161,37 +161,37 @@
                                             <div class="form-group">
                                                 <div class="pull-right">
                                                     <p>
-                                                        <a href="" class="reset-password-link">{% trans "Забыли пароль?" %}</a>
+                                                        <a href="" class="reset-password-link">{% trans "Forgot your password?" %}</a>
                                                     </p>
                                                     <p>
-                                                        <a href="" class="login-link">{% trans "Авторизация" %}</a>
+                                                        <a href="" class="login-link">{% trans "Authorization" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Войти" %}</button>
+                                                <button class="btn btn-info" type="submit">{% trans "Log in" %}</button>
                                             </div>
                                         </form>
                                         <form action="" id="reset-form" style="display: none;">
                                             <p class="center">
-                                                {% trans "Восстановление доступа:" %}
+                                                {% trans "Reset password" %}:
                                             </p>
                                             {% csrf_token %}
                                             <div class="form-group">
                                                 <input class="form-control"
-                                                       type="email"
-                                                       id="email"
-                                                       name="email"
-                                                       placeholder="{% trans "Email" %}">
+                                                       type="text"
+                                                       id="username"
+                                                       name="username"
+                                                       placeholder="{% trans "username" %}">
                                             </div>
                                             <div class="form-group">
                                                 <div class="pull-right">
                                                     <p>
-                                                        <a href="" class="login-link">{% trans "Авторизация" %}</a>
+                                                        <a href="" class="login-link">{% trans "Authorization" %}</a>
                                                     </p>
                                                     <p>
-                                                        <a href="" class="register-link">{% trans "Регистрация" %}</a>
+                                                        <a href="" class="register-link">{% trans "Registration" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Сбросить пароль" %}</button>
+                                                <button class="btn btn-info" type="submit">{% trans "Reset password" %}</button>
                                             </div>
                                         </form>
                                         <p class="form-error" style="display:none; color: #ff6e00;"></p>
@@ -380,9 +380,11 @@
                         </div>
                     </div>
                     <div class="gap4"></div>
-                    <p class="center">{{ social_networks }}:</p>
                     <p class="center">
-                        {% social_auth_widget %}
+                        <a href=""
+                           class="btn btn-default"
+                           data-toggle="modal"
+                           data-target="#myModal">{% trans "Sign up and login" %}</a>
                     </p>
                     <!--<p class="center">или</p>-->
                     <!--<p class="center"><button class="btn" type="submit">Зарегистрироваться</button></p>-->

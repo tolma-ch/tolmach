@@ -14,9 +14,10 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 ADMINS = (
-    ('Dmitry Chumak', 'mega.venik@gmail.com')
+    ('Dmitry Chumak', 'mega.venik@gmail.com'),
     # ('Your Name', 'your_email@example.com'),
 )
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 MANAGERS = ADMINS
 
@@ -50,6 +51,7 @@ LANGUAGE_CODE = 'ru'
 LANGUAGES = (
     ('ru', 'Russian'),
     ('en', 'English'),
+    ('zh', 'Chinese'),
 )
 
 LOCALE_PATHS = (
@@ -231,13 +233,13 @@ LOGGING = {
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            # 'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['mail_admins',],
             'level': 'ERROR',
             'propagate': True,
         },
