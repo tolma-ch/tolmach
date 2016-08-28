@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from tolmach.models import UserMeta, PairStats
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.utils import translation
 from translations.models import Project
 from tolmach import utils
 from django.conf import settings
@@ -99,14 +100,8 @@ def handler500(request):
     return response
 
 
-# @login_required #  TODO CHECK THIS
-# def done(request):
-#     return render_to_response('main/done.html', {'user': request.user, 'request': request},
-#                               RequestContext(request))
-
-
 def register(request):
-    from django.contrib.auth import login
+    from django.contrib.auth import authenticate, login
 
     username = request.POST["username"]
     password = request.POST["password"]
@@ -117,8 +112,9 @@ def register(request):
 
     try:
         new_user = User.objects.create_user(username, email, password)
-        login(request, new_user)
-        return HttpResponseRedirect("/")
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        # return HttpResponseRedirect("/")
         # Redirect to a success page.
     except:
         status = "1"
@@ -131,7 +127,9 @@ def register(request):
 
     response_status = 200
     if status != "0":
-        response_status = 400;
+        response_status = 400
+    else:
+        pass
     return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
 
 
@@ -165,8 +163,53 @@ def login_user(request):
 
     response_status = 200
     if status != "0":
-        response_status = 400;
+        response_status = 400
+    else:
+        from django.core.mail import EmailMessage
+        from tolmach.models import EmailTemplate, EmailTemplateBody
+        from entries.models import Language
+
+        user_locale = translation.get_language()
+        print "OLOLOLOLOLO Locale: ", user_locale
+
+        message_template = EmailTemplate.objects.get(type="register")
+        message_localized_data = EmailTemplateBody.objects.get(lang=Language.objects.get(code=user_locale),
+                                                               template=message_template,
+                                                               )
+        message_localized_data_dict = json.loads(message_localized_data.body)
+        message_template_body = message_template.body
+
+        import re
+
+        pattern = re.compile('|'.join(message_localized_data_dict.keys()))
+        result = pattern.sub(lambda x: message_localized_data_dict[x.group()], message_template_body)
+
+        dynamic_data_dict = {"{{username}}": username}
+        pattern = re.compile('|'.join(dynamic_data_dict.keys()))
+        result = pattern.sub(lambda x: dynamic_data_dict[x.group()], result)
+        print type(result)
+
+        email = EmailMessage(
+                to=[
+                    {
+                        "address": 'mega.venik@gmail.com',
+                        "substitution_data": {
+                            "subject": message_localized_data.title,
+                            # "subject": "12346",
+                            "email_body": result
+                        }
+                    }
+                ],
+                from_email='noreply@email.tolma.ch'
+            )
+        email.template = 'multilang-welcome'
+        print email
+        email.send()
     return HttpResponse(answer, content_type="application/json", status=response_status)
+
+
+def reset_password(request):
+    pass
 
 
 

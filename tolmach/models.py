@@ -60,3 +60,15 @@ class Messages(models.Model):
     message_type = models.CharField(max_length=1, choices=MESSAGE_TYPES)
     was_read = models.BooleanField(default=False)
     time_created = models.DateTimeField(auto_now_add=True)
+
+
+class EmailTemplate(models.Model):
+    type = models.TextField(default="")
+    body = models.TextField(default="")
+
+
+class EmailTemplateBody(models.Model):
+    template = models.ForeignKey('tolmach.EmailTemplate')
+    title = models.CharField(max_length=256, default=None, null=True)
+    body = models.TextField(default="")
+    lang = models.ForeignKey('entries.Language', related_name='template_body_lang')

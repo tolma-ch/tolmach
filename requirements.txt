@@ -4,7 +4,6 @@ Pillow==2.8.2
 oauthlib==0.6.0
 python-openid==2.2.5
 python-social-auth==0.2.7
-requests==1.2.3
 requests-oauthlib==0.3.3
 six==1.4.1
 uWSGI==1.9.17.1
