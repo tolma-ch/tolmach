@@ -17,9 +17,6 @@ urlpatterns = patterns('',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 
-    # django-registration
-    url(r'^accounts/', include('registration.backends.simple.urls')),
-
     # main
     url(r'^$', main_views.index, name='index'),
     url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
