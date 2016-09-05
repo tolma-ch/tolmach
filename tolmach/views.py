@@ -2,7 +2,7 @@
 
 import json
 from django.contrib.auth import logout
-from django.http.response import HttpResponseRedirect, HttpResponse
+from django.http.response import HttpResponseRedirect, HttpResponse, Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.models import User
@@ -101,11 +101,14 @@ def handler500(request):
 
 
 def register(request):
+    if request.method == "GET":
+        raise Http404()
+
     from django.contrib.auth import authenticate, login
 
-    username = request.POST["username"]
-    password = request.POST["password"]
-    email = request.POST["email"]
+    username = request.POST.get("username", False)
+    password = request.POST.get("password", False)
+    email = request.POST.get("email", False)
 
     status = "0"
     message = ""
@@ -136,10 +139,13 @@ def register(request):
 
 
 def login_user(request):
+    if request.method == "GET":
+        raise Http404()
+
     from django.contrib.auth import authenticate, login
 
-    username = request.POST['username']
-    password = request.POST['password']
+    username = request.POST.get('username', False)
+    password = request.POST.get('password', False)
     user = authenticate(username=username, password=password)
     message = ''
     if user is not None:
@@ -170,6 +176,9 @@ def login_user(request):
 
 
 def reset_password_approve(request):
+    if request.method == "GET":
+        raise Http404()
+    
     status = 0
     message = "Everything's ok"
 
@@ -178,7 +187,7 @@ def reset_password_approve(request):
         'message': message,
     }
 
-    username = request.POST['username']
+    username = request.POST.get('username', False)
 
     try:
         user = User.objects.get(username=username)
