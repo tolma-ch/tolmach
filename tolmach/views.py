@@ -184,14 +184,14 @@ def reset_password_approve(request):
         user = User.objects.get(username=username)
     except:
         some_data_to_dump['status'] = 1
-        some_data_to_dump['messgae'] = "User not found"
+        some_data_to_dump['message'] = "User not found"
         answer = json.dumps(some_data_to_dump)
         response_status = 400
         return HttpResponse(answer, content_type="application/json", status=response_status)
 
     if user.email == "":
         some_data_to_dump['status'] = 1
-        some_data_to_dump['messgae'] = "User not found"
+        some_data_to_dump['message'] = "User not found"
         answer = json.dumps(some_data_to_dump)
         response_status = 400
         return HttpResponse(answer, content_type="application/json", status=response_status)
