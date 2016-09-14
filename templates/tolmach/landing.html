@@ -167,7 +167,7 @@
                                                         <a href="" class="login-link">{% trans "Authorization" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Log in" %}</button>
+                                                <button class="btn btn-info" type="submit">{% trans "Sign up" %}</button>
                                             </div>
                                         </form>
                                         <form action="" id="reset-form" style="display: none;">
@@ -194,7 +194,31 @@
                                                 <button class="btn btn-info" type="submit">{% trans "Reset password" %}</button>
                                             </div>
                                         </form>
+                                        <form action="/" id="new-pass-form">
+                                            <p class="center">
+                                                {% trans "Type new password:" %}
+                                            </p>
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                <input class="form-control"
+                                                       type="password"
+                                                       id="password1"
+                                                       name="password1"
+                                                       placeholder="{% trans "Password" %}">
+                                            </div>
+                                            <div class="form-group">
+                                                <input class="form-control"
+                                                       type="password"
+                                                       id="password2"
+                                                       name="password2"
+                                                       placeholder="{% trans "Password confirmation" %}">
+                                            </div>
+                                            <div class="form-group">
+                                                <button class="btn btn-info" type="submit">{% trans "Submit" %}</button>
+                                            </div>
+                                        </form>
                                         <p class="form-error" style="display:none; color: #ff6e00;"></p>
+                                        <p class="form-success" style="display:none; color: #658412;"></p>
                                     </div>
                                 </div>
                             </div>
@@ -426,7 +450,8 @@
                 var $loginForm = $('#login-form'),
                     $registerForm = $('#register-form'),
                     $resetForm = $('#reset-form'),
-                    showErrorIterator = 0;
+                    $newPassForm = $('#new-pass-form'),
+                    showErrorIterator = 0,
                     showError = function (mes) {
                         $('.form-error').text(mes).show();
                         showErrorIterator++;
@@ -437,7 +462,29 @@
                             }
                         }, 3000);
 
-                    };
+                    },
+                    showMessIterator = 0,
+                    showMessage = function (mes) {
+                        $('.form-success').text(mes).show();
+                        showMessIterator++;
+                        var tempIterator = showMessIterator;
+                        setTimeout(function () {
+                            if (tempIterator === showMessIterator) {
+                                $('.form-success').hide();
+                            }
+                        }, 3000);
+
+                    },
+                    getParameterByName = function (name, url) {
+                        if (!url) url = window.location.href;
+                        name = name.replace(/[\[\]]/g, "\\$&");
+                        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                            results = regex.exec(url);
+                        if (!results) return null;
+                        if (!results[2]) return '';
+                        return decodeURIComponent(results[2].replace(/\+/g, " "));
+                    },
+                    recoveryCode = getParameterByName('code');
                 $('.login-link').click(function (e) {
                     e.preventDefault();
                     $loginForm.show();
@@ -456,6 +503,43 @@
                     $registerForm.hide();
                     $resetForm.show();
                 });
+                if (recoveryCode) {
+                    $loginForm.hide();
+                    $registerForm.hide();
+                    $resetForm.hide();
+                    $newPassForm.show();
+                    $newPassForm.submit(function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        var password1 = $('#password1', $newPassForm).val();
+                            password2 = $('#password2', $newPassForm).val();
+                            csrfmiddlewaretoken = $('[name="csrfmiddlewaretoken"]', $newPassForm).val();
+                        if (password1 !== password2) {
+                            showError('{% trans "Password is required field" %}');
+                            return;
+                        }
+                        $('input', $newPassForm).attr('disabled', true);
+                        $.ajax({
+                            url: '/register/',
+                            method: 'post',
+                            data: {
+                                password: password1,
+                                csrfmiddlewaretoken: csrfmiddlewaretoken
+                            }
+                        }).done(function (data) {
+                            if (data['responseJSON'] && data['responseJSON']['message']) {
+                                showMessage(data['responseJSON']['message']);
+                            }
+                        }).fail(function (data) {
+                            if (data['responseJSON'] && data['responseJSON']['message']) {
+                                showError(data['responseJSON']['message']);
+                            }
+                        }).always(function() {
+                            $('input', $registerForm).removeAttr('disabled');
+                        });
+                    });
+                }
                 $loginForm.submit(function (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -550,7 +634,7 @@
                             csrfmiddlewaretoken: csrfmiddlewaretoken
                         }
                     }).done(function (data) {
-                        location.href = "/";
+                        showMessage(data['responseJSON']['message']);
                     }).fail(function (data) {
                         if (data['responseJSON'] && data['responseJSON']['message']) {
                             showError(data['responseJSON']['message']);
