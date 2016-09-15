@@ -216,17 +216,22 @@ def reset_password_approve(request):
     return HttpResponse(answer, content_type="application/json", status=response_status)
 
 
-def reset_password(request, token):
+def reset_password_form(request, token):
+    try:
+        meta = UserMeta.objects.get(password_reset_token=token)
+    except:
+        return HttpResponseRedirect("/")
+    return HttpResponseRedirect("/?code=%s" % token)
+
+
+def accept_password(request):
     try:
         meta = UserMeta.objects.get(password_reset_token=token)
     except:
         return HttpResponseRedirect("/")
 
-    import string
-    import random
-
     user = meta.user
-    new_pass = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(10))
+    new_pass = request.POST['password']
     user.set_password(new_pass)
     user.save()
 

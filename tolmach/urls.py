@@ -26,7 +26,8 @@ urlpatterns = patterns('',
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
     url(r'password-reset/$', main_views.reset_password_approve, name="reset_password_approve"),
-    url(r'password-reset/(?P<token>\w+)/$', main_views.reset_password, name="reset_password"),
+    url(r'password-reset/(?P<token>\w+)/$', main_views.reset_password_form, name="reset_password_form"),
+    url(r'password-accept/$', main_views.accept_password, name="accept_password"),
     url(r'^login/', main_views.login_user, name="login_user"),
 
     # translations

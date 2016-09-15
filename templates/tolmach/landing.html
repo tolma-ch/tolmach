@@ -194,7 +194,7 @@
                                                 <button class="btn btn-info" type="submit">{% trans "Reset password" %}</button>
                                             </div>
                                         </form>
-                                        <form action="/" id="new-pass-form">
+                                        <form action="/" id="new-pass-form" style="display: none;">
                                             <p class="center">
                                                 {% trans "Type new password:" %}
                                             </p>
@@ -485,6 +485,12 @@
                         return decodeURIComponent(results[2].replace(/\+/g, " "));
                     },
                     recoveryCode = getParameterByName('code');
+                $('#myModal').on('show', function () {
+                    $loginForm.show();
+                    $registerForm.hide();
+                    $resetForm.hide();
+                    $newPassForm.hide();
+                });
                 $('.login-link').click(function (e) {
                     e.preventDefault();
                     $loginForm.show();
@@ -504,42 +510,43 @@
                     $resetForm.show();
                 });
                 if (recoveryCode) {
+                    $('#myModal').modal('show');
                     $loginForm.hide();
                     $registerForm.hide();
                     $resetForm.hide();
                     $newPassForm.show();
-                    $newPassForm.submit(function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        var password1 = $('#password1', $newPassForm).val();
-                            password2 = $('#password2', $newPassForm).val();
-                            csrfmiddlewaretoken = $('[name="csrfmiddlewaretoken"]', $newPassForm).val();
-                        if (password1 !== password2) {
-                            showError('{% trans "Password is required field" %}');
-                            return;
-                        }
-                        $('input', $newPassForm).attr('disabled', true);
-                        $.ajax({
-                            url: '/register/',
-                            method: 'post',
-                            data: {
-                                password: password1,
-                                csrfmiddlewaretoken: csrfmiddlewaretoken
-                            }
-                        }).done(function (data) {
-                            if (data['responseJSON'] && data['responseJSON']['message']) {
-                                showMessage(data['responseJSON']['message']);
-                            }
-                        }).fail(function (data) {
-                            if (data['responseJSON'] && data['responseJSON']['message']) {
-                                showError(data['responseJSON']['message']);
-                            }
-                        }).always(function() {
-                            $('input', $registerForm).removeAttr('disabled');
-                        });
-                    });
                 }
+                $newPassForm.submit(function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var password1 = $('#password1', $newPassForm).val();
+                        password2 = $('#password2', $newPassForm).val();
+                        csrfmiddlewaretoken = $('[name="csrfmiddlewaretoken"]', $newPassForm).val();
+                    if (password1 !== password2) {
+                        showError('{% trans "Password is required field" %}');
+                        return;
+                    }
+                    $('input', $newPassForm).attr('disabled', true);
+                    $.ajax({
+                        url: '/password-accept/',
+                        method: 'post',
+                        data: {
+                            password: password1,
+                            csrfmiddlewaretoken: csrfmiddlewaretoken
+                        }
+                    }).done(function (data) {
+                        if (data['message']) {
+                            showMessage(data['message']);
+                        }
+                    }).fail(function (data) {
+                        if (data['responseJSON'] && data['responseJSON']['message']) {
+                            showError(data['responseJSON']['message']);
+                        }
+                    }).always(function() {
+                        $('input', $registerForm).removeAttr('disabled');
+                    });
+                });
                 $loginForm.submit(function (e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -634,7 +641,9 @@
                             csrfmiddlewaretoken: csrfmiddlewaretoken
                         }
                     }).done(function (data) {
-                        showMessage(data['responseJSON']['message']);
+                        if (data['message']) {
+                            showMessage(data['message']);
+                        }
                     }).fail(function (data) {
                         if (data['responseJSON'] && data['responseJSON']['message']) {
                             showError(data['responseJSON']['message']);
