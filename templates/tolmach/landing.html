@@ -75,7 +75,7 @@
                         </h1>
                         <p class="center">
                             <a href=""
-                               class="btn btn-default"
+                               class="btn btn-default open-modal-btn"
                                data-toggle="modal"
                                data-target="#myModal">{% trans "Sign up and login" %}</a>
                         </p>
@@ -468,11 +468,11 @@
                         $('.form-success').text(mes).show();
                         showMessIterator++;
                         var tempIterator = showMessIterator;
-                        setTimeout(function () {
-                            if (tempIterator === showMessIterator) {
-                                $('.form-success').hide();
-                            }
-                        }, 3000);
+{#                        setTimeout(function () {#}
+{#                            if (tempIterator === showMessIterator) {#}
+{#                                $('.form-success').hide();#}
+{#                            }#}
+{#                        }, 3000);#}
 
                     },
                     getParameterByName = function (name, url) {
@@ -485,7 +485,8 @@
                         return decodeURIComponent(results[2].replace(/\+/g, " "));
                     },
                     recoveryCode = getParameterByName('code');
-                $('#myModal').on('show', function () {
+                $('.open-modal-btn').click(function () {
+                    console.log('show modal');
                     $loginForm.show();
                     $registerForm.hide();
                     $resetForm.hide();
@@ -496,21 +497,25 @@
                     $loginForm.show();
                     $registerForm.hide();
                     $resetForm.hide();
+                    $newPassForm.hide();
                 });
                 $('.register-link').click(function (e) {
                     e.preventDefault();
                     $loginForm.hide();
                     $registerForm.show();
                     $resetForm.hide();
+                    $newPassForm.hide();
                 });
                 $('.reset-password-link').click(function (e) {
                     e.preventDefault();
                     $loginForm.hide();
                     $registerForm.hide();
                     $resetForm.show();
+                    $newPassForm.hide();
                 });
                 if (recoveryCode) {
                     $('#myModal').modal('show');
+                    console.log('show recovery');
                     $loginForm.hide();
                     $registerForm.hide();
                     $resetForm.hide();
@@ -537,6 +542,7 @@
                         }
                     }).done(function (data) {
                         if (data['message']) {
+                            $newPassForm.hide();
                             showMessage(data['message']);
                         }
                     }).fail(function (data) {
@@ -642,6 +648,7 @@
                         }
                     }).done(function (data) {
                         if (data['message']) {
+                            $resetForm.hide();
                             showMessage(data['message']);
                         }
                     }).fail(function (data) {
