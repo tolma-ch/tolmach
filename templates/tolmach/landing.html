@@ -537,6 +537,7 @@
                         url: '/password-accept/',
                         method: 'post',
                         data: {
+                            token: recoveryCode,
                             password: password1,
                             csrfmiddlewaretoken: csrfmiddlewaretoken
                         }
