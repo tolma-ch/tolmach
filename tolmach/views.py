@@ -225,10 +225,17 @@ def reset_password_form(request, token):
 
 
 def accept_password(request):
+    from django.contrib.auth import authenticate, login
+
+    token = request.POST['token']
     try:
         meta = UserMeta.objects.get(password_reset_token=token)
     except:
-        return HttpResponseRedirect("/")
+        result = {
+            'status': 1,
+            'message': "Wrong token",
+        }
+        return HttpResponse(json.dumps(result), content_type="application/json", status=400)
 
     user = meta.user
     new_pass = request.POST['password']
@@ -241,9 +248,15 @@ def accept_password(request):
     dynamic_data_dict = {"{{username}}": user.username,
                          "{{newpass}}": new_pass}
 
-    utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+    # utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+    user = authenticate(username=user.username, password=new_pass)
+    login(request, user)
 
-    return HttpResponseRedirect("/")
+    result = {
+        'status': 0,
+        'message': "Everything's ok",
+    }
+    return HttpResponse(json.dumps(result), content_type="application/json", status=200)
 
 
 def logout(request):

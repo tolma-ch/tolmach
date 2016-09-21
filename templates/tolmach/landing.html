@@ -87,13 +87,15 @@
                                         <h4 class="modal-title" id="myModalLabel">{% trans "Sign up and login" %}</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="center">
-                                            {% trans "One-click sign up and login:" %}
-                                        </p>
-                                        <p class="center">
-                                            {% social_auth_widget %}
-                                        </p>
-                                        <div class="hr"><span>{% trans "or" %}</span></div>
+                                        <div class="socila-sign-block">
+                                            <p class="center">
+                                                {% trans "One-click sign up and login:" %}
+                                            </p>
+                                            <p class="center">
+                                                {% social_auth_widget %}
+                                            </p>
+                                            <div class="hr"><span>{% trans "or" %}</span></div>
+                                        </div>
                                         <form action="/login/" id="login-form">
                                             <p class="center">
                                                 {% trans "Log in using password:" %}
@@ -465,6 +467,7 @@
                     },
                     showMessIterator = 0,
                     showMessage = function (mes) {
+                        $('.socila-sign-block').hide();
                         $('.form-success').text(mes).show();
                         showMessIterator++;
                         var tempIterator = showMessIterator;
@@ -545,6 +548,9 @@
                         if (data['message']) {
                             $newPassForm.hide();
                             showMessage(data['message']);
+                            setTimeout(function () {
+                                location.href = "/";
+                            }, 2000);
                         }
                     }).fail(function (data) {
                         if (data['responseJSON'] && data['responseJSON']['message']) {
@@ -650,6 +656,7 @@
                     }).done(function (data) {
                         if (data['message']) {
                             $resetForm.hide();
+
                             showMessage(data['message']);
                         }
                     }).fail(function (data) {
