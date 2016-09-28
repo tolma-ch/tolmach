@@ -377,19 +377,19 @@ def text_ajax(request, project):
                 # и если он да, то тут уходим в другую векту и дёргаем не /convert, а /misc/get-xlsx-data
                 # который нам вернёт уже список с данными, из которых мы нарисуем табличку для второго окна
 
-                # if post['xlsx_prepare_state'] == 1:
-                #     url = 'http://127.0.0.1:8080/convert'
-                #     values = {'fname': filename,
-                #               'user_id': request.user.id,
-                #               'project_id': project.id,
-                #               }
-                #
-                #     data = urllib.urlencode(values)
-                #     req = urllib2.Request(url, data)
-                #     response = urllib2.urlopen(req)
-                #     the_page = json.loads(response.read())
-                #
-                #     return HttpResponse(the_page, content_type="application/json", status=400)
+                if post['xlsx_prepare_state'] == '1':
+                    url = 'http://127.0.0.1:8080/misc/get-xlsx-data'
+                    values = {'fname': filename,
+                              'user_id': request.user.id,
+                              'project_id': project.id,
+                              }
+
+                    data = urllib.urlencode(values)
+                    req = urllib2.Request(url, data)
+                    response = urllib2.urlopen(req)
+                    the_page = json.loads(response.read())
+
+                    return HttpResponse(json.dumps(the_page), content_type="application/json", status=400)
 
                 url = 'http://127.0.0.1:8080/convert'
                 values = {'fname': filename,
