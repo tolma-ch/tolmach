@@ -25,6 +25,7 @@
     module.controller('NewProjectModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.error = '';
+            $scope.type = 'private';
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {

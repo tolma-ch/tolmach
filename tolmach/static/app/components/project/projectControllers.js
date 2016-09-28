@@ -362,6 +362,11 @@
                         return;
                     }
                     $scope.busy = true;
+                    var fileName = $scope.text.files[0].name,
+                        ext = fileName ? fileName.split('.').pop() : false;
+                    if (ext === 'xlsx') {
+                        data['xlsx_prepare_state'] = 1;
+                    }
                     Upload.upload({
                             url: '/api/text/',
                             fields: data,

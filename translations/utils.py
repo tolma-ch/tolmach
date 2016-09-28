@@ -19,7 +19,7 @@ FORMATS = {
     # "rtf": "application/rtf",
 
     # Tables
-    # "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
     # Presentations
     # "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
