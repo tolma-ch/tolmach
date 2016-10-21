@@ -1124,7 +1124,9 @@
                     entry.editing = false;
                     entry.suggestion = '';
                     if (data.isApproved === true) {
-                        $scope.activeEntry = null;
+                        if (entry === $scope.activeEntry) {
+                            $scope.activeEntry = null;
+                        }
                         entry.approved = true;
                         applyTranslation(entry, data);
                     } else {
