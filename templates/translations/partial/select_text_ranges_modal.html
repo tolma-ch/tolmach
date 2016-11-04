@@ -1,0 +1,23 @@
+{% load i18n %}
+<script type="text/ng-template" id="selectTextRangesModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{% trans "Select cells for translating" %}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="table-sheet"></div>
+    </div>
+    <div class="modal-footer">
+        <div class="progress-bar"
+             ng-show="busy">
+            <div class="progress-bar__gauge"
+                 style="width: 1%;background:rgb(255, 217, 121)"
+                 ng-style="{width: progress + '%'}"></div>
+        </div>
+        <button class="btn btn-success"
+                ng-click="ok()"
+                ng-disabled="busy">{% trans "Next" %}</button>
+    </div>
+</script>
