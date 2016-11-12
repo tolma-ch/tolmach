@@ -260,6 +260,13 @@ ELASTIC_LIST = [
     {"host": "localhost", "port": 9200, "timeout": 30}
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
 try:
     from tolmach.local_settings import *
 except ImportError:

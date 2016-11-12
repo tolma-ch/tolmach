@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db.models import Q
 from django.db import models
 import math
@@ -106,19 +107,24 @@ class Project(models.Model):
         """
         Get progress percentage of the current project and return Int from 0 to 100
         """
-        common_progress = 0
-        translations_num = 0
-        texts = Text.objects.filter(project=self)
-        for text in texts:
-            translations = TextTranslation.objects.filter(text=text)
-            for translation in translations:
-                translations_num += 1
-                common_progress += translation.get_progress()[1][1]
+        project_progress = cache.get("%d_project_progress" % self.id)
 
-        if not texts.count() == 0:
-            return common_progress / translations_num
-        else:
-            return 0
+        if not project_progress:
+            common_progress = 0
+            translations_num = 0
+            texts = Text.objects.filter(project=self)
+            for text in texts:
+                translations = TextTranslation.objects.filter(text=text)
+                for translation in translations:
+                    translations_num += 1
+                    common_progress += translation.get_progress()[1][1]
+
+            if not texts.count() == 0:
+                project_progress = common_progress / translations_num
+            else:
+                project_progress = 0
+            cache.set("%d_project_progress" % self.id, project_progress, 60*20)
+        return project_progress
 
 
 class Text(models.Model):
@@ -196,9 +202,17 @@ class TextTranslation(models.Model):
 
         entries_approved/(entries_total/100.0)
         """
-        entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
-        entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+        all_stats = cache.get("%d_translation_progress" % self.id)
+
+        if all_stats:
+            entries_total = all_stats[0]
+            entries_translated = all_stats[1]
+            entries_approved = all_stats[2]
+        else:
+            entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
+            entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
+            entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+            cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
 
         if not entries_total == 0:
             return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
