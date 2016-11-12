@@ -11,3 +11,14 @@ def ya_metrika(request):
         return {
             'prod': 'false'
         }
+
+def less_debug(request):
+    print settings.DEBUG
+    if settings.DEBUG:
+        return {
+            'debug': 'true'
+        }
+    else:
+        return {
+            'debug': 'false'
+        }
