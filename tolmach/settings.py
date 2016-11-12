@@ -123,6 +123,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.i18n',
     'tolmach.context_processors.ya_metrika',
+    'tolmach.context_processors.less_debug',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -134,7 +135,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'tolmach.urls'
@@ -167,7 +168,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'debug_toolbar',
+    # 'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = (

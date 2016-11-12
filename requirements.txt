@@ -15,3 +15,4 @@ babel
 srt
 sparkpost
 django-debug-toolbar
+python-memcached

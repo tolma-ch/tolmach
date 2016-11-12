@@ -56,7 +56,12 @@ urlpatterns = patterns('',
     # temporarily added urls for developing purpuses
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
+try:
+    debug_toolbar_enable = settings.DEBUG_TOOLBAR
+except:
+    debug_toolbar_enable = False
+
+if debug_toolbar_enable:
     import debug_toolbar
     urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
