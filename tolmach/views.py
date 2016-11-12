@@ -227,17 +227,29 @@ def reset_password_approve(request):
     return HttpResponse(answer, content_type="application/json", status=response_status)
 
 
-def reset_password(request, token):
+def reset_password_form(request, token):
     try:
         meta = UserMeta.objects.get(password_reset_token=token)
     except:
         return HttpResponseRedirect("/")
+    return HttpResponseRedirect("/?code=%s" % token)
 
-    import string
-    import random
+
+def accept_password(request):
+    from django.contrib.auth import authenticate, login
+
+    token = request.POST['token']
+    try:
+        meta = UserMeta.objects.get(password_reset_token=token)
+    except:
+        result = {
+            'status': 1,
+            'message': "Wrong token",
+        }
+        return HttpResponse(json.dumps(result), content_type="application/json", status=400)
 
     user = meta.user
-    new_pass = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(10))
+    new_pass = request.POST['password']
     user.set_password(new_pass)
     user.save()
 
@@ -247,9 +259,15 @@ def reset_password(request, token):
     dynamic_data_dict = {"{{username}}": user.username,
                          "{{newpass}}": new_pass}
 
-    utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+    # utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
+    user = authenticate(username=user.username, password=new_pass)
+    login(request, user)
 
-    return HttpResponseRedirect("/")
+    result = {
+        'status': 0,
+        'message': "Everything's ok",
+    }
+    return HttpResponse(json.dumps(result), content_type="application/json", status=200)
 
 
 def logout(request):
