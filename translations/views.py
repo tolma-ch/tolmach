@@ -322,9 +322,9 @@ def export_translation(request, text_id, target_lang):
             )
             entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
             if entry_translation:
-                sub_object.content = entry_translation[0].body.encode('utf8')
+                sub_object.content = h.unescape(entry_translation[0].body.encode('utf8'))
             else:
-                sub_object.content = entry.body
+                sub_object.content = h.unescape(entry.body)
 
             subtitles_list.append(sub_object)
         response = HttpResponse(srt.compose(subtitles_list), content_type='text/srt')
