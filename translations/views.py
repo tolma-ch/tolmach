@@ -305,6 +305,8 @@ def export_translation(request, text_id, target_lang):
 
     elif format in [utils.FORMATS['po'], utils.FORMATS['mo'], utils.FORMATS['pot']]:
         response, doc_ext = export_utils.export_po(text_id, format, target_lang, text_translation)
+    elif format == utils.FORMATS['ass']:
+        response, doc_ext = export_utils.export_ass(text_id, format, target_lang, text_translation)
     elif format == utils.FORMATS['srt']:
         import srt
         import datetime
