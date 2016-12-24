@@ -653,64 +653,61 @@ def entry_ajax(request, action, text):
             has_plurals = False
             plural_examples = {}
 
-        entries = cache.get("%d_translation_entries" % text_translation.id)
-        if not entries:
-            entries = []
-            base_entries = TextEntry.objects.filter(text=text, parent_entry=None)
-            pre_glossary_text = []
+        entries = []
+        base_entries = TextEntry.objects.filter(text=text, parent_entry=None)
+        pre_glossary_text = []
 
-            target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
+        target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
 
-            # Если глоссарии привязаны к тексту, то
-            if text_translation.glossaries_list:
-                for entry in base_entries:
-                    pre_glossary_text.append(entry.body)
-
-                # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-                post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
-
-                # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
-                for post, clean in zip(post_glossary_entries, base_entries):
-                    clean.glossary_body = post
-
+        # Если глоссарии привязаны к тексту, то
+        if text_translation.glossaries_list:
             for entry in base_entries:
-                if not text_translation.glossaries_list:
-                    entry.glossary_body = entry.body
-                entry_translations = []
-                if has_plurals:
-                    entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
-                else:
-                    entry_meta = ""
-                approved = False
-                approved_text = ''
-                user_translation_text = ''
-                for entry_translation in target_lang_entries:
-                    if entry_translation.parent_entry == entry:
-                        translation_array = translation_to_json(entry_translation)
-                        translation_array['isVoted'] = entry_translation.is_voted(request.user)
-                        entry_translations.append(translation_array)
-                        if entry_translation.is_approved:
-                            approved_text = entry_translation.body
-                        if entry_translation.author.id == request.user.id:
-                            user_translation_text = entry_translation.body
-                        approved = approved or entry_translation.is_approved
+                pre_glossary_text.append(entry.body)
 
-                if has_plurals:
-                    entry_translation = approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body
-                else:
-                    entry_translation = approved_text or user_translation_text or entry.body
+            # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
 
-                entries.append({
-                    'id': entry.id,
-                    'idInText': entry.id_in_text,
-                    'rawBody': entry.body,
-                    'body': entry.glossary_body,
-                    'meta': entry_meta,
-                    'translations': entry_translations,
-                    'approved': approved,
-                    'translation': entry_translation
-                })
-            cache.set("%d_translation_entries" % text_translation.id, entries, None)
+            # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
+            for post, clean in zip(post_glossary_entries, base_entries):
+                clean.glossary_body = post
+
+        for entry in base_entries:
+            if not text_translation.glossaries_list:
+                entry.glossary_body = entry.body
+            entry_translations = []
+            if has_plurals:
+                entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+            else:
+                entry_meta = ""
+            approved = False
+            approved_text = ''
+            user_translation_text = ''
+            for entry_translation in target_lang_entries:
+                if entry_translation.parent_entry == entry:
+                    translation_array = translation_to_json(entry_translation)
+                    translation_array['isVoted'] = entry_translation.is_voted(request.user)
+                    entry_translations.append(translation_array)
+                    if entry_translation.is_approved:
+                        approved_text = entry_translation.body
+                    if entry_translation.author.id == request.user.id:
+                        user_translation_text = entry_translation.body
+                    approved = approved or entry_translation.is_approved
+
+            if has_plurals:
+                entry_translation = approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body
+            else:
+                entry_translation = approved_text or user_translation_text or entry.body
+
+            entries.append({
+                'id': entry.id,
+                'idInText': entry.id_in_text,
+                'rawBody': entry.body,
+                'body': entry.glossary_body,
+                'meta': entry_meta,
+                'translations': entry_translations,
+                'approved': approved,
+                'translation': entry_translation
+            })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
             '639_3': [text.source_lang.code_639_3, text_translation.target_lang.code_639_3],
