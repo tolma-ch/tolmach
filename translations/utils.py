@@ -28,6 +28,7 @@ FORMATS = {
     # Static docs
     # "pdf": "application/pdf",
     "srt": "text/srt",
+    "ass": "text/ass",
     "po": "text/x-gettext-translation",
     "pot": "text/x-gettext-translation-template",
     "mo": "application/x-gettext-translation",
