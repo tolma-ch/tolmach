@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-20 05:13+0400\n"
+"POT-Creation-Date: 2016-12-26 06:38+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -201,136 +201,136 @@ msgstr ""
 msgid "A problem shared is a problem halved"
 msgstr ""
 
-#: templates/tolmach/landing.html:80 templates/tolmach/landing.html.py:87
-#: templates/tolmach/landing.html:413
+#: templates/tolmach/landing.html:99 templates/tolmach/landing.html.py:106
+#: templates/tolmach/landing.html:432
 msgid "Sign up and login"
 msgstr ""
 
-#: templates/tolmach/landing.html:92
+#: templates/tolmach/landing.html:111
 msgid "One-click sign up and login:"
 msgstr ""
 
-#: templates/tolmach/landing.html:97
+#: templates/tolmach/landing.html:116
 msgid "or"
 msgstr ""
 
-#: templates/tolmach/landing.html:101
+#: templates/tolmach/landing.html:120
 msgid "Log in using password:"
 msgstr ""
 
-#: templates/tolmach/landing.html:109 templates/tolmach/landing.html.py:140
+#: templates/tolmach/landing.html:128 templates/tolmach/landing.html.py:159
 msgid "Username"
 msgstr ""
 
-#: templates/tolmach/landing.html:116 templates/tolmach/landing.html.py:154
-#: templates/tolmach/landing.html:209
+#: templates/tolmach/landing.html:135 templates/tolmach/landing.html.py:173
+#: templates/tolmach/landing.html:228
 msgid "Password"
 msgstr ""
 
-#: templates/tolmach/landing.html:121 templates/tolmach/landing.html.py:166
+#: templates/tolmach/landing.html:140 templates/tolmach/landing.html.py:185
 msgid "Forgot your password?"
 msgstr ""
 
-#: templates/tolmach/landing.html:124 templates/tolmach/landing.html.py:132
-#: templates/tolmach/landing.html:172
+#: templates/tolmach/landing.html:143 templates/tolmach/landing.html.py:151
+#: templates/tolmach/landing.html:191
 msgid "Sign up"
 msgstr ""
 
-#: templates/tolmach/landing.html:127
+#: templates/tolmach/landing.html:146
 msgid "Log in"
 msgstr ""
 
-#: templates/tolmach/landing.html:147
+#: templates/tolmach/landing.html:166
 msgid "Email"
 msgstr ""
 
-#: templates/tolmach/landing.html:161 templates/tolmach/landing.html.py:216
+#: templates/tolmach/landing.html:180 templates/tolmach/landing.html.py:235
 msgid "Password confirmation"
 msgstr ""
 
-#: templates/tolmach/landing.html:169 templates/tolmach/landing.html.py:190
+#: templates/tolmach/landing.html:188 templates/tolmach/landing.html.py:209
 msgid "Authorization"
 msgstr ""
 
-#: templates/tolmach/landing.html:177 templates/tolmach/landing.html.py:196
+#: templates/tolmach/landing.html:196 templates/tolmach/landing.html.py:215
 msgid "Reset password"
 msgstr ""
 
-#: templates/tolmach/landing.html:185
+#: templates/tolmach/landing.html:204
 msgid "username"
 msgstr ""
 
-#: templates/tolmach/landing.html:193
+#: templates/tolmach/landing.html:212
 #, fuzzy
 #| msgid "Users translations"
 msgid "Registration"
 msgstr "Users translations"
 
-#: templates/tolmach/landing.html:201
+#: templates/tolmach/landing.html:220
 msgid "Type new password:"
 msgstr ""
 
-#: templates/tolmach/landing.html:219
+#: templates/tolmach/landing.html:238
 msgid "Submit"
 msgstr ""
 
-#: templates/tolmach/landing.html:246
+#: templates/tolmach/landing.html:265
 msgid ""
 "Invite old colleagues or find new ones to work on Your project not looking "
 "up from translation."
 msgstr ""
 
-#: templates/tolmach/landing.html:250
+#: templates/tolmach/landing.html:269
 msgid "All the paperwork is up to us."
 msgstr ""
 
-#: templates/tolmach/landing.html:251
+#: templates/tolmach/landing.html:270
 msgid ""
 "«Tolmach» will parse received documents, extract all the useful textual data "
 "and split it into easy to translate fragments."
 msgstr ""
 
-#: templates/tolmach/landing.html:255
+#: templates/tolmach/landing.html:274
 msgid "Translate comfortably"
 msgstr ""
 
-#: templates/tolmach/landing.html:256
+#: templates/tolmach/landing.html:275
 msgid ""
 "Translate the text using glossaries, translation memory databases, machine "
 "translation systems and prepared dictionaries."
 msgstr ""
 
-#: templates/tolmach/landing.html:266
+#: templates/tolmach/landing.html:285
 msgid "How it works:"
 msgstr ""
 
-#: templates/tolmach/landing.html:300
+#: templates/tolmach/landing.html:319
 msgid "of"
 msgstr ""
 
-#: templates/tolmach/landing.html:306
+#: templates/tolmach/landing.html:325
 msgid "Personal page"
 msgstr ""
 
-#: templates/tolmach/landing.html:308
+#: templates/tolmach/landing.html:327
 msgid ""
 "This is a user's personal page. You do not need to fill out tedious "
 "questionnaires during registration - we can get your stuff from your social "
 "network profile."
 msgstr ""
 
-#: templates/tolmach/landing.html:311
+#: templates/tolmach/landing.html:330
 msgid ""
 "Here you can see all the statistics that present your experience as "
 "translator: total number of translated fragments and graphs showing which "
 "language pairs do you prefer to work with."
 msgstr ""
 
-#: templates/tolmach/landing.html:315
+#: templates/tolmach/landing.html:334
 msgid "Collective translations"
 msgstr ""
 
-#: templates/tolmach/landing.html:317
+#: templates/tolmach/landing.html:336
 msgid ""
 "Now several interpreters can comfortably work with one document "
 "simultaneously — share the responsibility for exact pieces of text between "
@@ -338,7 +338,7 @@ msgid ""
 "choosing, in the end, the best offered fragments."
 msgstr ""
 
-#: templates/tolmach/landing.html:320
+#: templates/tolmach/landing.html:339
 msgid ""
 "Team editor now can watch the whole process live — he will not have to spend "
 "huge amount of time to wait for the results of translation, and translators "
@@ -346,64 +346,64 @@ msgid ""
 "publication."
 msgstr ""
 
-#: templates/tolmach/landing.html:324
+#: templates/tolmach/landing.html:343
 msgid "Multilingual translations"
 msgstr ""
 
-#: templates/tolmach/landing.html:326
+#: templates/tolmach/landing.html:345
 msgid ""
 "No need to upload the same document several times - it is possible to "
 "translate the same one into several languages at once."
 msgstr ""
 
-#: templates/tolmach/landing.html:330
+#: templates/tolmach/landing.html:349
 msgid "Translation memory databases and glossaries"
 msgstr ""
 
-#: templates/tolmach/landing.html:332
+#: templates/tolmach/landing.html:351
 msgid ""
 "Translation memory databases help you to translate similar documents faster, "
 "reusing previously made translations."
 msgstr ""
 
-#: templates/tolmach/landing.html:335
+#: templates/tolmach/landing.html:354
 msgid ""
 "Correctly formatted glossaries will help to maintain a consistent style of "
 "translation, regardless of whether you work alone or in a group."
 msgstr ""
 
-#: templates/tolmach/landing.html:339
+#: templates/tolmach/landing.html:358
 msgid "Only translation, nothing more"
 msgstr ""
 
-#: templates/tolmach/landing.html:341
+#: templates/tolmach/landing.html:360
 msgid ""
 "We put a lot of effort to make the «Tolmach» interface as easy and "
 "minimalistic as possible."
 msgstr ""
 
-#: templates/tolmach/landing.html:344
+#: templates/tolmach/landing.html:363
 msgid ""
 "And despite the fact that we have already achieved significant results, we "
 "are constantly looking for new opportunities to make «Tolmach» even more "
 "simple and convenient."
 msgstr ""
 
-#: templates/tolmach/landing.html:348
+#: templates/tolmach/landing.html:367
 msgid "Visual progress"
 msgstr ""
 
-#: templates/tolmach/landing.html:350
+#: templates/tolmach/landing.html:369
 msgid ""
 "Evaluate the integrity and consistency of the translated text without being "
 "distracted from the process of translation, literally by a single click."
 msgstr ""
 
-#: templates/tolmach/landing.html:354
+#: templates/tolmach/landing.html:373
 msgid "Advanced formatting"
 msgstr ""
 
-#: templates/tolmach/landing.html:356
+#: templates/tolmach/landing.html:375
 msgid ""
 "Documents with complex formatting is not a problem for the «Tolmach». You "
 "don't need to think about how the text was formatted in the original "
@@ -414,11 +414,11 @@ msgid ""
 "notes."
 msgstr ""
 
-#: templates/tolmach/landing.html:360
+#: templates/tolmach/landing.html:379
 msgid "Machine translation systems"
 msgstr ""
 
-#: templates/tolmach/landing.html:362
+#: templates/tolmach/landing.html:381
 msgid ""
 "Despite the fact that machine translations result texts' quality is far from "
 "perfect, they can be a good help during the initial stages of translation. "
@@ -426,11 +426,11 @@ msgid ""
 "the final, much more high-quality translation is built."
 msgstr ""
 
-#: templates/tolmach/landing.html:366
+#: templates/tolmach/landing.html:385
 msgid "Dictionaries"
 msgstr ""
 
-#: templates/tolmach/landing.html:368
+#: templates/tolmach/landing.html:387
 msgid ""
 "When you see an unfamiliar word, you don't need to interrupt the translating "
 "process to use an external dictionary. You can just select the word and "
@@ -438,46 +438,46 @@ msgid ""
 "database is not static and is being constantly updated."
 msgstr ""
 
-#: templates/tolmach/landing.html:381
+#: templates/tolmach/landing.html:400
 msgid "Try «Tolmach».<br> It's great."
 msgstr ""
 
-#: templates/tolmach/landing.html:383
+#: templates/tolmach/landing.html:402
 msgid ""
 "Just register or log in to the service using your Vkontakte, Facebook or "
 "Twitter account."
 msgstr ""
 
-#: templates/tolmach/landing.html:386
+#: templates/tolmach/landing.html:405
 msgid ""
 "If you don't like it – just log out of your account. But, we think you'll "
 "like it:)"
 msgstr ""
 
-#: templates/tolmach/landing.html:392
+#: templates/tolmach/landing.html:411
 msgid "rubles you need to use the service."
 msgstr ""
 
-#: templates/tolmach/landing.html:398
+#: templates/tolmach/landing.html:417
 msgid "that's how many fragments we have already translated"
 msgstr ""
 
-#: templates/tolmach/landing.html:404
+#: templates/tolmach/landing.html:423
 msgid ""
 "the answer to the ultimate question of life, the universe and everything"
 msgstr ""
 
-#: templates/tolmach/landing.html:535 templates/tolmach/landing.html.py:575
-#: templates/tolmach/landing.html:615
+#: templates/tolmach/landing.html:554 templates/tolmach/landing.html.py:594
+#: templates/tolmach/landing.html:634
 msgid "Password is required field"
 msgstr ""
 
-#: templates/tolmach/landing.html:571 templates/tolmach/landing.html.py:607
-#: templates/tolmach/landing.html:645
+#: templates/tolmach/landing.html:590 templates/tolmach/landing.html.py:626
+#: templates/tolmach/landing.html:664
 msgid "Username is required field"
 msgstr ""
 
-#: templates/tolmach/landing.html:611
+#: templates/tolmach/landing.html:630
 msgid "Email is required field"
 msgstr ""
 
@@ -684,7 +684,7 @@ msgstr ""
 #: templates/translations/partial/add_text_modal.html:55
 msgid ""
 "Click here to upload file or drag file here to upload.</br> Supported "
-"formats: DOCX, SRT, POT, PO, MO."
+"formats: DOCX, SRT, ASS, POT, PO, MO."
 msgstr ""
 
 #: templates/translations/partial/add_text_modal.html:69
@@ -1011,8 +1011,8 @@ msgid "Text not found"
 msgstr ""
 
 #: translations/decorators.py:22 translations/views_ajax.py:169
-#: translations/views_ajax.py:733 translations/views_ajax.py:778
-#: translations/views_ajax.py:853
+#: translations/views_ajax.py:730 translations/views_ajax.py:775
+#: translations/views_ajax.py:850
 msgid "Not allowed"
 msgstr ""
 
@@ -1021,11 +1021,11 @@ msgstr ""
 msgid "Project id is not set"
 msgstr ""
 
-#: translations/utils.py:188 translations/utils.py:226
+#: translations/utils.py:189 translations/utils.py:227
 msgid "This source language is not supported yet"
 msgstr ""
 
-#: translations/utils.py:199 translations/utils.py:237
+#: translations/utils.py:200 translations/utils.py:238
 msgid "This target language is not supported yet"
 msgstr ""
 
@@ -1054,8 +1054,8 @@ msgstr ""
 #: translations/views_ajax.py:36 translations/views_ajax.py:55
 #: translations/views_ajax.py:122 translations/views_ajax.py:223
 #: translations/views_ajax.py:414 translations/views_ajax.py:463
-#: translations/views_ajax.py:580 translations/views_ajax.py:893
-#: translations/views_ajax.py:916
+#: translations/views_ajax.py:580 translations/views_ajax.py:890
+#: translations/views_ajax.py:913
 msgid "You have to be a manager of project"
 msgstr ""
 
@@ -1092,7 +1092,7 @@ msgid "User is not a member of project"
 msgstr ""
 
 #: translations/views_ajax.py:244 translations/views_ajax.py:320
-#: translations/views_ajax.py:324 translations/views_ajax.py:768
+#: translations/views_ajax.py:324 translations/views_ajax.py:765
 msgid "Language not found"
 msgstr ""
 
@@ -1159,34 +1159,34 @@ msgstr ""
 msgid "Target language is not set"
 msgstr ""
 
-#: translations/views_ajax.py:755 translations/views_ajax.py:877
-#: translations/views_ajax.py:904 translations/views_ajax.py:980
+#: translations/views_ajax.py:752 translations/views_ajax.py:874
+#: translations/views_ajax.py:901 translations/views_ajax.py:977
 msgid "Id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:760 translations/views_ajax.py:784
-#: translations/views_ajax.py:848 translations/views_ajax.py:863
-#: translations/views_ajax.py:909 translations/views_ajax.py:985
+#: translations/views_ajax.py:757 translations/views_ajax.py:781
+#: translations/views_ajax.py:845 translations/views_ajax.py:860
+#: translations/views_ajax.py:906 translations/views_ajax.py:982
 msgid "Not found"
 msgstr ""
 
-#: translations/views_ajax.py:775
+#: translations/views_ajax.py:772
 msgid "Translation not found"
 msgstr ""
 
-#: translations/views_ajax.py:797
+#: translations/views_ajax.py:794
 msgid "Entry translation text is not set"
 msgstr ""
 
-#: translations/views_ajax.py:843
+#: translations/views_ajax.py:840
 msgid "entry is not set"
 msgstr ""
 
-#: translations/views_ajax.py:856
+#: translations/views_ajax.py:853
 msgid "translation is not set"
 msgstr ""
 
-#: translations/views_ajax.py:960
+#: translations/views_ajax.py:957
 msgid "Something went wrong"
 msgstr ""
 
