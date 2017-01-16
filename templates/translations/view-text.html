@@ -121,7 +121,7 @@ startEditing            padding-left: 12px;
                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
                                          ng-drop="textareaDrop($event, entry)"
                                          ng-focus="startEditing(entry)"
-                                         ng-keypress="textareaKeypress($event, entry)"
+                                         ng-keydown="textareaKeydown($event, entry)"
                                          text-editor>
                                     </div>
                                 </div>
