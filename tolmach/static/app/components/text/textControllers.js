@@ -364,7 +364,7 @@
                     }
                 }
             };
-            $scope.textareaKeypress = function (event, entry) {
+            $scope.textareaKeydown = function (event, entry) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if ($scope.savingOptions.btn === 'enter') {
                     if (code === 13 || code === 10) {
