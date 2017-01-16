@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 06:45+0300\n"
+"POT-Creation-Date: 2017-01-16 11:26+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: zh\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: chat/views.py:17 chat/views.py:34
@@ -186,13 +186,12 @@ msgstr "Tolmach是什么？"
 
 #: templates/tolmach/landing.html:7
 msgid ""
-"«Tolmach» is an integrated translating environment, service that combines "
-"all necessary tools for the translator in one place — glossaries, "
-"translation memory databases, dictionaries, machine translation engines and "
-"more. All the paperwork also will be done by «Tolmach». All you have to do "
-"is to load the document into the system. All the extraction of useful text "
-"and division up into easy to translate fragments will be produced "
-"automatically."
+"«Tolmach» is an integrated translating environment, service that combines all "
+"necessary tools for the translator in one place — glossaries, translation "
+"memory databases, dictionaries, machine translation engines and more. All "
+"the paperwork also will be done by «Tolmach». All you have to do is to load "
+"the document into the system. All the extraction of useful text and division "
+"up into easy to translate fragments will be produced automatically."
 msgstr ""
 "“Tolmach”是一种将词汇表、翻译内存数据库、词典、机器翻译引擎等所有必要的翻译工"
 "具相结合的翻译集成环境和服务。全部书面工作也是被«Tolmach»做的你只要把文案上传"
@@ -571,6 +570,7 @@ msgstr "网站"
 #: templates/translations/partial/add_glossary_modal.html:89
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:137
+#: templates/translations/view-text.html:13
 msgid "Save"
 msgstr "保存"
 
@@ -640,6 +640,7 @@ msgstr "私人"
 #: templates/translations/project.html:205
 #: templates/translations/projects-main.html:138
 #: templates/translations/projects-main.html:351
+#: templates/translations/view-text.html:12
 msgid "Add"
 msgstr "添加"
 
@@ -929,14 +930,6 @@ msgstr "机器翻译"
 msgid "Translation memory variants"
 msgstr ""
 
-#: templates/translations/view-text.html:12
-msgid "Add (Ctrl + Enter)"
-msgstr "添加 (Ctrl + Enter)"
-
-#: templates/translations/view-text.html:13
-msgid "Save (Ctrl + Enter)"
-msgstr "保存 (Ctrl + Enter)"
-
 #: templates/translations/view-text.html:14
 msgid "Remove"
 msgstr "移除"
@@ -954,10 +947,8 @@ msgid "Translation"
 msgstr "翻译"
 
 #: templates/translations/view-text.html:18
-#, fuzzy
-#| msgid "Settings"
-msgid "Save settings"
-msgstr "设置"
+msgid "Add with"
+msgstr "保存用"
 
 #: templates/translations/view-text.html:81
 msgid "Disapprove translation"
@@ -1204,6 +1195,17 @@ msgstr ""
 #: translations/views_ajax.py:957
 msgid "Something went wrong"
 msgstr ""
+
+#~ msgid "Add (Ctrl + Enter)"
+#~ msgstr "添加 (Ctrl + Enter)"
+
+#~ msgid "Save (Ctrl + Enter)"
+#~ msgstr "保存 (Ctrl + Enter)"
+
+#, fuzzy
+#~| msgid "Settings"
+#~ msgid "Save settings"
+#~ msgstr "设置"
 
 #, fuzzy
 #~| msgid "Reset password"

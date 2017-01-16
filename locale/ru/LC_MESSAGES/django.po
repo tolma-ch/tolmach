@@ -8,16 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-16 06:45+0300\n"
+"POT-Creation-Date: 2017-01-16 11:26+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: chat/views.py:17 chat/views.py:34
 msgid "Project not set"
@@ -192,13 +192,12 @@ msgstr "Что такое «Толмач»?"
 
 #: templates/tolmach/landing.html:7
 msgid ""
-"«Tolmach» is an integrated translating environment, service that combines "
-"all necessary tools for the translator in one place — glossaries, "
-"translation memory databases, dictionaries, machine translation engines and "
-"more. All the paperwork also will be done by «Tolmach». All you have to do "
-"is to load the document into the system. All the extraction of useful text "
-"and division up into easy to translate fragments will be produced "
-"automatically."
+"«Tolmach» is an integrated translating environment, service that combines all "
+"necessary tools for the translator in one place — glossaries, translation "
+"memory databases, dictionaries, machine translation engines and more. All "
+"the paperwork also will be done by «Tolmach». All you have to do is to load "
+"the document into the system. All the extraction of useful text and division "
+"up into easy to translate fragments will be produced automatically."
 msgstr ""
 "«Толмач» - это интергированная среда перевода, сервис, объединяющий в себе "
 "все необходимые переводчику инструменты в одном месте — глоссарии, базы "
@@ -415,8 +414,8 @@ msgid ""
 "We put a lot of effort to make the «Tolmach» interface as easy and "
 "minimalistic as possible."
 msgstr ""
-"Мы приложили немало усилий, чтобы сделать интерфейс «Толмача» как можно "
-"более лёгким и минималистичным."
+"Мы приложили немало усилий, чтобы сделать интерфейс «Толмача» как можно более "
+"лёгким и минималистичным."
 
 #: templates/tolmach/landing.html:363
 msgid ""
@@ -631,6 +630,7 @@ msgstr "Адрес сайта"
 #: templates/translations/partial/add_glossary_modal.html:89
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:137
+#: templates/translations/view-text.html:13
 msgid "Save"
 msgstr "Сохранить"
 
@@ -701,6 +701,7 @@ msgstr "Приватный"
 #: templates/translations/project.html:205
 #: templates/translations/projects-main.html:138
 #: templates/translations/projects-main.html:351
+#: templates/translations/view-text.html:12
 msgid "Add"
 msgstr "Добавить"
 
@@ -992,14 +993,6 @@ msgstr "Машинные переводы"
 msgid "Translation memory variants"
 msgstr "Варианты перевода из базы памяти"
 
-#: templates/translations/view-text.html:12
-msgid "Add (Ctrl + Enter)"
-msgstr "Добавить (Ctrl + Enter)"
-
-#: templates/translations/view-text.html:13
-msgid "Save (Ctrl + Enter)"
-msgstr "Сохранить (Ctrl + Enter)"
-
 #: templates/translations/view-text.html:14
 msgid "Remove"
 msgstr "Удалить"
@@ -1017,10 +1010,8 @@ msgid "Translation"
 msgstr "Перевод"
 
 #: templates/translations/view-text.html:18
-#, fuzzy
-#| msgid "Settings"
-msgid "Save settings"
-msgstr "Настройки"
+msgid "Add with"
+msgstr "Добавлять через"
 
 #: templates/translations/view-text.html:81
 msgid "Disapprove translation"
@@ -1268,6 +1259,17 @@ msgstr "Преевод не указан"
 #: translations/views_ajax.py:957
 msgid "Something went wrong"
 msgstr ""
+
+#~ msgid "Add (Ctrl + Enter)"
+#~ msgstr "Добавить (Ctrl + Enter)"
+
+#~ msgid "Save (Ctrl + Enter)"
+#~ msgstr "Сохранить (Ctrl + Enter)"
+
+#, fuzzy
+#~| msgid "Settings"
+#~ msgid "Save settings"
+#~ msgstr "Настройки"
 
 #~ msgid "New password saved."
 #~ msgstr "Новый пароль сохранён"
