@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-26 06:38+0400\n"
+"POT-Creation-Date: 2017-01-16 06:45+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: chat/views.py:17 chat/views.py:34
@@ -186,12 +186,13 @@ msgstr "Tolmach是什么？"
 
 #: templates/tolmach/landing.html:7
 msgid ""
-"«Tolmach» is an integrated translating environment, service that combines all "
-"necessary tools for the translator in one place — glossaries, translation "
-"memory databases, dictionaries, machine translation engines and more. All "
-"the paperwork also will be done by «Tolmach». All you have to do is to load "
-"the document into the system. All the extraction of useful text and division "
-"up into easy to translate fragments will be produced automatically."
+"«Tolmach» is an integrated translating environment, service that combines "
+"all necessary tools for the translator in one place — glossaries, "
+"translation memory databases, dictionaries, machine translation engines and "
+"more. All the paperwork also will be done by «Tolmach». All you have to do "
+"is to load the document into the system. All the extraction of useful text "
+"and division up into easy to translate fragments will be produced "
+"automatically."
 msgstr ""
 "“Tolmach”是一种将词汇表、翻译内存数据库、词典、机器翻译引擎等所有必要的翻译工"
 "具相结合的翻译集成环境和服务。全部书面工作也是被«Tolmach»做的你只要把文案上传"
@@ -952,52 +953,58 @@ msgstr "原始"
 msgid "Translation"
 msgstr "翻译"
 
-#: templates/translations/view-text.html:80
+#: templates/translations/view-text.html:18
+#, fuzzy
+#| msgid "Settings"
+msgid "Save settings"
+msgstr "设置"
+
+#: templates/translations/view-text.html:81
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:93
+#: templates/translations/view-text.html:94
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:94
+#: templates/translations/view-text.html:95
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:203
+#: templates/translations/view-text.html:227
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:282
+#: templates/translations/view-text.html:306
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:283
+#: templates/translations/view-text.html:307
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:284
+#: templates/translations/view-text.html:308
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:285
+#: templates/translations/view-text.html:309
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:286
+#: templates/translations/view-text.html:310
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:287
+#: templates/translations/view-text.html:311
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:288
+#: templates/translations/view-text.html:312
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:289
+#: templates/translations/view-text.html:313
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 

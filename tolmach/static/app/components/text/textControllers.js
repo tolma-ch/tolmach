@@ -3,8 +3,8 @@
 
     var module = angular.module('textControllers', []);
 
-    module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout',
-        function ($rootScope, $scope, $http, $timeout) {
+    module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout', 'localStorageService',
+        function ($rootScope, $scope, $http, $timeout, localStorageService) {
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
@@ -62,6 +62,12 @@
                         //console.error(a);
                     });
                 };
+            $scope.savingOptions = {
+                btn: localStorageService.get('savingOptions-btn') || 'ctrl-enter'
+            };
+            $scope.changeSavingOptions = function () {
+                localStorageService.set('savingOptions-btn', $scope.savingOptions.btn);
+            };
             $scope.clearTags = clearTags;
             $scope.clearTranslation = clearTranslation;
             $scope.activeEntry = null;
@@ -343,21 +349,35 @@
                 });
                 //entry.suggestion += text;
             };
+            var saveHotKey = function (entry) {
+                $scope.suggestTranslation(entry);
+                var i,
+                    found = false;
+                for (i in $scope.entries) {
+                    var someEntry = $scope.entries[i];
+                    if (found === true && !someEntry.approved) {
+                        $scope.toggleEntry(someEntry);
+                        break;
+                    }
+                    if (someEntry === entry) {
+                        found = true;
+                    }
+                }
+            };
             $scope.textareaKeypress = function (event, entry) {
                 var code = event.keyCode ? event.keyCode : event.which;
-                if (event.ctrlKey && (code === 13 || code === 10)) {
-                    $scope.suggestTranslation(entry);
-                    var i,
-                        found = false;
-                    for (i in $scope.entries) {
-                        var someEntry = $scope.entries[i];
-                        if (found === true && !someEntry.approved) {
-                            $scope.toggleEntry(someEntry);
-                            break;
-                        }
-                        if (someEntry === entry) {
-                            found = true;
-                        }
+                if ($scope.savingOptions.btn === 'enter') {
+                    if (code === 13 || code === 10) {
+                        console.log('just enter');
+                        saveHotKey(entry);
+                    }
+                } else {
+                    if (event.keyCode == 13 && event.metaKey) {
+                        console.log('cmd enter');
+                        saveHotKey(entry);
+                    } else if (event.ctrlKey && (code === 13 || code === 10)) {
+                        console.log('ctrl enter');
+                        saveHotKey(entry);
                     }
                 }
             };

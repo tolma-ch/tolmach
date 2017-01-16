@@ -15,6 +15,7 @@
 {% trans 'Cancel (Esc)' as cancel_translation %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
+{% trans 'Save settings' as text_options %}
 
     <style>
         .sidebar {
@@ -125,6 +126,29 @@ startEditing            padding-left: 12px;
                                     </div>
                                 </div>
                                 <div class="translation-editor__btns">
+                                    <div class="translation-editor__options">
+                                        <div class="translation-editor__options-content">
+                                            {{ text_options }}:
+                                            <div>
+                                                <label>
+                                                    <input type="radio" class="ace"
+                                                           value="ctrl-enter"
+                                                           ng-model="savingOptions.btn"
+                                                           ng-click="changeSavingOptions()">
+                                                    <span class="lbl"> Ctrl-Enter</span>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    <input type="radio" class="ace"
+                                                           value="enter"
+                                                           ng-model="savingOptions.btn"
+                                                           ng-click="changeSavingOptions()">
+                                                    <span class="lbl"> Enter</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <a href=""
                                        ng-click="suggestTranslation(entry)"
                                        tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
