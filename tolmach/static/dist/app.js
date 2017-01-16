@@ -1220,7 +1220,7 @@
             $scope.textareaKeydown = function (event, entry) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if ($scope.savingOptions.btn === 'enter') {
-                    if (code === 13 || code === 10) {
+                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey) {
                         console.log('just enter');
                         saveHotKey(entry);
                     }
