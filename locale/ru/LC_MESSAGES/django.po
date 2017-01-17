@@ -1011,7 +1011,7 @@ msgstr "Перевод"
 
 #: templates/translations/view-text.html:18
 msgid "Add with"
-msgstr "Добавлять через"
+msgstr "Добавлять с помощью"
 
 #: templates/translations/view-text.html:81
 msgid "Disapprove translation"
