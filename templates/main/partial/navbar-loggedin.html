@@ -4,6 +4,7 @@
 {% trans 'pitched you out of the project' as uninvitation %}
 {% trans 'Logout' as logout %}
 {% trans 'See all messages' as messages %}
+{% trans 'Language' as language %}
 <ul class="navbar-nav pull-right">
 
 	<li class="navbar-nav__button button_light-blue"
@@ -99,6 +100,36 @@
             <!--</li>-->
 
             <!--<li class="divider"></li>-->
+
+            <li class="dropdown-hover dropleft">
+                <a href="#" tabindex="-1">{{ language }}</a>
+
+                <ul class="dropdown-menu pull-left">
+                    <li>
+                        <a href="" ng-click="changeLanguage('en')">
+                            English
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="" ng-click="changeLanguage('ru')">
+                            Russian
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="" ng-click="changeLanguage('it')">
+                            Italian
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="" ng-click="changeLanguage('zh')">
+                            Chinese
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li>
                 <a href="/logout">
