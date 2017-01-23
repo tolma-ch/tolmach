@@ -499,6 +499,7 @@
                     project: window['projectId'],
                     id: $scope.text.id,
                     title: $scope.text.title,
+                    machine: $scope.text.machine,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,

@@ -52,6 +52,7 @@ def text_to_json(text, text_translations, locale):
     return {
         'id': text.id,
         'title': text.title,
+        'machine': text.machine,
         'subject': text.subject.id,
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
