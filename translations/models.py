@@ -138,6 +138,7 @@ class Text(models.Model):
     document_name = models.CharField(max_length=256, default=None, null=True)
     time_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+    machine = models.BooleanField(default=True)
 
     def __unicode__(self):
         return unicode(self.title)

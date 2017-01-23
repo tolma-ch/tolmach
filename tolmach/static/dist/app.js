@@ -648,6 +648,7 @@
                     project: window['projectId'],
                     id: $scope.text.id,
                     title: $scope.text.title,
+                    machine: $scope.text.machine,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
@@ -893,6 +894,7 @@
                     return translationBody;
                 },
                 textId = window['textId'],
+                useMachine = window['useMachine'],
                 getYaMachines = function (entry) {
                     $http.post('/api/ya-translate/', {
                         lang_pair: $scope.langPair,
@@ -1180,7 +1182,7 @@
                         entry.pluralVariants = [];
                     }
                     entry.editing = true;
-                    if (typeof entry['machines'] === 'undefined') {
+                    if ((useMachine) && (typeof entry['machines'] === 'undefined')) {
                         getYaMachines(entry);
                         getTmdbVariants(entry);
                     }
