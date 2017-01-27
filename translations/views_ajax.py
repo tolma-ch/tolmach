@@ -1013,6 +1013,8 @@ def tmdb_search(request):
                                                                     }
                                                                     }
                                                                 })
+                except es_exept.ConnectionError:
+                    return HttpResponse(json.dumps(_('TMDB unavaliable at the moment')), content_type="application/json", status=400)
                 except es_exept.NotFoundError:
                     tmx = TMDatabase.objects.get(id=tmx_id)
                     tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)
