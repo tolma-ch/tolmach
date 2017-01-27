@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='text',
-            name='machine',
-            field=models.BooleanField(default=True),
+            name='options',
+            field=models.TextField(default=''),
+            preserve_default=False,
         ),
     ]

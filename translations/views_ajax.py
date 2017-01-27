@@ -234,7 +234,11 @@ def text_ajax(request, project):
             except Text.DoesNotExist:
                 return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
             text.title = post['title']
-            text.machine = post['machine']
+
+            text_options = json.loads(text.options)
+            text_options['machine'] = post['machine']
+            text.options = json.dumps(text_options)
+
             # text.subject = subject
             if 'translations' in post:
                 all_text_translations = [x.target_lang for x in TextTranslation.objects.filter(text=text)]
