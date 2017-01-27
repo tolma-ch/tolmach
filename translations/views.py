@@ -153,41 +153,41 @@ def project(request, proj_id=0):
     return render_to_response(template, data, RequestContext(request))
 
 
-@login_required
-def view_text(request, text_id):
-    try:
-        text = Text.objects.get(id=text_id)
-    except Text.DoesNotExist:
-        raise Http404(_('Sorry, no such text here!'))
-    if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
-        return HttpResponseRedirect('/')
-    projects_text = ''
-    projects_url = ''
-    pr = Project.objects.get(id=text.project.id)
-    if pr.is_user_manager(request.user):
-        projects_text = _('My projects')
-        projects_url = '/projects/my/'
-    elif str(request.user.id) in pr.members.split(','):
-        projects_text = _('Third-party projects')
-        projects_url = '/projects/thirdparty/'
-    elif not pr.is_private:
-        projects_text = _('Public projects')
-        projects_url = '/projects/public/'
-    else:
-        projects_text = "%s" % pr.manager.username
-        projects_url = '/user/%d/' % pr.manager.id
-    data = {'username': request.user,
-            'page_title': text.title,
-            'breadcrumbs': [
-                [projects_text, projects_url],
-                [text.project.name, '/project/%d/' % text.project.id],
-                [text.title, ''],
-            ],
-            'text': text,
-            }
-    template = 'translations/view-text.html'
-    return render_to_response(template, data, RequestContext(request))
+# @login_required
+# def view_text(request, text_id):
+#     try:
+#         text = Text.objects.get(id=text_id)
+#     except Text.DoesNotExist:
+#         raise Http404(_('Sorry, no such text here!'))
+#     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
+#         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+#         return HttpResponseRedirect('/')
+#     projects_text = ''
+#     projects_url = ''
+#     pr = Project.objects.get(id=text.project.id)
+#     if pr.is_user_manager(request.user):
+#         projects_text = _('My projects')
+#         projects_url = '/projects/my/'
+#     elif str(request.user.id) in pr.members.split(','):
+#         projects_text = _('Third-party projects')
+#         projects_url = '/projects/thirdparty/'
+#     elif not pr.is_private:
+#         projects_text = _('Public projects')
+#         projects_url = '/projects/public/'
+#     else:
+#         projects_text = "%s" % pr.manager.username
+#         projects_url = '/user/%d/' % pr.manager.id
+#     data = {'username': request.user,
+#             'page_title': text.title,
+#             'breadcrumbs': [
+#                 [projects_text, projects_url],
+#                 [text.project.name, '/project/%d/' % text.project.id],
+#                 [text.title, ''],
+#             ],
+#             'text': text,
+#             }
+#     template = 'translations/view-text.html'
+#     return render_to_response(template, data, RequestContext(request))
 
 
 @login_required
@@ -228,6 +228,10 @@ def view_translation(request, text_id, target_lang):
     else:
         projects_text = "%s" % pr.manager.username
         projects_url = '/user/%d/' % pr.manager.id
+
+    text_options = json.loads(text.options)
+    machine_trans_enabled = text_options.get('machine', True)
+
     data = {'username': request.user,
             'page_title': text.title,
             'breadcrumbs': [
@@ -236,6 +240,7 @@ def view_translation(request, text_id, target_lang):
                 [text.title, ''],
             ],
             'text': text,
+            'use_machine': int(machine_trans_enabled),
             'target_lang': target_lang,
             }
     template = 'translations/view-text.html'
@@ -249,6 +254,8 @@ def export_translation(request, text_id, target_lang):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
         return HttpResponseRedirect('/')
     format = text.document_format
+
+    print format
 
     title = text.title
 
