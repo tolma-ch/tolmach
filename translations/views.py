@@ -197,7 +197,7 @@ def view_translation(request, text_id, target_lang):
     except Text.DoesNotExist:
         raise Http404(_('Sorry, no such text here!'))
     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
     projects_text = ''
     projects_url = ''
@@ -251,7 +251,7 @@ def view_translation(request, text_id, target_lang):
 def export_translation(request, text_id, target_lang):
     text = get_object_or_404(Text, id=text_id)
     if not text.is_user_allowed_to_read(request.user):
-        messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
+        messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
     format = text.document_format
 
