@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='text',
             name='options',
-            field=models.TextField(default=''),
+            field=models.TextField(default='{}'),
             preserve_default=False,
         ),
     ]
