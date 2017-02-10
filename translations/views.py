@@ -339,6 +339,15 @@ def export_translation(request, text_id, target_lang):
         response = HttpResponse(srt.compose(subtitles_list), content_type='text/srt')
         doc_ext = "srt"
 
+    elif format == utils.FORMATS['xlsx']:
+        manager = text.project.manager
+        project = text.project
+        file_path = '/%s/%d/%d/%s' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                      int(manager.id),
+                                      int(project.id),
+                                      text.document_name)
+        response, doc_ext = export_utils.export_xlsx(text_id, file_path, text_translation)
+
     elif format == utils.FORMATS['docx']:
         # открываем документ на чтение
         from StringIO import StringIO

@@ -9,6 +9,38 @@ def unescape_html(string):
     import HTMLParser
     return HTMLParser.HTMLParser().unescape(string)
 
+def export_xlsx(text_id, file_path, text_translation):
+    from openpyxl import load_workbook
+
+    doc_ext = "xlsx"
+    content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    wb = load_workbook(file_path)
+
+    all_entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
+    for entry in all_entries:
+        entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+        # entry_orig = unescape_html(entry.body)
+
+        entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+        if entry_translation:
+            entry_translation = unescape_html(entry_translation[0].body.encode('utf8'))
+
+            ws = wb[entry_meta["sheet"]]
+            ws[entry_meta["target_coord"]] = entry_translation
+
+    # wb.save()
+
+    tmp_path = '/tmp/test.xlsx'
+    wb.save(tmp_path)
+    with open(tmp_path, 'r') as f:
+        text_to_return = f.readlines()
+    os.remove(tmp_path)
+
+    response = HttpResponse(text_to_return, content_type=content_type)
+    return response, doc_ext
+
+
 def export_po(text_id, format, target_lang, text_translation):
     import polib
 
