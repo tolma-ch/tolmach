@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     url(r'%s' % PATH, include('social.apps.django_app.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^rest/', include('api.urls')),
 
     # main
     url(r'^$', main_views.index, name='index'),
