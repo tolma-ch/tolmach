@@ -15,7 +15,7 @@ from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
-import json
+import json, os
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
 
@@ -257,44 +257,13 @@ def text_ajax(request, project):
                         text_translation = TextTranslation.objects.get(text=text,
                                                                        target_lang=target_lang)
                     except TextTranslation.DoesNotExist:
-                        text_translation = TextTranslation(text=text,
-                                                           target_lang=target_lang,
-                                                           )
-                        text_translation.save()
-
-                        #
-                        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
-                        #
-
-                        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
-                            gettext_meta = {
-                                'all_meta': {
-                                    'Project-Id-Version': '1.0',
-                                    'Report-Msgid-Bugs-To': 'you@example.com',
-                                    'POT-Creation-Date': '2007-10-18 14:00+0100',
-                                    'PO-Revision-Date': '2007-10-18 14:00+0100',
-                                    'Last-Translator': 'you <you@example.com>',
-                                    'Language-Team': 'English <yourteam@example.com>',
-                                    'Language': target_lang.code,
-                                    'MIME-Version': '1.0',
-                                    'Content-Type': 'text/plain; charset=utf-8',
-                                    'Content-Transfer-Encoding': '8bit',
-                                    'Plural-Forms': target_lang.plural_forms,
-                                },
-                                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
-                            }
-
-                            text_translation_meta = TextTranslationMeta(translation=text_translation,
-                                                                        meta_type="gettext_metadata",
-                                                                        meta_data=json.dumps(gettext_meta),
-                                                                        )
-                            text_translation_meta.save()
+                        text_translation = translation_ajax(request, text, target_lang, local_call=True, method="POST")
 
                     if 'glossaries' in translation:
                         glossary_ids_list = [str(x) for x in translation['glossaries']]
                         text_translation.glossaries_list.clear()
-                        for id in glossary_ids_list:
-                            text_translation.glossaries_list.add(Glossary.objects.get(id=id))
+                        for glossary_id in glossary_ids_list:
+                            text_translation.glossaries_list.add(Glossary.objects.get(id=glossary_id))
                     else:
                         text_translation.glossaries_list.clear()
 
@@ -304,8 +273,8 @@ def text_ajax(request, project):
                     if 'tmxes' in translation:
                         tmdb_ids_list = [str(x) for x in translation['tmxes']]
                         text_translation.tmdatabases_list.clear()
-                        for id in tmdb_ids_list:
-                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=id))
+                        for tmx_id in tmdb_ids_list:
+                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=tmx_id))
                     else:
                         text_translation.tmdatabases_list.clear()
                     text_translation.save()
@@ -337,7 +306,6 @@ def text_ajax(request, project):
                 text_body = post['textBody']
 
             elif 'file' in request.FILES:
-                import os
                 file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
 
                 if file_type not in utils.FORMATS.values():
@@ -394,6 +362,47 @@ def text_ajax(request, project):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+def translation_ajax(request, text, target_lang, local_call=False, method=None):
+    method = method if method else request.method
+
+    if method == "POST":
+        text_translation = TextTranslation(text=text,
+                                           target_lang=target_lang,
+                                           )
+        text_translation.save()
+
+        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
+        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
+            gettext_meta = {
+                'all_meta': {
+                    'Project-Id-Version': '1.0',
+                    'Report-Msgid-Bugs-To': 'you@example.com',
+                    'POT-Creation-Date': '2007-10-18 14:00+0100',
+                    'PO-Revision-Date': '2007-10-18 14:00+0100',
+                    'Last-Translator': 'you <you@example.com>',
+                    'Language-Team': 'English <yourteam@example.com>',
+                    'Language': target_lang.code,
+                    'MIME-Version': '1.0',
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Content-Transfer-Encoding': '8bit',
+                    'Plural-Forms': target_lang.plural_forms,
+                },
+                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
+            }
+
+            text_translation_meta = TextTranslationMeta(translation=text_translation,
+                                                        meta_type="gettext_metadata",
+                                                        meta_data=json.dumps(gettext_meta),
+                                                        )
+            text_translation_meta.save()
+
+        if local_call:
+            return text_translation
+        else:
+            return HttpResponse(json.dumps(True), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
 @accept_project
 @login_required
 def glossary_ajax(request, project):
@@ -443,26 +452,15 @@ def glossary_ajax(request, project):
                                 status=400)
         glossary_name = post['name']
         if 'file' in request.FILES:
-            f = request.FILES['file']
-            import uuid
-            file_on_disk = '/tmp/glossary_%s.%s' % (uuid.uuid4(), request.FILES['file'].name.split('.')[-1])
-            if f.size > settings.GLOSSARY_FILE_SIZE:
-                return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                    status=400)
-            with open(file_on_disk, 'w+') as fd:
-                for chunk in f.chunks():
-                    fd.write(chunk)
-
-            from mimetypes import MimeTypes
-            mime = MimeTypes()
-            file_type = mime.guess_type(file_on_disk)[0]
-            print "FILETYPE:", file_type
+            file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.GLOSSARY_FILE_SIZE)
 
             if file_type not in ['text/csv']:
+                os.remove(file_path)
                 return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                     status=400)
 
-            pairs_array = utils.parse_glossary(file_on_disk, file_type)
+            pairs_array = utils.parse_glossary(file_path, file_type)
+            os.remove(file_path)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
@@ -562,22 +560,16 @@ def tmx_ajax(request, project):
         if 'file' not in request.FILES:
             return HttpResponse(json.dumps(_('TMX file is not passed')), content_type="application/json",
                                 status=400)
-        f = request.FILES['file']
-        if f.size > settings.TM_FILE_SIZE:
-            return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                status=400)
-        # TODO: Разобраться, какого хрена tmx тут ваще определяется как octet-stream
-        elif f.content_type not in ['application/xml', 'application/octet-stream']:
+        file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
+        
+        if file_type not in ['application/xml', 'application/octet-stream']:
+            os.remove(file_path)
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                 status=400)
-        import uuid
-        filename = '/tmp/tmdb_%s' % uuid.uuid4()
-        with open(filename, 'w+') as fd:
-            for chunk in f.chunks():
-                fd.write(chunk)
 
-        parse_result = utils.parse_tmx(filename, tmdb_name, project, request)
+        parse_result = utils.parse_tmx(file_path, tmdb_name, project, request)
         if not parse_result['error'] == 0:
+            os.remove(file_path)
             return HttpResponse(json.dumps(parse_result['message'],
                                          content_type="application/json",
                                          status=parse_result['error']
