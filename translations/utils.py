@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import re
 import os
+import json
 from django.utils.translation import ugettext as _
 from entries.models import Language
 from translations.models import TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
@@ -75,6 +76,32 @@ def get_plural_examples(p):
             if len(num_dict[result]) < 4:
                 num_dict[result].append(n)
     return num_dict
+
+
+def upload_file(file_object, max_size):
+    import os, random, string
+    from django.http import HttpResponse
+
+    # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
+    rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
+    file_name = rand_string + "." + file_object.name.split(".")[-1]
+    file_dir = '/%s' % settings.GLOBAL_DOCUMENTS_TMP_DIR
+    if not os.path.isdir(file_dir):
+        os.makedirs(file_dir)
+    file_path = '%s/%s' % (file_dir, file_name)
+    if file_object.size > max_size:
+        return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
+                            status=400)
+    with open(file_path, 'w+') as fd:
+        for chunk in file_object.chunks():
+            fd.write(chunk)
+
+    # Проверяем тип файла
+    from mimetypes import MimeTypes
+    mime = MimeTypes()
+    file_type = mime.guess_type(file_path)[0]
+
+    return file_name, file_path, file_type
 
 
 def parse_glossary(file_on_disk, filetype):
