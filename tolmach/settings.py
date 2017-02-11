@@ -258,6 +258,7 @@ TM_FILE_SIZE = 104857600
 DOCUMENT_FILE_SIZE = 104857600
 
 GLOBAL_DOCUMENTS_DIR = ""
+GLOBAL_DOCUMENTS_TMP_DIR = "/tmp"
 
 ELASTIC_LIST = [
     {"host": "localhost", "port": 9200, "timeout": 30}

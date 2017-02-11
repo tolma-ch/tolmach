@@ -13,9 +13,7 @@ keys = {
 @csrf_exempt
 @check_apikey
 def get_project_info(request, project):
-    if request.method == "GET":
-        return HttpResponse(json.dumps("ololo"))
-    elif request.method == "POST":
+    if request.method == "POST":
         return_data = {}
 
         project_texts = Text.objects.filter(project=project)

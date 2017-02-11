@@ -328,82 +328,53 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            import urllib
-            import urllib2
+            file_type, file_name, title, text_body = "", "", "", ""
 
             if 'textBody' in post:
                 file_type = "text/plain"
-                url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': "None",
-                          'format': file_type,
-                          'title': post['title'],
-                          'text_body': post['textBody'],
-                          'user_id': request.user.id,
-                          'project_id': project.id,
-                          'subject_id': subject.id,
-                          'source_lang': source_lang.code,
-                          'target_lang': target_lang.code
-                          }
-
-                data = urllib.urlencode(values)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = json.loads(response.read())
-
-                if the_page["Error"] == 0:
-                    text = Text.objects.get(id=the_page["Text"])
-                else:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+                file_name = "None"
+                title = post['title']
+                text_body = post['textBody']
 
             elif 'file' in request.FILES:
-                import os, random, string
-                f = request.FILES['file']
-                # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
-                rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
-                filename = rand_string + "." + request.FILES['file'].name.split(".")[-1]
-                file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                          int(request.user.id),
-                                          int(project.id))
-                if not os.path.isdir(file_dir):
-                    os.makedirs(file_dir)
-                file_on_disk = '%s/%s' % (file_dir, filename)
-                if f.size > settings.DOCUMENT_FILE_SIZE:
-                    return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                        status=400)
-                with open(file_on_disk, 'w+') as fd:
-                    for chunk in f.chunks():
-                        fd.write(chunk)
+                import os
+                file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
 
-                # Проверяем тип файла
-                from mimetypes import MimeTypes
-                mime = MimeTypes()
-                file_type = mime.guess_type(file_on_disk)[0]
-                print file_type
                 if file_type not in utils.FORMATS.values():
-                    os.remove(file_on_disk)
+                    os.remove(file_path)
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
-
-                url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': filename,
-                          'format': file_type,
-                          'title': post['title'],
-                          'user_id': request.user.id,
-                          'project_id': project.id,
-                          'subject_id': subject.id,
-                          'source_lang': source_lang.code,
-                          'target_lang': target_lang.code
-                          }
-
-                data = urllib.urlencode(values)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = json.loads(response.read())
-
-                if the_page["Error"] == 0:
-                    text = Text.objects.get(id=the_page["Text"])
                 else:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+                    os.rename(file_path, '/%s/%d/%d/%s' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                                           int(request.user.id),
+                                                           int(project.id),
+                                                           file_name))
+                title = post['title']
+                text_body = ""
+
+            import urllib
+            import urllib2
+            url = 'http://127.0.0.1:8080/convert'
+            values = {'fname': file_name,
+                      'format': file_type,
+                      'title': title,
+                      'text_body': text_body,
+                      'user_id': request.user.id,
+                      'project_id': project.id,
+                      'subject_id': subject.id,
+                      'source_lang': source_lang.code,
+                      'target_lang': target_lang.code
+                      }
+
+            data = urllib.urlencode(values)
+            req = urllib2.Request(url, data)
+            response = urllib2.urlopen(req)
+            the_page = json.loads(response.read())
+
+            if the_page["Error"] == 0:
+                text = Text.objects.get(id=the_page["Text"])
+            else:
+                return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
         translations = TextTranslation.objects.filter(text=text)
         result = text_to_json(text, translations, request.LANGUAGE_CODE)
