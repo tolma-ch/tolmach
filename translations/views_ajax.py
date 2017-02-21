@@ -313,16 +313,15 @@ def text_ajax(request, project):
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
                 else:
-                    os.rename(file_path, '/%s/%d/%d/%s' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                                           int(request.user.id),
-                                                           int(project.id),
-                                                           file_name))
+                    target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                                   int(request.user.id),
+                                                   int(project.id))
+                    if not os.path.isdir(target_path):
+                        os.makedirs(target_path)
+                    os.rename(file_path, '%s/%s' % (target_path, file_name))
                 title = post['title']
                 text_body = ""
 
-            import urllib
-            import urllib2
-            url = 'http://127.0.0.1:8080/convert'
             values = {'fname': file_name,
                       'format': file_type,
                       'title': title,
@@ -334,10 +333,7 @@ def text_ajax(request, project):
                       'target_lang': target_lang.code
                       }
 
-            data = urllib.urlencode(values)
-            req = urllib2.Request(url, data)
-            response = urllib2.urlopen(req)
-            the_page = json.loads(response.read())
+            the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', values))
 
             if the_page["Error"] == 0:
                 text = Text.objects.get(id=the_page["Text"])
@@ -361,6 +357,33 @@ def text_ajax(request, project):
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
+@accept_text
+def update_text(request, text):
+    project = text.project
+    if project.is_user_manager(request.user):
+        if 'file' in request.FILES:
+            file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+            if not file_type == text.document_format:
+                return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
+            else:
+                # достаём тесктовые данные из нового документа
+                new_values = {
+                    'fname': file_name,
+                    'text_id': text.id,
+                    'save_to_db': False,
+                }
+                new_data = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', new_values))
+
+                # отправляем новые данные в чтеца для обновления текста:
+                update_data = {
+                    'fname': file_name,
+                    'text_id': text.id,
+                    'new_data': new_data,
+                }
+                update_text = json.loads(utils.chtec_request('http://127.0.0.1:8080/update', update_data))
+
+        return HttpResponse(json.dumps(True), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 def translation_ajax(request, text, target_lang, local_call=False, method=None):
     method = method if method else request.method
@@ -561,7 +584,7 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('TMX file is not passed')), content_type="application/json",
                                 status=400)
         file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
-        
+
         if file_type not in ['application/xml', 'application/octet-stream']:
             os.remove(file_path)
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
