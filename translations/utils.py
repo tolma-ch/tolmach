@@ -103,6 +103,16 @@ def upload_file(file_object, max_size):
 
     return file_name, file_path, file_type
 
+def chtec_request(url, values):
+    import urllib
+    import urllib2
+
+    data = urllib.urlencode(values)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+
+    return response.read()
+
 
 def parse_glossary(file_on_disk, filetype):
     def decode(s, encodings=('ascii', 'utf-8', 'cp1251')):
