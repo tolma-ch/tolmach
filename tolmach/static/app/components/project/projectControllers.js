@@ -322,8 +322,40 @@
             };
         }
     ]);
-    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
-        function ($scope, $modalInstance, $http, Upload) {
+    module.controller('SelectTextRangesModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', 'data', '$timeout',
+        function ($scope, $modalInstance, $http, Upload, data, $timeout) {
+            $timeout(function () {
+                var container = angular.element('.table-sheet')[0],
+                    sheet = data[Object.keys(data)[0]],
+                    hot = new Handsontable(container, {
+                        data: sheet,
+                        minSpareCols: 0,
+                        minSpareRows: 0,
+                        rowHeaders: true,
+                        colHeaders: true,
+                        contextMenu: true,
+                        height: 500,
+                        afterSelectionEnd: function (changes, source) {
+                            //if (desel != 1) {
+                            //    console.log(arguments);
+                            //    console.log(Array.from(arguments).map(minOne));
+                            //    var normalizedArgs = Array.from(arguments).map(minOne);
+                            //    document.getElementById("coords").textContent = numToChar(normalizedArgs[1]) + normalizedArgs[0] + ":" +
+                            //        numToChar(normalizedArgs[3]) + normalizedArgs[2];
+                            //} else {
+                            //    container.style.pointerEvents = "none";
+                            //    hot.deselectCell();
+                            //}
+                        }
+                    });
+            });
+            $scope.ok = function () {
+                $modalInstance.close(text);
+            };
+        }
+    ]);
+    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', '$modal',
+        function ($scope, $modalInstance, $http, Upload, $modal) {
             $scope.busy = false;
             $scope.progress = 0;
             $scope.text = {
@@ -362,6 +394,11 @@
                         return;
                     }
                     $scope.busy = true;
+                    var fileName = $scope.text.files[0].name,
+                        ext = fileName ? fileName.split('.').pop() : false;
+                    if (ext === 'xlsx') {
+                        data['xlsx_prepare_state'] = 1;
+                    }
                     Upload.upload({
                             url: '/api/text/',
                             fields: data,
@@ -371,8 +408,29 @@
                             $scope.progress = 100.0 * evt.loaded / evt.total;
                         })
                         .success(function (text) {
-                            $modalInstance.close(text);
                             $scope.busy = false;
+                            if (ext === 'xlsx') {
+                                var modalInstance = $modal.open({
+                                    templateUrl: 'selectTextRangesModal.html',
+                                    controller: 'SelectTextRangesModalCtrl',
+                                    size: 'lg',
+                                    backdrop: 'static',
+                                    resolve: {
+                                        data: function () {
+                                            return text;
+                                        }
+                                    }
+                                });
+
+                                modalInstance.result.then(function (res) {
+                                    //todo
+                                    $modalInstance.close(text);
+                                }, function () {
+                                });
+
+                            } else {
+                                $modalInstance.close(text);
+                            }
                         })
                         .error(function (data) {
                             $scope.error = data;

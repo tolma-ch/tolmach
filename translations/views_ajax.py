@@ -333,6 +333,13 @@ def text_ajax(request, project):
                       'target_lang': target_lang.code
                       }
 
+            if post['xlsx_prepare_state'] == '1':
+                the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/preparse', values))
+                if the_page["Error"] == 0:
+                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json")
+                else:
+                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+
             the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', values))
 
             if the_page["Error"] == 0:
