@@ -306,7 +306,11 @@ def text_ajax(request, project):
                 text_body = post['textBody']
 
             elif 'file' in request.FILES:
-                file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+                file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+
+                if upload_error:
+                    return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                            status=400)
 
                 if file_type not in utils.FORMATS.values():
                     os.remove(file_path)
@@ -362,7 +366,10 @@ def update_text(request, text):
     project = text.project
     if project.is_user_manager(request.user):
         if 'file' in request.FILES:
-            file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+            file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+            if upload_error:
+                return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                        status=400)
             if not file_type == text.document_format:
                 return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
             else:
@@ -475,7 +482,11 @@ def glossary_ajax(request, project):
                                 status=400)
         glossary_name = post['name']
         if 'file' in request.FILES:
-            file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.GLOSSARY_FILE_SIZE)
+            file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.GLOSSARY_FILE_SIZE)
+
+            if upload_error:
+                return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                        status=400)
 
             if file_type not in ['text/csv']:
                 os.remove(file_path)
@@ -583,7 +594,11 @@ def tmx_ajax(request, project):
         if 'file' not in request.FILES:
             return HttpResponse(json.dumps(_('TMX file is not passed')), content_type="application/json",
                                 status=400)
-        file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
+        file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
+
+        if upload_error:
+            return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                    status=400)
 
         if file_type not in ['application/xml', 'application/octet-stream']:
             os.remove(file_path)
