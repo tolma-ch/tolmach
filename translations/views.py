@@ -5,7 +5,6 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
-from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -14,9 +13,11 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, Text, TextMeta, TextEntry, TextEntryMeta, TextTranslation
+from translations.models import Project, Text, TextTranslation
 from entries.models import Language, Subject
-import translations.utils as utils, export_utils
+import translations.utils as utils
+
+from tolmach import local_settings
 
 
 @login_required
@@ -153,43 +154,6 @@ def project(request, proj_id=0):
     return render_to_response(template, data, RequestContext(request))
 
 
-# @login_required
-# def view_text(request, text_id):
-#     try:
-#         text = Text.objects.get(id=text_id)
-#     except Text.DoesNotExist:
-#         raise Http404(_('Sorry, no such text here!'))
-#     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
-#         messages.add_message(request, messages.ERROR, _('Sorry, no such text here'))
-#         return HttpResponseRedirect('/')
-#     projects_text = ''
-#     projects_url = ''
-#     pr = Project.objects.get(id=text.project.id)
-#     if pr.is_user_manager(request.user):
-#         projects_text = _('My projects')
-#         projects_url = '/projects/my/'
-#     elif str(request.user.id) in pr.members.split(','):
-#         projects_text = _('Third-party projects')
-#         projects_url = '/projects/thirdparty/'
-#     elif not pr.is_private:
-#         projects_text = _('Public projects')
-#         projects_url = '/projects/public/'
-#     else:
-#         projects_text = "%s" % pr.manager.username
-#         projects_url = '/user/%d/' % pr.manager.id
-#     data = {'username': request.user,
-#             'page_title': text.title,
-#             'breadcrumbs': [
-#                 [projects_text, projects_url],
-#                 [text.project.name, '/project/%d/' % text.project.id],
-#                 [text.title, ''],
-#             ],
-#             'text': text,
-#             }
-#     template = 'translations/view-text.html'
-#     return render_to_response(template, data, RequestContext(request))
-
-
 @login_required
 def view_translation(request, text_id, target_lang):
     try:
@@ -249,351 +213,34 @@ def view_translation(request, text_id, target_lang):
 
 @login_required
 def export_translation(request, text_id, target_lang):
+    import os
+    EXPORTS_DIR = local_settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
     text = get_object_or_404(Text, id=text_id)
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
-    format = text.document_format
-
-    print format
 
     title = text.title
 
-    try:
-        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
-    except TextTranslation.DoesNotExist:
-        messages.add_message(request, messages.ERROR, _('Sorry, no such translations here'))
-        return HttpResponseRedirect('/')
+    values = {
+          'text_id': text.id,
+          'target_lang': target_lang
+        }
 
-    import HTMLParser
-    h = HTMLParser.HTMLParser()
+    the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/export', values))
 
-    if format == "text/plain":
-        import re
-        pure_text = ""
-        try:
-            text_meta = TextMeta.objects.get(text=text,
-                                         meta_type="text/plain")
-        except:
-            text_meta = False
-        if not text_meta:
-            pure_text = re.sub(r'<.*?>', "", text.body)
+    if not the_page['Error'] == 0:
+        return HttpResponse(json.dumps(the_page["error_message"]), content_type="application/json", status=the_page['Error'])
 
-            entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
-            for entry in entries:
-                entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-                if entry_translation:
-                    pure_text = re.sub(utils.escape_brackets(entry.body), h.unescape(entry_translation[0].body), pure_text, 1)
-        else:
-            paragraphs_list = {}
-            entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
+    content_type = the_page['content_type']
+    doc_ext = the_page['file_ext']
+    file_name = the_page['file_name']
 
-            # получаем список параграфов
-            for ent in entries_metas:
-                ent_data = json.loads(ent.meta_data)
-                if not ent_data['paragraph'] in paragraphs_list:
-                    paragraphs_list[ent_data['paragraph']] = [ent.entry]
-                else:
-                    paragraphs_list[ent_data['paragraph']].append(ent.entry)
+    file_body = open(EXPORTS_DIR + file_name, 'r').read()
+    response = HttpResponse(file_body, content_type=content_type)
 
-            print paragraphs_list
+    os.remove(EXPORTS_DIR + file_name)
 
-            for key, value in paragraphs_list.items():
-                for entry in value:
-                    entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-                    if entry_translation:
-                        pure_text += h.unescape(entry_translation[0].body) + " "
-                    else:
-                        pure_text += entry.body + " "
-                pure_text += "\n"
-
-        response = HttpResponse(pure_text, content_type='text/plain')
-        doc_ext = "txt"
-
-    elif format in [utils.FORMATS['po'], utils.FORMATS['mo'], utils.FORMATS['pot']]:
-        response, doc_ext = export_utils.export_po(text_id, format, target_lang, text_translation)
-    elif format == utils.FORMATS['ass']:
-        response, doc_ext = export_utils.export_ass(text_id, format, target_lang, text_translation)
-    elif format == utils.FORMATS['srt']:
-        import srt
-        import datetime
-
-        subtitles_list = []
-
-        entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)
-        for entry in entries:
-            entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
-            sub_object = srt.Subtitle(index=entry_meta['index'],
-                                      start=datetime.timedelta(seconds=entry_meta['start']),
-                                      end=datetime.timedelta(seconds=entry_meta['end']),
-                                      content=str(''),
-                                      proprietary=entry_meta['proprietary'],
-            )
-            entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-            if entry_translation:
-                sub_object.content = h.unescape(entry_translation[0].body.encode('utf8'))
-            else:
-                sub_object.content = h.unescape(entry.body)
-
-            subtitles_list.append(sub_object)
-        response = HttpResponse(srt.compose(subtitles_list), content_type='text/srt')
-        doc_ext = "srt"
-
-    elif format == utils.FORMATS['xlsx']:
-        manager = text.project.manager
-        project = text.project
-        file_path = '/%s/%d/%d/%s' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                      int(manager.id),
-                                      int(project.id),
-                                      text.document_name)
-        response, doc_ext = export_utils.export_xlsx(text_id, file_path, text_translation)
-
-    elif format == utils.FORMATS['docx']:
-        # открываем документ на чтение
-        from StringIO import StringIO
-        from zipfile import ZipFile
-        from xml.dom import minidom
-        from string import maketrans
-
-        manager = text.project.manager
-        project = text.project
-        file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                  int(manager.id),
-                                  int(project.id))
-        z = ZipFile("%s/%s" % (file_dir, text.document_name), 'r')
-        doc = z.open('word/document.xml')
-        doc_str = doc.read()
-
-        outzip = StringIO()
-
-        xmldoc = minidom.parseString(doc_str)
-        prlist = xmldoc.getElementsByTagName('w:p')
-
-        paragraphs_list = {}
-        text_meta = TextMeta.objects.get(text=text,
-                                         meta_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-        text_meta_data = json.loads(text_meta.meta_data)
-        try:
-            parse_version = text_meta_data['parse_version']
-        except:
-            parse_version = 0
-        entries_metas = TextEntryMeta.objects.filter(text_meta=text_meta)
-
-        # получаем список параграфов
-        for ent in entries_metas:
-            ent_data = json.loads(ent.meta_data)
-            if not ent_data['paragraph'] in paragraphs_list:
-                paragraphs_list[ent_data['paragraph']] = [ent.entry]
-            else:
-                paragraphs_list[ent_data['paragraph']].append(ent.entry)
-
-        # теперь проходимся по кастомным параграфам, заменяем в них текст, исключаем из общего списка
-        import re
-
-        def repl(matchobj):
-            return "†" + matchobj.group(0) + "†"
-
-        def replace_left_tag(matchobj):
-            return "<tag i='%s'>" % matchobj.group(0).split('"')[3]
-
-        if parse_version == 1.0:
-            for par, styles in text_meta_data["paragraphs"].items():
-                for idx, pr in enumerate(prlist):
-                    if int(par) == idx:
-                        # удалить все runs из параграфа
-                        wrs = pr.getElementsByTagName('w:r')
-                        for i in wrs:
-                            try:
-                                parent = i.parentNode
-                                parent.removeChild(i)
-                            except:
-                                pass
-
-                        # теперь проходим все энтрисы параграфа и проверяем, переведены ли они
-                        for entry in paragraphs_list[int(par)]:
-                            translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-                            translated_runs = []
-                            if not translated_entries:
-                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
-
-                            else:
-                                tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
-                                tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
-
-                                # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
-                                tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
-
-                                # а это чтобы всякое говно ваще убрать
-                                # http://stackoverflow.com/questions/8115261/how-to-remove-all-the-escape-sequences-from-a-list-of-strings
-                                escapes = ''.join([chr(char) for char in range(1, 32)])
-                                tag_prepared_body = re.sub('[%s]' % escapes, '', tag_prepared_body)
-
-                                print tag_prepared_body
-                                # return True
-                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
-
-                            for run in translated_runs:
-                                if not run == "":
-                                    clear_run = ""
-                                    # print "OLOLO: ", run
-                                    if run.startswith("<tag i="):
-                                        def cdata_start_repl(matchobj):
-                                            return matchobj.group(0) +"<![CDATA["
-                                        def cdata_end_repl(matchobj):
-                                            return "]]>" + matchobj.group(0)
-
-                                        try:
-                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
-                                        except:
-                                            run = re.sub("<tag i='.*'>", cdata_start_repl, run)
-                                            run = re.sub("</tag>", cdata_end_repl, run)
-                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
-                                        taglist = run_tag_id_xml.getElementsByTagName('tag')
-                                        i_tag = taglist[0].attributes['i']
-                                        style = styles[i_tag.value]
-                                        clear_run = taglist[0].firstChild.nodeValue
-                                    else:
-                                        style = styles["default"]
-                                        clear_run = run
-
-                                    if not style == "":
-                                        run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
-                <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
-                %s
-                </w:document>""" % style
-                                        params_dom = minidom.parseString(run_params_xml)
-                                        rPr = params_dom.getElementsByTagName('w:rPr')[0]
-                                    run = xmldoc.createElement("w:r")
-                                    wt = xmldoc.createElement("w:t")
-                                    text = xmldoc.createTextNode(h.unescape(clear_run))
-                                    wt.appendChild(text)
-                                    if not style == "":
-                                        run.appendChild(rPr)
-                                    run.appendChild(wt)
-                                    # print run.toprettyxml()
-                                    pr.appendChild(run)
-                        paragraphs_list.pop(int(par), None)
-        else:
-            for par, styles in text_meta_data["paragraphs"].items():
-                for idx, pr in enumerate(prlist):
-                    if int(par) == idx:
-
-                        # Теперь получаем переведённые
-                        for entry in paragraphs_list[int(par)]:
-                            translated_entries = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
-
-                            print "CUSTOM: ", re.sub("<tag.*?>.*?</tag>", repl, entry.body).split("†")
-                            if translated_entries:
-                                # Тут удаляем все старые runs
-                                for run in pr.getElementsByTagName("w:r"):
-                                    parent = run.parentNode
-                                    parent.removeChild(run)
-
-                                tag_prepared_body = re.sub('<hr r="" i="[0-9]+">', '</tag>', translated_entries[0].body)
-                                tag_prepared_body = re.sub('<hr l="" i="[0-9]+">', replace_left_tag, tag_prepared_body)
-
-                                # поскольку XML-парсер спотыкается о html-пробел, заменяем его уже тут
-                                tag_prepared_body = re.sub('&nbsp;', ' ', tag_prepared_body)
-
-                                # а это чтобы всякое говно ваще убрать
-                                # http://stackoverflow.com/questions/8115261/how-to-remove-all-the-escape-sequences-from-a-list-of-strings
-                                escapes = ''.join([chr(char) for char in range(1, 32)])
-                                tag_prepared_body = re.sub('[%s]' % escapes, '', tag_prepared_body)
-
-                                print tag_prepared_body
-                                # return True
-                                translated_runs = re.sub("<tag.*?>.*?</tag>", repl, tag_prepared_body).split("†")
-
-                                for run in translated_runs:
-                                    if not run == "":
-                                        clear_run = ""
-                                        # print "OLOLO: ", run
-                                        if run.startswith("<tag i="):
-                                            run_tag_id_xml = minidom.parseString(run.encode("utf-8"))
-                                            taglist = run_tag_id_xml.getElementsByTagName('tag')
-                                            i_tag = taglist[0].attributes['i']
-                                            style = styles[i_tag.value]
-                                            clear_run = taglist[0].firstChild.nodeValue
-                                        else:
-                                            style = styles["default"]
-                                            clear_run = run
-
-                                        if not style == "":
-                                            run_params_xml = """<?xml version="1.0" encoding="UTF-8"?>
-                    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
-                    %s
-                    </w:document>""" % style
-                                            params_dom = minidom.parseString(run_params_xml)
-                                            rPr = params_dom.getElementsByTagName('w:rPr')[0]
-                                        run = xmldoc.createElement("w:r")
-                                        wt = xmldoc.createElement("w:t")
-                                        text = xmldoc.createTextNode(h.unescape(clear_run))
-                                        wt.appendChild(text)
-                                        if not style == "":
-                                            run.appendChild(rPr)
-                                        run.appendChild(wt)
-                                        # print run.toprettyxml()
-                                        pr.appendChild(run)
-
-                        # и убираем параграф из списка на обход
-                        paragraphs_list.pop(int(par), None)
-                    else:
-                        continue
-
-        from lxml import etree
-        for par, entries in paragraphs_list.items():
-            for idx, pr in enumerate(prlist):
-                if int(par) == idx:
-                    test_xml = """<?xml version="1.0"?>
-                <w:document xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
-                %s
-                </w:document>""" % pr.toprettyxml()
-                    tree = etree.XML(test_xml)
-                    try:
-                        tree.xpath('/w:document/w:p/w:r/w:t/text()', namespaces={'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'})[0]
-                    except:
-                        continue
-
-                    new_txt_value = ""
-                    for ent in entries:
-                        translated_entries = TextEntry.objects.filter(parent_entry=ent, translation=text_translation, is_approved=True)
-                        if translated_entries:
-                            new_txt_value += h.unescape(translated_entries[0].body) + " "
-                        else:
-                            new_txt_value += ent.body + " "
-
-                    wrs = pr.getElementsByTagName('w:r')
-                    run_style = wrs[0].getElementsByTagName('w:rPr')[0]
-                    for i in wrs:
-                        try:
-                            parent = i.parentNode
-                            parent.removeChild(i)
-                        except:
-                            pass
-                    run = xmldoc.createElement("w:r")
-                    wt = xmldoc.createElement("w:t")
-                    text = xmldoc.createTextNode(h.unescape(new_txt_value))
-                    wt.appendChild(text)
-                    run.appendChild(run_style)
-                    run.appendChild(wt)
-                    # print run.toprettyxml()
-                    pr.appendChild(run)
-
-        output_doc_str = xmldoc.toxml().encode("utf-8")
-
-        # совершенно не представляю, что делает этот кусок кода
-        # но он был в скрипте, описывающем работу с docx'ами. Надеюсь, всё ок
-        out = ZipFile(outzip, 'w')
-        for zinfo in z.infolist():
-            if zinfo.filename != 'word/document.xml':
-                out.writestr(zinfo, z.read(zinfo))
-            else:
-                out.writestr(zinfo, output_doc_str)
-        out.close()
-        outzip.seek(0)
-
-        response = HttpResponse(outzip.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-        doc_ext = "docx"
 
     from django.utils.encoding import iri_to_uri
     if "Chrome" in request.META['HTTP_USER_AGENT']:
