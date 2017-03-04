@@ -17,7 +17,7 @@
 				{% if user.is_authenticated %}
 	                {% load tolmach_tags %}
 	                {% login_navbar %}
-                    <ul class="breadcrumbs2">
+                    <ul class="breadcrumbs2 hidden-xs">
                         {% for link in breadcrumbs %}
                         <li class="breadcrumbs2__item">
                             {% if link.1 %}<a href="{{ link.1 }}">{{ link.0 }}</a>
