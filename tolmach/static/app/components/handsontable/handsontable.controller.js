@@ -5,7 +5,7 @@ angular
             onUpdate: '&',
             sheet: '<'
         },
-        templateUrl: '/static/app/components/handsontable/handsontable.template.html',
+        templateUrl: 'handsontable.template.html',
         controller: ['$element', '$timeout', function ($element, $timeout) {
             var hot,
                 chr = function (codePt) {
@@ -34,7 +34,7 @@ angular
                 var self = this;
                 if (bindings.sheet && !hot) {
                     var sheetContainer = $element.find('.sheet__container')[0];
-                    //$timeout (function () {
+                    $timeout (function () {
                         hot = new Handsontable(sheetContainer, {
                             data: self.sheet,
                             minSpareCols: 0,
@@ -78,12 +78,21 @@ angular
                                         }
                                     }
                                 }
-                                this.update();
-                                console.log(text);
                                 hot.deselectCell();
+                                this.update();
+                            },
+                            cells: function (row, col, prop) {
+                                console.log('cells');
+                                var cellProperties = {};
+
+                                if (row === 0 && col === 0) {
+                                    cellProperties.readOnly = true;
+                                }
+
+                                return cellProperties;
                             }
                         });
-                    //});
+                    });
                 }
             };
             var checkRanges = function () {
