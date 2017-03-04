@@ -297,13 +297,19 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            file_type, file_name, title, text_body = "", "", "", ""
+            file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
 
             if 'textBody' in post:
                 file_type = "text/plain"
                 file_name = "None"
                 title = post['title']
                 text_body = post['textBody']
+
+            elif 'file_name' in post:
+                file_name = post['file_name']
+                file_type = post['file_type']
+                custom_parse = post.get('custom_parse', None)
+                text_body = ""
 
             elif 'file' in request.FILES:
                 file_name, file_path, file_type = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
@@ -330,15 +336,17 @@ def text_ajax(request, project):
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
-                      'target_lang': target_lang.code
+                      'target_lang': target_lang.code,
+                      'custom_parse': custom_parse
                       }
 
-            if post['xlsx_prepare_state'] == '1':
+            if post.get('xlsx_prepare_state', 0) == '1':
                 the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/preparse', values))
+                the_page['file_type'] = file_type
                 if the_page["Error"] == 0:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json")
+                    return HttpResponse(json.dumps(the_page), content_type="application/json")
                 else:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+                    return HttpResponse(json.dumps(the_page), content_type="application/json", status=400)
 
             the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', values))
 
