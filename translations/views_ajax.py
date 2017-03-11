@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
@@ -361,35 +362,60 @@ def text_ajax(request, project):
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
-@accept_text
-def update_text(request, text):
-    project = text.project
-    if project.is_user_manager(request.user):
-        if 'file' in request.FILES:
-            file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
-            if upload_error:
-                return HttpResponse(json.dumps(upload_error), content_type="application/json",
-                        status=400)
-            if not file_type == text.document_format:
-                return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
-            else:
-                # достаём тесктовые данные из нового документа
-                new_values = {
-                    'fname': file_name,
-                    'text_id': text.id,
-                    'save_to_db': False,
-                }
-                new_data = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', new_values))
+# @accept_text
+@csrf_exempt
+def update_text(request, text_id=681):
+    from django.shortcuts import render_to_response
+    from django.template import RequestContext
+    if request.method == "GET":
+        data = {
+            'texts_list': Text.objects.filter(project_id=196)
+        }
+        template = 'dev/text_update.html'
+        return render_to_response(template, data, RequestContext(request))
+    elif request.method == "POST":
+        text = Text.objects.get(id=text_id)
+        project = text.project
+        if project.is_user_manager(request.user):
+            if 'file' in request.FILES:
+                file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+                if upload_error:
+                    return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                            status=400)
+                if not file_type == text.document_format:
+                    os.remove(file_path)
+                    return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
+                else:
+                    target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                                   int(request.user.id),
+                                                   int(project.id))
+                    if not os.path.isdir(target_path):
+                        os.makedirs(target_path)
+                    os.rename(file_path, '%s/%s' % (target_path, file_name))
 
-                # отправляем новые данные в чтеца для обновления текста:
-                update_data = {
-                    'fname': file_name,
-                    'text_id': text.id,
-                    'new_data': new_data,
-                }
-                update_text = json.loads(utils.chtec_request('http://127.0.0.1:8080/update', update_data))
+                    # достаём тесктовые данные из нового документа
+                    new_values = {
+                        'fname': file_name,
+                        'text_id': text.id,
+                        'format': file_type,
+                        'user_id': request.user.id,
+                        'project_id': project.id,
+                        'source_lang': text.source_lang.code,
+                        'save_to_db': '',
+                    }
+                    new_data = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', new_values))
 
-        return HttpResponse(json.dumps(True), content_type="application/json")
+                    # отправляем новые данные в чтеца для обновления текста:
+                    update_data = {
+                        'fname': file_name,
+                        'text_id': text.id,
+                        'user_id': request.user.id,
+                        'new_data': json.dumps(new_data),
+                        'document_format': file_type
+                    }
+                    update_text = json.loads(utils.chtec_request('http://127.0.0.1:8080/update', update_data))
+
+            return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 def translation_ajax(request, text, target_lang, local_call=False, method=None):

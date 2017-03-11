@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+  <form enctype="multipart/form-data" method="post">
+      <select name="text_id">
+          {% for text in texts_list %}
+          <option value="{{ text.id }}">{{ text.title }}</option>
+          {% endfor %}
+      </select>
+      <p>
+          <input type="file" name="file">
+          <input type="submit" value="Отправить">
+      </p>
+  </form>
+</body>
+</html>
