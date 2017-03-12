@@ -150,7 +150,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if self.project.manager == user or str(user.id) in self.project.members.split(','):
+            if self.project.manager == user or str(user.id) in self.project.members.split(',') or user.is_staff:
                 return True
             else:
                 return False
