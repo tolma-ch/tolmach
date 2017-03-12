@@ -13,7 +13,7 @@ PATH = getattr(settings, 'URL_PATH', '')
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'%s' % PATH, include('social.apps.django_app.urls',
+    url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^rest/', include('api.urls')),
