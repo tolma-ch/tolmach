@@ -790,6 +790,7 @@ def translate_entry_ajax(request):
             set_approved = False
             if project.members == "":
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                translation=entry.translation,
                                                                  is_approved=True).count()
                 if not approved_translation:
                     set_approved = True
@@ -888,6 +889,7 @@ def approve_entry_ajax(request):
         if entry.parent_entry:
             TextEntry.objects.filter(~Q(id=entry_id),
                                      parent_entry=entry.parent_entry,
+                                     translation=entry.translation,
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
