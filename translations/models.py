@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.utils import timezone
 from django.db.models import Q
 from django.db import models
 import math
@@ -66,13 +67,20 @@ class Project(models.Model):
     members = models.TextField(default="")
     users_invited = models.TextField(default="")
     users_requested = models.TextField(default="")
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(Project, self).save(*args, **kwargs)
 
     def is_user_manager(self, user):
         """
@@ -136,12 +144,19 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
     options = models.TextField(default="{}")
 
     def __unicode__(self):
         return unicode(self.title)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(Text, self).save(*args, **kwargs)
 
     def is_user_allowed_to_read(self, user):
         """
@@ -237,8 +252,8 @@ class TextEntry(models.Model):
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return unicode(self.body)
@@ -246,6 +261,13 @@ class TextEntry(models.Model):
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []
         return str(user.id) in voters
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(TextEntry, self).save(*args, **kwargs)
 
 
 class TextEntryMeta(models.Model):

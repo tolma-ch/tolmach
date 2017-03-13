@@ -5,6 +5,11 @@ from django.db import models, migrations
 import django.utils.datetime_safe
 
 
+import warnings
+warnings.filterwarnings(
+        'ignore', r"DateTimeField .* received a naive datetime",
+        RuntimeWarning, r'django\.db\.models\.fields')
+
 class Migration(migrations.Migration):
 
     dependencies = [
