@@ -337,7 +337,7 @@ def text_ajax(request, project):
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
                       'target_lang': target_lang.code,
-                      'custom_parse': custom_parse
+                      'custom_parse': json.dumps(custom_parse)
                       }
 
             if post.get('xlsx_prepare_state', 0) == '1':
