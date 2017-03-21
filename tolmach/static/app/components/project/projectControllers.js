@@ -354,13 +354,11 @@
             $scope.currentSheetName = Object.keys(data)[0];
             $scope.updateResult = function (sheetName, value) {
                 result[sheetName] = value;
-                console.log(result);
             };
             $scope.ok = function () {
                 if (!checkResult()) {
                     return;
                 }
-                console.log(result);
                 $modalInstance.close(result);
             };
             $scope.cancel = function () {
@@ -440,7 +438,6 @@
                                 });
 
                                 modalInstance.result.then(function (res) {
-                                    console.log(res);
                                     var ranges = {};
                                     for (var i in res) {
                                         if (!res.hasOwnProperty(i)) {
