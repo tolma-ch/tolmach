@@ -17,6 +17,7 @@
         {% else %}
             <link rel="stylesheet" href="/static/assets/bootstrap/dist/css/bootstrap.css">
             <link rel="stylesheet/less" type="text/css" href="/static/less/tolmach.less" />
+            <link rel="stylesheet/less" type="text/css" href="/static/assets/handsontable/dist/handsontable.full.css" />
             <script src="/static/assets/less/dist/less.js" type="text/javascript"></script>
         {%  endif %}
 
@@ -257,6 +258,7 @@
         <script src="/static/assets/angular-img-cropper/dist/angular-img-cropper.min.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-dragdrop/src/angular-dragdrop.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-local-storage/dist/angular-local-storage.min.js?v={{ front_version }}"></script>
+        <script src="/static/assets/handsontable/dist/handsontable.full.min.js?v={{ front_version }}"></script>
         <script>
             var csrfToken = '{{ csrf_token }}';
         </script>

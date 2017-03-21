@@ -322,8 +322,52 @@
             };
         }
     ]);
-    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
-        function ($scope, $modalInstance, $http, Upload) {
+    module.controller('SelectTextRangesModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', 'data', '$timeout',
+        function ($scope, $modalInstance, $http, Upload, data, $timeout) {
+            var result = {},
+                checkResult = function () {
+                    for (var sheetName in result) {
+                        if (!result.hasOwnProperty(sheetName)) {
+                            continue;
+                        }
+                        var ranges = result[sheetName];
+                        for (var j in ranges) {
+                            if (!ranges.hasOwnProperty(j)) {
+                                continue;
+                            }
+                            var range = ranges[j];
+                            if (!range.source.coords) {
+                                range.source.error = true;
+                                $scope.currentSheetName = sheetName;
+                                return false;
+                            }
+                            if (!range.target.coords) {
+                                range.target.error = true;
+                                $scope.currentSheetName = sheetName;
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                };
+            $scope.sheets = data;
+            $scope.currentSheetName = Object.keys(data)[0];
+            $scope.updateResult = function (sheetName, value) {
+                result[sheetName] = value;
+            };
+            $scope.ok = function () {
+                if (!checkResult()) {
+                    return;
+                }
+                $modalInstance.close(result);
+            };
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', '$modal',
+        function ($scope, $modalInstance, $http, Upload, $modal) {
             $scope.busy = false;
             $scope.progress = 0;
             $scope.text = {
@@ -362,6 +406,11 @@
                         return;
                     }
                     $scope.busy = true;
+                    var fileName = $scope.text.files[0].name,
+                        ext = fileName ? fileName.split('.').pop() : false;
+                    if (ext === 'xlsx') {
+                        data['xlsx_prepare_state'] = 1;
+                    }
                     Upload.upload({
                             url: '/api/text/',
                             fields: data,
@@ -371,8 +420,68 @@
                             $scope.progress = 100.0 * evt.loaded / evt.total;
                         })
                         .success(function (text) {
-                            $modalInstance.close(text);
                             $scope.busy = false;
+                            if (ext === 'xlsx') {
+                                var serverFileName = text['file_name'],
+                                    serverFileType = text['file_type'],
+                                    sheets = text['Text'],
+                                    modalInstance = $modal.open({
+                                    templateUrl: 'selectTextRangesModal.html',
+                                    controller: 'SelectTextRangesModalCtrl',
+                                    size: 'lg',
+                                    backdrop: 'static',
+                                    resolve: {
+                                        data: function () {
+                                            return sheets;
+                                        }
+                                    }
+                                });
+
+                                modalInstance.result.then(function (res) {
+                                    var ranges = {};
+                                    for (var i in res) {
+                                        if (!res.hasOwnProperty(i)) {
+                                            continue;
+                                        }
+                                        var sheet = res[i];
+                                        ranges[i] = {
+                                            'source_coords': [],
+                                            'target_coords': []
+                                        };
+                                        for (var j in sheet) {
+                                            if (!sheet.hasOwnProperty(j)) {
+                                                continue;
+                                            }
+                                            var range = sheet[j];
+                                            ranges[i]['source_coords'].push(range.source.text);
+                                            ranges[i]['target_coords'].push(range.target.text);
+                                        }
+                                    }
+                                    var data = {
+                                        project: window['projectId'],
+                                        title: $scope.text.title,
+                                        subject: $scope.text.subject,
+                                        sourceLang: $scope.text.sourceLang,
+                                        targetLang: $scope.text.targetLang,
+                                        file_name: serverFileName,
+                                        file_type: serverFileType,
+                                        custom_parse: ranges
+                                    };
+                                    $scope.busy = true;
+                                    $http.post('/api/text/', data)
+                                        .success(function (text) {
+                                            $scope.busy = false;
+                                            $modalInstance.close(text);
+                                        })
+                                        .error(function (data) {
+                                            $scope.busy = false;
+                                        });
+                                }, function () {
+                                });
+
+                            } else {
+                                $modalInstance.close(text);
+                            }
                         })
                         .error(function (data) {
                             $scope.error = data;

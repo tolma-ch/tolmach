@@ -62,7 +62,8 @@ module.exports = function (grunt) {
             css: {
                 src: [
                     'tmp/tolmach.css',
-                    'tolmach/static/assets/bootstrap/dist/css/bootstrap.css'
+                    'tolmach/static/assets/bootstrap/dist/css/bootstrap.css',
+                    'tolmach/static/assets/handsontable/dist/handsontable.full.css'
 
                 ],
                 dest: 'tolmach/static/dist/tolmach.css'
