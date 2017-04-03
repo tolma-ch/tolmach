@@ -308,6 +308,7 @@ def text_ajax(request, project):
             elif 'file_name' in post:
                 file_name = post['file_name']
                 file_type = post['file_type']
+                title = post['title']
                 custom_parse = post.get('custom_parse', None)
                 text_body = ""
 
