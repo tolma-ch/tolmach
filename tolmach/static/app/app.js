@@ -5,6 +5,7 @@
 
     var module = angular.module('tolmachApp', [
         'ui.select',
+        'ui.toggle',
         'mainModule',
         'profileModule',
         'projectModule',
