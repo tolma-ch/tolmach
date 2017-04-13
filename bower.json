@@ -16,6 +16,7 @@
     "ngDraggable": "^0.1.8",
     "angular-dragdrop": "^1.0.13",
     "angular-local-storage": "^0.5.2",
-    "handsontable": "^0.31.0"
+    "handsontable": "^0.31.0",
+    "angular-bootstrap-toggle": "0.1.1"
   }
 }

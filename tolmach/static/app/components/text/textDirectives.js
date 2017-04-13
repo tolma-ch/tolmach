@@ -32,8 +32,8 @@
                     'id="res-entry-' + id + '" ' +
                     'ng-class="{active: activeEntry.idInText === ' + id + ',' +
                     'approved: entriesById[' + id + '].approved}">' +
-                    '<span ng-show="textTab === 0">' + elem.html() + '</span>' +
-                    '<span ng-show="textTab === 1" ' +
+                    '<span ng-show="textTab == 0">' + elem.html() + '</span>' +
+                    '<span ng-show="textTab == 1" ' +
                     'ng-bind-html="entriesById[' + id + '].translation | trusted"></span>' +
                     '</span>';
             },
