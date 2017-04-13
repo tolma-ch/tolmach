@@ -11,12 +11,12 @@
             <a href=""
                class="switcher2__button"
                ng-repeat="(sheetName, sheet) in sheets"
-               ng-class="{'switcher2__button_active': currentSheetName === sheetName}"
-               ng-click="currentSheetName = sheetName">{= sheetName =}</a>
+               ng-class="{'switcher2__button_active': $parent.currentSheetName === sheetName}"
+               ng-click="$parent.currentSheetName = sheetName">{= sheetName =}</a>
         </div>
 
         <div ng-repeat="(sheetName, sheet) in sheets"
-             ng-show="currentSheetName === sheetName">
+             ng-if="$parent.currentSheetName === sheetName">
             <handsontable sheet="sheet"
                           on-update="updateResult(sheetName, value)"></handsontable>
         </div>

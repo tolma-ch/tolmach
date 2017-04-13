@@ -13,7 +13,7 @@
                              ng-class="{'sheet-range_active': range.active}">
                             <a href=""
                                class="sheet-range__remove-btn"
-                               ng-click="removeRange(range)"><i class="fa fa-trash"></i></a>
+                               ng-click="$ctrl.removeRange(range)"><i class="fa fa-trash"></i></a>
                             <div class="sheet-range__input"
                                  ng-click="$ctrl.selectRange(range, 0)"
                                  ng-class="{'sheet-range__input_active': range.active && range.source.active,
