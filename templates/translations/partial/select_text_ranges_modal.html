@@ -16,7 +16,7 @@
         </div>
 
         <div ng-repeat="(sheetName, sheet) in sheets"
-             ng-if="$parent.currentSheetName === sheetName">
+             ng-show="$parent.currentSheetName === sheetName">
             <handsontable sheet="sheet"
                           on-update="updateResult(sheetName, value)"></handsontable>
         </div>
