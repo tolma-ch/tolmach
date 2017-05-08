@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-27 10:15+0400\n"
+"POT-Creation-Date: 2017-05-08 23:01+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,8 +19,8 @@ msgstr ""
 
 #: chat/views.py:21 chat/views.py:38 translations/decorators.py:40
 #: translations/views_ajax.py:31 translations/views_ajax.py:49
-#: translations/views_ajax.py:53 translations/views_ajax.py:466
-#: translations/views_ajax.py:583
+#: translations/views_ajax.py:53 translations/views_ajax.py:492
+#: translations/views_ajax.py:602
 msgid "Project not found"
 msgstr "项目找不到"
 
@@ -46,8 +46,8 @@ msgstr "仪表板"
 msgid "Projects"
 msgstr "项目"
 
-#: templates/main/base-logged-in.html:7 translations/views.py:33
-#: translations/views.py:110 translations/views.py:220
+#: templates/main/base-logged-in.html:7 translations/views.py:34
+#: translations/views.py:111 translations/views.py:184
 msgid "My projects"
 msgstr "我的项目"
 
@@ -59,8 +59,8 @@ msgstr "第三方"
 msgid "Community"
 msgstr "社区"
 
-#: templates/main/base-logged-in.html:10 translations/views.py:46
-#: translations/views.py:116 translations/views.py:226
+#: templates/main/base-logged-in.html:10 translations/views.py:47
+#: translations/views.py:117 translations/views.py:190
 msgid "Public projects"
 msgstr "公共项目"
 
@@ -92,16 +92,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:92 templates/main/base.html.py:198
+#: templates/main/base.html:93 templates/main/base.html:199
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:95 templates/main/base.html.py:201
+#: templates/main/base.html:96 templates/main/base.html:202
 #: templates/translations/partial/add_text_modal.html:100
+#: templates/translations/partial/select_text_ranges_modal.html:33
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:227
+#: templates/main/base.html:228
 msgid "No results"
 msgstr "没有结果"
 
@@ -175,7 +176,7 @@ msgid "Hi,"
 msgstr "你好,"
 
 #: templates/main/partial/navbar.html:32
-#: templates/translations/project.html:150
+#: templates/translations/project.html:151
 msgid "Export translation"
 msgstr "翻译到处"
 
@@ -209,7 +210,7 @@ msgstr ""
 msgid "A problem shared is a problem halved"
 msgstr "共享的问题就是减半的问题"
 
-#: templates/tolmach/landing.html:99 templates/tolmach/landing.html.py:106
+#: templates/tolmach/landing.html:99 templates/tolmach/landing.html:106
 #: templates/tolmach/landing.html:432
 msgid "Sign up and login"
 msgstr "注册/登录"
@@ -226,20 +227,20 @@ msgstr "或"
 msgid "Log in using password:"
 msgstr "密码登录"
 
-#: templates/tolmach/landing.html:128 templates/tolmach/landing.html.py:159
+#: templates/tolmach/landing.html:128 templates/tolmach/landing.html:159
 msgid "Username"
 msgstr "注册名"
 
-#: templates/tolmach/landing.html:135 templates/tolmach/landing.html.py:173
+#: templates/tolmach/landing.html:135 templates/tolmach/landing.html:173
 #: templates/tolmach/landing.html:228
 msgid "Password"
 msgstr "密码"
 
-#: templates/tolmach/landing.html:140 templates/tolmach/landing.html.py:185
+#: templates/tolmach/landing.html:140 templates/tolmach/landing.html:185
 msgid "Forgot your password?"
 msgstr "忘记密码?"
 
-#: templates/tolmach/landing.html:143 templates/tolmach/landing.html.py:151
+#: templates/tolmach/landing.html:143 templates/tolmach/landing.html:151
 #: templates/tolmach/landing.html:191
 msgid "Sign up"
 msgstr "立即注册"
@@ -252,15 +253,15 @@ msgstr "登录"
 msgid "Email"
 msgstr "邮箱"
 
-#: templates/tolmach/landing.html:180 templates/tolmach/landing.html.py:235
+#: templates/tolmach/landing.html:180 templates/tolmach/landing.html:235
 msgid "Password confirmation"
 msgstr "确认密码"
 
-#: templates/tolmach/landing.html:188 templates/tolmach/landing.html.py:209
+#: templates/tolmach/landing.html:188 templates/tolmach/landing.html:209
 msgid "Authorization"
 msgstr "登录"
 
-#: templates/tolmach/landing.html:196 templates/tolmach/landing.html.py:215
+#: templates/tolmach/landing.html:196 templates/tolmach/landing.html:215
 msgid "Reset password"
 msgstr "找回密码"
 
@@ -478,12 +479,12 @@ msgid ""
 "the answer to the ultimate question of life, the universe and everything"
 msgstr "生命、宇宙以及任何事情的終極答案"
 
-#: templates/tolmach/landing.html:554 templates/tolmach/landing.html.py:594
+#: templates/tolmach/landing.html:554 templates/tolmach/landing.html:594
 #: templates/tolmach/landing.html:634
 msgid "Password is required field"
 msgstr ""
 
-#: templates/tolmach/landing.html:590 templates/tolmach/landing.html.py:626
+#: templates/tolmach/landing.html:590 templates/tolmach/landing.html:626
 #: templates/tolmach/landing.html:664
 msgid "Username is required field"
 msgstr ""
@@ -640,7 +641,7 @@ msgstr "私人"
 #: templates/translations/partial/new_project_modal.html:9
 #: templates/translations/project.html:66
 #: templates/translations/project.html:124
-#: templates/translations/project.html:205
+#: templates/translations/project.html:202
 #: templates/translations/projects-main.html:138
 #: templates/translations/projects-main.html:351
 #: templates/translations/view-text.html:12
@@ -793,6 +794,12 @@ msgstr "公开"
 msgid "private"
 msgstr "私人"
 
+#: templates/translations/partial/select_text_ranges_modal.html:7
+#, fuzzy
+#| msgid "Collective translations"
+msgid "Select cells for translating"
+msgstr "众包翻译"
+
 #: templates/translations/project.html:63
 msgid "Participants"
 msgstr "参与者"
@@ -817,39 +824,49 @@ msgstr "文档"
 msgid "Click here to add new document to translate"
 msgstr ""
 
-#: templates/translations/project.html:154
+#: templates/translations/project.html:157
+#, fuzzy
+#| msgid "Translation"
+msgid "Translated document"
+msgstr "翻译"
+
+#: templates/translations/project.html:163
+msgid "Bilingual DOCX"
+msgstr ""
+
+#: templates/translations/project.html:169
 msgid "Go to translation"
 msgstr ""
 
-#: templates/translations/project.html:159
+#: templates/translations/project.html:174
 msgid "Fragments approved:"
 msgstr ""
 
-#: templates/translations/project.html:160
+#: templates/translations/project.html:175
 msgid "Fragments translated:"
 msgstr ""
 
-#: templates/translations/project.html:198
+#: templates/translations/project.html:195
 msgid "TMX/Glossaries"
 msgstr "TMX / 词汇"
 
-#: templates/translations/project.html:204
+#: templates/translations/project.html:201
 msgid "Click here to translation memory or glossary"
 msgstr ""
 
-#: templates/translations/project.html:215
+#: templates/translations/project.html:212
 msgid "TMX"
 msgstr "TMX"
 
-#: templates/translations/project.html:223
+#: templates/translations/project.html:220
 msgid "Glossary"
 msgstr "词库"
 
-#: templates/translations/project.html:230
+#: templates/translations/project.html:227
 msgid "Here will be TMXes and glossaries"
 msgstr ""
 
-#: templates/translations/project.html:267
+#: templates/translations/project.html:264
 msgid "Remove Project"
 msgstr "移除项目"
 
@@ -969,36 +986,36 @@ msgstr ""
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:309
+#: templates/translations/view-text.html:315
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:310
+#: templates/translations/view-text.html:316
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:311
+#: templates/translations/view-text.html:317
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:312
+#: templates/translations/view-text.html:318
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:313
+#: templates/translations/view-text.html:319
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:314
+#: templates/translations/view-text.html:320
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:315
+#: templates/translations/view-text.html:321
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:316
+#: templates/translations/view-text.html:322
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
@@ -1015,55 +1032,56 @@ msgid "text id is not set"
 msgstr "文案ID未设置"
 
 #: translations/decorators.py:20 translations/views_ajax.py:235
-#: translations/views_ajax.py:417
+#: translations/views_ajax.py:372
 msgid "Text not found"
 msgstr "未找到"
 
 #: translations/decorators.py:22 translations/views_ajax.py:169
-#: translations/views_ajax.py:735 translations/views_ajax.py:780
-#: translations/views_ajax.py:855
+#: translations/views_ajax.py:752 translations/views_ajax.py:797
+#: translations/views_ajax.py:873
 msgid "Not allowed"
 msgstr "不允许"
 
-#: translations/decorators.py:35 translations/views_ajax.py:462
-#: translations/views_ajax.py:579
+#: translations/decorators.py:35 translations/views_ajax.py:488
+#: translations/views_ajax.py:598
 msgid "Project id is not set"
 msgstr ""
 
-#: translations/utils.py:189 translations/utils.py:227
+#: translations/utils.py:94
+msgid "File is too big"
+msgstr "文件太大"
+
+#: translations/utils.py:226 translations/utils.py:264
 msgid "This source language is not supported yet"
 msgstr "该原语言暂时未支持"
 
-#: translations/utils.py:200 translations/utils.py:238
+#: translations/utils.py:237 translations/utils.py:275
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
-#: translations/views.py:39 translations/views.py:113
-#: translations/views.py:223
+#: translations/views.py:40 translations/views.py:114
+#: translations/views.py:187
 msgid "Third-party projects"
 msgstr "第三方项目"
 
-#: translations/views.py:104 translations/views.py:106
+#: translations/views.py:105 translations/views.py:107
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: translations/views.py:198
+#: translations/views.py:162 translations/views.py:164
+#: translations/views.py:220
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:200 translations/views.py:254
-msgid "Sorry, no such text here"
-msgstr ""
-
-#: translations/views.py:265
-msgid "Sorry, no such translations here"
+#: translations/views.py:226
+msgid "Sorry, no such page here!"
 msgstr ""
 
 #: translations/views_ajax.py:36 translations/views_ajax.py:55
 #: translations/views_ajax.py:122 translations/views_ajax.py:223
-#: translations/views_ajax.py:419 translations/views_ajax.py:468
-#: translations/views_ajax.py:585 translations/views_ajax.py:895
-#: translations/views_ajax.py:918
+#: translations/views_ajax.py:374 translations/views_ajax.py:494
+#: translations/views_ajax.py:604 translations/views_ajax.py:914
+#: translations/views_ajax.py:937
 msgid "You have to be a manager of project"
 msgstr ""
 
@@ -1099,106 +1117,101 @@ msgstr ""
 msgid "User is not a member of project"
 msgstr "该用户不是项目成员"
 
-#: translations/views_ajax.py:249 translations/views_ajax.py:325
-#: translations/views_ajax.py:329 translations/views_ajax.py:770
+#: translations/views_ajax.py:249 translations/views_ajax.py:294
+#: translations/views_ajax.py:298 translations/views_ajax.py:787
 msgid "Language not found"
 msgstr "语言未找到"
 
-#: translations/views_ajax.py:371 translations/views_ajax.py:479
-#: translations/views_ajax.py:596
-msgid "File is too big"
-msgstr "文件太大"
-
-#: translations/views_ajax.py:384 translations/views_ajax.py:491
-#: translations/views_ajax.py:600
+#: translations/views_ajax.py:324 translations/views_ajax.py:509
+#: translations/views_ajax.py:621
 msgid "Wrong file type"
 msgstr "无支持文件类型"
 
-#: translations/views_ajax.py:413
+#: translations/views_ajax.py:368
 msgid "Text id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:434 translations/views_ajax.py:505
-#: translations/views_ajax.py:535
+#: translations/views_ajax.py:460 translations/views_ajax.py:524
+#: translations/views_ajax.py:554
 msgid "Glossary not found"
 msgstr "词汇库找不到"
 
-#: translations/views_ajax.py:471
+#: translations/views_ajax.py:497
 msgid "Glossary name is not set"
 msgstr "词汇库名称未设定"
 
-#: translations/views_ajax.py:497
+#: translations/views_ajax.py:516
 msgid "Please, send file or input data manually"
 msgstr ""
 
-#: translations/views_ajax.py:531
+#: translations/views_ajax.py:550
 msgid "Glossary id is not set"
 msgstr "词汇库ID未设置"
 
-#: translations/views_ajax.py:537
+#: translations/views_ajax.py:556
 msgid "It's not your glossary"
 msgstr "该词汇库不属于你"
 
-#: translations/views_ajax.py:552
+#: translations/views_ajax.py:571
 msgid "TMDatabase not found"
 msgstr "TMX找不到"
 
-#: translations/views_ajax.py:588
+#: translations/views_ajax.py:607
 msgid "TMX name is not set"
 msgstr "TMX名称未设置"
 
-#: translations/views_ajax.py:592
+#: translations/views_ajax.py:611
 msgid "TMX file is not passed"
 msgstr ""
 
-#: translations/views_ajax.py:620
+#: translations/views_ajax.py:637
 msgid "TMX id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:624
+#: translations/views_ajax.py:641
 msgid "TMX not found"
 msgstr "TMX未找到"
 
-#: translations/views_ajax.py:626
+#: translations/views_ajax.py:643
 msgid "It's not your TMX"
 msgstr ""
 
-#: translations/views_ajax.py:648
+#: translations/views_ajax.py:665
 msgid "Target language is not set"
 msgstr ""
 
-#: translations/views_ajax.py:757 translations/views_ajax.py:879
-#: translations/views_ajax.py:906 translations/views_ajax.py:982
+#: translations/views_ajax.py:774 translations/views_ajax.py:897
+#: translations/views_ajax.py:925 translations/views_ajax.py:1001
 msgid "Id is not set"
 msgstr "ID未设置"
 
-#: translations/views_ajax.py:762 translations/views_ajax.py:786
-#: translations/views_ajax.py:850 translations/views_ajax.py:865
-#: translations/views_ajax.py:911 translations/views_ajax.py:987
+#: translations/views_ajax.py:779 translations/views_ajax.py:803
+#: translations/views_ajax.py:868 translations/views_ajax.py:883
+#: translations/views_ajax.py:930 translations/views_ajax.py:1006
 msgid "Not found"
 msgstr "未找到"
 
-#: translations/views_ajax.py:777
+#: translations/views_ajax.py:794
 msgid "Translation not found"
 msgstr "未找到翻译"
 
-#: translations/views_ajax.py:799
+#: translations/views_ajax.py:817
 msgid "Entry translation text is not set"
 msgstr ""
 
-#: translations/views_ajax.py:845
+#: translations/views_ajax.py:863
 msgid "entry is not set"
 msgstr ""
 
-#: translations/views_ajax.py:858
+#: translations/views_ajax.py:876
 msgid "translation is not set"
 msgstr ""
 
-#: translations/views_ajax.py:962
+#: translations/views_ajax.py:981
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/views_ajax.py:1017
+#: translations/views_ajax.py:1036
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 
