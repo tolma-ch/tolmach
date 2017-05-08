@@ -144,11 +144,26 @@
                                        tooltip-append-to-body="true"><i class="fa fa-pencil"></i></a>
                                 </div>
                                 <div class="project-list-text__cell">
-                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations">
-                                        <a class="project-list-text__btn"
-                                           href="/text/{=:: text.id =}/{=:: translation.lang =}/export/"
+                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations" style="position: relative;">
+                                        <a class="project-list-text__btn dropdown"
+                                           href="#"
+                                           data-toggle="dropdown"
                                            tooltip="{% trans 'Export translation' %}"
                                            tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
+                                        <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                                            <li>
+                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/">
+                                                    <i class="fa-off"></i>
+                                                    {% trans 'Translated document' %}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/pairs/">
+                                                    <i class="fa-off"></i>
+                                                    {% trans 'Bilingual DOCX' %}
+                                                </a>
+                                            </li>
+                                        </ul>
                                         <a href="/text/{=:: text.id =}/{=:: translation.lang =}/" class="project-list-text__item">
                                             <span class="project-list-text__language"
                                                   tooltip="{% trans 'Go to translation' %}"

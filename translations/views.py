@@ -212,7 +212,7 @@ def view_translation(request, text_id, target_lang):
 
 
 @login_required
-def export_translation(request, text_id, target_lang):
+def export_translation(request, text_id, target_lang, extra=None):
     import os
     EXPORTS_DIR = local_settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
     text = get_object_or_404(Text, id=text_id)
@@ -222,7 +222,17 @@ def export_translation(request, text_id, target_lang):
 
     title = text.title
 
-    values = {
+    if extra and not extra == "pairs":
+        raise Http404(_('Sorry, no such page here!'))
+
+    if extra == "pairs":
+        values = {
+              'text_id': text.id,
+              'target_lang': target_lang,
+              'export_pairs': 1
+            }
+    else:
+        values = {
           'text_id': text.id,
           'target_lang': target_lang
         }

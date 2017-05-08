@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),
+    url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
 
     # ajax
     url(r'^api/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
