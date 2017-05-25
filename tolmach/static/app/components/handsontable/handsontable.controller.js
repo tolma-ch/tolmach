@@ -68,13 +68,74 @@ angular
                         fillRangeToMatrix(range.target.coords, 2);
                     }
                 },
-                ranges = [];
+                activateNextRange = function (activeRange) {
+                    var activeRangeIndex = ranges.indexOf(activeRange);
+                    if (activeRangeIndex > -1 && ranges.hasOwnProperty(activeRangeIndex + 1)) {
+                        var nextRange = ranges[activeRangeIndex + 1];
+                        nextRange.active = true;
+                        nextRange.source.active = true;
+                    } else {
+                        for (var i in ranges) {
+                            if (!ranges.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            var range = ranges[i];
+                            if (!range.source.coords) {
+                                range.active = true;
+                                range.source.active = true;
+                                range.target.active = false;
+                                return;
+                            }
+                            if (!range.target.coords) {
+                                range.active = true;
+                                range.target.active = true;
+                                range.source.active = false;
+                                return;
+                            }
+                            range.active = false;
+                            range.source.active = false;
+                            range.target.active = false;
+                        }
+                        ranges.push({
+                            active: true,
+                            source: {
+                                coords: false,
+                                text: '',
+                                active: true
+                            },
+                            target: {
+                                coords: false,
+                                text: '',
+                                active: false
+                            }
+                        });
+                    }
+                },
+                ranges = [{
+                    active: true,
+                    source: {
+                        coords: false,
+                        text: '',
+                        active: true
+                    },
+                    target: {
+                        coords: false,
+                        text: '',
+                        active: false
+                    }
+                }];
+
             this.update = function () {
                 this.onUpdate({value: ranges});
             };
             this.ranges = ranges;
             this.$onChanges = function(bindings) {
                 var self = this;
+
+                if (angular.isUndefined(bindings.ranges.previousValue) && angular.isDefined(bindings.ranges.currentValue)) {
+                    ranges = bindings.ranges;
+                    this.ranges = ranges;
+                }
                 if (bindings.sheet && !hot) {
                     var sheetContainer = $element.find('.sheet__container')[0];
                     $timeout (function () {
@@ -115,21 +176,16 @@ angular
                                     }
                                     if (activeRange) {
                                         if (activeRange.source.active) {
-                                            range.source.coords = coords;
-                                            range.source.text = text;
-                                            range.source.active = false;
-                                            range.target.active = true;
+                                            activeRange.source.coords = coords;
+                                            activeRange.source.text = text;
+                                            activeRange.source.active = false;
+                                            activeRange.target.active = true;
                                         } else {
-                                            range.target.coords = coords;
-                                            range.target.text = text;
-                                            range.target.active = false;
-                                            range.active = false;
-                                            var activeRangeIndex = ranges.indexOf(activeRange);
-                                            if (activeRangeIndex > -1 && ranges.hasOwnProperty(activeRangeIndex + 1)) {
-                                                var nextRange = ranges[activeRangeIndex + 1];
-                                                nextRange.active = true;
-                                                nextRange.source.active = true;
-                                            }
+                                            activeRange.target.coords = coords;
+                                            activeRange.target.text = text;
+                                            activeRange.target.active = false;
+                                            activeRange.active = false;
+                                            activateNextRange(activeRange);
                                         }
                                     }
                                     fillMatrix();

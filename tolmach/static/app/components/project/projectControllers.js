@@ -350,6 +350,7 @@
                     }
                     return true;
                 };
+            $scope.ranges = result;
             $scope.sheets = data;
             $scope.currentSheetName = Object.keys(data)[0];
             $scope.updateResult = function (sheetName, value) {
