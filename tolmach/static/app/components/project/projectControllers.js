@@ -10,21 +10,21 @@
             $scope.isUserManager = window['isUserManager'];
             $scope.languages = window['languages'];
             $scope.participants = [];
-            $http.get('/api/participant', {params: {project: $scope.projectId}})
+            $http.get('/ajax/participant', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;
                 });
             $scope.texts = [];
-            $http.get('/api/text', {params: {project: $scope.projectId}})
+            $http.get('/ajax/text', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.texts = response.data;
                 });
             $scope.glossaries = [];
-            $http.get('/api/glossary', {params: {project: $scope.projectId}})
+            $http.get('/ajax/glossary', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
-            $http.get('/api/tmx', {params: {project: $scope.projectId}})
+            $http.get('/ajax/tmx', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.tmxes = response.data;
                 });
@@ -48,7 +48,7 @@
                     'user': participant.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/participant/', {params: data})
+                $http.delete('/ajax/participant/', {params: data})
                     .success(function () {
                         var i = $scope.participants.indexOf(participant);
                         if (i > -1) {
@@ -116,7 +116,7 @@
                     'text': text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         var i = $scope.texts.indexOf(text);
                         if (i > -1) {
@@ -182,7 +182,7 @@
                         }
                     }
                 });
-                $http.get('/api/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
+                $http.get('/ajax/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
                     .then(function (response) {
                         glossary.rows = response.data.rows;
                         var lastRow = glossary.rows[glossary.rows.length - 1];
@@ -201,7 +201,7 @@
                     'glossary': glossary.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/glossary/', {params: data})
+                $http.delete('/ajax/glossary/', {params: data})
                     .success(function () {
                         var i = $scope.glossaries.indexOf(glossary);
                         if (i > -1) {
@@ -220,7 +220,7 @@
                     'tmx': tmx.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/tmx/', {params: data})
+                $http.delete('/ajax/tmx/', {params: data})
                     .success(function () {
                         var i = $scope.tmxes.indexOf(tmx);
                         if (i > -1) {
@@ -244,7 +244,7 @@
             $scope.saveName = function () {
                 $scope.editingName = false;
                 $scope.project.name = $scope.projectName;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'name': $scope.project.name
                     })
@@ -263,7 +263,7 @@
             $scope.saveDescription = function () {
                 $scope.project.description = $scope.projectDescription;
                 $scope.editingDescription = false;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'description': $scope.project.description
                     })
@@ -278,7 +278,7 @@
 
             $scope.removeProject = function (project) {
                 $scope.busy = true;
-                $http.delete('/api/project/', {params: {id: project.id}})
+                $http.delete('/ajax/project/', {params: {id: project.id}})
                     .success(function () {
                         $scope.busy = false;
                         location.href = '/projects/';
@@ -294,7 +294,7 @@
     module.controller('AddParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.getUsers = function (query) {
-                return $http.get('/api/get-users', {params: {q: query}})
+                return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
                         return response.data;
                     });
@@ -306,7 +306,7 @@
                     'user': $scope.user.id
                 };
                 $scope.busy = true;
-                $http.post('/api/participant/', data)
+                $http.post('/ajax/participant/', data)
                     .success(function (participant) {
                         $modalInstance.close(participant);
                         $scope.busy = false;
@@ -413,7 +413,7 @@
                         data['xlsx_prepare_state'] = 1;
                     }
                     Upload.upload({
-                            url: '/api/text/',
+                            url: '/ajax/text/',
                             fields: data,
                             file: $scope.text.files[0]
                         })
@@ -469,7 +469,7 @@
                                         custom_parse: ranges
                                     };
                                     $scope.busy = true;
-                                    $http.post('/api/text/', data)
+                                    $http.post('/ajax/text/', data)
                                         .success(function (text) {
                                             $scope.busy = false;
                                             $modalInstance.close(text);
@@ -495,7 +495,7 @@
                     }
                     data.textBody = $scope.text.textBody;
                     $scope.busy = true;
-                    $http.post('/api/text/', data)
+                    $http.post('/ajax/text/', data)
                         .success(function (text) {
                             $modalInstance.close(text);
                             $scope.busy = false;
@@ -618,7 +618,7 @@
                     tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
-                $http.post('/api/text/', data)
+                $http.post('/ajax/text/', data)
                     .success(function (text) {
                         $modalInstance.close(text);
                         $scope.busy = false;
@@ -635,7 +635,7 @@
                     'text': $scope.text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         $scope.busy = false;
                         $modalInstance.close('removed');
@@ -681,7 +681,7 @@
                 data['project'] = window['projectId'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
-                    $http.post('/api/glossary/', data)
+                    $http.post('/ajax/glossary/', data)
                         .success(function (glossary) {
                             $modalInstance.close(glossary);
                             $scope.busy = false;
@@ -692,7 +692,7 @@
                         });
                 } else {
                     Upload.upload({
-                            url: '/api/glossary/',
+                            url: '/ajax/glossary/',
                             fields: data,
                             file: data.files[0]
                         })
@@ -726,7 +726,7 @@
                 data['project'] = window['projectId'];
 
                 Upload.upload({
-                        url: '/api/tmx/',
+                        url: '/ajax/tmx/',
                         fields: data,
                         file: data.files[0]
                     })

@@ -7,7 +7,7 @@
         function ($scope, $http, $timeout, $modal, $window) {
 
             var updateMessages = function () {
-                $http.get('/api/message/').success(function (data) {
+                $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 15 * 60 * 1000);
                 }).error(function (data) {
@@ -23,7 +23,7 @@
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
             };
             $scope.readMessage = function (message) {
-                $http.post('/api/message/', {id: message.id}).success(function (data) {
+                $http.post('/ajax/message/', {id: message.id}).success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 5000);
                 }).error(function (data) {
@@ -196,7 +196,7 @@
     module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.error = '';
-            $http.get('/api/message/all').success(function (data) {
+            $http.get('/ajax/message/all').success(function (data) {
                 $scope.messages = data;
                 $timeout(updateMessages, 5000);
             }).error(function (data) {
