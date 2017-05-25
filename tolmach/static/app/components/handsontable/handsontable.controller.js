@@ -3,11 +3,13 @@ angular
     .component('handsontable', {
         bindings: {
             onUpdate: '&',
+            ranges: '<',
             sheet: '<'
         },
         templateUrl: 'handsontable.template.html',
         controller: ['$element', '$timeout', function ($element, $timeout) {
-            var hot,
+            var ctrl = this,
+                hot,
                 cellRenderer = function (instance, td, row, col, prop, value, cellProperties) {
                     Handsontable.renderers.TextRenderer.apply(this, arguments);
                     //td.style.fontWeight = 'bold';
@@ -59,27 +61,27 @@ angular
                 },
                 fillMatrix = function () {
                     matrix = [];
-                    for (var i in ranges) {
-                        if (!ranges.hasOwnProperty(i)) {
+                    for (var i in ctrl.ranges) {
+                        if (!ctrl.ranges.hasOwnProperty(i)) {
                             continue;
                         }
-                        var range = ranges[i];
+                        var range = ctrl.ranges[i];
                         fillRangeToMatrix(range.source.coords, 1);
                         fillRangeToMatrix(range.target.coords, 2);
                     }
                 },
                 activateNextRange = function (activeRange) {
-                    var activeRangeIndex = ranges.indexOf(activeRange);
-                    if (activeRangeIndex > -1 && ranges.hasOwnProperty(activeRangeIndex + 1)) {
-                        var nextRange = ranges[activeRangeIndex + 1];
+                    var activeRangeIndex = ctrl.ranges.indexOf(activeRange);
+                    if (activeRangeIndex > -1 && ctrl.ranges.hasOwnProperty(activeRangeIndex + 1)) {
+                        var nextRange = ctrl.ranges[activeRangeIndex + 1];
                         nextRange.active = true;
                         nextRange.source.active = true;
                     } else {
-                        for (var i in ranges) {
-                            if (!ranges.hasOwnProperty(i)) {
+                        for (var i in ctrl.ranges) {
+                            if (!ctrl.ranges.hasOwnProperty(i)) {
                                 continue;
                             }
-                            var range = ranges[i];
+                            var range = ctrl.ranges[i];
                             if (!range.source.coords) {
                                 range.active = true;
                                 range.source.active = true;
@@ -96,7 +98,7 @@ angular
                             range.source.active = false;
                             range.target.active = false;
                         }
-                        ranges.push({
+                        ctrl.ranges.push({
                             active: true,
                             source: {
                                 coords: false,
@@ -110,38 +112,37 @@ angular
                             }
                         });
                     }
-                },
-                ranges = [{
-                    active: true,
-                    source: {
-                        coords: false,
-                        text: '',
-                        active: true
-                    },
-                    target: {
-                        coords: false,
-                        text: '',
-                        active: false
-                    }
-                }];
+                };
 
-            this.update = function () {
-                this.onUpdate({value: ranges});
+            ctrl.update = function () {
+                ctrl.onUpdate({value: ctrl.ranges});
             };
-            this.ranges = ranges;
-            this.$onChanges = function(bindings) {
-                var self = this;
-
-                if (angular.isUndefined(bindings.ranges.previousValue) && angular.isDefined(bindings.ranges.currentValue)) {
-                    ranges = bindings.ranges;
-                    this.ranges = ranges;
+            ctrl.ranges = [{
+                active: true,
+                source: {
+                    coords: false,
+                    text: '',
+                    active: true
+                },
+                target: {
+                    coords: false,
+                    text: '',
+                    active: false
+                }
+            }];
+            ctrl.$onChanges = function(bindings) {
+                if (bindings.ranges
+                    && angular.isUndefined(bindings.ranges.previousValue)
+                    && angular.isDefined(bindings.ranges.currentValue)) {
+                    ctrl.ranges = bindings.ranges.previousValue;
+                    fillMatrix();
                 }
                 if (bindings.sheet && !hot) {
                     var sheetContainer = $element.find('.sheet__container')[0];
                     $timeout (function () {
                         Handsontable.renderers.registerRenderer('cellRenderer', cellRenderer);
                         hot = new Handsontable(sheetContainer, {
-                            data: self.sheet,
+                            data: ctrl.sheet,
                             minSpareCols: 0,
                             minSpareRows: 0,
                             rowHeaders: true,
@@ -155,11 +156,11 @@ angular
                                     searchNext = false,
                                     activeRange;
                                 try {
-                                    for (var i in ranges) {
-                                        if (!ranges.hasOwnProperty(i)) {
+                                    for (var i in ctrl.ranges) {
+                                        if (!ctrl.ranges.hasOwnProperty(i)) {
                                             continue;
                                         }
-                                        var range = ranges[i];
+                                        var range = ctrl.ranges[i];
                                         range.source.error = false;
                                         range.target.error = false;
                                         if (range.active) {
@@ -194,7 +195,7 @@ angular
                                     console.log('intersection');
                                 }
                                 hot.deselectCell();
-                                self.update();
+                                ctrl.update();
                                 hot.render();
                             },
                             cells: function (row, col, prop) {
@@ -207,19 +208,19 @@ angular
                 }
             };
             var checkRanges = function () {
-                for (var i in ranges) {
-                    if (!ranges.hasOwnProperty(i)) {
+                for (var i in ctrl.ranges) {
+                    if (!ctrl.ranges.hasOwnProperty(i)) {
                         continue;
                     }
-                    var range = ranges[i];
+                    var range = ctrl.ranges[i];
                     if (!range.source.coords) {
                         range.source.error = true;
-                        this.update();
+                        ctrl.update();
                         return false;
                     }
                     if (!range.target.coords) {
                         range.target.error = true;
-                        this.update();
+                        ctrl.update();
                         return false;
                     }
                     range.active = false;
@@ -228,11 +229,11 @@ angular
                 }
                 return true;
             };
-            this.addRange = function () {
+            ctrl.addRange = function () {
                 if (!checkRanges()) {
                     return false;
                 }
-                this.ranges.push({
+                ctrl.ranges.push({
                     active: true,
                     source: {
                         coords: false,
@@ -245,14 +246,14 @@ angular
                         active: false
                     }
                 });
-                this.update();
+                ctrl.update();
             };
-            this.selectRange = function (range, input) {
-                for (var i in ranges) {
-                    if (!ranges.hasOwnProperty(i)) {
+            ctrl.selectRange = function (range, input) {
+                for (var i in ctrl.ranges) {
+                    if (!ctrl.ranges.hasOwnProperty(i)) {
                         continue;
                     }
-                    var someRange = ranges[i];
+                    var someRange = ctrl.ranges[i];
                     if (someRange === range) {
                         someRange.active = true;
                         someRange.source.active = !input;
@@ -264,11 +265,11 @@ angular
                     }
                 }
             };
-            this.removeRange = function (range) {
-                var index = ranges.indexOf(range);
+            ctrl.removeRange = function (range) {
+                var index = ctrl.ranges.indexOf(range);
                 if (index > -1) {
-                    ranges.splice(index, 1);
-                    this.update();
+                    ctrl.ranges.splice(index, 1);
+                    ctrl.update();
                 }
             }
         }]
