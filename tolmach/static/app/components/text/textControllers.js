@@ -42,7 +42,7 @@
                 textId = window['textId'],
                 useMachine = window['useMachine'],
                 getYaMachines = function (entry) {
-                    $http.post('/api/ya-translate/', {
+                    $http.post('/ajax/ya-translate/', {
                         lang_pair: $scope.langPair,
                         entry_body: clearTags(entry['rawBody'])
                     }).success(function (data) {
@@ -54,7 +54,7 @@
                     });
                 },
                 getTmdbVariants = function (entry) {
-                    $http.post('/api/tmdb-search/', {
+                    $http.post('/ajax/tmdb-search/', {
                         entry_id: entry['id'],
                         lang_pair: $scope.langPair
                     }).success(function (data) {
@@ -88,7 +88,7 @@
                 }
             };
             $scope.userIsManager = false;
-            $http.get('/api/entry/', {
+            $http.get('/ajax/entry/', {
                 params: {
                     text: textId,
                     target_lang: window['translationTargetLang']
@@ -189,7 +189,7 @@
                 expandEntry(entry);
             };
             $scope.approveEntry = function (translation, entry) {
-                $http.post('/api/entry-approve/', {id: translation.id}).success(function () {
+                $http.post('/ajax/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
                     entry.approved = true;
                     applyTranslation(entry, translation);
@@ -214,7 +214,7 @@
                     }
                 }
                 if (translation) {
-                    $http.post('/api/entry-disapprove/', {id: translation.id}).success(function () {
+                    $http.post('/ajax/entry-disapprove/', {id: translation.id}).success(function () {
                         translation.isApproved = false;
                         entry.approved = false;
                         $scope.activeEntry = entry;
@@ -227,7 +227,7 @@
                 if (!entry.suggestionId) {
                     return;
                 }
-                $http.post('/api/remove-translate/', {
+                $http.post('/ajax/remove-translate/', {
                     'entry': entry.id,
                     'translation': entry.suggestionId
                 }).success(function () {
@@ -259,7 +259,7 @@
                     data['translation_id'] = suggestionId;
                 }
                 entry.suggestionId = false;
-                $http.post('/api/entry-translate/', data).success(function (data) {
+                $http.post('/ajax/entry-translate/', data).success(function (data) {
                     if (suggestionId) {
                         var i,
                             translation;
@@ -308,7 +308,7 @@
                         vote: vote ? 1 : 0
                     };
                 translation.isVoted = vote;
-                $http.post('/api/entry/vote/', data).success(function (data) {
+                $http.post('/ajax/entry/vote/', data).success(function (data) {
                     translation.busy = false;
                 }).error(function (data) {
                     translation.isVoted = !vote;

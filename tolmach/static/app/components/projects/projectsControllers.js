@@ -33,7 +33,7 @@
                     'type': $scope.type
                 };
                 $scope.busy = true;
-                $http.post('/api/project-create/', data)
+                $http.post('/ajax/project-create/', data)
                     .success(function (data) {
                         location.href = '/project/' + data;
                     })
