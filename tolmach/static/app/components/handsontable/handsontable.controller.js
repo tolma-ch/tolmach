@@ -12,7 +12,6 @@ angular
                 hot,
                 cellRenderer = function (instance, td, row, col, prop, value, cellProperties) {
                     Handsontable.renderers.TextRenderer.apply(this, arguments);
-                    //td.style.fontWeight = 'bold';
                     var color = matrix[row] && matrix[row][col];
                     if (color == 1) {
                         td.style.color = 'green';
@@ -98,48 +97,23 @@ angular
                             range.source.active = false;
                             range.target.active = false;
                         }
-                        ctrl.ranges.push({
-                            active: true,
-                            source: {
-                                coords: false,
-                                text: '',
-                                active: true
-                            },
-                            target: {
-                                coords: false,
-                                text: '',
-                                active: false
-                            }
-                        });
                     }
                 };
 
             ctrl.update = function () {
                 ctrl.onUpdate({value: ctrl.ranges});
             };
-            ctrl.ranges = [{
-                active: true,
-                source: {
-                    coords: false,
-                    text: '',
-                    active: true
-                },
-                target: {
-                    coords: false,
-                    text: '',
-                    active: false
-                }
-            }];
+            ctrl.ranges = [];
             ctrl.$onChanges = function(bindings) {
                 if (bindings.ranges
                     && angular.isUndefined(bindings.ranges.previousValue)
                     && angular.isDefined(bindings.ranges.currentValue)) {
-                    ctrl.ranges = bindings.ranges.previousValue;
-                    fillMatrix();
+                    ctrl.ranges = bindings.ranges.previousValue;;
                 }
                 if (bindings.sheet && !hot) {
                     var sheetContainer = $element.find('.sheet__container')[0];
                     $timeout (function () {
+                        fillMatrix();
                         Handsontable.renderers.registerRenderer('cellRenderer', cellRenderer);
                         hot = new Handsontable(sheetContainer, {
                             data: ctrl.sheet,
@@ -153,7 +127,6 @@ angular
                                 var coords = [rowStart, columnStart, rowEnd, columnEnd],
                                     text = numToChar(columnStart) + (rowStart + 1) + ":" +
                                            numToChar(columnEnd) + (rowEnd + 1),
-                                    searchNext = false,
                                     activeRange;
                                 try {
                                     for (var i in ctrl.ranges) {
@@ -174,6 +147,22 @@ angular
                                             checkIntersection(coords, range.source.coords);
                                             checkIntersection(coords, range.target.coords);
                                         }
+                                    }
+                                    if (!activeRange) {
+                                        activeRange = {
+                                            active: true,
+                                            source: {
+                                                coords: false,
+                                                text: '',
+                                                active: true
+                                            },
+                                            target: {
+                                                coords: false,
+                                                text: '',
+                                                active: false
+                                            }
+                                        };
+                                        ctrl.ranges.push(activeRange);
                                     }
                                     if (activeRange) {
                                         if (activeRange.source.active) {
@@ -206,47 +195,6 @@ angular
                         });
                     });
                 }
-            };
-            var checkRanges = function () {
-                for (var i in ctrl.ranges) {
-                    if (!ctrl.ranges.hasOwnProperty(i)) {
-                        continue;
-                    }
-                    var range = ctrl.ranges[i];
-                    if (!range.source.coords) {
-                        range.source.error = true;
-                        ctrl.update();
-                        return false;
-                    }
-                    if (!range.target.coords) {
-                        range.target.error = true;
-                        ctrl.update();
-                        return false;
-                    }
-                    range.active = false;
-                    range.source.active = false;
-                    range.target.active = false;
-                }
-                return true;
-            };
-            ctrl.addRange = function () {
-                if (!checkRanges()) {
-                    return false;
-                }
-                ctrl.ranges.push({
-                    active: true,
-                    source: {
-                        coords: false,
-                        text: '',
-                        active: true
-                    },
-                    target: {
-                        coords: false,
-                        text: '',
-                        active: false
-                    }
-                });
-                ctrl.update();
             };
             ctrl.selectRange = function (range, input) {
                 for (var i in ctrl.ranges) {

@@ -354,19 +354,7 @@
             $scope.sheets = data;
             for (var i in data) {
                 if (data.hasOwnProperty(i)) {
-                    $scope.ranges[i] = [{
-                        active: true,
-                        source: {
-                            coords: false,
-                            text: '',
-                            active: true
-                        },
-                        target: {
-                            coords: false,
-                            text: '',
-                            active: false
-                        }
-                    }];
+                    $scope.ranges[i] = [];
                 }
             }
             $scope.currentSheetName = Object.keys(data)[0];
