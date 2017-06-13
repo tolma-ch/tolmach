@@ -15,7 +15,7 @@ from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
-import json, os
+import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
 
@@ -329,7 +329,7 @@ def text_ajax(request, project):
                                                    int(project.id))
                     if not os.path.isdir(target_path):
                         os.makedirs(target_path)
-                    os.rename(file_path, '%s/%s' % (target_path, file_name))
+                    shutil.move(file_path, '%s/%s' % (target_path, file_name))
                 title = post['title']
                 text_body = ""
 
