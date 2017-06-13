@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-08 23:01+0400\n"
+"POT-Creation-Date: 2017-06-13 11:48+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -102,7 +102,7 @@ msgstr ""
 
 #: templates/main/base.html:96 templates/main/base.html:202
 #: templates/translations/partial/add_text_modal.html:100
-#: templates/translations/partial/select_text_ranges_modal.html:33
+#: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr ""
 
@@ -693,7 +693,7 @@ msgstr ""
 #: templates/translations/partial/add_text_modal.html:55
 msgid ""
 "Click here to upload file or drag file here to upload.</br> Supported "
-"formats: DOCX, SRT, ASS, POT, PO, MO."
+"formats: DOCX, XLSX, SRT, ASS, POT, PO, MO, TXT."
 msgstr ""
 
 #: templates/translations/partial/add_text_modal.html:69
@@ -791,6 +791,13 @@ msgstr ""
 
 #: templates/translations/partial/select_text_ranges_modal.html:7
 msgid "Select cells for translating"
+msgstr ""
+
+#: templates/translations/partial/select_text_ranges_modal.html:11
+msgid ""
+"If you want exact cells to be translated, just select source range of cells "
+"and than target range, where to store translations. If you want all the "
+"cells to be translated, just click 'Next' whithout selecting any cells."
 msgstr ""
 
 #: templates/translations/project.html:63
