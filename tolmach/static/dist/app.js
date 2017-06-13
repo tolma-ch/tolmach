@@ -72,14 +72,15 @@
     .component('handsontable', {
         bindings: {
             onUpdate: '&',
+            ranges: '<',
             sheet: '<'
         },
         templateUrl: 'handsontable.template.html',
         controller: ['$element', '$timeout', function ($element, $timeout) {
-            var hot,
+            var ctrl = this,
+                hot,
                 cellRenderer = function (instance, td, row, col, prop, value, cellProperties) {
                     Handsontable.renderers.TextRenderer.apply(this, arguments);
-                    //td.style.fontWeight = 'bold';
                     var color = matrix[row] && matrix[row][col];
                     if (color == 1) {
                         td.style.color = 'green';
@@ -128,28 +129,63 @@
                 },
                 fillMatrix = function () {
                     matrix = [];
-                    for (var i in ranges) {
-                        if (!ranges.hasOwnProperty(i)) {
+                    for (var i in ctrl.ranges) {
+                        if (!ctrl.ranges.hasOwnProperty(i)) {
                             continue;
                         }
-                        var range = ranges[i];
+                        var range = ctrl.ranges[i];
                         fillRangeToMatrix(range.source.coords, 1);
                         fillRangeToMatrix(range.target.coords, 2);
                     }
                 },
-                ranges = [];
-            this.update = function () {
-                this.onUpdate({value: ranges});
+                activateNextRange = function (activeRange) {
+                    var activeRangeIndex = ctrl.ranges.indexOf(activeRange);
+                    if (activeRangeIndex > -1 && ctrl.ranges.hasOwnProperty(activeRangeIndex + 1)) {
+                        var nextRange = ctrl.ranges[activeRangeIndex + 1];
+                        nextRange.active = true;
+                        nextRange.source.active = true;
+                    } else {
+                        for (var i in ctrl.ranges) {
+                            if (!ctrl.ranges.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            var range = ctrl.ranges[i];
+                            if (!range.source.coords) {
+                                range.active = true;
+                                range.source.active = true;
+                                range.target.active = false;
+                                return;
+                            }
+                            if (!range.target.coords) {
+                                range.active = true;
+                                range.target.active = true;
+                                range.source.active = false;
+                                return;
+                            }
+                            range.active = false;
+                            range.source.active = false;
+                            range.target.active = false;
+                        }
+                    }
+                };
+
+            ctrl.update = function () {
+                ctrl.onUpdate({value: ctrl.ranges});
             };
-            this.ranges = ranges;
-            this.$onChanges = function(bindings) {
-                var self = this;
+            ctrl.ranges = [];
+            ctrl.$onChanges = function(bindings) {
+                if (bindings.ranges
+                    && angular.isUndefined(bindings.ranges.previousValue)
+                    && angular.isDefined(bindings.ranges.currentValue)) {
+                    ctrl.ranges = bindings.ranges.previousValue;;
+                }
                 if (bindings.sheet && !hot) {
                     var sheetContainer = $element.find('.sheet__container')[0];
                     $timeout (function () {
+                        fillMatrix();
                         Handsontable.renderers.registerRenderer('cellRenderer', cellRenderer);
                         hot = new Handsontable(sheetContainer, {
-                            data: self.sheet,
+                            data: ctrl.sheet,
                             minSpareCols: 0,
                             minSpareRows: 0,
                             rowHeaders: true,
@@ -160,14 +196,13 @@
                                 var coords = [rowStart, columnStart, rowEnd, columnEnd],
                                     text = numToChar(columnStart) + (rowStart + 1) + ":" +
                                            numToChar(columnEnd) + (rowEnd + 1),
-                                    searchNext = false,
                                     activeRange;
                                 try {
-                                    for (var i in ranges) {
-                                        if (!ranges.hasOwnProperty(i)) {
+                                    for (var i in ctrl.ranges) {
+                                        if (!ctrl.ranges.hasOwnProperty(i)) {
                                             continue;
                                         }
-                                        var range = ranges[i];
+                                        var range = ctrl.ranges[i];
                                         range.source.error = false;
                                         range.target.error = false;
                                         if (range.active) {
@@ -182,23 +217,34 @@
                                             checkIntersection(coords, range.target.coords);
                                         }
                                     }
+                                    if (!activeRange) {
+                                        activeRange = {
+                                            active: true,
+                                            source: {
+                                                coords: false,
+                                                text: '',
+                                                active: true
+                                            },
+                                            target: {
+                                                coords: false,
+                                                text: '',
+                                                active: false
+                                            }
+                                        };
+                                        ctrl.ranges.push(activeRange);
+                                    }
                                     if (activeRange) {
                                         if (activeRange.source.active) {
-                                            range.source.coords = coords;
-                                            range.source.text = text;
-                                            range.source.active = false;
-                                            range.target.active = true;
+                                            activeRange.source.coords = coords;
+                                            activeRange.source.text = text;
+                                            activeRange.source.active = false;
+                                            activeRange.target.active = true;
                                         } else {
-                                            range.target.coords = coords;
-                                            range.target.text = text;
-                                            range.target.active = false;
-                                            range.active = false;
-                                            var activeRangeIndex = ranges.indexOf(activeRange);
-                                            if (activeRangeIndex > -1 && ranges.hasOwnProperty(activeRangeIndex + 1)) {
-                                                var nextRange = ranges[activeRangeIndex + 1];
-                                                nextRange.active = true;
-                                                nextRange.source.active = true;
-                                            }
+                                            activeRange.target.coords = coords;
+                                            activeRange.target.text = text;
+                                            activeRange.target.active = false;
+                                            activeRange.active = false;
+                                            activateNextRange(activeRange);
                                         }
                                     }
                                     fillMatrix();
@@ -207,7 +253,7 @@
                                     console.log('intersection');
                                 }
                                 hot.deselectCell();
-                                self.update();
+                                ctrl.update();
                                 hot.render();
                             },
                             cells: function (row, col, prop) {
@@ -219,53 +265,12 @@
                     });
                 }
             };
-            var checkRanges = function () {
-                for (var i in ranges) {
-                    if (!ranges.hasOwnProperty(i)) {
+            ctrl.selectRange = function (range, input) {
+                for (var i in ctrl.ranges) {
+                    if (!ctrl.ranges.hasOwnProperty(i)) {
                         continue;
                     }
-                    var range = ranges[i];
-                    if (!range.source.coords) {
-                        range.source.error = true;
-                        this.update();
-                        return false;
-                    }
-                    if (!range.target.coords) {
-                        range.target.error = true;
-                        this.update();
-                        return false;
-                    }
-                    range.active = false;
-                    range.source.active = false;
-                    range.target.active = false;
-                }
-                return true;
-            };
-            this.addRange = function () {
-                if (!checkRanges()) {
-                    return false;
-                }
-                this.ranges.push({
-                    active: true,
-                    source: {
-                        coords: false,
-                        text: '',
-                        active: true
-                    },
-                    target: {
-                        coords: false,
-                        text: '',
-                        active: false
-                    }
-                });
-                this.update();
-            };
-            this.selectRange = function (range, input) {
-                for (var i in ranges) {
-                    if (!ranges.hasOwnProperty(i)) {
-                        continue;
-                    }
-                    var someRange = ranges[i];
+                    var someRange = ctrl.ranges[i];
                     if (someRange === range) {
                         someRange.active = true;
                         someRange.source.active = !input;
@@ -277,11 +282,11 @@
                     }
                 }
             };
-            this.removeRange = function (range) {
-                var index = ranges.indexOf(range);
+            ctrl.removeRange = function (range) {
+                var index = ctrl.ranges.indexOf(range);
                 if (index > -1) {
-                    ranges.splice(index, 1);
-                    this.update();
+                    ctrl.ranges.splice(index, 1);
+                    ctrl.update();
                 }
             }
         }]
@@ -331,10 +336,10 @@
             $scope.ok = function () {
                 $scope.busy = true;
                 $scope.error = '';
-                $http.post('/api/user/', $scope.userData)
+                $http.post('/ajax/user/', $scope.userData)
                     .success(function(data) {
                         if ($scope.cropper.croppedImage) {
-                            $http.post('/api/user/', JSON.stringify($scope.cropper.croppedImage))
+                            $http.post('/ajax/user/', JSON.stringify($scope.cropper.croppedImage))
                                 .success(function() {
                                     location.reload();
                                 })
@@ -378,21 +383,21 @@
             $scope.isUserManager = window['isUserManager'];
             $scope.languages = window['languages'];
             $scope.participants = [];
-            $http.get('/api/participant', {params: {project: $scope.projectId}})
+            $http.get('/ajax/participant', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;
                 });
             $scope.texts = [];
-            $http.get('/api/text', {params: {project: $scope.projectId}})
+            $http.get('/ajax/text', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.texts = response.data;
                 });
             $scope.glossaries = [];
-            $http.get('/api/glossary', {params: {project: $scope.projectId}})
+            $http.get('/ajax/glossary', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
-            $http.get('/api/tmx', {params: {project: $scope.projectId}})
+            $http.get('/ajax/tmx', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.tmxes = response.data;
                 });
@@ -416,7 +421,7 @@
                     'user': participant.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/participant/', {params: data})
+                $http.delete('/ajax/participant/', {params: data})
                     .success(function () {
                         var i = $scope.participants.indexOf(participant);
                         if (i > -1) {
@@ -484,7 +489,7 @@
                     'text': text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         var i = $scope.texts.indexOf(text);
                         if (i > -1) {
@@ -550,7 +555,7 @@
                         }
                     }
                 });
-                $http.get('/api/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
+                $http.get('/ajax/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
                     .then(function (response) {
                         glossary.rows = response.data.rows;
                         var lastRow = glossary.rows[glossary.rows.length - 1];
@@ -569,7 +574,7 @@
                     'glossary': glossary.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/glossary/', {params: data})
+                $http.delete('/ajax/glossary/', {params: data})
                     .success(function () {
                         var i = $scope.glossaries.indexOf(glossary);
                         if (i > -1) {
@@ -588,7 +593,7 @@
                     'tmx': tmx.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/tmx/', {params: data})
+                $http.delete('/ajax/tmx/', {params: data})
                     .success(function () {
                         var i = $scope.tmxes.indexOf(tmx);
                         if (i > -1) {
@@ -612,7 +617,7 @@
             $scope.saveName = function () {
                 $scope.editingName = false;
                 $scope.project.name = $scope.projectName;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'name': $scope.project.name
                     })
@@ -631,7 +636,7 @@
             $scope.saveDescription = function () {
                 $scope.project.description = $scope.projectDescription;
                 $scope.editingDescription = false;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'description': $scope.project.description
                     })
@@ -646,7 +651,7 @@
 
             $scope.removeProject = function (project) {
                 $scope.busy = true;
-                $http.delete('/api/project/', {params: {id: project.id}})
+                $http.delete('/ajax/project/', {params: {id: project.id}})
                     .success(function () {
                         $scope.busy = false;
                         location.href = '/projects/';
@@ -662,7 +667,7 @@
     module.controller('AddParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.getUsers = function (query) {
-                return $http.get('/api/get-users', {params: {q: query}})
+                return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
                         return response.data;
                     });
@@ -674,7 +679,7 @@
                     'user': $scope.user.id
                 };
                 $scope.busy = true;
-                $http.post('/api/participant/', data)
+                $http.post('/ajax/participant/', data)
                     .success(function (participant) {
                         $modalInstance.close(participant);
                         $scope.busy = false;
@@ -718,7 +723,13 @@
                     }
                     return true;
                 };
+            $scope.ranges = result;
             $scope.sheets = data;
+            for (var i in data) {
+                if (data.hasOwnProperty(i)) {
+                    $scope.ranges[i] = [];
+                }
+            }
             $scope.currentSheetName = Object.keys(data)[0];
             $scope.updateResult = function (sheetName, value) {
                 result[sheetName] = value;
@@ -780,7 +791,7 @@
                         data['xlsx_prepare_state'] = 1;
                     }
                     Upload.upload({
-                            url: '/api/text/',
+                            url: '/ajax/text/',
                             fields: data,
                             file: $scope.text.files[0]
                         })
@@ -836,7 +847,7 @@
                                         custom_parse: ranges
                                     };
                                     $scope.busy = true;
-                                    $http.post('/api/text/', data)
+                                    $http.post('/ajax/text/', data)
                                         .success(function (text) {
                                             $scope.busy = false;
                                             $modalInstance.close(text);
@@ -862,7 +873,7 @@
                     }
                     data.textBody = $scope.text.textBody;
                     $scope.busy = true;
-                    $http.post('/api/text/', data)
+                    $http.post('/ajax/text/', data)
                         .success(function (text) {
                             $modalInstance.close(text);
                             $scope.busy = false;
@@ -985,7 +996,7 @@
                     tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
-                $http.post('/api/text/', data)
+                $http.post('/ajax/text/', data)
                     .success(function (text) {
                         $modalInstance.close(text);
                         $scope.busy = false;
@@ -1002,7 +1013,7 @@
                     'text': $scope.text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         $scope.busy = false;
                         $modalInstance.close('removed');
@@ -1048,7 +1059,7 @@
                 data['project'] = window['projectId'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
-                    $http.post('/api/glossary/', data)
+                    $http.post('/ajax/glossary/', data)
                         .success(function (glossary) {
                             $modalInstance.close(glossary);
                             $scope.busy = false;
@@ -1059,7 +1070,7 @@
                         });
                 } else {
                     Upload.upload({
-                            url: '/api/glossary/',
+                            url: '/ajax/glossary/',
                             fields: data,
                             file: data.files[0]
                         })
@@ -1093,7 +1104,7 @@
                 data['project'] = window['projectId'];
 
                 Upload.upload({
-                        url: '/api/tmx/',
+                        url: '/ajax/tmx/',
                         fields: data,
                         file: data.files[0]
                     })
@@ -1157,7 +1168,7 @@
                     'type': $scope.type
                 };
                 $scope.busy = true;
-                $http.post('/api/project-create/', data)
+                $http.post('/ajax/project-create/', data)
                     .success(function (data) {
                         location.href = '/project/' + data;
                     })
@@ -1224,7 +1235,7 @@
                 textId = window['textId'],
                 useMachine = window['useMachine'],
                 getYaMachines = function (entry) {
-                    $http.post('/api/ya-translate/', {
+                    $http.post('/ajax/ya-translate/', {
                         lang_pair: $scope.langPair,
                         entry_body: clearTags(entry['rawBody'])
                     }).success(function (data) {
@@ -1236,7 +1247,7 @@
                     });
                 },
                 getTmdbVariants = function (entry) {
-                    $http.post('/api/tmdb-search/', {
+                    $http.post('/ajax/tmdb-search/', {
                         entry_id: entry['id'],
                         lang_pair: $scope.langPair
                     }).success(function (data) {
@@ -1270,7 +1281,7 @@
                 }
             };
             $scope.userIsManager = false;
-            $http.get('/api/entry/', {
+            $http.get('/ajax/entry/', {
                 params: {
                     text: textId,
                     target_lang: window['translationTargetLang']
@@ -1371,7 +1382,7 @@
                 expandEntry(entry);
             };
             $scope.approveEntry = function (translation, entry) {
-                $http.post('/api/entry-approve/', {id: translation.id}).success(function () {
+                $http.post('/ajax/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
                     entry.approved = true;
                     applyTranslation(entry, translation);
@@ -1396,7 +1407,7 @@
                     }
                 }
                 if (translation) {
-                    $http.post('/api/entry-disapprove/', {id: translation.id}).success(function () {
+                    $http.post('/ajax/entry-disapprove/', {id: translation.id}).success(function () {
                         translation.isApproved = false;
                         entry.approved = false;
                         $scope.activeEntry = entry;
@@ -1409,7 +1420,7 @@
                 if (!entry.suggestionId) {
                     return;
                 }
-                $http.post('/api/remove-translate/', {
+                $http.post('/ajax/remove-translate/', {
                     'entry': entry.id,
                     'translation': entry.suggestionId
                 }).success(function () {
@@ -1441,7 +1452,7 @@
                     data['translation_id'] = suggestionId;
                 }
                 entry.suggestionId = false;
-                $http.post('/api/entry-translate/', data).success(function (data) {
+                $http.post('/ajax/entry-translate/', data).success(function (data) {
                     if (suggestionId) {
                         var i,
                             translation;
@@ -1490,7 +1501,7 @@
                         vote: vote ? 1 : 0
                     };
                 translation.isVoted = vote;
-                $http.post('/api/entry/vote/', data).success(function (data) {
+                $http.post('/ajax/entry/vote/', data).success(function (data) {
                     translation.busy = false;
                 }).error(function (data) {
                     translation.isVoted = !vote;
@@ -2352,7 +2363,7 @@
         function ($scope, $http, $timeout, $modal, $window) {
 
             var updateMessages = function () {
-                $http.get('/api/message/').success(function (data) {
+                $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 15 * 60 * 1000);
                 }).error(function (data) {
@@ -2368,7 +2379,7 @@
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
             };
             $scope.readMessage = function (message) {
-                $http.post('/api/message/', {id: message.id}).success(function (data) {
+                $http.post('/ajax/message/', {id: message.id}).success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 5000);
                 }).error(function (data) {
@@ -2541,7 +2552,7 @@
     module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.error = '';
-            $http.get('/api/message/all').success(function (data) {
+            $http.get('/ajax/message/all').success(function (data) {
                 $scope.messages = data;
                 $timeout(updateMessages, 5000);
             }).error(function (data) {
