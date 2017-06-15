@@ -693,6 +693,14 @@ def entry_ajax(request, action, text):
             text_body = cut_beginning[0]
 
         entries = []
+        import math
+        total_pages = int(
+            math.ceil(
+                TextEntry.objects.filter(text=text, parent_entry=None).count()/float(
+                    entries_per_page
+                )
+            )
+        )
         base_entries = TextEntry.objects.filter(text=text, parent_entry=None)[offset:offset+entries_per_page]
         pre_glossary_text = []
 
@@ -755,7 +763,8 @@ def entry_ajax(request, action, text):
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
             'entries': entries,
-            'text_body': text_body
+            'text_body': text_body,
+            'total_pages': total_pages
         }
     elif request.method == 'POST':
         params = request.POST or json.loads(request.body)
