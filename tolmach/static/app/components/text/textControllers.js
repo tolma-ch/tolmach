@@ -366,14 +366,14 @@
                 }
             };
             $scope.textareaKeydown = function (event, entry) {
-                var code = event.keyCode ? event.keyCode : event.which;
+                var code = (event.charCode) ? event.charCode : ((event.which) ? event.which : event.keyCode);
                 if ($scope.savingOptions.btn === 'enter') {
                     if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey) {
                         console.log('just enter');
                         saveHotKey(entry);
                     }
                 } else {
-                    if (event.keyCode == 13 && event.metaKey) {
+                    if (code == 13 && event.metaKey) {
                         console.log('cmd enter');
                         saveHotKey(entry);
                     } else if (event.ctrlKey && (code === 13 || code === 10)) {
