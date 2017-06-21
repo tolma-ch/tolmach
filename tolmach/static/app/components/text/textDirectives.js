@@ -313,8 +313,8 @@
         return {
             link: function (scope, element) {
                 element.on('keydown', function (e) {
-                    var code = event.keyCode ? event.keyCode : event.which;
-                    if (event.ctrlKey) {
+                    var code = (e.charCode) ? e.charCode : ((e.which) ? e.which : e.keyCode);
+                    if (e.ctrlKey) {
                         if (code === 66) { // b
                             e.preventDefault();
                         }
