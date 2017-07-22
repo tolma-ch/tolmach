@@ -145,7 +145,7 @@
                     setTimeout(function () {
                         var $container = $('#translations-container'),
                             $elem = $('#entry-' + id),
-                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'];
+                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
                         $container.stop().animate({
                             scrollTop: containerShift
                         }, 500);
@@ -155,7 +155,7 @@
                     setTimeout(function () {
                         var $resContainer = $('#result-container'),
                             $resElem = $('#res-entry-' + id),
-                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'];
+                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
                         $resContainer.stop().animate({
                             scrollTop: resShift
                         }, 500);
