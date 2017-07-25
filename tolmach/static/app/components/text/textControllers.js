@@ -145,6 +145,8 @@
                     setTimeout(function () {
                         var $container = $('#translations-container'),
                             $elem = $('#entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
                             containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
                         $container.stop().animate({
                             scrollTop: containerShift
@@ -155,6 +157,8 @@
                     setTimeout(function () {
                         var $resContainer = $('#result-container'),
                             $resElem = $('#res-entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
                             resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
                         $resContainer.stop().animate({
                             scrollTop: resShift
