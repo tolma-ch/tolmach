@@ -355,7 +355,10 @@
                 //entry.suggestion += text;
             };
             var saveHotKey = function (entry) {
-                $scope.suggestTranslation(entry);
+                // $('#entry-' + entry.idInText).trigger("blur");
+                $timeout(function () {
+                    $scope.suggestTranslation(entry);
+                }, 501);
                 var i,
                     found = false;
                 for (i in $scope.entries) {
