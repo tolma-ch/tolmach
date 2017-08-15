@@ -675,8 +675,33 @@ def entry_ajax(request, action, text):
             has_plurals = False
             plural_examples = {}
 
+        # Получаем инфу о странице
+        page_num = int(request.GET.get('page', 1)) - 1
+        entries_per_page = int(request.GET.get('entries_per_page', 100))
+        offset = page_num * entries_per_page
+
+        # Делим текст для правой колонки
+        tail_cut = '<span data-entry="%d">' % (offset + entries_per_page + 1)
+        cut_tail = text.body.split(tail_cut, 1)[0]
+
+        beginning_cut = '<span data-entry="%d">' % (offset + 1)
+        cut_beginning = cut_tail.split(beginning_cut, 1)
+
+        if len(cut_beginning) > 1:
+            text_body = beginning_cut + cut_beginning[1]
+        else:
+            text_body = cut_beginning[0]
+
         entries = []
-        base_entries = TextEntry.objects.filter(text=text, parent_entry=None)
+        import math
+        total_pages = int(
+            math.ceil(
+                TextEntry.objects.filter(text=text, parent_entry=None).count()/float(
+                    entries_per_page
+                )
+            )
+        )
+        base_entries = TextEntry.objects.filter(text=text, parent_entry=None)[offset:offset+entries_per_page]
         pre_glossary_text = []
 
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
@@ -737,7 +762,9 @@ def entry_ajax(request, action, text):
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
-            'entries': entries
+            'entries': entries,
+            'text_body': text_body,
+            'total_pages': total_pages
         }
     elif request.method == 'POST':
         params = request.POST or json.loads(request.body)

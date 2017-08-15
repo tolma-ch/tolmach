@@ -1255,6 +1255,38 @@
                     }).error(function (a) {
                         //console.error(a);
                     });
+                },
+                updateEntries = function () {
+                    $scope.busy = true;
+                    $http.get('/ajax/entry/', {
+                        params: {
+                            text: textId,
+                            page: $scope.page,
+                            target_lang: window['translationTargetLang']
+                        }
+                    }).success(function (data) {
+                        var entries = data['entries'];
+                        $scope.userIsManager = !!data['user_is_manager'];
+                        $scope.translationAllowed = !!data['translation_allowed'];
+                        $scope.langPair = data['lang_pair'];
+                        $scope.langPair3 = data['639_3'];
+                        $scope.pluralExamples = data['plural_examples'];
+                        $scope.user = data['user'];
+                        var entriesById = {},
+                            i, entry;
+                        for (i = entries.length - 1; i >= 0; i--) {
+                            entry = entries[i];
+                            entry.body = entry.body.replace("\n", '<br>');
+                            updateTranslation(entry);
+                            entriesById[entry['idInText']] = entry;
+                        }
+                        $scope.entries = entries;
+                        $scope.pagesCount = data['total_pages'];
+                        $scope.entriesById = entriesById;
+                        $scope.busy = false;
+                    }).error(function (a) {
+                        console.log(a);
+                    });
                 };
             $scope.savingOptions = {
                 btn: localStorageService.get('savingOptions-btn') || 'ctrl-enter'
@@ -1281,33 +1313,9 @@
                 }
             };
             $scope.userIsManager = false;
-            $http.get('/ajax/entry/', {
-                params: {
-                    text: textId,
-                    target_lang: window['translationTargetLang']
-                }
-            }).success(function (data) {
-                var entries = data['entries'];
-                $scope.userIsManager = !!data['user_is_manager'];
-                $scope.translationAllowed = !!data['translation_allowed'];
-                $scope.langPair = data['lang_pair'];
-                $scope.langPair3 = data['639_3'];
-                $scope.pluralExamples = data['plural_examples'];
-                $scope.user = data['user'];
-                var entriesById = {},
-                    i, entry;
-                for (i = entries.length - 1; i >= 0; i--) {
-                    entry = entries[i];
-                    entry.body = entry.body.replace("\n", '<br>');
-                    updateTranslation(entry);
-                    entriesById[entry['idInText']] = entry;
-                }
-                $scope.entries = entries;
-                $scope.pagesCount = Math.ceil(entries.length / $scope.countPerPage);
-                $scope.entriesById = entriesById;
-            }).error(function (a) {
-                console.log(a);
-            });
+
+            updateEntries();
+
             var moveCursorToEnd = function (elem) {
                 var caretPos = elem.innerHTML.length;
                 var range = document.createRange();
@@ -1316,6 +1324,24 @@
                 range.collapse(true);
                 sel.removeAllRanges();
                 sel.addRange(range);
+            };
+            $scope.prevPage = function () {
+                if ($scope.busy) {
+                    return;
+                }
+                if ($scope.page > 1) {
+                    $scope.page = $scope.page - 1;
+                    updateEntries();
+                }
+            };
+            $scope.nextPage = function () {
+                if ($scope.busy) {
+                    return;
+                }
+                if ($scope.page < $scope.pagesCount) {
+                    $scope.page = $scope.page + 1;
+                    updateEntries();
+                }
             };
             $scope.addMachineSuggestion = function (entry, machine) {
                 if (entry.suggestion) {
@@ -1338,6 +1364,8 @@
                     setTimeout(function () {
                         var $container = $('#translations-container'),
                             $elem = $('#entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
                             containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
                         $container.stop().animate({
                             scrollTop: containerShift
@@ -1348,6 +1376,8 @@
                     setTimeout(function () {
                         var $resContainer = $('#result-container'),
                             $resElem = $('#res-entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
                             resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
                         $resContainer.stop().animate({
                             scrollTop: resShift
@@ -1544,7 +1574,10 @@
                 //entry.suggestion += text;
             };
             var saveHotKey = function (entry) {
-                $scope.suggestTranslation(entry);
+                // $('#entry-' + entry.idInText).trigger("blur");
+                $timeout(function () {
+                    $scope.suggestTranslation(entry);
+                }, 501);
                 var i,
                     found = false;
                 for (i in $scope.entries) {

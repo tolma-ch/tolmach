@@ -58,11 +58,11 @@
     <div class="workbench-layout" ng-controller="transCtrl">
         <div class="workbench-layout__row row" ng-cloak>
             <div class="workbench-layout__col col-xs-12 col-sm-6">
-                <div class="text-pieces" id="translations-container">
+                <div class="text-pieces" id="translations-container"
+                     ng-show="!busy">
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
-                         ng-if="(page - 1)*countPerPage < entry.idInText && entry.idInText <= page * countPerPage"
                          ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
@@ -261,7 +261,7 @@
                                 <div class="text-overview__paginator"
                                      ng-show="pagesCount > 1">
                                     <a href=""
-                                       ng-click="page = page > 1 ? page - 1 : 1"><i class="fa fa-chevron-left"></i></a>
+                                       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
                                 <span class="text-overview__paginator-text"
                                       ng-show="!editPage"
                                       ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
@@ -272,7 +272,7 @@
                                            ng-keypress="paginatorKeypress($event)"
                                            ng-blur="paginatorBlur()">
                                     <a href=""
-                                       ng-click="page = page < pagesCount ? page + 1 : pagesCount"><i class="fa fa-chevron-right"></i></a>
+                                       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
                                 </div>
                                 <div class="text-overview__switcher">
                                     <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
@@ -300,7 +300,8 @@
                         </div>
                         <div class="text-overview__row">
                             <div class="text-overview__cell">
-                                <div class="text-overview__content" id="result-container">
+                                <div class="text-overview__content" id="result-container"
+                                     ng-show="!busy">
                                     {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
                                 </div>
                             </div>
