@@ -476,11 +476,16 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
             target_lang.code: clean_target_text,
         }
 
-        res = es.index(
-            index=tmdb,
-            doc_type='tmx1',
-            body=doc
-        )
+        try:
+            res = es.index(
+                index=tmdb,
+                doc_type='tmx1',
+                body=doc
+            )
+        except:
+            res = {}
+            res['created'] = "error"
+
 
         print "ELASTICSEARCH: ", res['created']
 
