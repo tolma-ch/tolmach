@@ -1305,6 +1305,7 @@
                 $scope.editPage = false;
                 $scope.page = parseInt($scope.page) || 1;
                 $scope.page = $scope.page > $scope.pagesCount ? $scope.pagesCount : ($scope.page < 1 ? 1 : $scope.page);
+                updateEntries();
             };
             $scope.paginatorKeypress = function (event) {
                 var code = event.keyCode ? event.keyCode : event.which;
