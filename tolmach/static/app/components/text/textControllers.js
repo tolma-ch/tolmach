@@ -3,8 +3,8 @@
 
     var module = angular.module('textControllers', []);
 
-    module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout',
-        function ($rootScope, $scope, $http, $timeout) {
+    module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout', 'localStorageService',
+        function ($rootScope, $scope, $http, $timeout, localStorageService) {
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
@@ -40,8 +40,9 @@
                     return translationBody;
                 },
                 textId = window['textId'],
+                useMachine = window['useMachine'],
                 getYaMachines = function (entry) {
-                    $http.post('/api/ya-translate/', {
+                    $http.post('/ajax/ya-translate/', {
                         lang_pair: $scope.langPair,
                         entry_body: clearTags(entry['rawBody'])
                     }).success(function (data) {
@@ -53,7 +54,7 @@
                     });
                 },
                 getTmdbVariants = function (entry) {
-                    $http.post('/api/tmdb-search/', {
+                    $http.post('/ajax/tmdb-search/', {
                         entry_id: entry['id'],
                         lang_pair: $scope.langPair
                     }).success(function (data) {
@@ -61,7 +62,45 @@
                     }).error(function (a) {
                         //console.error(a);
                     });
+                },
+                updateEntries = function () {
+                    $scope.busy = true;
+                    $http.get('/ajax/entry/', {
+                        params: {
+                            text: textId,
+                            page: $scope.page,
+                            target_lang: window['translationTargetLang']
+                        }
+                    }).success(function (data) {
+                        var entries = data['entries'];
+                        $scope.userIsManager = !!data['user_is_manager'];
+                        $scope.translationAllowed = !!data['translation_allowed'];
+                        $scope.langPair = data['lang_pair'];
+                        $scope.langPair3 = data['639_3'];
+                        $scope.pluralExamples = data['plural_examples'];
+                        $scope.user = data['user'];
+                        var entriesById = {},
+                            i, entry;
+                        for (i = entries.length - 1; i >= 0; i--) {
+                            entry = entries[i];
+                            entry.body = entry.body.replace("\n", '<br>');
+                            updateTranslation(entry);
+                            entriesById[entry['idInText']] = entry;
+                        }
+                        $scope.entries = entries;
+                        $scope.pagesCount = data['total_pages'];
+                        $scope.entriesById = entriesById;
+                        $scope.busy = false;
+                    }).error(function (a) {
+                        console.log(a);
+                    });
                 };
+            $scope.savingOptions = {
+                btn: localStorageService.get('savingOptions-btn') || 'ctrl-enter'
+            };
+            $scope.changeSavingOptions = function () {
+                localStorageService.set('savingOptions-btn', $scope.savingOptions.btn);
+            };
             $scope.clearTags = clearTags;
             $scope.clearTranslation = clearTranslation;
             $scope.activeEntry = null;
@@ -73,6 +112,7 @@
                 $scope.editPage = false;
                 $scope.page = parseInt($scope.page) || 1;
                 $scope.page = $scope.page > $scope.pagesCount ? $scope.pagesCount : ($scope.page < 1 ? 1 : $scope.page);
+                updateEntries();
             };
             $scope.paginatorKeypress = function (event) {
                 var code = event.keyCode ? event.keyCode : event.which;
@@ -81,33 +121,9 @@
                 }
             };
             $scope.userIsManager = false;
-            $http.get('/api/entry/', {
-                params: {
-                    text: textId,
-                    target_lang: window['translationTargetLang']
-                }
-            }).success(function (data) {
-                var entries = data['entries'];
-                $scope.userIsManager = !!data['user_is_manager'];
-                $scope.translationAllowed = !!data['translation_allowed'];
-                $scope.langPair = data['lang_pair'];
-                $scope.langPair3 = data['639_3'];
-                $scope.pluralExamples = data['plural_examples'];
-                $scope.user = data['user'];
-                var entriesById = {},
-                    i, entry;
-                for (i = entries.length - 1; i >= 0; i--) {
-                    entry = entries[i];
-                    entry.body = entry.body.replace("\n", '<br>');
-                    updateTranslation(entry);
-                    entriesById[entry['idInText']] = entry;
-                }
-                $scope.entries = entries;
-                $scope.pagesCount = Math.ceil(entries.length / $scope.countPerPage);
-                $scope.entriesById = entriesById;
-            }).error(function (a) {
-                console.log(a);
-            });
+
+            updateEntries();
+
             var moveCursorToEnd = function (elem) {
                 var caretPos = elem.innerHTML.length;
                 var range = document.createRange();
@@ -116,6 +132,24 @@
                 range.collapse(true);
                 sel.removeAllRanges();
                 sel.addRange(range);
+            };
+            $scope.prevPage = function () {
+                if ($scope.busy) {
+                    return;
+                }
+                if ($scope.page > 1) {
+                    $scope.page = $scope.page - 1;
+                    updateEntries();
+                }
+            };
+            $scope.nextPage = function () {
+                if ($scope.busy) {
+                    return;
+                }
+                if ($scope.page < $scope.pagesCount) {
+                    $scope.page = $scope.page + 1;
+                    updateEntries();
+                }
             };
             $scope.addMachineSuggestion = function (entry, machine) {
                 if (entry.suggestion) {
@@ -138,7 +172,9 @@
                     setTimeout(function () {
                         var $container = $('#translations-container'),
                             $elem = $('#entry-' + id),
-                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'];
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
+                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
                         $container.stop().animate({
                             scrollTop: containerShift
                         }, 500);
@@ -148,7 +184,9 @@
                     setTimeout(function () {
                         var $resContainer = $('#result-container'),
                             $resElem = $('#res-entry-' + id),
-                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'];
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
+                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
                         $resContainer.stop().animate({
                             scrollTop: resShift
                         }, 500);
@@ -182,7 +220,7 @@
                 expandEntry(entry);
             };
             $scope.approveEntry = function (translation, entry) {
-                $http.post('/api/entry-approve/', {id: translation.id}).success(function () {
+                $http.post('/ajax/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
                     entry.approved = true;
                     applyTranslation(entry, translation);
@@ -207,7 +245,7 @@
                     }
                 }
                 if (translation) {
-                    $http.post('/api/entry-disapprove/', {id: translation.id}).success(function () {
+                    $http.post('/ajax/entry-disapprove/', {id: translation.id}).success(function () {
                         translation.isApproved = false;
                         entry.approved = false;
                         $scope.activeEntry = entry;
@@ -220,7 +258,7 @@
                 if (!entry.suggestionId) {
                     return;
                 }
-                $http.post('/api/remove-translate/', {
+                $http.post('/ajax/remove-translate/', {
                     'entry': entry.id,
                     'translation': entry.suggestionId
                 }).success(function () {
@@ -252,7 +290,7 @@
                     data['translation_id'] = suggestionId;
                 }
                 entry.suggestionId = false;
-                $http.post('/api/entry-translate/', data).success(function (data) {
+                $http.post('/ajax/entry-translate/', data).success(function (data) {
                     if (suggestionId) {
                         var i,
                             translation;
@@ -271,7 +309,9 @@
                     entry.editing = false;
                     entry.suggestion = '';
                     if (data.isApproved === true) {
-                        $scope.activeEntry = null;
+                        if (entry === $scope.activeEntry) {
+                            $scope.activeEntry = null;
+                        }
                         entry.approved = true;
                         applyTranslation(entry, data);
                     } else {
@@ -299,7 +339,7 @@
                         vote: vote ? 1 : 0
                     };
                 translation.isVoted = vote;
-                $http.post('/api/entry/vote/', data).success(function (data) {
+                $http.post('/ajax/entry/vote/', data).success(function (data) {
                     translation.busy = false;
                 }).error(function (data) {
                     translation.isVoted = !vote;
@@ -319,7 +359,7 @@
                         entry.pluralVariants = [];
                     }
                     entry.editing = true;
-                    if (typeof entry['machines'] === 'undefined') {
+                    if ((useMachine) && (typeof entry['machines'] === 'undefined')) {
                         getYaMachines(entry);
                         getTmdbVariants(entry);
                     }
@@ -341,21 +381,38 @@
                 });
                 //entry.suggestion += text;
             };
-            $scope.textareaKeypress = function (event, entry) {
-                var code = event.keyCode ? event.keyCode : event.which;
-                if (event.ctrlKey && (code === 13 || code === 10)) {
+            var saveHotKey = function (entry) {
+                // $('#entry-' + entry.idInText).trigger("blur");
+                $timeout(function () {
                     $scope.suggestTranslation(entry);
-                    var i,
-                        found = false;
-                    for (i in $scope.entries) {
-                        var someEntry = $scope.entries[i];
-                        if (found === true && !someEntry.approved) {
-                            $scope.toggleEntry(someEntry);
-                            break;
-                        }
-                        if (someEntry === entry) {
-                            found = true;
-                        }
+                }, 501);
+                var i,
+                    found = false;
+                for (i in $scope.entries) {
+                    var someEntry = $scope.entries[i];
+                    if (found === true && !someEntry.approved) {
+                        $scope.toggleEntry(someEntry);
+                        break;
+                    }
+                    if (someEntry === entry) {
+                        found = true;
+                    }
+                }
+            };
+            $scope.textareaKeydown = function (event, entry) {
+                var code = (event.charCode) ? event.charCode : ((event.which) ? event.which : event.keyCode);
+                if ($scope.savingOptions.btn === 'enter') {
+                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey) {
+                        console.log('just enter');
+                        saveHotKey(entry);
+                    }
+                } else {
+                    if (code == 13 && event.metaKey) {
+                        console.log('cmd enter');
+                        saveHotKey(entry);
+                    } else if (event.ctrlKey && (code === 13 || code === 10)) {
+                        console.log('ctrl enter');
+                        saveHotKey(entry);
                     }
                 }
             };

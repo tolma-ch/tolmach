@@ -9,12 +9,13 @@
 {% trans 'Add your translation' as your_translation %}
 {% trans 'Machine translations' as mtranslations %}
 {% trans 'Translation memory variants' as tmtranslations %}
-{% trans 'Add (Ctrl + Enter)' as add_translation %}
-{% trans 'Save (Ctrl + Enter)' as save_translation %}
+{% trans 'Add' as add_translation %}
+{% trans 'Save' as save_translation %}
 {% trans 'Remove' as remove_translation %}
 {% trans 'Cancel (Esc)' as cancel_translation %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
+{% trans 'Add with' as text_options %}
 
     <style>
         .sidebar {
@@ -42,7 +43,7 @@
             padding-top: 0;
             padding-bottom: 0;
             padding-right: 12px;
-startEditing            padding-left: 12px;
+            padding-left: 12px;
         }
         .main-content {
             margin-left: 0 !important;
@@ -50,17 +51,18 @@ startEditing            padding-left: 12px;
     </style>
     <script>
         window['textId'] = {{ text.id }};
+        window['useMachine'] = {{ use_machine }};
         window['translationTargetLang'] = '{{ target_lang }}';
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
         <div class="workbench-layout__row row" ng-cloak>
             <div class="workbench-layout__col col-xs-12 col-sm-6">
-                <div class="text-pieces" id="translations-container">
+                <div class="text-pieces" id="translations-container"
+                     ng-show="!busy">
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
-                         ng-if="(page - 1)*countPerPage < entry.idInText && entry.idInText <= page * countPerPage"
                          ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
@@ -120,17 +122,42 @@ startEditing            padding-left: 12px;
                                          ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
                                          ng-drop="textareaDrop($event, entry)"
                                          ng-focus="startEditing(entry)"
-                                         ng-keypress="textareaKeypress($event, entry)"
+                                         ng-keydown="textareaKeydown($event, entry)"
                                          text-editor>
                                     </div>
                                 </div>
                                 <div class="translation-editor__btns">
-                                    <a href=""
-                                       ng-click="suggestTranslation(entry)"
-                                       tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
-                                       tooltip-append-to-body="true">
-                                        <i class="fa fa-fw fa-floppy-o"></i>
-                                    </a>
+                                    <div class="translation-editor__save-btn">
+                                        <div class="translation-editor__options">
+                                            <div class="translation-editor__options-content">
+                                                {{ text_options }}:
+                                                <div>
+                                                    <label>
+                                                        <input type="radio" class="ace"
+                                                               value="ctrl-enter"
+                                                               ng-model="savingOptions.btn"
+                                                               ng-click="changeSavingOptions()">
+                                                        <span class="lbl"> Ctrl-Enter</span>
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <label>
+                                                        <input type="radio" class="ace"
+                                                               value="enter"
+                                                               ng-model="savingOptions.btn"
+                                                               ng-click="changeSavingOptions()">
+                                                        <span class="lbl"> Enter</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href=""
+                                           ng-click="suggestTranslation(entry)"
+                                           tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-fw fa-floppy-o"></i>
+                                        </a>
+                                    </div>
                                     <a href=""
                                        ng-show="entry.suggestionId"
                                        ng-click="removeTranslation(entry)"
@@ -234,7 +261,7 @@ startEditing            padding-left: 12px;
                                 <div class="text-overview__paginator"
                                      ng-show="pagesCount > 1">
                                     <a href=""
-                                       ng-click="page = page > 1 ? page - 1 : 1"><i class="fa fa-chevron-left"></i></a>
+                                       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
                                 <span class="text-overview__paginator-text"
                                       ng-show="!editPage"
                                       ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
@@ -245,29 +272,36 @@ startEditing            padding-left: 12px;
                                            ng-keypress="paginatorKeypress($event)"
                                            ng-blur="paginatorBlur()">
                                     <a href=""
-                                       ng-click="page = page < pagesCount ? page + 1 : pagesCount"><i class="fa fa-chevron-right"></i></a>
+                                       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
                                 </div>
                                 <div class="text-overview__switcher">
-                                    <div class="switcher">
-                                        <a class="switcher__button"
-                                           id="switcher__button_original-text"
-                                           ng-class="{'switcher__button_active': textTab === 0}"
-                                           ng-click="textTab = 0">
-                                            <span>{{ original_text }}</span>
-                                        </a>
-                                        <a class="switcher__button"
-                                           id="switcher__button_translated-text"
-                                           ng-class="{'switcher__button_active': textTab === 1}"
-                                           ng-click="textTab = 1">
-                                            <span>{{ translated_text }}</span>
-                                        </a>
-                                    </div>
+                                    <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
+                                    <style>
+                                        .toggle.android {
+                                            border-radius: 0px;
+                                            border-width: 1px;
+                                            min-width: 115px;
+                                        }
+                                        .toggle .btn-primary {
+                                            background-color: #438EB9 !important;
+                                        }
+                                         .toggle.android .toggle-handle {
+                                             border-radius: 0px;
+                                             border-width: 1px;
+                                        }
+                                    </style>
+                                    <toggle ng-model="textTab" ng-change="changed()"
+                                            on="{{ translated_text }}"
+                                            off="{{ original_text }}"
+                                            size="btn-sm"
+                                            style="android"></toggle>
                                 </div>
                             </div>
                         </div>
                         <div class="text-overview__row">
                             <div class="text-overview__cell">
-                                <div class="text-overview__content" id="result-container">
+                                <div class="text-overview__content" id="result-container"
+                                     ng-show="!busy">
                                     {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
                                 </div>
                             </div>

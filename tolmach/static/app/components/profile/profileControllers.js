@@ -44,10 +44,10 @@
             $scope.ok = function () {
                 $scope.busy = true;
                 $scope.error = '';
-                $http.post('/api/user/', $scope.userData)
+                $http.post('/ajax/user/', $scope.userData)
                     .success(function(data) {
                         if ($scope.cropper.croppedImage) {
-                            $http.post('/api/user/', JSON.stringify($scope.cropper.croppedImage))
+                            $http.post('/ajax/user/', JSON.stringify($scope.cropper.croppedImage))
                                 .success(function() {
                                     location.reload();
                                 })

@@ -3,11 +3,11 @@
 
     var module = angular.module('mainControllers', []);
 
-    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal',
-        function ($scope, $http, $timeout, $modal) {
+    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window',
+        function ($scope, $http, $timeout, $modal, $window) {
 
             var updateMessages = function () {
-                $http.get('/api/message/').success(function (data) {
+                $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 15 * 60 * 1000);
                 }).error(function (data) {
@@ -23,7 +23,7 @@
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
             };
             $scope.readMessage = function (message) {
-                $http.post('/api/message/', {id: message.id}).success(function (data) {
+                $http.post('/ajax/message/', {id: message.id}).success(function (data) {
                     $scope.messages = data;
                     $timeout(updateMessages, 5000);
                 }).error(function (data) {
@@ -179,13 +179,24 @@
             $scope.mouseup = function (event) {
                 $scope.$broadcast('GlobalMouseup', event);
             };
+
+            $scope.changeLanguage = function (language) {
+                $http({
+                    method: 'POST',
+                    url: '/i18n/setlang/',
+                    data: $.param({language: language}),
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                }).success(function () {
+                    $window.location.reload();
+                })
+            };
         }
     ]);
 
     module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.error = '';
-            $http.get('/api/message/all').success(function (data) {
+            $http.get('/ajax/message/all').success(function (data) {
                 $scope.messages = data;
                 $timeout(updateMessages, 5000);
             }).error(function (data) {

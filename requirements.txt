@@ -1,11 +1,9 @@
-Django==1.8
+Django==1.9.12
 MySQL-python
 Pillow==2.8.2
-oauthlib==0.6.0
 python-openid==2.2.5
-python-social-auth==0.2.7
-requests-oauthlib==0.3.3
-six==1.4.1
+social-auth-app-django==1.1.0
+social-auth-core==1.2.0
 uWSGI==1.9.17.1
 wsgiref==0.1.2
 yandex.translate
@@ -13,4 +11,8 @@ lxml
 elasticsearch
 babel
 srt
+ass
 sparkpost
+django-debug-toolbar
+python-memcached
+chardet

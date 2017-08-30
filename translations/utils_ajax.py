@@ -3,6 +3,8 @@
 from tolmach.models import UserMeta
 from translations.models import TextTranslation
 
+import json
+
 
 def entry_to_json(entry):
     pass
@@ -49,9 +51,14 @@ def text_to_json(text, text_translations, locale):
             'glossaries': [int(x.id) for x in filter(None, translation.glossaries_list.all())] if translation.glossaries_list.all() else [],
             'tmxes': [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else [],
         })
+
+    text_options = json.loads(text.options)
+    machine_trans_enabled = text_options.get('machine', True)
+
     return {
         'id': text.id,
         'title': text.title,
+        'machine': machine_trans_enabled,
         'subject': text.subject.id,
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,

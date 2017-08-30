@@ -6,6 +6,7 @@
         'contenteditable',
         'textControllers',
         'textDirectives',
-        'textFilters'
+        'textFilters',
+        'LocalStorageModule'
     ]);
 }());

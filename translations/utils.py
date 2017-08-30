@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import re
 import os
+import json
 from django.utils.translation import ugettext as _
 from entries.models import Language
 from translations.models import TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
@@ -13,10 +14,10 @@ import datetime
 
 FORMATS = {
     # Docs
-    # "doc": "application/msword",
-    # "odt": "application/vnd.oasis.opendocument.text",
+    "doc": "application/msword",
+    "odt": "application/vnd.oasis.opendocument.text",
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    # "rtf": "application/rtf",
+    "rtf": "application/rtf",
 
     # Tables
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -28,6 +29,7 @@ FORMATS = {
     # Static docs
     # "pdf": "application/pdf",
     "srt": "text/srt",
+    "ass": "text/ass",
     "po": "text/x-gettext-translation",
     "pot": "text/x-gettext-translation-template",
     "mo": "application/x-gettext-translation",
@@ -74,6 +76,42 @@ def get_plural_examples(p):
             if len(num_dict[result]) < 4:
                 num_dict[result].append(n)
     return num_dict
+
+
+def upload_file(file_object, max_size):
+    import os, random, string
+
+    error = ""
+
+    # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
+    rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
+    file_name = rand_string + "." + file_object.name.split(".")[-1]
+    file_dir = '/%s' % settings.GLOBAL_DOCUMENTS_TMP_DIR
+    if not os.path.isdir(file_dir):
+        os.makedirs(file_dir)
+    file_path = '%s/%s' % (file_dir, file_name)
+    if file_object.size > max_size:
+        error = _('File is too big')
+    with open(file_path, 'w+') as fd:
+        for chunk in file_object.chunks():
+            fd.write(chunk)
+
+    # Проверяем тип файла
+    from mimetypes import MimeTypes
+    mime = MimeTypes()
+    file_type = mime.guess_type(file_path)[0]
+
+    return file_name, file_path, file_type, error
+
+def chtec_request(url, values):
+    import urllib
+    import urllib2
+
+    data = urllib.urlencode(values)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+
+    return response.read()
 
 
 def parse_glossary(file_on_disk, filetype):
@@ -438,11 +476,16 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
             target_lang.code: clean_target_text,
         }
 
-        res = es.index(
-            index=tmdb,
-            doc_type='tmx1',
-            body=doc
-        )
+        try:
+            res = es.index(
+                index=tmdb,
+                doc_type='tmx1',
+                body=doc
+            )
+        except:
+            res = {}
+            res['created'] = "error"
+
 
         print "ELASTICSEARCH: ", res['created']
 
