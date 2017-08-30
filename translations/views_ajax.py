@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q, F
@@ -14,7 +15,7 @@ from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
 from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
-import json
+import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
 
@@ -233,6 +234,11 @@ def text_ajax(request, project):
             except Text.DoesNotExist:
                 return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
             text.title = post['title']
+
+            text_options = json.loads(text.options)
+            text_options['machine'] = post['machine']
+            text.options = json.dumps(text_options)
+
             # text.subject = subject
             if 'translations' in post:
                 all_text_translations = [x.target_lang for x in TextTranslation.objects.filter(text=text)]
@@ -251,51 +257,24 @@ def text_ajax(request, project):
                         text_translation = TextTranslation.objects.get(text=text,
                                                                        target_lang=target_lang)
                     except TextTranslation.DoesNotExist:
-                        text_translation = TextTranslation(text=text,
-                                                           target_lang=target_lang,
-                                                           )
-                        text_translation.save()
-
-                        #
-                        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
-                        #
-
-                        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
-                            gettext_meta = {
-                                'all_meta': {
-                                    'Project-Id-Version': '1.0',
-                                    'Report-Msgid-Bugs-To': 'you@example.com',
-                                    'POT-Creation-Date': '2007-10-18 14:00+0100',
-                                    'PO-Revision-Date': '2007-10-18 14:00+0100',
-                                    'Last-Translator': 'you <you@example.com>',
-                                    'Language-Team': 'English <yourteam@example.com>',
-                                    'Language': target_lang.code,
-                                    'MIME-Version': '1.0',
-                                    'Content-Type': 'text/plain; charset=utf-8',
-                                    'Content-Transfer-Encoding': '8bit',
-                                    'Plural-Forms': target_lang.plural_forms,
-                                },
-                                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
-                            }
-
-                            text_translation_meta = TextTranslationMeta(translation=text_translation,
-                                                                        meta_type="gettext_metadata",
-                                                                        meta_data=json.dumps(gettext_meta),
-                                                                        )
-                            text_translation_meta.save()
+                        text_translation = translation_ajax(request, text, target_lang, local_call=True, method="POST")
 
                     if 'glossaries' in translation:
                         glossary_ids_list = [str(x) for x in translation['glossaries']]
                         text_translation.glossaries_list.clear()
-                        for id in glossary_ids_list:
-                            text_translation.glossaries_list.add(Glossary.objects.get(id=id))
+                        for glossary_id in glossary_ids_list:
+                            text_translation.glossaries_list.add(Glossary.objects.get(id=glossary_id))
                     else:
                         text_translation.glossaries_list.clear()
+
+                    # clearing text translation cache after glossaries update
+                    cache.delete("%d_translation_entries" % text_translation.id)
+
                     if 'tmxes' in translation:
                         tmdb_ids_list = [str(x) for x in translation['tmxes']]
                         text_translation.tmdatabases_list.clear()
-                        for id in tmdb_ids_list:
-                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=id))
+                        for tmx_id in tmdb_ids_list:
+                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=tmx_id))
                     else:
                         text_translation.tmdatabases_list.clear()
                     text_translation.save()
@@ -318,99 +297,68 @@ def text_ajax(request, project):
             except Language.DoesNotExist:
                 return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
 
-            import urllib
-            import urllib2
+            file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
 
             if 'textBody' in post:
                 file_type = "text/plain"
-                url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': "None",
-                          'format': file_type,
-                          'title': post['title'],
-                          'text_body': post['textBody'],
-                          'user_id': request.user.id,
-                          'project_id': project.id,
-                          'subject_id': subject.id,
-                          'source_lang': source_lang.code,
-                          'target_lang': target_lang.code
-                          }
+                file_name = "None"
+                title = post['title']
+                text_body = post['textBody']
 
-                data = urllib.urlencode(values)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = json.loads(response.read())
-
-                if the_page["Error"] == 0:
-                    text = Text.objects.get(id=the_page["Text"])
-                else:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+            elif 'file_name' in post:
+                file_name = post['file_name']
+                file_type = post['file_type']
+                title = post['title']
+                custom_parse = post.get('custom_parse', None)
+                text_body = ""
 
             elif 'file' in request.FILES:
-                import os, random, string
-                f = request.FILES['file']
-                # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
-                rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
-                filename = rand_string + "." + request.FILES['file'].name.split(".")[-1]
-                file_dir = '/%s/%d/%d' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                          int(request.user.id),
-                                          int(project.id))
-                if not os.path.isdir(file_dir):
-                    os.makedirs(file_dir)
-                file_on_disk = '%s/%s' % (file_dir, filename)
-                if f.size > settings.DOCUMENT_FILE_SIZE:
-                    return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                        status=400)
-                with open(file_on_disk, 'w+') as fd:
-                    for chunk in f.chunks():
-                        fd.write(chunk)
+                file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
 
-                # Проверяем тип файла
-                from mimetypes import MimeTypes
-                mime = MimeTypes()
-                file_type = mime.guess_type(file_on_disk)[0]
-                print file_type
+                if upload_error:
+                    return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                            status=400)
+
                 if file_type not in utils.FORMATS.values():
-                    os.remove(file_on_disk)
+                    os.remove(file_path)
                     return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                         status=400)
-                # вот тут надо добавить проверку какого-нить параметра, типа xlsx_prepare_state == 1
-                # и если он да, то тут уходим в другую векту и дёргаем не /convert, а /misc/get-xlsx-data
-                # который нам вернёт уже список с данными, из которых мы нарисуем табличку для второго окна
+                else:
+                    target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                                   int(request.user.id),
+                                                   int(project.id))
+                    if not os.path.isdir(target_path):
+                        os.makedirs(target_path)
+                    shutil.move(file_path, '%s/%s' % (target_path, file_name))
+                title = post['title']
+                text_body = ""
 
-                if post['xlsx_prepare_state'] == '1':
-                    url = 'http://127.0.0.1:8080/misc/get-xlsx-data'
-                    values = {'fname': filename,
-                              'user_id': request.user.id,
-                              'project_id': project.id,
-                              }
+            values = {'fname': file_name,
+                      'format': file_type,
+                      'title': title,
+                      'text_body': text_body,
+                      'user_id': request.user.id,
+                      'project_id': project.id,
+                      'subject_id': subject.id,
+                      'source_lang': source_lang.code,
+                      'target_lang': target_lang.code,
+                      'custom_parse': json.dumps(custom_parse)
+                      }
 
-                    data = urllib.urlencode(values)
-                    req = urllib2.Request(url, data)
-                    response = urllib2.urlopen(req)
-                    the_page = json.loads(response.read())
-
+            if post.get('xlsx_prepare_state', 0) == '1':
+                the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/preparse', values))
+                the_page['file_type'] = file_type
+                if the_page["Error"] == 0:
+                    return HttpResponse(json.dumps(the_page), content_type="application/json")
+                else:
                     return HttpResponse(json.dumps(the_page), content_type="application/json", status=400)
 
-                url = 'http://127.0.0.1:8080/convert'
-                values = {'fname': filename,
-                          'format': file_type,
-                          'title': post['title'],
-                          'user_id': request.user.id,
-                          'project_id': project.id,
-                          'subject_id': subject.id,
-                          'source_lang': source_lang.code,
-                          'target_lang': target_lang.code
-                          }
+            the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', values))
 
-                data = urllib.urlencode(values)
-                req = urllib2.Request(url, data)
-                response = urllib2.urlopen(req)
-                the_page = json.loads(response.read())
-
-                if the_page["Error"] == 0:
-                    text = Text.objects.get(id=the_page["Text"])
-                else:
-                    return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
+            if the_page["Error"] == 0:
+                text = Text.objects.get(id=the_page["Text"])
+            else:
+                return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
         translations = TextTranslation.objects.filter(text=text)
         result = text_to_json(text, translations, request.LANGUAGE_CODE)
@@ -427,6 +375,77 @@ def text_ajax(request, project):
                                 status=400)
         text.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+@accept_text
+def update_text(request, text):
+    project = text.project
+    if project.is_user_manager(request.user):
+        if 'file' in request.FILES:
+            file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
+            if upload_error:
+                return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                        status=400)
+            if not file_type == text.document_format:
+                return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
+            else:
+                # достаём тесктовые данные из нового документа
+                new_values = {
+                    'fname': file_name,
+                    'text_id': text.id,
+                    'save_to_db': False,
+                }
+                new_data = json.loads(utils.chtec_request('http://127.0.0.1:8080/convert', new_values))
+
+                # отправляем новые данные в чтеца для обновления текста:
+                update_data = {
+                    'fname': file_name,
+                    'text_id': text.id,
+                    'new_data': new_data,
+                }
+                update_text = json.loads(utils.chtec_request('http://127.0.0.1:8080/update', update_data))
+
+        return HttpResponse(json.dumps(True), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+def translation_ajax(request, text, target_lang, local_call=False, method=None):
+    method = method if method else request.method
+
+    if method == "POST":
+        text_translation = TextTranslation(text=text,
+                                           target_lang=target_lang,
+                                           )
+        text_translation.save()
+
+        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
+        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
+            gettext_meta = {
+                'all_meta': {
+                    'Project-Id-Version': '1.0',
+                    'Report-Msgid-Bugs-To': 'you@example.com',
+                    'POT-Creation-Date': '2007-10-18 14:00+0100',
+                    'PO-Revision-Date': '2007-10-18 14:00+0100',
+                    'Last-Translator': 'you <you@example.com>',
+                    'Language-Team': 'English <yourteam@example.com>',
+                    'Language': target_lang.code,
+                    'MIME-Version': '1.0',
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Content-Transfer-Encoding': '8bit',
+                    'Plural-Forms': target_lang.plural_forms,
+                },
+                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
+            }
+
+            text_translation_meta = TextTranslationMeta(translation=text_translation,
+                                                        meta_type="gettext_metadata",
+                                                        meta_data=json.dumps(gettext_meta),
+                                                        )
+            text_translation_meta.save()
+
+        if local_call:
+            return text_translation
+        else:
+            return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
@@ -479,26 +498,19 @@ def glossary_ajax(request, project):
                                 status=400)
         glossary_name = post['name']
         if 'file' in request.FILES:
-            f = request.FILES['file']
-            import uuid
-            file_on_disk = '/tmp/glossary_%s.%s' % (uuid.uuid4(), request.FILES['file'].name.split('.')[-1])
-            if f.size > settings.GLOSSARY_FILE_SIZE:
-                return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                    status=400)
-            with open(file_on_disk, 'w+') as fd:
-                for chunk in f.chunks():
-                    fd.write(chunk)
+            file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.GLOSSARY_FILE_SIZE)
 
-            from mimetypes import MimeTypes
-            mime = MimeTypes()
-            file_type = mime.guess_type(file_on_disk)[0]
-            print "FILETYPE:", file_type
+            if upload_error:
+                return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                        status=400)
 
             if file_type not in ['text/csv']:
+                os.remove(file_path)
                 return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                     status=400)
 
-            pairs_array = utils.parse_glossary(file_on_disk, file_type)
+            pairs_array = utils.parse_glossary(file_path, file_type)
+            os.remove(file_path)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
@@ -598,22 +610,20 @@ def tmx_ajax(request, project):
         if 'file' not in request.FILES:
             return HttpResponse(json.dumps(_('TMX file is not passed')), content_type="application/json",
                                 status=400)
-        f = request.FILES['file']
-        if f.size > settings.TM_FILE_SIZE:
-            return HttpResponse(json.dumps(_('File is too big')), content_type="application/json",
-                                status=400)
-        # TODO: Разобраться, какого хрена tmx тут ваще определяется как octet-stream
-        elif f.content_type not in ['application/xml', 'application/octet-stream']:
+        file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
+
+        if upload_error:
+            return HttpResponse(json.dumps(upload_error), content_type="application/json",
+                    status=400)
+
+        if file_type not in ['application/xml', 'application/octet-stream']:
+            os.remove(file_path)
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                 status=400)
-        import uuid
-        filename = '/tmp/tmdb_%s' % uuid.uuid4()
-        with open(filename, 'w+') as fd:
-            for chunk in f.chunks():
-                fd.write(chunk)
 
-        parse_result = utils.parse_tmx(filename, tmdb_name, project, request)
+        parse_result = utils.parse_tmx(file_path, tmdb_name, project, request)
         if not parse_result['error'] == 0:
+            os.remove(file_path)
             return HttpResponse(json.dumps(parse_result['message'],
                                          content_type="application/json",
                                          status=parse_result['error']
@@ -657,12 +667,41 @@ def entry_ajax(request, action, text):
         text_translation = TextTranslation.objects.get(text=text,
                                                        target_lang=lang,
                                                        )
-        # all_text_entries = TextEntry.objects.filter(text=text)
-        base_entries = []
-        for entry in TextEntry.objects.filter(text=text, parent_entry=None):
-            if not entry.parent_entry:
-                base_entries.append(entry)
+
+        if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
+            has_plurals = True
+            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
+        else:
+            has_plurals = False
+            plural_examples = {}
+
+        # Получаем инфу о странице
+        page_num = int(request.GET.get('page', 1)) - 1
+        entries_per_page = int(request.GET.get('entries_per_page', 100))
+        offset = page_num * entries_per_page
+
+        # Делим текст для правой колонки
+        tail_cut = '<span data-entry="%d">' % (offset + entries_per_page + 1)
+        cut_tail = text.body.split(tail_cut, 1)[0]
+
+        beginning_cut = '<span data-entry="%d">' % (offset + 1)
+        cut_beginning = cut_tail.split(beginning_cut, 1)
+
+        if len(cut_beginning) > 1:
+            text_body = beginning_cut + cut_beginning[1]
+        else:
+            text_body = cut_beginning[0]
+
         entries = []
+        import math
+        total_pages = int(
+            math.ceil(
+                TextEntry.objects.filter(text=text, parent_entry=None).count()/float(
+                    entries_per_page
+                )
+            )
+        )
+        base_entries = TextEntry.objects.filter(text=text, parent_entry=None)[offset:offset+entries_per_page]
         pre_glossary_text = []
 
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
@@ -678,13 +717,6 @@ def entry_ajax(request, action, text):
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
-
-        if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
-            has_plurals = True
-            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
-        else:
-            has_plurals = False
-            plural_examples = {}
 
         for entry in base_entries:
             if not text_translation.glossaries_list:
@@ -730,7 +762,9 @@ def entry_ajax(request, action, text):
             'user_is_manager': text.project.is_user_manager(request.user),
             'translation_allowed': text.is_user_allowed_to_write(request.user),
             'user': request.user.id,
-            'entries': entries
+            'entries': entries,
+            'text_body': text_body,
+            'total_pages': total_pages
         }
     elif request.method == 'POST':
         params = request.POST or json.loads(request.body)
@@ -799,6 +833,7 @@ def translate_entry_ajax(request):
             set_approved = False
             if project.members == "":
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                translation=entry.translation,
                                                                  is_approved=True).count()
                 if not approved_translation:
                     set_approved = True
@@ -897,6 +932,7 @@ def approve_entry_ajax(request):
         if entry.parent_entry:
             TextEntry.objects.filter(~Q(id=entry_id),
                                      parent_entry=entry.parent_entry,
+                                     translation=entry.translation,
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
@@ -1023,6 +1059,8 @@ def tmdb_search(request):
                                                                     }
                                                                     }
                                                                 })
+                except es_exept.ConnectionError:
+                    return HttpResponse(json.dumps(_('TMDB unavaliable at the moment')), content_type="application/json", status=400)
                 except es_exept.NotFoundError:
                     tmx = TMDatabase.objects.get(id=tmx_id)
                     tmx_entries = TMDatabaseEntry.objects.filter(tmx=tmx)

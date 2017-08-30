@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class UserMeta(models.Model):
@@ -61,7 +62,7 @@ class Messages(models.Model):
     )
     message_type = models.CharField(max_length=1, choices=MESSAGE_TYPES)
     was_read = models.BooleanField(default=False)
-    time_created = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField(default=timezone.now)
 
 
 class EmailTemplate(models.Model):

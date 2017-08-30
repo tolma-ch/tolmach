@@ -82,13 +82,13 @@
                                  ng-click="activeParticipant = participant"
                                  ng-class="{'project-list-participant_active': activeParticipant === participant}">
                                 <div class="project-list-participant__ava">
-                                    <img src="/media/{= participant.avatar =}" alt="Jason's Photo">
+                                    <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
                                 </div>
                                 <div class="project-list-participant__name">
-                                    {= participant.name =}
+                                    {=:: participant.name =}
                                 </div>
                                 <div class="project-list-participant__btns">
-                                    <a class="project-list-participant__btn" href="/user/{= participant.id =}"><i class="fa fa-eye"></i></a>
+                                    <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
                                     <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                     <a class="project-list-participant__btn tooltip-warning" href=""
                                        tooltip="{% trans "Remove participant" %}"
@@ -132,10 +132,10 @@
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
                                 <div class="project-list-text__cell-btn">
-                                    <i class="flag flag-{= text.sourceLang =}"></i>
+                                    <i class="flag flag-{=:: text.sourceLang =}"></i>
                                 </div>
                                 <div class="project-list-text__title">
-                                    {= text.title =}
+                                    {=:: text.title =}
                                     &nbsp;&nbsp;
                                     <a href=""
                                        ng-show="isUserManager"
@@ -144,48 +144,45 @@
                                        tooltip-append-to-body="true"><i class="fa fa-pencil"></i></a>
                                 </div>
                                 <div class="project-list-text__cell">
-                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations">
-                                        <a class="project-list-text__btn"
-                                           href="/text/{= text.id =}/{= translation.lang =}/export/"
+                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations" style="position: relative;">
+                                        <a class="project-list-text__btn dropdown"
+                                           href="#"
+                                           data-toggle="dropdown"
                                            tooltip="{% trans 'Export translation' %}"
                                            tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
-                                        <a href="/text/{= text.id =}/{= translation.lang =}/" class="project-list-text__item">
+                                        <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                                            <li>
+                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/">
+                                                    <i class="fa-off"></i>
+                                                    {% trans 'Translated document' %}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/pairs/">
+                                                    <i class="fa-off"></i>
+                                                    {% trans 'Bilingual DOCX' %}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <a href="/text/{=:: text.id =}/{=:: translation.lang =}/" class="project-list-text__item">
                                             <span class="project-list-text__language"
                                                   tooltip="{% trans 'Go to translation' %}"
                                                   tooltip-append-to-body="true">
-                                                <i class="flag flag-{= translation.langFull =}"><span class="flag__text">{= translation.lang =}</span></i>
+                                                <i class="flag flag-{=:: translation.langFull =}"><span class="flag__text">{=:: translation.lang =}</span></i>
                                             </span>
                                             <span class="project-list-text__progress"
-                                                  tooltip="{% trans 'Fragments approved:' %} {= translation.counts[2] =}
-                                                  {% trans 'Fragments translated:' %} {= translation.counts[1] =}"
+                                                  tooltip="{% trans 'Fragments approved:' %} {=:: translation.counts[2] =}
+                                                  {% trans 'Fragments translated:' %} {=:: translation.counts[1] =}"
                                                   tooltip-append-to-body="true">
                                                 <div class="progress-bar">
-                                                    <div class="progress-bar__gauge" style="width:{= translation.progress[1] =}%;background:#02c14f"></div>
-                                                    <div class="progress-bar__gauge" style="width: {= translation.progress[0] - translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
-                                                    <span class="progress-bar__value">{= translation.progress[1] =}%</span>
+                                                    <div class="progress-bar__gauge" style="width:{=:: translation.progress[1] =}%;background:#02c14f"></div>
+                                                    <div class="progress-bar__gauge" style="width: {=:: translation.progress[0] - translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
+                                                    <span class="progress-bar__value">{=:: translation.progress[1] =}%</span>
                                                 </div>
                                             </span>
                                         </a>
                                     </div>
                                 </div>
-{#                                <div class="project-list-text__languages">#}
-{#                                    <div ng-repeat="translation in text.translations">#}
-{#                                        <a href="/text/{= text.id =}/{= translation.lang =}/">#}
-{#                                            <div class="languages">#}
-{#                                                <i class="flag flag-{= text.sourceLang =}"></i>#}
-{#                                                <i class="fa fa-chevron-right"></i>#}
-{#                                            </div>#}
-{#                                        </a>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                                <div class="project-list-text__btns">#}
-{#                                    <a class="project-list-text__btn" href=""#}
-{#                                       tooltip="{% trans 'Delete text' %}"#}
-{#                                       tooltip-append-to-body="true"#}
-{#                                       ng-show="isUserManager"#}
-{#                                       popover-template="'textRemovePopover.html'"#}
-{#                                       popover-placement="left"><i class="fa fa-trash-o"></i></a>#}
-{#                                </div>#}
                             </div>
                         </div>
                     </div><!-- /widget-body -->
@@ -232,7 +229,7 @@
                             <div class="project-list-glossary" ng-repeat="tmx in tmxes">
                                 <div class="project-list-glossary__name">
                                     <i class="fa fa-language"></i>
-                                    {= tmx.name =}
+                                    {=:: tmx.name =}
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""
@@ -245,7 +242,7 @@
                             <div class="project-list-glossary" ng-repeat="glossary in glossaries">
                                 <div class="project-list-glossary__name" ng-click="editGlossary(glossary)">
                                     <i class="fa fa-book"></i>
-                                    {= glossary.name =}
+                                    {=:: glossary.name =}
                                 </div>
                                 <div class="project-list-glossary__btns">
                                     <a class="project-list-glossary__btn" href=""
@@ -273,11 +270,13 @@
     {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
     {% include "translations/partial/add_text_modal.html" %}
+    {% include "translations/partial/select_text_ranges_modal.html" %}
     {% include "translations/partial/edit_text_modal.html" %}
     {% include "translations/partial/text_remove_popover.html" %}
     {% include "translations/partial/add_glossary_modal.html" %}
     {% include "translations/partial/add_tmx_modal.html" %}
     {% include "translations/partial/glossary_remove_popover.html" %}
+    {% include "translations/partial/handsontable.template.html" %}
     {% include "translations/partial/tmx_remove_popover.html" %}
     {% include "translations/partial/project_remove_popover.html" %}
     {% endif %}

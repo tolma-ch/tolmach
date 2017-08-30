@@ -117,12 +117,13 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
+    'social_django.context_processors.backends',
+    'social_django.context_processors.login_redirect',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.i18n',
     'tolmach.context_processors.ya_metrika',
+    'tolmach.context_processors.less_debug',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -134,6 +135,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'tolmach.urls'
@@ -155,7 +157,7 @@ INSTALLED_APPS = (
     'entries',
     'chat',
     'social_auth_widget',
-    'social.apps.django_app.default',
+    'social_django',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -166,13 +168,14 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    # 'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.facebook.Facebook2OAuth2',
-    'social.backends.vk.VKOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.vk.VKOAuth2',
 )
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = '3890506'
@@ -189,8 +192,6 @@ SOCIAL_AUTH_FACEBOOK_SECRET = '367ab143381a50e4cad94289887d4110'
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 URL_PATH = ''
-SOCIAL_AUTH_STRATEGY = 'social.strategies.django_strategy.DjangoStrategy'
-SOCIAL_AUTH_STORAGE = 'social.apps.django_app.default.models.DjangoStorage'
 
 SOCIAL_AUTH_PROVIDERS = [
     {'id': p[0], 'name': p[1], 'icon': p[2]}
@@ -202,17 +203,17 @@ SOCIAL_AUTH_PROVIDERS = [
 ]
 
 SOCIAL_AUTH_PIPELINE = (
-    'social.pipeline.social_auth.social_details',
-    'social.pipeline.social_auth.social_uid',
-    'social.pipeline.social_auth.auth_allowed',
-    'social.pipeline.social_auth.social_user',
-    'social.pipeline.mail.mail_validation',
-    'social.pipeline.social_auth.associate_by_email',
-    'social.pipeline.user.get_username',
-    'social.pipeline.user.create_user',
-    'social.pipeline.social_auth.associate_user',
-    'social.pipeline.social_auth.load_extra_data',
-    'social.pipeline.user.user_details',
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.mail.mail_validation',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
 
     'tolmach.pipeline.update_user_social_data',
 )
@@ -255,10 +256,18 @@ TM_FILE_SIZE = 104857600
 DOCUMENT_FILE_SIZE = 104857600
 
 GLOBAL_DOCUMENTS_DIR = ""
+GLOBAL_DOCUMENTS_TMP_DIR = "/tmp"
 
 ELASTIC_LIST = [
     {"host": "localhost", "port": 9200, "timeout": 30}
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
 
 try:
     from tolmach.local_settings import *

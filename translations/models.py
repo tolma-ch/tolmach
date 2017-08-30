@@ -1,3 +1,5 @@
+from django.core.cache import cache
+from django.utils import timezone
 from django.db.models import Q
 from django.db import models
 import math
@@ -65,13 +67,20 @@ class Project(models.Model):
     members = models.TextField(default="")
     users_invited = models.TextField(default="")
     users_requested = models.TextField(default="")
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(Project, self).save(*args, **kwargs)
 
     def is_user_manager(self, user):
         """
@@ -106,19 +115,24 @@ class Project(models.Model):
         """
         Get progress percentage of the current project and return Int from 0 to 100
         """
-        common_progress = 0
-        translations_num = 0
-        texts = Text.objects.filter(project=self)
-        for text in texts:
-            translations = TextTranslation.objects.filter(text=text)
-            for translation in translations:
-                translations_num += 1
-                common_progress += translation.get_progress()[1][1]
+        project_progress = cache.get("%d_project_progress" % self.id)
 
-        if not texts.count() == 0:
-            return common_progress / translations_num
-        else:
-            return 0
+        if not project_progress:
+            common_progress = 0
+            translations_num = 0
+            texts = Text.objects.filter(project=self)
+            for text in texts:
+                translations = TextTranslation.objects.filter(text=text)
+                for translation in translations:
+                    translations_num += 1
+                    common_progress += translation.get_progress()[1][1]
+
+            if not texts.count() == 0:
+                project_progress = common_progress / translations_num
+            else:
+                project_progress = 0
+            cache.set("%d_project_progress" % self.id, project_progress, 60*20)
+        return project_progress
 
 
 class Text(models.Model):
@@ -130,11 +144,19 @@ class Text(models.Model):
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
+    options = models.TextField(default="{}")
 
     def __unicode__(self):
         return unicode(self.title)
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(Text, self).save(*args, **kwargs)
 
     def is_user_allowed_to_read(self, user):
         """
@@ -143,7 +165,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if self.project.manager == user or str(user.id) in self.project.members.split(','):
+            if self.project.manager == user or str(user.id) in self.project.members.split(',') or user.is_staff:
                 return True
             else:
                 return False
@@ -196,9 +218,17 @@ class TextTranslation(models.Model):
 
         entries_approved/(entries_total/100.0)
         """
-        entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-        entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
-        entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+        all_stats = cache.get("%d_translation_progress" % self.id)
+
+        if all_stats:
+            entries_total = all_stats[0]
+            entries_translated = all_stats[1]
+            entries_approved = all_stats[2]
+        else:
+            entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
+            entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
+            entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+            cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
 
         if not entries_total == 0:
             return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
@@ -222,8 +252,8 @@ class TextEntry(models.Model):
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
-    time_created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
 
     def __unicode__(self):
         return unicode(self.body)
@@ -231,6 +261,13 @@ class TextEntry(models.Model):
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []
         return str(user.id) in voters
+
+    def save(self, *args, **kwargs):
+        ''' On save, update timestamps '''
+        if not self.id:
+            self.time_created = timezone.now()
+        self.last_modified = timezone.now()
+        super(TextEntry, self).save(*args, **kwargs)
 
 
 class TextEntryMeta(models.Model):

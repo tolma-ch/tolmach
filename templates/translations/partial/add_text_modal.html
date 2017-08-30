@@ -7,7 +7,7 @@
         <h3 class="modal-title">{% trans "Add text" %}</h3>
     </div>
     <div class="modal-body">
-        <form ng-init="tab=1">
+        <form ng-init="tab=0">
             <div class="form-group">
                 <input type="text"
                        placeholder="{% trans "Title" %}"
@@ -52,7 +52,7 @@
                             <i class="fa fa-file-text-o"></i>
                         </div>
                         <span ng-show="text.files.length">{= text.files[0].name =}</span>
-                        <span ng-show="!text.files.length">{% trans "Click here to upload file or drag file here to upload.</br> Supported formats: DOCX, SRT, POT, PO, MO." %}</span>
+                        <span ng-show="!text.files.length">{% trans "Click here to upload file or drag file here to upload.</br> Supported formats: DOCX, XLSX, SRT, ASS, POT, PO, MO, TXT." %}</span>
                     </div>
                 </div>
                 <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>

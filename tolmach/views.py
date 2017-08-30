@@ -2,7 +2,8 @@
 
 import json
 from django.contrib.auth import logout
-from django.http.response import HttpResponseRedirect, HttpResponse
+from django.utils.translation import ugettext as _
+from django.http.response import HttpResponseRedirect, HttpResponse, Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.models import User
@@ -19,6 +20,8 @@ def index(request):
         first_name = request.user.first_name
         last_name = request.user.last_name
         projects = Project.objects.filter(manager=request.user.id).order_by('-last_modified')
+        for proj in projects:
+            proj.progress = proj.get_progress()
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
@@ -101,11 +104,14 @@ def handler500(request):
 
 
 def register(request):
+    if request.method == "GET":
+        raise Http404()
+
     from django.contrib.auth import authenticate, login
 
-    username = request.POST["username"]
-    password = request.POST["password"]
-    email = request.POST["email"]
+    username = request.POST.get("username", False)
+    password = request.POST.get("password", False)
+    email = request.POST.get("email", False)
 
     status = "0"
     message = ""
@@ -136,10 +142,13 @@ def register(request):
 
 
 def login_user(request):
+    if request.method == "GET":
+        raise Http404()
+
     from django.contrib.auth import authenticate, login
 
-    username = request.POST['username']
-    password = request.POST['password']
+    username = request.POST.get('username', False)
+    password = request.POST.get('password', False)
     user = authenticate(username=username, password=password)
     message = ''
     if user is not None:
@@ -170,15 +179,18 @@ def login_user(request):
 
 
 def reset_password_approve(request):
+    if request.method == "GET":
+        raise Http404()
+    
     status = 0
-    message = "Everything's ok"
+    message = _("Password was reseted. Further instructions were sent to your email.")
 
     some_data_to_dump = {
         'status': status,
         'message': message,
     }
 
-    username = request.POST['username']
+    username = request.POST.get('username', False)
 
     try:
         user = User.objects.get(username=username)
@@ -227,7 +239,15 @@ def reset_password_form(request, token):
 def accept_password(request):
     from django.contrib.auth import authenticate, login
 
-    token = request.POST['token']
+    try:
+        token = request.POST['token']
+    except:
+        result = {
+            'status': 1,
+            'message': "No token provided",
+        }
+        return HttpResponse(json.dumps(result), content_type="application/json", status=400)
+
     try:
         meta = UserMeta.objects.get(password_reset_token=token)
     except:
@@ -254,7 +274,7 @@ def accept_password(request):
 
     result = {
         'status': 0,
-        'message': "Everything's ok",
+        'message': _("New password saved. Please wait for the sign in."),
     }
     return HttpResponse(json.dumps(result), content_type="application/json", status=200)
 

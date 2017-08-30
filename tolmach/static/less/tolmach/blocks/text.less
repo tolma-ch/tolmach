@@ -230,6 +230,27 @@
       }
     }
   }
+  &__save-btn:hover &__options {
+    width: 130px;
+  }
+  &__options {
+    display: block;
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    width: 0;
+    overflow: hidden;
+    transition: 0.2s width;
+    transition-delay: .5s;
+    text-align: left;
+  }
+  &__options-content {
+    background: @grayBg;
+    border: 1px solid @grayBorder;
+    padding: 10px 15px;
+    width: 130px;
+    font-size: 14px;
+  }
   &__input-wrapper {
 
   }

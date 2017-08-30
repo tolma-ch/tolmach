@@ -10,21 +10,21 @@
             $scope.isUserManager = window['isUserManager'];
             $scope.languages = window['languages'];
             $scope.participants = [];
-            $http.get('/api/participant', {params: {project: $scope.projectId}})
+            $http.get('/ajax/participant', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;
                 });
             $scope.texts = [];
-            $http.get('/api/text', {params: {project: $scope.projectId}})
+            $http.get('/ajax/text', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.texts = response.data;
                 });
             $scope.glossaries = [];
-            $http.get('/api/glossary', {params: {project: $scope.projectId}})
+            $http.get('/ajax/glossary', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
-            $http.get('/api/tmx', {params: {project: $scope.projectId}})
+            $http.get('/ajax/tmx', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.tmxes = response.data;
                 });
@@ -48,7 +48,7 @@
                     'user': participant.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/participant/', {params: data})
+                $http.delete('/ajax/participant/', {params: data})
                     .success(function () {
                         var i = $scope.participants.indexOf(participant);
                         if (i > -1) {
@@ -116,7 +116,7 @@
                     'text': text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         var i = $scope.texts.indexOf(text);
                         if (i > -1) {
@@ -182,7 +182,7 @@
                         }
                     }
                 });
-                $http.get('/api/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
+                $http.get('/ajax/glossary', {params: {project: $scope.projectId, glossary: glossary.id}})
                     .then(function (response) {
                         glossary.rows = response.data.rows;
                         var lastRow = glossary.rows[glossary.rows.length - 1];
@@ -201,7 +201,7 @@
                     'glossary': glossary.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/glossary/', {params: data})
+                $http.delete('/ajax/glossary/', {params: data})
                     .success(function () {
                         var i = $scope.glossaries.indexOf(glossary);
                         if (i > -1) {
@@ -220,7 +220,7 @@
                     'tmx': tmx.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/tmx/', {params: data})
+                $http.delete('/ajax/tmx/', {params: data})
                     .success(function () {
                         var i = $scope.tmxes.indexOf(tmx);
                         if (i > -1) {
@@ -244,7 +244,7 @@
             $scope.saveName = function () {
                 $scope.editingName = false;
                 $scope.project.name = $scope.projectName;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'name': $scope.project.name
                     })
@@ -263,7 +263,7 @@
             $scope.saveDescription = function () {
                 $scope.project.description = $scope.projectDescription;
                 $scope.editingDescription = false;
-                $http.post('/api/project/', {
+                $http.post('/ajax/project/', {
                         'id': $scope.project.id,
                         'description': $scope.project.description
                     })
@@ -278,7 +278,7 @@
 
             $scope.removeProject = function (project) {
                 $scope.busy = true;
-                $http.delete('/api/project/', {params: {id: project.id}})
+                $http.delete('/ajax/project/', {params: {id: project.id}})
                     .success(function () {
                         $scope.busy = false;
                         location.href = '/projects/';
@@ -294,7 +294,7 @@
     module.controller('AddParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.getUsers = function (query) {
-                return $http.get('/api/get-users', {params: {q: query}})
+                return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
                         return response.data;
                     });
@@ -306,7 +306,7 @@
                     'user': $scope.user.id
                 };
                 $scope.busy = true;
-                $http.post('/api/participant/', data)
+                $http.post('/ajax/participant/', data)
                     .success(function (participant) {
                         $modalInstance.close(participant);
                         $scope.busy = false;
@@ -322,8 +322,58 @@
             };
         }
     ]);
-    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload',
-        function ($scope, $modalInstance, $http, Upload) {
+    module.controller('SelectTextRangesModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', 'data', '$timeout',
+        function ($scope, $modalInstance, $http, Upload, data, $timeout) {
+            var result = {},
+                checkResult = function () {
+                    for (var sheetName in result) {
+                        if (!result.hasOwnProperty(sheetName)) {
+                            continue;
+                        }
+                        var ranges = result[sheetName];
+                        for (var j in ranges) {
+                            if (!ranges.hasOwnProperty(j)) {
+                                continue;
+                            }
+                            var range = ranges[j];
+                            if (!range.source.coords) {
+                                range.source.error = true;
+                                $scope.currentSheetName = sheetName;
+                                return false;
+                            }
+                            if (!range.target.coords) {
+                                range.target.error = true;
+                                $scope.currentSheetName = sheetName;
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                };
+            $scope.ranges = result;
+            $scope.sheets = data;
+            for (var i in data) {
+                if (data.hasOwnProperty(i)) {
+                    $scope.ranges[i] = [];
+                }
+            }
+            $scope.currentSheetName = Object.keys(data)[0];
+            $scope.updateResult = function (sheetName, value) {
+                result[sheetName] = value;
+            };
+            $scope.ok = function () {
+                if (!checkResult()) {
+                    return;
+                }
+                $modalInstance.close(result);
+            };
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', '$modal',
+        function ($scope, $modalInstance, $http, Upload, $modal) {
             $scope.busy = false;
             $scope.progress = 0;
             $scope.text = {
@@ -368,7 +418,7 @@
                         data['xlsx_prepare_state'] = 1;
                     }
                     Upload.upload({
-                            url: '/api/text/',
+                            url: '/ajax/text/',
                             fields: data,
                             file: $scope.text.files[0]
                         })
@@ -376,8 +426,68 @@
                             $scope.progress = 100.0 * evt.loaded / evt.total;
                         })
                         .success(function (text) {
-                            $modalInstance.close(text);
                             $scope.busy = false;
+                            if (ext === 'xlsx') {
+                                var serverFileName = text['file_name'],
+                                    serverFileType = text['file_type'],
+                                    sheets = text['Text'],
+                                    modalInstance = $modal.open({
+                                    templateUrl: 'selectTextRangesModal.html',
+                                    controller: 'SelectTextRangesModalCtrl',
+                                    size: 'lg',
+                                    backdrop: 'static',
+                                    resolve: {
+                                        data: function () {
+                                            return sheets;
+                                        }
+                                    }
+                                });
+
+                                modalInstance.result.then(function (res) {
+                                    var ranges = {};
+                                    for (var i in res) {
+                                        if (!res.hasOwnProperty(i)) {
+                                            continue;
+                                        }
+                                        var sheet = res[i];
+                                        ranges[i] = {
+                                            'source_coords': [],
+                                            'target_coords': []
+                                        };
+                                        for (var j in sheet) {
+                                            if (!sheet.hasOwnProperty(j)) {
+                                                continue;
+                                            }
+                                            var range = sheet[j];
+                                            ranges[i]['source_coords'].push(range.source.text);
+                                            ranges[i]['target_coords'].push(range.target.text);
+                                        }
+                                    }
+                                    var data = {
+                                        project: window['projectId'],
+                                        title: $scope.text.title,
+                                        subject: $scope.text.subject,
+                                        sourceLang: $scope.text.sourceLang,
+                                        targetLang: $scope.text.targetLang,
+                                        file_name: serverFileName,
+                                        file_type: serverFileType,
+                                        custom_parse: ranges
+                                    };
+                                    $scope.busy = true;
+                                    $http.post('/ajax/text/', data)
+                                        .success(function (text) {
+                                            $scope.busy = false;
+                                            $modalInstance.close(text);
+                                        })
+                                        .error(function (data) {
+                                            $scope.busy = false;
+                                        });
+                                }, function () {
+                                });
+
+                            } else {
+                                $modalInstance.close(text);
+                            }
                         })
                         .error(function (data) {
                             $scope.error = data;
@@ -390,7 +500,7 @@
                     }
                     data.textBody = $scope.text.textBody;
                     $scope.busy = true;
-                    $http.post('/api/text/', data)
+                    $http.post('/ajax/text/', data)
                         .success(function (text) {
                             $modalInstance.close(text);
                             $scope.busy = false;
@@ -504,6 +614,7 @@
                     project: window['projectId'],
                     id: $scope.text.id,
                     title: $scope.text.title,
+                    machine: $scope.text.machine,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
@@ -512,7 +623,7 @@
                     tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
-                $http.post('/api/text/', data)
+                $http.post('/ajax/text/', data)
                     .success(function (text) {
                         $modalInstance.close(text);
                         $scope.busy = false;
@@ -529,7 +640,7 @@
                     'text': $scope.text.id
                 };
                 $scope.busy = true;
-                $http.delete('/api/text/', {params: data})
+                $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         $scope.busy = false;
                         $modalInstance.close('removed');
@@ -575,7 +686,7 @@
                 data['project'] = window['projectId'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
-                    $http.post('/api/glossary/', data)
+                    $http.post('/ajax/glossary/', data)
                         .success(function (glossary) {
                             $modalInstance.close(glossary);
                             $scope.busy = false;
@@ -586,7 +697,7 @@
                         });
                 } else {
                     Upload.upload({
-                            url: '/api/glossary/',
+                            url: '/ajax/glossary/',
                             fields: data,
                             file: data.files[0]
                         })
@@ -620,7 +731,7 @@
                 data['project'] = window['projectId'];
 
                 Upload.upload({
-                        url: '/api/tmx/',
+                        url: '/ajax/tmx/',
                         fields: data,
                         file: data.files[0]
                     })
