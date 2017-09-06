@@ -10,7 +10,8 @@
         'profileModule',
         'projectModule',
         'projectsModule',
-        'textModule'
+        'textModule',
+        'chatModule'
     ]);
 
     module.run(function ($http) {
@@ -1160,6 +1161,7 @@
     module.controller('NewProjectModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
             $scope.error = '';
+            $scope.type = 'private';
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {
