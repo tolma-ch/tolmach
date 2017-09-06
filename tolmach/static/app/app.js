@@ -10,7 +10,8 @@
         'profileModule',
         'projectModule',
         'projectsModule',
-        'textModule'
+        'textModule',
+        'chatModule'
     ]);
 
     module.run(function ($http) {
