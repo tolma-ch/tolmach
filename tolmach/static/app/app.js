@@ -11,7 +11,8 @@
         'projectModule',
         'projectsModule',
         'textModule',
-        'chatModule'
+        'chatModule',
+        'dictModule'
     ]);
 
     module.run(function ($http) {

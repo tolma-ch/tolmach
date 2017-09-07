@@ -173,6 +173,11 @@
             $scope.toggleChat = function () {
                 $scope.showChatroom = !$scope.showChatroom;
             };
+            $scope.showDictModal = false;
+            $scope.dictOpener = function (ololo) {
+                $scope.showDictModal = !$scope.showDictModal;
+                console.log($scope.showDictModal);
+            };
             $scope.globalResize = function (window) {
                 $scope.$broadcast('GlobalResize', window);
             };
