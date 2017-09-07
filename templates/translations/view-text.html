@@ -290,31 +290,33 @@
                                              border-width: 1px;
                                         }
                                         .dict-btn {
-                                            border-width: 2px;
-                                            color: #777676 !important;
-                                            background-color: #f5f5f5 !important;
-                                            border-color: #f5f5f5;
-                                            font-size: large;
-                                            line-height: 17px;
+                                          /*border: 0 !important;*/
+                                          color: #777676 !important;
+                                          background-color: #f5f5f5 !important;
+                                          border-color: #f5f5f5;
+                                          font-size: large;
+                                          line-height: 17px;
                                         }
                                         .dict-btn.active {
-                                            background-color: #e0e0e0 !important;
-                                            border-color: #cecece;
+                                          background-color: #e0e0e0 !important;
+                                          border-color: #cecece;
                                         }
                                         .dict-btn:hover {
-                                            background-color: #D9D9D9 !important;
-                                            border-color: #E7E7E7;
+                                          background-color: #D9D9D9 !important;
+                                          border-color: #E7E7E7;
                                         }
+
                                     </style>
                                     <toggle ng-model="textTab" ng-change="changed()"
                                             on="{{ translated_text }}"
                                             off="{{ original_text }}"
                                             size="btn-sm"
                                             style="android"></toggle>
-                                    <button type="button" class="btn btn-sm btn-light dict-btn"
+                                    <button type="button" class="btn btn-sm dict-btn btn-light"
                                             id="dict-button"
                                             tooltip="{% trans 'Dictionary' %}"
-                                            tooltip-append-to-body="true">
+                                            tooltip-append-to-body="true"
+                                            ng-click="dictOpener()">
                                         <i class="fa fa-book"></i>
                                     </button>
                                 </div>
@@ -335,50 +337,16 @@
             </div>
         </div>
     </div>
-    <div id="dialog-form" title="Search word translations">
-        <style>
-            .word-help {
-                padding-left: 5px;
-                position: absolute;
-                display: inline;
-                cursor: pointer;
-                color: #000;
-                background-color: #f1f1f1;
-                text-decoration: none;
-            }
-
-            .found-word .word-help {
-                visibility: hidden;
-                opacity: 0;
-            }
-
-            .found-word:hover {
-                cursor: pointer;
-                color: #000;
-                background-color: #f1f1f1;
-                text-decoration: none;
-            }
-
-            .found-word:hover .word-help {
-                visibility: visible;
-                opacity: 1;
-                cursor: pointer;
-                color: #000;
-                background-color: #f1f1f1;
-                text-decoration: none;
-                transition: visibility 1s, opacity 0.3s linear 0.5s;
-            }
-
-            .meanings {
-                display: none;
-                border-radius: 6px;
-                padding: 5px;
-                background-color: #f3f3f3;
-                color: #6d6d6d;
-            }
-        </style>
-        <form>
-            <fieldset>
+    <div class="dictionary"
+         ng-if="showDictModal"
+         ng-cloak
+         ng-controller="DictCtrl"
+         ng-style="style"
+         data-drag="true"
+         jqyoui-draggable
+         data-jqyoui-options="{handle: '.dictionary__title'}">
+        <div class="dictionary__title">
+            <form>
                 <input type="text" name="name" id="name" placeholder="enter word" class="text ui-widget-content ui-corner-all">
                 <div class="btn-group">
                     <button class="btn btn-xs">
@@ -393,26 +361,28 @@
                         RU
                     </button>
                 </div>
-                <h4>hello</h4>
-                <h5>
-                <a class="found-word" id="word-1">привет<div class="word-help" title="wizard"><i class="fa fa-book"></i></div></a>,
-                    <a class="found-word" id="word-2">здравствуйте<div class="word-help"><i class="fa fa-book"></i></div></a>,
-                    <a class="found-word" id="word-3">алло<div class="word-help"><i class="fa fa-book"></i></div></a>,
-                    <a class="found-word" id="word-4">добрый день<div class="word-help"><i class="fa fa-book"></i></div></a>,
-                    <a class="found-word" id="word-5">здравствуй<div class="word-help"><i class="fa fa-book"></i></div></a>,
-                    <a class="found-word" id="word-6">ау<div class="word-help"><i class="fa fa-book"></i></div></a>
-                </h5>
-                <p class="meanings" id="meanings-1">"greeting", "how do you do?", "welcome(!)", "иранкарапте", "привет(!)", "Expression of greeting used by two or more people who meet each other."</p>
-                <p class="meanings" id="meanings-2">"greeting", "good day (daytime greeting)", "how do you do?", "по телефону: &quot;слушаю", "hello(!)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
-                <p class="meanings" id="meanings-3">"when answering the telephone"</p>
-                <p class="meanings" id="meanings-4">"greeting", "good day (daytime greeting)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
-                <p class="meanings" id="meanings-5">"greeting", "how do you do?", "welcome(!)", "привет(!)"</p>
-                <p class="meanings" id="meanings-6">"is anyone there?"</p>
+            </form>
+        </div>
+        <div class="dictionary__body">
+            <h4>hello</h4>
+            <h5>
+            <a class="found-word" id="word-1" ng-click="showMeanings(1)">привет</a>,
+                <a class="found-word" id="word-2" ng-click="showMeanings(2)">здравствуйте</a>,
+                <a class="found-word" id="word-3" ng-click="showMeanings(3)">алло</a>,
+                <a class="found-word" id="word-4" ng-click="showMeanings(4)">добрый день</a>,
+                <a class="found-word" id="word-5" ng-click="showMeanings(5)">здравствуй</a>,
+                <a class="found-word" id="word-6" ng-click="showMeanings(6)">ау</a>
+            </h5>
+            <p class="meanings" id="meanings-1">"greeting", "how do you do?", "welcome(!)", "иранкарапте", "привет(!)", "Expression of greeting used by two or more people who meet each other."</p>
+            <p class="meanings" id="meanings-2">"greeting", "good day (daytime greeting)", "how do you do?", "по телефону: &quot;слушаю", "hello(!)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
+            <p class="meanings" id="meanings-3">"when answering the telephone"</p>
+            <p class="meanings" id="meanings-4">"greeting", "good day (daytime greeting)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
+            <p class="meanings" id="meanings-5">"greeting", "how do you do?", "welcome(!)", "привет(!)"</p>
+            <p class="meanings" id="meanings-6">"is anyone there?"</p>
 
-                <!-- Allow form submission with keyboard without duplicating the dialog button -->
-                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-            </fieldset>
-        </form>
+            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </div>
     </div>
     <script>
         var helpTexts = {
@@ -429,26 +399,5 @@
 {% endblock %}
 
 {% block script %}
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="/static/js/jquery-ui-1.10.3.full.min.js"></script>
-<script>
-    dialog = $( "#dialog-form" ).dialog({
-        autoOpen: false,
-        height: 300,
-        width: 470,
-        minHeight: 270,
-        minWidth: 350
-    });
-    $( "#dict-button" ).button().on( "click", function() {
-        dialog.dialog( "open" );
-    });
-
-    $(".word-help").on("click", function() {
-        var parentId = $(this).closest('a').attr('id');
-        var wordNum = parentId.split('-')[1];
-        console.log(wordNum);
-        $('.meanings').css('display', 'none');
-        $('#meanings-' + wordNum).css('display', 'block');
-    })
-</script>
 {% endblock %}

@@ -1,0 +1,40 @@
+.dictionary {
+  position: fixed;
+  width: 470px;
+  height: 300px;
+  top: 100px;
+  right: 50px;
+  //bottom: 0;
+  //left: 0;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #D5D5D5;
+  &__title {
+    border-bottom: 1px solid #D5D5D5;
+    padding: 4px 10px;
+    cursor: move;
+  }
+  &__body {
+    flex-basis: 100%;
+    overflow-y: scroll;
+    padding: 10px;
+  }
+  &__input {
+    flex-basis: 29px;
+  }
+}
+.found-word:hover {
+  cursor: pointer;
+  color: #000;
+  background-color: #f1f1f1;
+  text-decoration: none;
+}
+
+.meanings {
+  display: none;
+  border-radius: 6px;
+  padding: 5px;
+  background-color: #f3f3f3;
+  color: #6d6d6d;
+}
