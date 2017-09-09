@@ -103,6 +103,7 @@
                 //$scope.word = '';
                 //alert(angular.toJson($scope.word));
                 $scope.foundWords = [];
+                $scope.wordToFind = $scope.word;
                 $http.post('/ajax/dict-search/', {
                         params: {
                             //from: $scope.langPair3[0],
@@ -1295,6 +1296,8 @@
 
     module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout', 'localStorageService',
         function ($rootScope, $scope, $http, $timeout, localStorageService) {
+            $scope.translationProgress = window['translation_progress'];
+            $scope.translationCounts = window['translation_counts'];
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");

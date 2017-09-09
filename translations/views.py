@@ -196,6 +196,10 @@ def view_translation(request, text_id, target_lang):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
+    lang = Language.objects.get(code=target_lang)
+    translation = TextTranslation.objects.get(text=text, target_lang=lang)
+    translation_counts, translation_progress = translation.get_progress()
+
     data = {'username': request.user,
             'page_title': text.title,
             'breadcrumbs': [
@@ -206,6 +210,8 @@ def view_translation(request, text_id, target_lang):
             'text': text,
             'use_machine': int(machine_trans_enabled),
             'target_lang': target_lang,
+            'translation_progress': translation_progress,
+            'translation_counts': translation_counts
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
