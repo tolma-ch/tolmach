@@ -1110,6 +1110,41 @@ def tmdb_search(request):
 
 
 @login_required
+def dict_search(request):
+    if request.method == 'POST':
+        post = request.POST or json.loads(request.body)
+        print post
+        import urllib2
+        word = post['params']['phrase']
+        source_lang = "en"
+        target_lang = "ru"
+        url = "https://glosbe.com/gapi/translate?from=%s&dest=%s&format=json&phrase=%s&pretty=true" % (source_lang, target_lang, word)
+        f = urllib2.urlopen(url)
+
+        data = json.loads(f.read())
+
+        out_data = []
+
+        # print json.dumps(data["tuc"])
+
+        if data['result'] == 'ok':
+            element = {
+                "meanings": []
+            }
+            for entry in data['tuc']:
+                if not element == {"meanings": []}:
+                    out_data.append(element)
+                element = {"meanings": []}
+                if "phrase" in entry:
+                    element["translation"] = entry["phrase"]["text"]
+                    if "meanings" in entry:
+                        for item in entry["meanings"]:
+                            element["meanings"].append(item["text"])
+
+        return HttpResponse(json.dumps(out_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
+
+
+@login_required
 def message_ajax(request, all):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
