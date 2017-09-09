@@ -368,7 +368,9 @@
         <div class="dictionary__body">
             <h4>hello</h4>
             <h5>
-            <a class="found-word" id="word-0" ng-click="showMeanings(1)" ng-repeat="x in foundWords">{{ x }}</a>,
+                <p style="display: inline-block" ng-repeat="x in foundWords">
+                    <a class="found-word" id="word-{=x.id=}" ng-click="showMeanings({=x.id=})">{=x.word=}</a>,&nbsp
+                </p>
             <!--<a class="found-word" id="word-1" ng-click="showMeanings(1)">привет</a>,-->
                 <!--<a class="found-word" id="word-2" ng-click="showMeanings(2)">здравствуйте</a>,-->
                 <!--<a class="found-word" id="word-3" ng-click="showMeanings(3)">алло</a>,-->
@@ -376,12 +378,18 @@
                 <!--<a class="found-word" id="word-5" ng-click="showMeanings(5)">здравствуй</a>,-->
                 <!--<a class="found-word" id="word-6" ng-click="showMeanings(6)">ау</a>-->
             </h5>
-            <p class="meanings" id="meanings-1">"greeting", "how do you do?", "welcome(!)", "иранкарапте", "привет(!)", "Expression of greeting used by two or more people who meet each other."</p>
-            <p class="meanings" id="meanings-2">"greeting", "good day (daytime greeting)", "how do you do?", "по телефону: &quot;слушаю", "hello(!)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
-            <p class="meanings" id="meanings-3">"when answering the telephone"</p>
-            <p class="meanings" id="meanings-4">"greeting", "good day (daytime greeting)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>
-            <p class="meanings" id="meanings-5">"greeting", "how do you do?", "welcome(!)", "привет(!)"</p>
-            <p class="meanings" id="meanings-6">"is anyone there?"</p>
+
+            <p style="display: inline-block" ng-repeat="x in foundWords" >
+                <a class="meanings" id="meanings-{=x.id=}">
+                    {=x.meanings[0]=}123
+                </a>
+            </p>
+            <!--<p class="meanings" id="meanings-1">"greeting", "how do you do?", "welcome(!)", "иранкарапте", "привет(!)", "Expression of greeting used by two or more people who meet each other."</p>-->
+            <!--<p class="meanings" id="meanings-2">"greeting", "good day (daytime greeting)", "how do you do?", "по телефону: &quot;слушаю", "hello(!)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>-->
+            <!--<p class="meanings" id="meanings-3">"when answering the telephone"</p>-->
+            <!--<p class="meanings" id="meanings-4">"greeting", "good day (daytime greeting)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>-->
+            <!--<p class="meanings" id="meanings-5">"greeting", "how do you do?", "welcome(!)", "привет(!)"</p>-->
+            <!--<p class="meanings" id="meanings-6">"is anyone there?"</p>-->
         </div>
     </div>
     <script>
