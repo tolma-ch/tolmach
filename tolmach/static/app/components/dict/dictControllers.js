@@ -21,6 +21,7 @@
                 }
             };
             $scope.showMeanings = function (wordId) {
+                console.log(wordId);
                 $('.meanings').css('display', 'none');
                 if (wordId != lastMeaningNum){
                     $('#meanings-' + wordId).css('display', 'block');
@@ -41,9 +42,13 @@
                         }
                     }).success(function (res) {
                         var results = [];
-                        angular.forEach(res, function (elem){
-                            $scope.foundWords.push(elem['translation']);
+                        angular.forEach(res, function (elem, key){
+                            results.push({id: key,
+                                        word: elem['translation'],
+                                        meanings: elem['meanings']
+                            });
                         });
+                        $scope.foundWords = results;
                         //$scope.$apply();
                         console.log(res);
                         console.log($scope.foundWords);
