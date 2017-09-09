@@ -32,6 +32,7 @@
                 //$scope.word = '';
                 //alert(angular.toJson($scope.word));
                 $scope.foundWords = [];
+                $scope.wordToFind = $scope.word;
                 $http.post('/ajax/dict-search/', {
                         params: {
                             //from: $scope.langPair3[0],

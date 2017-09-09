@@ -54,6 +54,8 @@
         window['useMachine'] = {{ use_machine }};
         window['translationTargetLang'] = '{{ target_lang }}';
         window['translationSourceLang'] = '{{ source_lang }}';
+        window['translation_progress'] = {{ translation_progress }};
+        window['translation_counts'] = {{ translation_counts }};
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -336,6 +338,41 @@
                     </div>
                 </div>
             </div>
+            {% block navprogress %}
+                <style>
+                    .header-progress {
+                        position: absolute;
+                        display: block;
+                        z-index: 300;
+                        top: 0px;
+                        left: 0px;
+                        height: 3px;
+                        width: 100%;
+                    }
+                    .header-progress:hover {
+                        /*border: 2px double #ffffff;*/
+                        height: 7px;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+                        cursor: pointer;
+                    }
+                    .header-progress-full {
+                        width: 60%;
+                        height: 100%;
+                        float: left;
+                        border-right: 1px solid #a2a2a2;
+                    }
+                </style>
+                <div class="progress header-progress"
+                      tooltip="{% trans 'Fragments approved:' %} {= translationCounts[2] =}
+                      {% trans 'Fragments translated:' %} {= translationCounts[1] =}"
+                      tooltip-placement="bottom"
+                      tooltip-append-to-body="true">
+                    <div class="progress-bar-success header-progress-full" role="progressbar"
+                  aria-valuemin="0" aria-valuemax="100" ng-style="{width : ( translationProgress[1] + '%' ) }"></div>
+                    <div class="progress-bar-success header-progress-full" role="progressbar"
+                  aria-valuemin="0" aria-valuemax="100" ng-style="{width : ( translationProgress[0] - translationProgress[1] + '%' ), background: 'rgb(255, 217, 121)' }"></div>
+                </div>
+            {% endblock %}
         </div>
     </div>
     <div class="dictionary"
@@ -366,30 +403,17 @@
             </form>
         </div>
         <div class="dictionary__body">
-            <h4>hello</h4>
+            <h4>{= wordToFind =}</h4>
             <h5>
                 <p style="display: inline-block" ng-repeat="x in foundWords">
-                    <a class="found-word" id="word-{=x.id=}" ng-click="showMeanings({=x.id=})">{=x.word=}</a>,&nbsp
+                    <a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp
+                    <a class="meanings" id="meanings-{=x.id=}">
+                        {=x.meanings=}
+                    </a>
                 </p>
-            <!--<a class="found-word" id="word-1" ng-click="showMeanings(1)">привет</a>,-->
-                <!--<a class="found-word" id="word-2" ng-click="showMeanings(2)">здравствуйте</a>,-->
-                <!--<a class="found-word" id="word-3" ng-click="showMeanings(3)">алло</a>,-->
-                <!--<a class="found-word" id="word-4" ng-click="showMeanings(4)">добрый день</a>,-->
-                <!--<a class="found-word" id="word-5" ng-click="showMeanings(5)">здравствуй</a>,-->
-                <!--<a class="found-word" id="word-6" ng-click="showMeanings(6)">ау</a>-->
             </h5>
 
-            <p style="display: inline-block" ng-repeat="x in foundWords" >
-                <a class="meanings" id="meanings-{=x.id=}">
-                    {=x.meanings[0]=}123
-                </a>
-            </p>
-            <!--<p class="meanings" id="meanings-1">"greeting", "how do you do?", "welcome(!)", "иранкарапте", "привет(!)", "Expression of greeting used by two or more people who meet each other."</p>-->
-            <!--<p class="meanings" id="meanings-2">"greeting", "good day (daytime greeting)", "how do you do?", "по телефону: &quot;слушаю", "hello(!)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>-->
-            <!--<p class="meanings" id="meanings-3">"when answering the telephone"</p>-->
-            <!--<p class="meanings" id="meanings-4">"greeting", "good day (daytime greeting)", "здравствуйте (дневное приветствие)", "Expression of greeting used by two or more people who meet each other."</p>-->
-            <!--<p class="meanings" id="meanings-5">"greeting", "how do you do?", "welcome(!)", "привет(!)"</p>-->
-            <!--<p class="meanings" id="meanings-6">"is anyone there?"</p>-->
+         
         </div>
     </div>
     <script>

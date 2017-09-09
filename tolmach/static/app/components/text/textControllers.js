@@ -5,6 +5,8 @@
 
     module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout', 'localStorageService',
         function ($rootScope, $scope, $http, $timeout, localStorageService) {
+            $scope.translationProgress = window['translation_progress'];
+            $scope.translationCounts = window['translation_counts'];
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
