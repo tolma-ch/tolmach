@@ -102,14 +102,40 @@
             $scope.searchWord = function () {
                 //$scope.word = '';
                 //alert(angular.toJson($scope.word));
+                var notFoundBlock = document.getElementById('dict-nothing-found');
+                notFoundBlock.style.display = "none";
                 $scope.foundWords = [];
-                $scope.wordToFind = $scope.word;
+                $scope.wordToFind = "";
+                var opts = {
+                  lines: 13 // The number of lines to draw
+                , length: 40 // The length of each line
+                , width: 2 // The line thickness
+                , radius: 16 // The radius of the inner circle
+                , scale: 0.50 // Scales overall size of the spinner
+                , corners: 0.4 // Corner roundness (0..1)
+                , color: '#777676' // #rgb or #rrggbb or array of colors
+                , opacity: 0 // Opacity of the lines
+                , rotate: 0 // The rotation offset
+                , direction: 1 // 1: clockwise, -1: counterclockwise
+                , speed: 1 // Rounds per second
+                , trail: 83 // Afterglow percentage
+                , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+                , zIndex: 2e9 // The z-index (defaults to 2000000000)
+                , className: 'spinner' // The CSS class to assign to the spinner
+                , top: '50%' // Top position relative to parent
+                , left: '50%' // Left position relative to parent
+                , shadow: false // Whether to render a shadow
+                , hwaccel: false // Whether to use hardware acceleration
+                , position: 'absolute' // Element positioning
+                };
+                var target = document.getElementById('dict-body');
+                var spinner = new Spinner(opts).spin(target);
                 $http.post('/ajax/dict-search/', {
                         params: {
-                            //from: $scope.langPair3[0],
-                            //dest: $scope.langPair3[1],
-                            from: 'eng',
-                            dest: 'rus',
+                            from: window['translationSourceLang'],
+                            dest: window['translationTargetLang'],
+                            //from: 'eng',
+                            //dest: 'rus',
                             phrase: $scope.word
                         }
                     }).success(function (res) {
@@ -120,25 +146,17 @@
                                         meanings: elem['meanings']
                             });
                         });
-                        $scope.foundWords = results;
+                        spinner.stop();
+                        if (results && results.length == 0) {
+                            var notFoundBlock = document.getElementById('dict-nothing-found');
+                            notFoundBlock.style.display = "block";
+                        } else {
+                            $scope.wordToFind = $scope.word;
+                            $scope.foundWords = results;
+                        }
                         //$scope.$apply();
                         console.log(res);
                         console.log($scope.foundWords);
-                        //$scope.$parent.translationResults = results;
-                        //$scope.$parent.translatePopupStyle = {
-                        //    display: 'block',
-                        //    left: coords['x'] + 'px',
-                        //    top: coords['y'] + 'px'
-                        //};
-                        //$scope.$parent.showTranslatePopup = true;
-                        //if ($scope.$parent.showTranslatePopup) {
-                        //    $timeout(function () {
-                        //        var elem = $('#translation-popup'),
-                        //            elemWidth = elem.width(),
-                        //            left = coords['x'] + (width - elemWidth) / 2;
-                        //        $scope.$parent.translatePopupStyle.left = left + 'px';
-                        //    },1);
-                        //}
                     })
             }
         }

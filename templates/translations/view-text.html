@@ -384,7 +384,7 @@
         </div>
     </div>
     <div class="dictionary"
-         ng-if="showDictModal"
+         ng-show="showDictModal"
          ng-cloak
          ng-controller="DictCtrl"
          ng-style="style"
@@ -393,25 +393,26 @@
          data-jqyoui-options="{handle: '.dictionary__title'}">
         <div class="dictionary__title">
             <form ng-submit="searchWord()" name="dictInputForm">
-                <input type="text" ng-model="word" name="wordToSearch" id="name" placeholder="enter word" class="text ui-widget-content ui-corner-all">
+                <input type="text" ng-model="word" name="wordToSearch" id="name" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all">
                 <div class="btn-group">
                     <button class="btn btn-xs">
                         <!--<i class="flag flag-Russian"></i>-->
-                        EN
+                        {{ source_lang }}
                     </button>
                     <button class="btn btn-xs">
                         <i class="fa fa-exchange"></i>
                     </button>
                     <button class="btn btn-xs">
                         <!--<i class="flag flag-English"></i>-->
-                        RU
+                        {{ target_lang }}
                     </button>
                 </div>
                 <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
             </form>
         </div>
-        <div class="dictionary__body">
+        <div class="dictionary__body" id="dict-body">
             <h4>{= wordToFind =}</h4>
+            <p class="dictionary__nothing_found" id="dict-nothing-found">Ничего не найдено =(</p>
             <h5>
                 <p style="display: inline-block" ng-repeat="x in foundWords">
                     <a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp
@@ -440,4 +441,5 @@
 
 {% block script %}
 <script src="/static/js/jquery-ui-1.10.3.full.min.js"></script>
+<script src="/static/js/spin.min.js"></script>
 {% endblock %}

@@ -209,6 +209,7 @@ def view_translation(request, text_id, target_lang):
             ],
             'text': text,
             'use_machine': int(machine_trans_enabled),
+            'source_lang': text.source_lang.code,
             'target_lang': target_lang,
             'translation_progress': translation_progress,
             'translation_counts': translation_counts

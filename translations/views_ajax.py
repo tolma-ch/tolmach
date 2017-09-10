@@ -1116,9 +1116,10 @@ def dict_search(request):
         print post
         import urllib2
         word = post['params']['phrase']
-        source_lang = "en"
-        target_lang = "ru"
+        source_lang = post['params']['from']
+        target_lang = post['params']['dest']
         url = "https://glosbe.com/gapi/translate?from=%s&dest=%s&format=json&phrase=%s&pretty=true" % (source_lang, target_lang, word)
+        print url
         f = urllib2.urlopen(url)
 
         data = json.loads(f.read())
