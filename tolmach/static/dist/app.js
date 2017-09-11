@@ -1312,8 +1312,8 @@
 
     var module = angular.module('textControllers', []);
 
-    module.controller('transCtrl', ['$rootScope', '$scope', '$http', '$timeout', 'localStorageService',
-        function ($rootScope, $scope, $http, $timeout, localStorageService) {
+    module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$timeout', 'localStorageService',
+        function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
             var clearTags = function (text) {
@@ -1399,6 +1399,8 @@
                             entriesById[entry['idInText']] = entry;
                         }
                         $scope.entries = entries;
+                        //document.getElementById('result-container').innerHTML = data['text_body'].replace(/\n/g, "<br />");
+                        $scope.textBody = $sce.trustAsHtml(data['text_body'].replace(/\n/g, "<br />"));
                         $scope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
                         $scope.busy = false;

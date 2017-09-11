@@ -330,8 +330,7 @@
                         <div class="text-overview__row">
                             <div class="text-overview__cell">
                                 <div class="text-overview__content" id="result-container"
-                                     ng-show="!busy">
-                                    {% autoescape off %}{{ text.body | linebreaksbr }}{% endautoescape %}
+                                     ng-show="!busy" ng-bind-html="textBody">
                                 </div>
                             </div>
                         </div>

@@ -165,19 +165,19 @@ def view_translation(request, text_id, target_lang):
         return HttpResponseRedirect('/')
     projects_text = ''
     projects_url = ''
-    res = ''
-    body = text.body
-    page = 1
-    start = 101
-    prefix = ''
-    while body:
-        splited = body.split('<span data-entry="%d">' % start, 1)
-        res += ('<div entry-page="%d">' % page) + prefix + splited[0] + '</div>'
-        prefix = '<span data-entry="%d">' % start
-        page += 1
-        start += 100
-        body = splited[1] if len(splited) > 1 else False
-    text.body = res
+    # res = ''
+    # body = text.body
+    # page = 1
+    # start = 101
+    # prefix = ''
+    # while body:
+    #     splited = body.split('<span data-entry="%d">' % start, 1)
+    #     res += ('<div entry-page="%d">' % page) + prefix + splited[0] + '</div>'
+    #     prefix = '<span data-entry="%d">' % start
+    #     page += 1
+    #     start += 100
+    #     body = splited[1] if len(splited) > 1 else False
+    # text.body = res
 
     pr = Project.objects.get(id=text.project.id)
     if pr.is_user_manager(request.user):
