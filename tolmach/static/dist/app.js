@@ -1399,8 +1399,7 @@
                             entriesById[entry['idInText']] = entry;
                         }
                         $scope.entries = entries;
-                        //document.getElementById('result-container').innerHTML = data['text_body'].replace(/\n/g, "<br />");
-                        $scope.textBody = $sce.trustAsHtml(data['text_body'].replace(/\n/g, "<br />"));
+                        $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
                         $scope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
                         $scope.busy = false;
@@ -2487,6 +2486,18 @@
         }
       };
     }]);
+    module.directive('dynamic', function ($compile) {
+      return {
+        restrict: 'A',
+        replace: true,
+        link: function (scope, ele, attrs) {
+          scope.$watch(attrs.dynamic, function(html) {
+            ele.html(html);
+            $compile(ele.contents())(scope);
+          });
+        }
+      };
+    });
 }());;(function () {
     'use strict';
 
