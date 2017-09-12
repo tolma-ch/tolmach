@@ -90,8 +90,7 @@
                             entriesById[entry['idInText']] = entry;
                         }
                         $scope.entries = entries;
-                        //document.getElementById('result-container').innerHTML = data['text_body'].replace(/\n/g, "<br />");
-                        $scope.textBody = $sce.trustAsHtml(data['text_body'].replace(/\n/g, "<br />"));
+                        $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
                         $scope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
                         $scope.busy = false;
