@@ -402,3 +402,34 @@
     display: inline-block;
   }
 }
+
+.header-progress {
+  position: absolute !important;
+  display: block;
+  z-index: 300;
+  top: 0;
+  left: 0;
+  height: 3px !important;
+  width: 100%;
+  -webkit-transition: height 0.1s ease-in-out;
+  -moz-transition: height 0.1s ease-in-out;
+  -o-transition: height 0.1s ease-in-out;
+  transition: height 0.1s ease-in-out;
+
+  &:hover {
+    height: 7px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    cursor: pointer;
+    -webkit-transition: height 0.1s ease-in-out;
+    -moz-transition: height 0.1s ease-in-out;
+    -o-transition: height 0.1s ease-in-out;
+    transition: height 0.1s ease-in-out;
+  }
+
+  &-full {
+    width: 60%;
+    height: 100%;
+    float: left;
+    border-right: 1px solid #a2a2a2;
+  }
+}
