@@ -15,10 +15,20 @@ body > .main
 	width 100%
 	box-sizing border-box
 
-	&__before,
+	&__before
+		display table-cell
+		width 0%
+		&:before
+			display block
+			content ""
+			border-bottom 1px solid $grayBorder
+			height 50%
+			width 100%
+			position relative
+			top -7px
 	&__after
 		display table-cell
-		width 50%
+		width 100%
 
 		&:before
 			display block

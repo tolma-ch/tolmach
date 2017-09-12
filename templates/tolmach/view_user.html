@@ -42,63 +42,13 @@
 
             <div class="user-sidebar__profile">
                 <div class="user-sidebar__profile-line">
-                    <span class="user-sidebar__profile-line-title">website:</span>
+                    <span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
                     <a class="user-sidebar__profile-line-data" href="" target="__blank">{{ website }}</a>
                 </div>
             </div>
         </div>
     </aside>
     <section class="profile-content">
-        <div class="user-statistics">
-            <div class="user-statistics__title">{{ statistics_header }}</div>
-            <div class="user-statistics__translations">
-                <ul class="user-statistics-list">
-                    {% for key, value in stat.items|slice:":3" %}
-                    <li class="user-statistics-list__item">
-                        <div class="user-statistics-column">
-                            <div class="user-statistics-column__value user-statistics-column__value_l" style="height: {{ value.0 }}%"></div>
-                            <div class="user-statistics-column__value user-statistics-column__value_r" style="height: {{ value.1 }}%"></div>
-                        </div>
-                        <div class="user-statistics__translations-rate">
-                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_l-r">
-                                <div class="languages">
-                                    <i class="flag flag-{{ key.0 }}"></i>
-                                    <i class="fa fa-chevron-right"></i>
-                                    <i class="flag flag-{{ key.1 }}"></i>
-                                </div>
-                            </div>
-                            {% if value.1 > 0 %}
-                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
-                                <div class="languages">
-                                    <i class="flag flag-{{ key.1 }}"></i>
-                                    <i class="fa fa-chevron-right"></i>
-                                    <i class="flag flag-{{ key.0 }}"></i>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </li>
-                    {% endfor %}
-                    {% if empty_list %}
-                        {% for i in empty_list %}
-                        <li class="user-statistics-list__item">
-                            <div class="user-statistics-column">
-                                <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 0%"></div>
-                                <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 0%"></div>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    {% endif %}
-                </ul>
-
-                <div class="user-statistics__total">
-                    <div class="user-statistics__total-title">{{ total_label }}:</div>
-                    <div class="user-statistics__total-number">{{ entries_total }}</div>
-                    <div class="user-statistics__total-sentences">{% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}</div>
-                </div>
-            </div>
-        </div>
-
         <div class="user-statistics__recent-progress">
             {% if projects %}
             <div class="user-statistics__recent-progress-title stripy-heading">
@@ -139,6 +89,31 @@
             </div>
             {% endif %}
 
+        </div>
+
+        <!--brand new stats panel-->
+        <div class="user-statistics">
+            <div class="user-statistics__title stripy-heading">
+                <span class="stripy-heading__before"></span>
+                <span class="stripy-heading__text" style="padding: 0 20px 20px 20px;">{{ statistics_header }}</span>
+                <span class="stripy-heading__after"></span>
+            </div>
+            <div class="user-statistics__translations">
+                <div class="user-statistics__new-block-total">
+                    <div class="user-statistics__new-total-number">{{ entries_total }}</div>
+                    <div class="user-statistics__new-total-sentences">
+    {% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}
+                    </div>
+                </div>
+                {% for pair in stat %}
+                <div class="user-statistics__new-block">
+                    <div class="user-statistics__new-number">{{ pair.fragments_translated }}</div>
+                    <div class="user-statistics__new-sentences">
+                        {{ pair.source_lang.code }} <i class="fa fa-chevron-right user-statistics__new-chevron"></i> {{ pair.target_lang.code }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </section>
 </div>
