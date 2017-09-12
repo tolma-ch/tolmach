@@ -22,62 +22,14 @@
         {% include "tolmach/partial/profile-sidebar.html" %}
     </aside>
     <section class="profile-content">
-        <div class="user-statistics">
-            <div class="user-statistics__title">{{ statistics_header }}</div>
-            <div class="user-statistics__translations">
-                <ul class="user-statistics-list">
-                    {% for key, value in stat.items|slice:":3" %}
-                    <li class="user-statistics-list__item">
-                        <div class="user-statistics-column">
-                            <div class="user-statistics-column__value user-statistics-column__value_l" style="height: {{ value.0 }}%"></div>
-                            <div class="user-statistics-column__value user-statistics-column__value_r" style="height: {{ value.1 }}%"></div>
-                        </div>
-                        <div class="user-statistics__translations-rate">
-                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_l-r">
-                                <div class="languages">
-                                    <i class="flag flag-{{ key.0 }}"></i>
-                                    <i class="fa fa-chevron-right"></i>
-                                    <i class="flag flag-{{ key.1 }}"></i>
-                                </div>
-                            </div>
-                            {% if value.1 > 0 %}
-                            <div class="user-statistics__translations-rate-item user-statistics__translations-rate-item_r-l">
-                                <div class="languages">
-                                    <i class="flag flag-{{ key.1 }}"></i>
-                                    <i class="fa fa-chevron-right"></i>
-                                    <i class="flag flag-{{ key.0 }}"></i>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                    </li>
-                    {% endfor %}
-                    {% if empty_list %}
-                        {% for i in empty_list %}
-                        <li class="user-statistics-list__item">
-                            <div class="user-statistics-column">
-                                <div class="user-statistics-column__value user-statistics-column__value_l" style="height: 0%"></div>
-                                <div class="user-statistics-column__value user-statistics-column__value_r" style="height: 0%"></div>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    {% endif %}
-                </ul>
-
-                <div class="user-statistics__total">
-                    <div class="user-statistics__total-title">{{ total_label }}:</div>
-                    <div class="user-statistics__total-number">{{ entries_total }}</div>
-                    <div class="user-statistics__total-sentences">
-{% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="user-statistics__recent-progress">
             <div class="user-statistics__recent-progress-title stripy-heading">
                 <span class="stripy-heading__before"></span>
-                <span class="stripy-heading__text">{{ projects_label }}</span>
+                <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ projects_label }}</span>
+                <a href="" class="btn helped-block btn-minier btn-link"
+                   ng-click="startNewProject()"
+                   help-text="{% trans 'Click this button to create new project' %}"
+                   style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
                 <span class="stripy-heading__after"></span>
             </div>
 
@@ -100,18 +52,36 @@
                                     <span class="progress-bar__value">{{ project.progress }}%</span>
                                 </div>
                             </td>
-                            <!--<td class="project-list-text__btns">-->
-                                    <!--<a class="project-list-text__btn" href=""-->
-                                       <!--ng-click="editText(text)"><i class="fa fa-pencil-square-o"></i></a>-->
-                                    <!--<a class="project-list-text__btn" href=""><i class="fa fa-download"></i></a>-->
-                                    <!--<a class="project-list-text__btn" href=""><i class="fa fa-trash-o"></i></a>-->
-                            <!--</td>-->
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <a href="" class="btn helped-block" ng-click="startNewProject()" help-text="{% trans "Click this button to create new project" %}">{{ start_new_label }}</a>
+        </div>
+
+        <!--brand new stats panel-->
+        <div class="user-statistics">
+            <div class="user-statistics__title stripy-heading">
+                <span class="stripy-heading__before"></span>
+                <span class="stripy-heading__text" style="padding: 0 20px 20px 20px;">{{ statistics_header }}</span>
+                <span class="stripy-heading__after"></span>
+            </div>
+            <div class="user-statistics__translations">
+                <div class="user-statistics__new-block-total">
+                    <div class="user-statistics__new-total-number">{{ entries_total }}</div>
+                    <div class="user-statistics__new-total-sentences">
+    {% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}
+                    </div>
+                </div>
+                {% for pair in stat %}
+                <div class="user-statistics__new-block">
+                    <div class="user-statistics__new-number">{{ pair.fragments_translated }}</div>
+                    <div class="user-statistics__new-sentences">
+                        {{ pair.source_lang.code }} <i class="fa fa-chevron-right user-statistics__new-chevron"></i> {{ pair.target_lang.code }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </section>
 </div>
