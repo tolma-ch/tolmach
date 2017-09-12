@@ -338,37 +338,6 @@
                 </div>
             </div>
             {% block navprogress %}
-                <style>
-                    .header-progress {
-                        position: absolute;
-                        display: block;
-                        z-index: 300;
-                        top: 0px;
-                        left: 0px;
-                        height: 3px;
-                        width: 100%;
-                        -webkit-transition: height 0.1s ease-in-out;
-                        -moz-transition: height 0.1s ease-in-out;
-                        -o-transition: height 0.1s ease-in-out;
-                        transition: height 0.1s ease-in-out;
-                    }
-                    .header-progress:hover {
-                        /*border: 2px double #ffffff;*/
-                        height: 7px;
-                        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-                        cursor: pointer;
-                        -webkit-transition: height 0.1s ease-in-out;
-                        -moz-transition: height 0.1s ease-in-out;
-                        -o-transition: height 0.1s ease-in-out;
-                        transition: height 0.1s ease-in-out;
-                    }
-                    .header-progress-full {
-                        width: 60%;
-                        height: 100%;
-                        float: left;
-                        border-right: 1px solid #a2a2a2;
-                    }
-                </style>
                 <div class="progress header-progress"
                       tooltip="{% trans 'Fragments approved:' %} {= translationCounts[2] =}
                       {% trans 'Fragments translated:' %} {= translationCounts[1] =}"
@@ -389,7 +358,8 @@
          ng-style="style"
          data-drag="true"
          jqyoui-draggable
-         data-jqyoui-options="{handle: '.dictionary__title'}">
+         data-jqyoui-options="{handle: '.dictionary__title'}"
+         style="position: fixed">
         <div class="dictionary__title">
             <form ng-submit="searchWord()" name="dictInputForm">
                 <input type="text" ng-model="word" name="wordToSearch" id="name" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all">
