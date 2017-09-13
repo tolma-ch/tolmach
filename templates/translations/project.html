@@ -20,16 +20,16 @@
                        ng-model="projectName"/>
                 <small><a class="float-right"
                           href=""
+                          ng-show="!editingName"
+                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
+                <small><a class="float-right"
+                          href=""
                           ng-show="editingName"
                           ng-click="saveName()"><i class="fa fa-check"></i></a></small>
                 <small><a class="float-right"
                           href=""
                           ng-show="editingName"
                           ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
-                <small><a class="float-right"
-                          href=""
-                          ng-show="!editingName"
-                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
                 {% endif %}
             </h1>
             <blockquote>

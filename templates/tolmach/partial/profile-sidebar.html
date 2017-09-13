@@ -11,8 +11,8 @@
 	</div>
 
 	<div class="user-sidebar__info">
-		<div class="user-sidebar__nickname">{= userData.username =}</div>
 		<div class="user-sidebar__username">{= userData.firstName =} {= userData.lastName =}</div>
+		<div class="user-sidebar__nickname">{= userData.username =}</div>
 		<!--<div class="user-sidebar__location">-->
 			<!--<i class="fa fa-map-marker"></i>-->
 			<!--Irkutsk, Russia-->
@@ -27,8 +27,7 @@
 	<!--</div>-->
 
 	<div class="user-sidebar__profile">
-		<div class="user-sidebar__profile-line">
-
+		<div class="user-sidebar__profile-line" ng-if="userData.website">
 			<span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
 			<a class="user-sidebar__profile-line-data" href="" target="__blank">{= userData.website =}</a>
 		</div>

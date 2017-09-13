@@ -22,65 +22,150 @@
         {% include "tolmach/partial/profile-sidebar.html" %}
     </aside>
     <section class="profile-content">
-        <div class="user-statistics__recent-progress">
-            <div class="user-statistics__recent-progress-title stripy-heading">
-                <span class="stripy-heading__before"></span>
-                <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ projects_label }}</span>
-                <a href="" class="btn helped-block btn-minier btn-link"
-                   ng-click="startNewProject()"
-                   help-text="{% trans 'Click this button to create new project' %}"
-                   style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
-                <span class="stripy-heading__after"></span>
-            </div>
+        <div class="tabbable">
+            <style>
+                .tabbable {
+                    padding-top: 15px;
+                }
+                .nav-tabs {
+                    overflow: hidden;
+                }
+                .tab-content {
+                    border: none;
+                }
+                .nav-tabs li a:hover,
+                .nav-tabs li.active a:hover,
+                .nav-tabs li.active a:focus,
+                .nav-tabs li.active a,
+                .nav-tabs li a {
+                    border-left: none;
+                    border-right: none;
+                    border-top: none;
+                    border-bottom: none;
+                    background: none;
+                    box-shadow: none;
+                }
+                .nav-tabs li.active {
+                    border-bottom: 5px solid #02C14F;
+                }
 
-            <div class="user-statistics__recent-progress-table">
-                <table cellpadding="0" cellspacing="0" class="user-statistics-table">
-                    <tbody>
-                        {% for project in projects %}
-                        <tr class="user-statistics-table__row">
-                            <td>
-                                {% if project.is_private %}
-                                <i class="fa fa-lock"></i>
-                                {% endif %}
-                            </td>
-                            <td class="user-statistics-table__title">
-                                <a href="/project/{{ project.id }}">{{ project.name }}</a>
-                            </td>
-                            <td class="user-statistics-table__progress">
-                                <div class="progress-bar">
-                                    <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
-                                    <span class="progress-bar__value">{{ project.progress }}%</span>
+            </style>
+            <ul class="nav nav-tabs" id="ololo">
+                <li class="active">
+                    <a data-toggle="tab" href="#home">
+                        ОБЗОР
+                    </a>
+                </li>
+
+                <li>
+                    <a data-toggle="tab" href="#projects">
+                        ПРОЕКТЫ
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="home" class="tab-pane in active">
+
+                    <div class="user-statistics__recent-progress">
+                        <div class="user-statistics__recent-progress-title stripy-heading">
+                            <span class="stripy-heading__before"></span>
+                            <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">Недавние проекты</span>
+                            <a href="" class="btn helped-block btn-minier btn-link"
+                               ng-click="startNewProject()"
+                               help-text="{% trans 'Click this button to create new project' %}"
+                               style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
+                            <span class="stripy-heading__after"></span>
+                        </div>
+
+                        <div class="user-statistics__recent-progress-table">
+                            <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                                <tbody>
+                                    {% for project in recent_projects %}
+                                    <tr class="user-statistics-table__row">
+                                        <td>
+                                            {% if project.is_private %}
+                                            <i class="fa fa-lock"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="user-statistics-table__title">
+                                            <a href="/project/{{ project.id }}">{{ project.name }}</a>
+                                        </td>
+                                        <td class="user-statistics-table__progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                                <span class="progress-bar__value">{{ project.progress }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--brand new stats panel-->
+                    <div class="user-statistics">
+                        <div class="user-statistics__title stripy-heading">
+                            <span class="stripy-heading__before"></span>
+                            <span class="stripy-heading__text" style="padding: 0 20px 20px 20px;">{{ statistics_header }}</span>
+                            <span class="stripy-heading__after"></span>
+                        </div>
+                        <div class="user-statistics__translations">
+                            <div class="user-statistics__new-block-total">
+                                <div class="user-statistics__new-total-number">{{ entries_total }}</div>
+                                <div class="user-statistics__new-total-sentences">
+                {% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}
                                 </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                            </div>
+                            {% for pair in stat %}
+                            <div class="user-statistics__new-block">
+                                <div class="user-statistics__new-number">{{ pair.fragments_translated }}</div>
+                                <div class="user-statistics__new-sentences">
+                                    {{ pair.source_lang.code }} <i class="fa fa-chevron-right user-statistics__new-chevron"></i> {{ pair.target_lang.code }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                <div id="projects" class="tab-pane">
+                    <div class="user-statistics__recent-progress">
+                        <div class="user-statistics__recent-progress-title stripy-heading">
+                            <span class="stripy-heading__before"></span>
+                            <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ projects_label }}</span>
+                            <a href="" class="btn helped-block btn-minier btn-link"
+                               ng-click="startNewProject()"
+                               help-text="{% trans 'Click this button to create new project' %}"
+                               style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
+                            <span class="stripy-heading__after"></span>
+                        </div>
 
-        <!--brand new stats panel-->
-        <div class="user-statistics">
-            <div class="user-statistics__title stripy-heading">
-                <span class="stripy-heading__before"></span>
-                <span class="stripy-heading__text" style="padding: 0 20px 20px 20px;">{{ statistics_header }}</span>
-                <span class="stripy-heading__after"></span>
-            </div>
-            <div class="user-statistics__translations">
-                <div class="user-statistics__new-block-total">
-                    <div class="user-statistics__new-total-number">{{ entries_total }}</div>
-                    <div class="user-statistics__new-total-sentences">
-    {% blocktrans count counter=entries_total %}fragment translated.{% plural %}fragments translated.{% endblocktrans %}
+                        <div class="user-statistics__recent-progress-table">
+                            <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                                <tbody>
+                                    {% for project in projects %}
+                                    <tr class="user-statistics-table__row">
+                                        <td>
+                                            {% if project.is_private %}
+                                            <i class="fa fa-lock"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="user-statistics-table__title">
+                                            <a href="/project/{{ project.id }}">{{ project.name }}</a>
+                                        </td>
+                                        <td class="user-statistics-table__progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                                <span class="progress-bar__value">{{ project.progress }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                {% for pair in stat %}
-                <div class="user-statistics__new-block">
-                    <div class="user-statistics__new-number">{{ pair.fragments_translated }}</div>
-                    <div class="user-statistics__new-sentences">
-                        {{ pair.source_lang.code }} <i class="fa fa-chevron-right user-statistics__new-chevron"></i> {{ pair.target_lang.code }}
-                    </div>
-                </div>
-                {% endfor %}
             </div>
         </div>
     </section>

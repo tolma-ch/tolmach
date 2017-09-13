@@ -30,7 +30,7 @@
                 $scope.error = '';
                 var data = {
                     'name': $scope.name,
-                    'description': $scope.description,
+                    'description': $scope.description || " ",
                     'type': $scope.type
                 };
                 $scope.busy = true;
@@ -45,6 +45,10 @@
                     });
             };
 
+            $scope.addProjectAdvancedOptions = false;
+            $scope.addProjectAdvancedOptionsOpener = function () {
+                $scope.addProjectAdvancedOptions = !$scope.addProjectAdvancedOptions;
+            };
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
