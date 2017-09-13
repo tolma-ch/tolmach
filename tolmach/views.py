@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Sum
 
-from translations.models import Project
+from translations.models import Project, Text, TextTranslation, TextEntry
 
 from tolmach.models import UserMeta, PairStats
 from tolmach import utils
@@ -25,6 +25,12 @@ def index(request):
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
+        recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
+        recent_project_ids = Text.objects.values_list('project_id').filter(id__in=recent_text_ids).distinct()
+        recent_projects = [x for x in Project.objects.filter(id__in=recent_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
+        for proj in recent_projects:
+            proj.progress = proj.get_progress()
+
         # Костыль для выведения пустых столбиков статистики
         empty_list = []
         if len(ordered_stat) < 3:
@@ -32,6 +38,7 @@ def index(request):
 
         data = {
             'projects': projects,
+            'recent_projects': recent_projects,
             'username': request.user.username,
             'usermeta': usermeta,
             'first_name': first_name,
