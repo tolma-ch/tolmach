@@ -449,6 +449,23 @@ def translation_ajax(request, text, target_lang, local_call=False, method=None):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
+@login_required
+def get_translation_progress(request):
+    post = request.POST or json.loads(request.body)
+    try:
+        text = Text.objects.get(id=post['text'])
+        translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['target_lang']))
+    except Text.DoesNotExist:
+        return HttpResponse(json.dumps(False), content_type="application/json", status=404)
+    if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    translation_counts, translation_progress = translation.get_progress()
+
+    return HttpResponse(json.dumps({'translation_counts': translation_counts,
+                                   'translation_progress': translation_progress}
+                                  ), content_type="application/json")
+
+
 @accept_project
 @login_required
 def glossary_ajax(request, project):
