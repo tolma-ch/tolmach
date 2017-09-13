@@ -174,8 +174,12 @@
                 $scope.showChatroom = !$scope.showChatroom;
             };
             $scope.showDictModal = false;
-            $scope.dictOpener = function (ololo) {
+            $scope.dictOpener = function () {
                 $scope.showDictModal = !$scope.showDictModal;
+                if ($scope.showDictModal){
+                    console.log('ololo');
+                    document.getElementById('dict-search-word-input').focus();
+                }
                 console.log($scope.showDictModal);
             };
             $scope.globalResize = function (window) {

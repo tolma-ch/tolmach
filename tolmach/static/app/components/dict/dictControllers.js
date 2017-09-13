@@ -7,6 +7,8 @@
         function ($scope, $http, $window, Dict) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
+            $scope.dictSourceLang = window['translationSourceLang'];
+            $scope.dictTargetLang = window['translationTargetLang'];
             $scope.style = {};
             $scope.$on('GlobalResize', function (e, w) {
                 var height = w.h,
@@ -27,6 +29,12 @@
                     $('#meanings-' + wordId).css('display', 'block');
                 }
                 lastMeaningNum = wordId;
+            };
+            $scope.dictSwitchLangs = function () {
+                var cur_source_lang = $scope.dictSourceLang;
+                var cur_target_lang = $scope.dictTargetLang;
+                $scope.dictSourceLang = cur_target_lang;
+                $scope.dictTargetLang = cur_source_lang;
             };
             $scope.searchWord = function () {
                 //$scope.word = '';
@@ -61,10 +69,8 @@
                 var spinner = new Spinner(opts).spin(target);
                 $http.post('/ajax/dict-search/', {
                         params: {
-                            from: window['translationSourceLang'],
-                            dest: window['translationTargetLang'],
-                            //from: 'eng',
-                            //dest: 'rus',
+                            from: $scope.dictSourceLang,
+                            dest: $scope.dictTargetLang,
                             phrase: $scope.word
                         }
                     }).success(function (res) {
