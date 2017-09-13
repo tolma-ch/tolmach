@@ -49,14 +49,24 @@
       font-size: 1.5em;
       padding: 0 5px;
       position: relative;
-      top: 3px;
+      display: inline-block;
+      height: 29px;
+      line-height: 30px;
+      vertical-align: middle;
+      &:hover {
+        background-color: #E4E4E4;
+      }
+      &:active {
+        background-color: #E4E4E4;
+        box-shadow: inset 0 0 3px 0px rgba(0,0,0,0.5);
+      }
     }
     input {
       width: 30px;
     }
     &-text {
       cursor: pointer;
-      padding: 5px 4px;
+      padding: 6px 5px 9px 5px;
       &:hover {
         background: #E4E4E4;
       }

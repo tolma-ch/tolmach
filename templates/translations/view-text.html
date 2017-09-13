@@ -364,20 +364,82 @@
          data-jqyoui-options="{handle: '.dictionary__title'}"
          style="position: fixed">
         <div class="dictionary__title">
+            <style>
+                .dict-dropdown {
+                    display: inline-block;
+                    -moz-appearance: none;
+                    -webkit-appearance: none;
+                    appearance: none;
+                    border: none;
+                }
+                .dict-dropdown:hover {
+                    background-color: #f5f5f5;
+                    cursor: pointer;
+                }
+                .dict-dropdown:active {
+                    background-color: #f5f5f5;
+                    cursor: pointer;
+                    box-shadow: inset 0 0 2px 0px rgba(0,0,0,0.5);
+                }
+                .dict-word-input {
+                    display: inline-block;
+                    width: 70%;
+                    margin-left: 5px;
+                }
+                .dict-switch {
+                    margin-top: -1px;
+                    padding-left: 3px !important;
+                    padding-right: 3px !important;
+                    font-size: 14px;
+                    display: inline-block;
+                    width: 26px;
+                    color: #858585;
+                    text-align: center;
+                    height: 30px;
+                    line-height: 30px;
+                    vertical-align: middle;
+                }
+                .dict-switch:hover {
+                    background-color: #f5f5f5 !important;
+                    color: #858585;
+                    cursor: pointer;
+                    text-decoration: none;
+                }
+                .dict-switch:active {
+                    background-color: #f5f5f5 !important;
+                    color: #858585;
+                    cursor: pointer;
+                    text-decoration: none;
+                    box-shadow: inset 0 0 2px 0px rgba(0,0,0,0.5);
+                }
+                .dict-button-group {
+                    float: right;
+                }
+                .dict-switch:hover .fa-chevron-right,
+                .dict-switch .fa-refresh {
+                    display: none;
+                }
+                .dict-switch:hover .fa-refresh {
+                    display: inline;
+                }
+            </style>
             <form ng-submit="searchWord()" name="dictInputForm">
-                <input type="text" ng-model="word" name="wordToSearch" id="name" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all">
-                <div class="btn-group">
-                    <button class="btn btn-xs">
-                        <!--<i class="flag flag-Russian"></i>-->
-                        {{ source_lang }}
-                    </button>
-                    <button class="btn btn-xs">
-                        <i class="fa fa-exchange"></i>
-                    </button>
-                    <button class="btn btn-xs">
-                        <!--<i class="flag flag-English"></i>-->
-                        {{ target_lang }}
-                    </button>
+                <input type="text" ng-model="word" name="wordToSearch" id="dict-search-word-input" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all dict-word-input" set-focus="123">
+                <div class="dict-button-group">
+                    <select class="selectpicker dict-dropdown" ng-model="dictSourceLang">
+                        {% for code in language_codes %}
+                            <option {% if code == source_lang %} selected value="{{ code }}"{% endif %}>{{ code }}</option>
+                        {% endfor %}
+                    </select>
+                    <a class="dict-switch" ng-click="dictSwitchLangs()">
+                        <i class="fa fa-chevron-right"></i>
+                        <i class="fa fa-refresh"></i>
+                    </a>
+                    <select class="selectpicker dict-dropdown" ng-model="dictTargetLang">
+                        {% for code in language_codes %}
+                            <option {% if code == target_lang %} selected value="{{ code }}"{% endif %}>{{ code }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
             </form>
@@ -387,7 +449,8 @@
             <p class="dictionary__nothing_found" id="dict-nothing-found">Ничего не найдено =(</p>
             <h5>
                 <p style="display: inline-block" ng-repeat="x in foundWords">
-                    <a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp
+                    <!--<a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp-->
+                    <a class="found-word" id="word-{=x.id=}">{=x.word=}</a>,&nbsp
                     <a class="meanings" id="meanings-{=x.id=}">
                         {=x.meanings=}
                     </a>

@@ -78,6 +78,8 @@
         function ($scope, $http, $window, Dict) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
+            $scope.dictSourceLang = window['translationSourceLang'];
+            $scope.dictTargetLang = window['translationTargetLang'];
             $scope.style = {};
             $scope.$on('GlobalResize', function (e, w) {
                 var height = w.h,
@@ -98,6 +100,12 @@
                     $('#meanings-' + wordId).css('display', 'block');
                 }
                 lastMeaningNum = wordId;
+            };
+            $scope.dictSwitchLangs = function () {
+                var cur_source_lang = $scope.dictSourceLang;
+                var cur_target_lang = $scope.dictTargetLang;
+                $scope.dictSourceLang = cur_target_lang;
+                $scope.dictTargetLang = cur_source_lang;
             };
             $scope.searchWord = function () {
                 //$scope.word = '';
@@ -132,10 +140,8 @@
                 var spinner = new Spinner(opts).spin(target);
                 $http.post('/ajax/dict-search/', {
                         params: {
-                            from: window['translationSourceLang'],
-                            dest: window['translationTargetLang'],
-                            //from: 'eng',
-                            //dest: 'rus',
+                            from: $scope.dictSourceLang,
+                            dest: $scope.dictTargetLang,
                             phrase: $scope.word
                         }
                     }).success(function (res) {
@@ -161,6 +167,30 @@
             }
         }
     ]);
+}());;(function () {
+    'use strict';
+
+    var module = angular.module('dictDirectives', []);
+
+    module.directive('setFocus', function ($timeout) {
+        return function ($scope, $element, $attr) {
+            if ($attr.setFocus !== false) {
+                var timeout = 750; // wait 750 ms before evaluating
+                var focus = true;
+                if ($attr.setFocus) {
+                    // if we have focus criteria, then evaluate it against the scope (ex: set-focus="myValue === 1")
+                    focus = $scope.$eval($attr.setFocus);
+                }
+
+                // if we need to set focus to this element, then wait for the timeout and set focus
+                if (focus) {
+                    $timeout(function () {
+                        $element[0].focus();
+                    }, timeout);
+                }
+            }
+        };
+    });
 }());;(function () {
     'use strict';
 
@@ -2711,8 +2741,12 @@
                 $scope.showChatroom = !$scope.showChatroom;
             };
             $scope.showDictModal = false;
-            $scope.dictOpener = function (ololo) {
+            $scope.dictOpener = function () {
                 $scope.showDictModal = !$scope.showDictModal;
+                if ($scope.showDictModal){
+                    console.log('ololo');
+                    document.getElementById('dict-search-word-input').focus();
+                }
                 console.log($scope.showDictModal);
             };
             $scope.globalResize = function (window) {

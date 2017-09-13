@@ -212,7 +212,8 @@ def view_translation(request, text_id, target_lang):
             'source_lang': text.source_lang.code,
             'target_lang': target_lang,
             'translation_progress': translation_progress,
-            'translation_counts': translation_counts
+            'translation_counts': translation_counts,
+            'language_codes': [x.code for x in Language.objects.all()]
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))
