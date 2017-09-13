@@ -13,8 +13,20 @@
                     div.innerHTML = text;
                     return div.textContent || div.innerText || "";
                 },
+                updateTranslationProgress = function () {
+                    $http.post('/ajax/get-translation-progress/', {
+                        text: textId,
+                        target_lang: window['translationTargetLang']
+                    }).success(function (data) {
+                        $scope.translationProgress = data['translation_progress'];
+                        $scope.translationCounts = data['translation_counts'];
+                    }).error(function (a) {
+                        //console.error(a);
+                    });
+                },
                 applyTranslation = function (entry, translation) {
                     entry.translation = (clearTranslation(entry, translation));
+                    updateTranslationProgress();
                 },
                 updateTranslation = function (entry) {
                     if (!entry.approved) {
