@@ -218,7 +218,8 @@ class TextTranslation(models.Model):
 
         entries_approved/(entries_total/100.0)
         """
-        all_stats = cache.get("%d_translation_progress" % self.id)
+        # all_stats = cache.get("%d_translation_progress" % self.id)
+        all_stats = []
 
         if all_stats:
             entries_total = all_stats[0]
