@@ -32,6 +32,13 @@
             position: relative;
             overflow: hidden;
         }
+        @media (max-width: 755px) {
+            html, body, .main, .main-container, .main-container-inner, .main-content, .page-content {
+                height: auto;
+                position: relative;
+                overflow: unset;
+            }
+        }
         html > body > .main {
             padding-bottom: 0;
             padding-top: 50px;
