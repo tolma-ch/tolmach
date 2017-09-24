@@ -49,6 +49,7 @@ def index(request):
                 'username': request.user.username,
                 'website': usermeta.website,
             }),
+            'active_tab': 'main',
             'stat': ordered_stat,
             'empty_list': empty_list,
             'entries_total': total_translated
