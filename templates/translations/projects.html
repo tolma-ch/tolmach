@@ -1,87 +1,125 @@
-{% extends "main/base-logged-in.html" %}
+{% extends "tolmach/profile.html" %}
 {% load i18n %}
 
-{% block innercontent %}
-                <!--<h1>Projects list</h1>-->
-                <div class="pagination">
-                    <span class="step-links">
-                        {% if user_projects.has_previous %}
-                            <a href="?page={{ user_projects.previous_page_number }}"><i class="fa fa-chevron-left"></i></a>
-                        {% endif %}
+{% block tab-content %}
+            <style>
+                .project-type-selector {
+                    margin: 0;
+                }
+                .project-type-selector li a {
+                    background-color: white;
+                    border: none;
+                }
+            </style>
+            <ul class="pagination project-type-selector">
+                <li class="{% if active_tab == 'my' %}active{% endif %}">
+                    <a href="/projects/my/">{{ sidebar_my_projects }}</a>
+                </li>
 
-                        <span class="current">
-                            Page {{ user_projects.number }} of {{ user_projects.paginator.num_pages }}
-                        </span>
+                <li class="{% if active_tab == 'thirdparty' %}active{% endif %}">
+                    <a href="/projects/thirdparty/">{{ sidebar_third_party }}</a>
+                </li>
 
-                        {% if user_projects.has_next %}
-                            <a href="?page={{ user_projects.next_page_number }}"><i class="fa fa-chevron-right"></i></a>
-                        {% endif %}
-                    </span>
-                </div>
-                {% for project in user_projects %}
-                <div class="widget-box">
-                    <div class="widget-header widget-header-flat widget-header-large">
-                        <h3>
-                            <a href="/project/{{ project.id }}">
-                                {{ project.name }}
-                            </a>
-                            <small>
-                            {% if project.is_private %}
-                            <i class="fa fa-lock"></i>
-                            {% endif %}
-                                updated on <span class="modified-date">{{ project.last_modified|date:"d.m.Y" }}</span></small>
-                        </h3>
-                        <div class="widget-toolbar no-border">
-                            <a href="/user/{{ project.manager.id }}">
-                                <img class="project-list__user-photo" src="/media/{{ project.manager_avatar }}" alt="Avatar">
-                                {{ project.manager.username }}
-                            </a>
-                        </div>
-                    </div>
-                    <div class="widget-body">
-                        <div class="widget-main widget-main-large project-list">
-                            <div class="project-list__languages">
-                                {% for pair in project.langpairs %}
-                                    <div class="languages">
-                                        <i class="flag flag-{{ pair.source_lang }}"></i>
-                                        <i class="fa fa-chevron-right"></i>
-                                        <i class="flag flag-{{ pair.target_lang }}"></i>
-                                    </div>
+                <li class="{% if active_tab == 'public' %}active{% endif %}">
+                    <a href="/projects/public/">{{ sidebar_public_projects }}</a>
+                </li>
+            </ul>
+           <div id="projects" class="tab-pane active">
+                <div class="user-statistics__recent-progress">
+                    <!--<div class="user-statistics__recent-progress-title stripy-heading">-->
+                        <!--<span class="stripy-heading__before"></span>-->
+                        <!--<span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ page_title }}</span>-->
+                        <!--<a href="" class="btn helped-block btn-minier btn-link"-->
+                           <!--ng-click="startNewProject()"-->
+                           <!--help-text="{% trans 'Click this button to create new project' %}"-->
+                           <!--style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>-->
+                        <!--<span class="stripy-heading__after"></span>-->
+                    <!--</div>-->
+
+                    <div class="user-statistics__recent-progress-table">
+                        <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                            <tbody>
+                                {% for project in projects %}
+                                <tr class="user-statistics-table__row">
+                                    <td>
+                                        {% if project.is_private %}
+                                        <i class="fa fa-lock"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td class="user-statistics-table__title">
+                                        <a href="/project/{{ project.id }}">
+                                            {% if not project.manager.username == user.username %}
+                                                <span class="user-statistics-table__project-manager">{{ project.manager }}/</span>{% endif %}<span class="user-statistics-table__project-title">{{ project.name }}</span>
+                                        </a>
+                                    </td>
+                                    <td class="user-statistics-table__progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                            <span class="progress-bar__value">{{ project.progress }}%</span>
+                                        </div>
+                                    </td>
+                                </tr>
                                 {% endfor %}
-                            </div>
-                            <p class="project-list__description">
-                                {{ project.description }}
-                            </p>
-                            <div class="project-list__buttons">
-                                <div class="project-list__buttons-inner">
-                                    <div class="project-list__buttons-inner-inner">
-                                        <!--{% if project.list_button == 'enter' %}-->
-                                        <!--<a class="project-list-text__btn" href=""><i class="fa fa-sign-in"></i></a>-->
-                                        <!--{% elif project.list_button == 'leave' %}-->
-                                        <!--<a class="project-list-text__btn" href=""><i class="fa fa-sign-out"></i></a>-->
-                                        <!--{% endif %}-->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="project-list__progress-bar">
-                                <div class="progress-bar">
-                                    <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
-                                    <span class="progress-bar__value ng-binding">{{ project.progress }}%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- /widget-body -->
-                </div>
-                <br>
-                {% empty %}
-                  <tr class="empty">
-                    <td>{% trans "Sorry, you haven't created any projects yet" %}</td>
-                  </tr>
-                {% endfor %}
+                            </tbody>
+                        </table>
+                        <style>
+                            .projects-paginator li a {
+                                background: none;
+                                border: none;
+                            }
+                            .projects-paginator li a:hover {
+                                background: #F5F5F5;
+                            }
+                            .projects-paginator li a:hover {
+                                background: #F5F5F5;
+                                border: none;
+                            }
+                        </style>
+                        {% if projects.paginator.num_pages > 1 %}
+                        <ul class="pagination projects-paginator">
+                            {% if projects.has_previous %}
+                            <li>
+                                <a href="?page={{projects.previous_page_number}}">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for i in projects.paginator.page_range %}
+                                {% if projects.number == i %}
+                                    <li class="active">
+                                        <a href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% elif i > projects.number|add:'-4' and i < projects.number|add:'4' %}
+                                    <li>
+                                        <a href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
 
-    <p style="text-align: center" ng-controller="projectsCtrl">
-        <a href="" class="btn" ng-click="startNewProject()">{% trans 'Create new' %}</a>
-    </p>
+                            {% if projects.has_next %}
+                            <li>
+                                <a href="?page={{ projects.next_page_number }}">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
     {% include "translations/partial/new_project_modal.html" %}
 

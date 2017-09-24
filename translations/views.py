@@ -26,6 +26,10 @@ def projects(request, proj_type):
 
     meta, p = UserMeta.objects.get_or_create(user=user)
 
+    # User sidebar info
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+
     page_title = ''
     page_url = ''
     # Getting data about user's projects
@@ -36,6 +40,7 @@ def projects(request, proj_type):
         user_projects_list = Project.objects.filter(manager=user).order_by('-last_modified')
         for pr in user_projects_list:
             pr.list_button = 'none'
+        active_tab = 'my'
     elif proj_type == 'thirdparty':
         page_title = _('Third-party projects')
         page_url = '/projects/thirdparty/'
@@ -43,9 +48,11 @@ def projects(request, proj_type):
         user_projects_list = Project.objects.filter(id__in=member_of).order_by('-last_modified')
         for pr in user_projects_list:
             pr.list_button = 'leave'
+        active_tab = 'thirdparty'
     elif proj_type == 'public':
         page_title = _('Public projects')
         page_url = '/projects/public/'
+        active_tab = 'public'
         if not request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
         else:
@@ -60,7 +67,7 @@ def projects(request, proj_type):
     else:
         raise Http404("Poll does not exist")
 
-    paginator = Paginator(user_projects_list, 15)
+    paginator = Paginator(user_projects_list, 10)
 
     page = request.GET.get('page')
     try:
@@ -73,19 +80,22 @@ def projects(request, proj_type):
         result_proj_list = paginator.page(paginator.num_pages)
 
     for proj in result_proj_list:
-        proj_manager_meta = UserMeta.objects.get(user=proj.manager)
-        proj.manager_avatar = proj_manager_meta.avatar
-        proj.texts = Text.objects.filter(project=proj)
         proj.progress = proj.get_progress()
-        proj.langpairs = []
-        for text in proj.texts:
-            for translation in TextTranslation.objects.filter(text=text):
-                if not {'source_lang': text.source_lang, 'target_lang': translation.target_lang} in proj.langpairs:
-                    proj.langpairs.append({'source_lang': text.source_lang, 'target_lang': translation.target_lang})
 
-    data = {'page_title': page_title,
+    data = {'username': request.user.username,
+            'usermeta': meta,
+            'first_name': first_name,
+            'last_name': last_name,
+            'userData': json.dumps({
+                'firstName': first_name,
+                'lastName': last_name,
+                'username': request.user.username,
+                'website': meta.website,
+            }),
+            'page_title': page_title,
+            'active_tab': active_tab,
             'breadcrumbs': [[page_title, page_url], ],
-            'user_projects': result_proj_list,
+            'projects': result_proj_list,
             'projects_page_active': True,
             'messages': messages.get_messages(request)
             }
