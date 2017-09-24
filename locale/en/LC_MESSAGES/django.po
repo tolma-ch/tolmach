@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-13 11:48+0400\n"
+"POT-Creation-Date: 2017-09-24 18:36+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,8 +23,8 @@ msgstr ""
 
 #: chat/views.py:21 chat/views.py:38 translations/decorators.py:40
 #: translations/views_ajax.py:31 translations/views_ajax.py:49
-#: translations/views_ajax.py:53 translations/views_ajax.py:492
-#: translations/views_ajax.py:602
+#: translations/views_ajax.py:53 translations/views_ajax.py:509
+#: translations/views_ajax.py:619
 msgid "Project not found"
 msgstr ""
 
@@ -96,17 +96,17 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: templates/main/base.html:93 templates/main/base.html:199
+#: templates/main/base.html:90 templates/main/base.html:196
 msgid "Close"
 msgstr ""
 
-#: templates/main/base.html:96 templates/main/base.html:202
+#: templates/main/base.html:93 templates/main/base.html:199
 #: templates/translations/partial/add_text_modal.html:100
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr ""
 
-#: templates/main/base.html:228
+#: templates/main/base.html:225
 msgid "No results"
 msgstr ""
 
@@ -179,7 +179,7 @@ msgstr ""
 msgid "Hi,"
 msgstr ""
 
-#: templates/main/partial/navbar.html:32
+#: templates/main/partial/navbar.html:85
 #: templates/translations/project.html:151
 msgid "Export translation"
 msgstr "Users translations"
@@ -589,15 +589,23 @@ msgstr ""
 msgid "Start new"
 msgstr ""
 
-#: templates/tolmach/profile.html:71 templates/tolmach/view_user.html:97
+#: templates/tolmach/profile.html:9
+msgid "Overview"
+msgstr ""
+
+#: templates/tolmach/profile.html:10
+msgid "Recent projects"
+msgstr ""
+
+#: templates/tolmach/profile.html:78 templates/tolmach/profile.html:143
+msgid "Click this button to create new project"
+msgstr ""
+
+#: templates/tolmach/profile.html:122 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
 msgstr[1] ""
-
-#: templates/tolmach/profile.html:114
-msgid "Click this button to create new project"
-msgstr ""
 
 #: templates/tolmach/view_user.html:9
 #: templates/translations/partial/new_project_modal.html:3
@@ -612,12 +620,12 @@ msgid "Project name"
 msgstr ""
 
 #: templates/tolmach/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:5
+#: templates/translations/partial/new_project_modal.html:6
 msgid "Short project name"
 msgstr ""
 
 #: templates/tolmach/view_user.html:12
-#: templates/translations/partial/new_project_modal.html:6
+#: templates/translations/partial/new_project_modal.html:7
 msgid "Short project description"
 msgstr ""
 
@@ -633,7 +641,7 @@ msgstr ""
 #: templates/translations/partial/add_glossary_modal.html:88
 #: templates/translations/partial/add_participant_modal.html:28
 #: templates/translations/partial/add_tmx_modal.html:46
-#: templates/translations/partial/new_project_modal.html:9
+#: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/project.html:66
 #: templates/translations/project.html:124
 #: templates/translations/project.html:202
@@ -781,12 +789,24 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: templates/translations/partial/new_project_modal.html:7
-msgid "public"
+#: templates/translations/partial/new_project_modal.html:5
+msgid "Advanced options"
 msgstr ""
 
 #: templates/translations/partial/new_project_modal.html:8
+msgid "public"
+msgstr ""
+
+#: templates/translations/partial/new_project_modal.html:9
+msgid "All users can see your project"
+msgstr ""
+
+#: templates/translations/partial/new_project_modal.html:10
 msgid "private"
+msgstr ""
+
+#: templates/translations/partial/new_project_modal.html:11
+msgid "Only invited users can see your project"
 msgstr ""
 
 #: templates/translations/partial/select_text_ranges_modal.html:7
@@ -837,10 +857,12 @@ msgid "Go to translation"
 msgstr ""
 
 #: templates/translations/project.html:174
+#: templates/translations/view-text.html:349
 msgid "Fragments approved:"
 msgstr ""
 
 #: templates/translations/project.html:175
+#: templates/translations/view-text.html:350
 msgid "Fragments translated:"
 msgstr ""
 
@@ -968,60 +990,64 @@ msgstr ""
 msgid "Add with"
 msgstr ""
 
-#: templates/translations/view-text.html:82
+#: templates/translations/view-text.html:92
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:95
+#: templates/translations/view-text.html:105
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:96
+#: templates/translations/view-text.html:106
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:230
+#: templates/translations/view-text.html:240
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:315
+#: templates/translations/view-text.html:327
+msgid "Dictionary"
+msgstr ""
+
+#: templates/translations/view-text.html:472
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:316
+#: templates/translations/view-text.html:473
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:317
+#: templates/translations/view-text.html:474
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:318
+#: templates/translations/view-text.html:475
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:319
+#: templates/translations/view-text.html:476
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:320
+#: templates/translations/view-text.html:477
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:321
+#: templates/translations/view-text.html:478
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:322
+#: templates/translations/view-text.html:479
 msgid "All the text with translated fragments"
 msgstr ""
 
-#: tolmach/views.py:186
+#: tolmach/views.py:193
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:277
+#: tolmach/views.py:284
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1035,13 +1061,13 @@ msgid "Text not found"
 msgstr ""
 
 #: translations/decorators.py:22 translations/views_ajax.py:169
-#: translations/views_ajax.py:752 translations/views_ajax.py:797
-#: translations/views_ajax.py:873
+#: translations/views_ajax.py:796 translations/views_ajax.py:841
+#: translations/views_ajax.py:917
 msgid "Not allowed"
 msgstr ""
 
-#: translations/decorators.py:35 translations/views_ajax.py:488
-#: translations/views_ajax.py:598
+#: translations/decorators.py:35 translations/views_ajax.py:505
+#: translations/views_ajax.py:615
 msgid "Project id is not set"
 msgstr ""
 
@@ -1067,19 +1093,19 @@ msgid "Sorry, no such project here!"
 msgstr ""
 
 #: translations/views.py:162 translations/views.py:164
-#: translations/views.py:220
+#: translations/views.py:228
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:226
+#: translations/views.py:234
 msgid "Sorry, no such page here!"
 msgstr ""
 
 #: translations/views_ajax.py:36 translations/views_ajax.py:55
 #: translations/views_ajax.py:122 translations/views_ajax.py:223
-#: translations/views_ajax.py:374 translations/views_ajax.py:494
-#: translations/views_ajax.py:604 translations/views_ajax.py:914
-#: translations/views_ajax.py:937
+#: translations/views_ajax.py:374 translations/views_ajax.py:511
+#: translations/views_ajax.py:621 translations/views_ajax.py:958
+#: translations/views_ajax.py:981
 msgid "You have to be a manager of project"
 msgstr ""
 
@@ -1116,12 +1142,12 @@ msgid "User is not a member of project"
 msgstr ""
 
 #: translations/views_ajax.py:249 translations/views_ajax.py:294
-#: translations/views_ajax.py:298 translations/views_ajax.py:787
+#: translations/views_ajax.py:298 translations/views_ajax.py:831
 msgid "Language not found"
 msgstr ""
 
-#: translations/views_ajax.py:324 translations/views_ajax.py:509
-#: translations/views_ajax.py:621
+#: translations/views_ajax.py:324 translations/views_ajax.py:526
+#: translations/views_ajax.py:638
 msgid "Wrong file type"
 msgstr ""
 
@@ -1129,87 +1155,87 @@ msgstr ""
 msgid "Text id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:460 translations/views_ajax.py:524
-#: translations/views_ajax.py:554
+#: translations/views_ajax.py:477 translations/views_ajax.py:541
+#: translations/views_ajax.py:571
 msgid "Glossary not found"
 msgstr ""
 
-#: translations/views_ajax.py:497
+#: translations/views_ajax.py:514
 msgid "Glossary name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:516
+#: translations/views_ajax.py:533
 msgid "Please, send file or input data manually"
 msgstr ""
 
-#: translations/views_ajax.py:550
+#: translations/views_ajax.py:567
 msgid "Glossary id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:556
+#: translations/views_ajax.py:573
 msgid "It's not your glossary"
 msgstr ""
 
-#: translations/views_ajax.py:571
+#: translations/views_ajax.py:588
 msgid "TMDatabase not found"
 msgstr ""
 
-#: translations/views_ajax.py:607
+#: translations/views_ajax.py:624
 msgid "TMX name is not set"
 msgstr ""
 
-#: translations/views_ajax.py:611
+#: translations/views_ajax.py:628
 msgid "TMX file is not passed"
 msgstr ""
 
-#: translations/views_ajax.py:637
+#: translations/views_ajax.py:654
 msgid "TMX id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:641
+#: translations/views_ajax.py:658
 msgid "TMX not found"
 msgstr ""
 
-#: translations/views_ajax.py:643
+#: translations/views_ajax.py:660
 msgid "It's not your TMX"
 msgstr ""
 
-#: translations/views_ajax.py:665
+#: translations/views_ajax.py:682
 msgid "Target language is not set"
 msgstr ""
 
-#: translations/views_ajax.py:774 translations/views_ajax.py:897
-#: translations/views_ajax.py:925 translations/views_ajax.py:1001
+#: translations/views_ajax.py:818 translations/views_ajax.py:941
+#: translations/views_ajax.py:969 translations/views_ajax.py:1045
 msgid "Id is not set"
 msgstr ""
 
-#: translations/views_ajax.py:779 translations/views_ajax.py:803
-#: translations/views_ajax.py:868 translations/views_ajax.py:883
-#: translations/views_ajax.py:930 translations/views_ajax.py:1006
+#: translations/views_ajax.py:823 translations/views_ajax.py:847
+#: translations/views_ajax.py:912 translations/views_ajax.py:927
+#: translations/views_ajax.py:974 translations/views_ajax.py:1050
 msgid "Not found"
 msgstr ""
 
-#: translations/views_ajax.py:794
+#: translations/views_ajax.py:838
 msgid "Translation not found"
 msgstr ""
 
-#: translations/views_ajax.py:817
+#: translations/views_ajax.py:861
 msgid "Entry translation text is not set"
 msgstr ""
 
-#: translations/views_ajax.py:863
+#: translations/views_ajax.py:907
 msgid "entry is not set"
 msgstr ""
 
-#: translations/views_ajax.py:876
+#: translations/views_ajax.py:920
 msgid "translation is not set"
 msgstr ""
 
-#: translations/views_ajax.py:981
+#: translations/views_ajax.py:1025
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/views_ajax.py:1036
+#: translations/views_ajax.py:1080
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 
