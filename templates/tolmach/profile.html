@@ -109,6 +109,44 @@
                         </div>
                     </div>
 
+                    <style>
+                        @media (min-width: 756px) and (max-width: 1014px) {
+                            #stats-block-6 {
+                                display: none;
+                            }
+                        }
+                        @media (min-width: 756px) and (max-width: 923px) {
+                            #stats-block-5 {
+                                display: none;
+                            }
+                        }
+                        @media (min-width: 756px) and (max-width: 834px) {
+                            #stats-block-4 {
+                                display: none;
+                            }
+                        }
+                        @media (max-width: 737px) {
+                            #stats-block-6 {
+                                display: none;
+                            }
+                        }
+                        @media (max-width: 647px) {
+                            #stats-block-5 {
+                                display: none;
+                            }
+                        }
+                        @media (max-width: 557px) {
+                            #stats-block-4 {
+                                display: none;
+                            }
+                        }
+                        @media (max-width: 467px) {
+                            #stats-block-3 {
+                                display: none;
+                            }
+                        }
+                    </style>
+
                     <!--brand new stats panel-->
                     <div class="user-statistics">
                         <div class="user-statistics__title stripy-heading">
@@ -124,7 +162,7 @@
                                 </div>
                             </div>
                             {% for pair in stat %}
-                            <div class="user-statistics__new-block">
+                            <div class="user-statistics__new-block" id="stats-block-{{ forloop.counter }}">
                                 <div class="user-statistics__new-number">{{ pair.fragments_translated }}</div>
                                 <div class="user-statistics__new-sentences">
                                     {{ pair.source_lang.code }} <i class="fa fa-chevron-right user-statistics__new-chevron"></i> {{ pair.target_lang.code }}

@@ -162,6 +162,42 @@
   }
 }
 
+.project-type-selector {
+  margin: 0;
+  li {
+    display: inline;
+    a {
+      background-color: white;
+      border: none !important;
+      position: relative;
+      float: left;
+      padding: 6px 12px;
+      line-height: 1.42857143;
+      text-decoration: none;
+      &:hover {
+        color: #337AB7;
+        background-color: #F5F5F5;
+      }
+    }
+    &.active {
+      a {
+        color: white;
+        background-color: #438EB9;
+      }
+    }
+  }
+}
+@media (max-width: 454px) {
+  .project-type-selector {
+    li {
+      a {
+        padding: 7px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
 .user-avatar {
   display: inline-block;
   border-radius: 50%;
