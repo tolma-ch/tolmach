@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-24 18:36+0400\n"
+"POT-Creation-Date: 2017-09-25 14:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,8 +52,8 @@ msgstr "Табло"
 msgid "Projects"
 msgstr "Проекты"
 
-#: templates/main/base-logged-in.html:7 translations/views.py:34
-#: translations/views.py:111 translations/views.py:184
+#: templates/main/base-logged-in.html:7 translations/views.py:38
+#: translations/views.py:121 translations/views.py:194
 msgid "My projects"
 msgstr "Мои проекты"
 
@@ -65,8 +65,8 @@ msgstr "Сторонние проекты"
 msgid "Community"
 msgstr "Сообщество"
 
-#: templates/main/base-logged-in.html:10 translations/views.py:47
-#: translations/views.py:117 translations/views.py:190
+#: templates/main/base-logged-in.html:10 translations/views.py:53
+#: translations/views.py:127 translations/views.py:200
 msgid "Public projects"
 msgstr "Публичные проекты"
 
@@ -666,11 +666,11 @@ msgstr "Обзор"
 msgid "Recent projects"
 msgstr "Недавние проекты"
 
-#: templates/tolmach/profile.html:78 templates/tolmach/profile.html:143
+#: templates/tolmach/profile.html:79 templates/translations/projects.html:45
 msgid "Click this button to create new project"
 msgstr "Нажмите, чтобы создать новый проект"
 
-#: templates/tolmach/profile.html:122 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:161 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "фрагмент переведён"
@@ -699,9 +699,9 @@ msgstr "Краткое название проекта"
 msgid "Short project description"
 msgstr "Краткое описание проекта"
 
-#: templates/tolmach/view_user.html:13
+#: templates/tolmach/view_user.html:13 templates/translations/projects.html:6
 msgid "Public"
-msgstr "Публичный"
+msgstr "Публичные"
 
 #: templates/tolmach/view_user.html:14
 msgid "Private"
@@ -969,7 +969,6 @@ msgstr "Удалить проект"
 #: templates/translations/projects-main.html:64
 #: templates/translations/projects-main.html:97
 #: templates/translations/projects-main.html:322
-#: templates/translations/projects.html:78
 msgid "Sorry, you haven't created any projects yet"
 msgstr "Вы пока не создали ни одного проекта"
 
@@ -1018,9 +1017,13 @@ msgstr "Добавить пользователя"
 msgid "Username:"
 msgstr "Имя пользователя:"
 
-#: templates/translations/projects.html:83
-msgid "Create new"
-msgstr "Начать новый"
+#: templates/translations/projects.html:4
+msgid "My"
+msgstr "Мои"
+
+#: templates/translations/projects.html:5
+msgid "Third-party"
+msgstr "Сторонние"
 
 #: templates/translations/view-text.html:6
 msgid "Translation variants"
@@ -1119,12 +1122,12 @@ msgstr "Исходный текст"
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
-#: tolmach/views.py:193
+#: tolmach/views.py:194
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:284
+#: tolmach/views.py:285
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
@@ -1160,21 +1163,21 @@ msgstr "Этот язык пока не поддерживается как ис
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
-#: translations/views.py:40 translations/views.py:114
-#: translations/views.py:187
+#: translations/views.py:45 translations/views.py:124
+#: translations/views.py:197
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
-#: translations/views.py:105 translations/views.py:107
+#: translations/views.py:115 translations/views.py:117
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: translations/views.py:162 translations/views.py:164
-#: translations/views.py:228
+#: translations/views.py:172 translations/views.py:174
+#: translations/views.py:238
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:234
+#: translations/views.py:244
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
 
@@ -1315,6 +1318,9 @@ msgstr ""
 #: translations/views_ajax.py:1080
 msgid "TMDB unavaliable at the moment"
 msgstr ""
+
+#~ msgid "Create new"
+#~ msgstr "Начать новый"
 
 #~ msgid "Sorry, no such text here"
 #~ msgstr "Простите, указанный текст не найден"

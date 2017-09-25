@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-24 18:36+0400\n"
+"POT-Creation-Date: 2017-09-25 14:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,8 +50,8 @@ msgstr ""
 msgid "Projects"
 msgstr ""
 
-#: templates/main/base-logged-in.html:7 translations/views.py:34
-#: translations/views.py:111 translations/views.py:184
+#: templates/main/base-logged-in.html:7 translations/views.py:38
+#: translations/views.py:121 translations/views.py:194
 msgid "My projects"
 msgstr ""
 
@@ -63,8 +63,8 @@ msgstr ""
 msgid "Community"
 msgstr ""
 
-#: templates/main/base-logged-in.html:10 translations/views.py:47
-#: translations/views.py:117 translations/views.py:190
+#: templates/main/base-logged-in.html:10 translations/views.py:53
+#: translations/views.py:127 translations/views.py:200
 msgid "Public projects"
 msgstr ""
 
@@ -597,11 +597,11 @@ msgstr ""
 msgid "Recent projects"
 msgstr ""
 
-#: templates/tolmach/profile.html:78 templates/tolmach/profile.html:143
+#: templates/tolmach/profile.html:79 templates/translations/projects.html:45
 msgid "Click this button to create new project"
 msgstr ""
 
-#: templates/tolmach/profile.html:122 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:161 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
@@ -629,7 +629,7 @@ msgstr ""
 msgid "Short project description"
 msgstr ""
 
-#: templates/tolmach/view_user.html:13
+#: templates/tolmach/view_user.html:13 templates/translations/projects.html:6
 msgid "Public"
 msgstr ""
 
@@ -893,7 +893,6 @@ msgstr ""
 #: templates/translations/projects-main.html:64
 #: templates/translations/projects-main.html:97
 #: templates/translations/projects-main.html:322
-#: templates/translations/projects.html:78
 msgid "Sorry, you haven't created any projects yet"
 msgstr ""
 
@@ -942,8 +941,12 @@ msgstr ""
 msgid "Username:"
 msgstr ""
 
-#: templates/translations/projects.html:83
-msgid "Create new"
+#: templates/translations/projects.html:4
+msgid "My"
+msgstr ""
+
+#: templates/translations/projects.html:5
+msgid "Third-party"
 msgstr ""
 
 #: templates/translations/view-text.html:6
@@ -1043,11 +1046,11 @@ msgstr ""
 msgid "All the text with translated fragments"
 msgstr ""
 
-#: tolmach/views.py:193
+#: tolmach/views.py:194
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:284
+#: tolmach/views.py:285
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1083,21 +1086,21 @@ msgstr ""
 msgid "This target language is not supported yet"
 msgstr ""
 
-#: translations/views.py:40 translations/views.py:114
-#: translations/views.py:187
+#: translations/views.py:45 translations/views.py:124
+#: translations/views.py:197
 msgid "Third-party projects"
 msgstr ""
 
-#: translations/views.py:105 translations/views.py:107
+#: translations/views.py:115 translations/views.py:117
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: translations/views.py:162 translations/views.py:164
-#: translations/views.py:228
+#: translations/views.py:172 translations/views.py:174
+#: translations/views.py:238
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:234
+#: translations/views.py:244
 msgid "Sorry, no such page here!"
 msgstr ""
 

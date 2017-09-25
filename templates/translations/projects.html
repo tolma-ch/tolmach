@@ -2,17 +2,36 @@
 {% load i18n %}
 
 {% block tab-content %}
+{% trans 'My' as my_tab_label %}
+{% trans 'Third-party' as third_party_tab_label %}
+{% trans 'Public' as public_tab_label %}
+            <style>
+                @media (max-width: 454px) {
+                    .project-type-selector li a span {
+                        display: none;
+                    }
+                    #mytab a:after {
+                        content: '{{ my_tab_label }}';
+                    }
+                    #thirdpartytab a:after {
+                        content: '{{ third_party_tab_label }}';
+                    }
+                    #publictab a:after {
+                        content: '{{ public_tab_label }}';
+                    }
+                }
+            </style>
             <ul class="project-type-selector">
-                <li class="{% if active_tab == 'my' %}active{% endif %}">
-                    <a href="/projects/my/">{{ sidebar_my_projects }}</a>
+                <li class="{% if active_tab == 'my' %}active{% endif %}" id="mytab">
+                    <a href="/projects/my/"><span>{{ sidebar_my_projects }}</span></a>
                 </li>
 
-                <li class="{% if active_tab == 'thirdparty' %}active{% endif %}">
-                    <a href="/projects/thirdparty/">{{ sidebar_third_party }}</a>
+                <li class="{% if active_tab == 'thirdparty' %}active{% endif %}" id="thirdpartytab">
+                    <a href="/projects/thirdparty/"><span>{{ sidebar_third_party }}</span></a>
                 </li>
 
-                <li class="{% if active_tab == 'public' %}active{% endif %}">
-                    <a href="/projects/public/">{{ sidebar_public_projects }}</a>
+                <li class="{% if active_tab == 'public' %}active{% endif %}" id="publictab">
+                    <a href="/projects/public/"><span>{{ sidebar_public_projects }}</span></a>
                 </li>
             </ul>
            <div id="projects" class="tab-pane active">

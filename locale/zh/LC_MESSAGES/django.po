@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-24 18:36+0400\n"
+"POT-Creation-Date: 2017-09-25 14:03+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,8 +46,8 @@ msgstr "仪表板"
 msgid "Projects"
 msgstr "项目"
 
-#: templates/main/base-logged-in.html:7 translations/views.py:34
-#: translations/views.py:111 translations/views.py:184
+#: templates/main/base-logged-in.html:7 translations/views.py:38
+#: translations/views.py:121 translations/views.py:194
 msgid "My projects"
 msgstr "我的项目"
 
@@ -59,8 +59,8 @@ msgstr "第三方"
 msgid "Community"
 msgstr "社区"
 
-#: templates/main/base-logged-in.html:10 translations/views.py:47
-#: translations/views.py:117 translations/views.py:190
+#: templates/main/base-logged-in.html:10 translations/views.py:53
+#: translations/views.py:127 translations/views.py:200
 msgid "Public projects"
 msgstr "公共项目"
 
@@ -602,11 +602,11 @@ msgstr "概述"
 msgid "Recent projects"
 msgstr "最近项目"
 
-#: templates/tolmach/profile.html:78 templates/tolmach/profile.html:143
+#: templates/tolmach/profile.html:79 templates/translations/projects.html:45
 msgid "Click this button to create new project"
 msgstr "点击此按钮创建新项目"
 
-#: templates/tolmach/profile.html:122 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:161 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译片单"
@@ -634,7 +634,7 @@ msgstr "项目短名"
 msgid "Short project description"
 msgstr "项目短说明"
 
-#: templates/tolmach/view_user.html:13
+#: templates/tolmach/view_user.html:13 templates/translations/projects.html:6
 msgid "Public"
 msgstr "公开"
 
@@ -906,7 +906,6 @@ msgstr "移除项目"
 #: templates/translations/projects-main.html:64
 #: templates/translations/projects-main.html:97
 #: templates/translations/projects-main.html:322
-#: templates/translations/projects.html:78
 msgid "Sorry, you haven't created any projects yet"
 msgstr "对不起，你还没有创建任何项目"
 
@@ -955,9 +954,13 @@ msgstr "添加用户"
 msgid "Username:"
 msgstr "用户名："
 
-#: templates/translations/projects.html:83
-msgid "Create new"
-msgstr "新建"
+#: templates/translations/projects.html:4
+msgid "My"
+msgstr "我的"
+
+#: templates/translations/projects.html:5
+msgid "Third-party"
+msgstr "第三方"
 
 #: templates/translations/view-text.html:6
 msgid "Translation variants"
@@ -1058,11 +1061,11 @@ msgstr "源文本"
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
-#: tolmach/views.py:193
+#: tolmach/views.py:194
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:284
+#: tolmach/views.py:285
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1098,21 +1101,21 @@ msgstr "该原语言暂时未支持"
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
-#: translations/views.py:40 translations/views.py:114
-#: translations/views.py:187
+#: translations/views.py:45 translations/views.py:124
+#: translations/views.py:197
 msgid "Third-party projects"
 msgstr "第三方项目"
 
-#: translations/views.py:105 translations/views.py:107
+#: translations/views.py:115 translations/views.py:117
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: translations/views.py:162 translations/views.py:164
-#: translations/views.py:228
+#: translations/views.py:172 translations/views.py:174
+#: translations/views.py:238
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:234
+#: translations/views.py:244
 msgid "Sorry, no such page here!"
 msgstr ""
 
@@ -1253,6 +1256,9 @@ msgstr ""
 #: translations/views_ajax.py:1080
 msgid "TMDB unavaliable at the moment"
 msgstr ""
+
+#~ msgid "Create new"
+#~ msgstr "新建"
 
 #~ msgid "Add (Ctrl + Enter)"
 #~ msgstr "添加 (Ctrl + Enter)"
