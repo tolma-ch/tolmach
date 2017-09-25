@@ -6,37 +6,81 @@
 {% trans 'Tolma.ch on Facebook' as fb_title %}
 
 {% if user.is_authenticated %}
+    <style>
+        .footer {
+            margin-bottom: 10px;
+        }
+        .footer-grid {
+            width: 100%;
+        }
+        .footer-data__logo {
+            float: left;
+            margin-top: -10px;
+            /*margin-bottom: 5px;*/
+        }
+        .footer-data__copyright {
+            float: left;
+            margin-left: 10px;
+        }
+        .footer-data__copyright p {
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 20px;
+        }
+        .footer-data__social-block {
+            float: left;
+            margin-left: 10px;
+        }
+        .footer-social_small {
+            padding: 3px 0;
+        }
+        .footer-data__links {
+            float: right;
+        }
+        .footer-data__links ul li {
+            display: inline;
+            margin: 0 5px;
+            line-height: 20px;
+            font-size: 12px;
+        }
+        @media (max-width: 400px) {
+            .footer-data__social-block {
+                display: none;
+            }
+        }
+    </style>
 	<footer class="footer footer-white auth" id="footer">
 		<div class="container footer-container" id="footer-container">
             <div class="row">
-                <div>
-                    <div class="col-sm-3">
-                    </div>
-                    <div class="col-sm-3">
-                        <p class="footer-data__item">2015 - {% now "Y" %} © Tolma.ch</p>
-                    </div>
-                    <div class="col-sm-1" style="margin-top: -15px">
+                <div class="col-sm-12 footer-grid">
+                    <div class="footer-data__logo">
                         <a href="/">
-                            <img src="/static/images/main/small_footer_parrot.png">
+                            <!--<img src="/static/images/main/small_footer_parrot.png">-->
+                            <img src="/static/images/footer/footer_logo.svg" height="40">
                         </a><!-- /.brand -->
                     </div>
-                    <div class="col-sm-1">
+                    <div class="footer-data__copyright">
+                        <p>{% now "Y" %} © Tolma.ch</p>
+                    </div>
+                    <div class="footer-data__social-block">
                         <ul class="footer-social footer-social_small">
                             <li class="footer-social__item">
                                 <a href="http://vk.com/tolma_ch" target="_blank" title="{{ vk_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_vk"></a>
                             </li>
-                            <!--<li class="footer-social__item">-->
-                                <!--<a href="#" target="_blank" title="{{ gp_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_gp"></a>-->
-                            <!--</li>-->
                             <li class="footer-social__item">
                                 <a href="https://twitter.com/tolma_ch" target="_blank" title="{{ tw_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_tw"></a>
                             </li>
-                            <!--<li class="footer-social__item">-->
-                                <!--<a href="#" target="_blank" title="{{ fb_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_fb"></a>-->
-                            <!--</li>-->
                         </ul>
                     </div>
-                    <div class="col-sm-1">
+                    <div class="footer-data__links">
+                        <ul>
+                            <li>
+                                <a href="/blog/">Блог</a>
+                            </li>
+                            <li>
+                                <a href="/about/">О нас</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

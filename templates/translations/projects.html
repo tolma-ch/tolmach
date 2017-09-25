@@ -5,47 +5,21 @@
 {% trans 'My' as my_tab_label %}
 {% trans 'Third-party' as third_party_tab_label %}
 {% trans 'Public' as public_tab_label %}
-            <style>
-                @media (max-width: 454px) {
-                    .project-type-selector li a span {
-                        display: none;
-                    }
-                    #mytab a:after {
-                        content: '{{ my_tab_label }}';
-                    }
-                    #thirdpartytab a:after {
-                        content: '{{ third_party_tab_label }}';
-                    }
-                    #publictab a:after {
-                        content: '{{ public_tab_label }}';
-                    }
-                }
-            </style>
             <ul class="project-type-selector">
                 <li class="{% if active_tab == 'my' %}active{% endif %}" id="mytab">
-                    <a href="/projects/my/"><span>{{ sidebar_my_projects }}</span></a>
+                    <a href="/projects/my/"><span>{{ my_tab_label }}</span></a>
                 </li>
 
                 <li class="{% if active_tab == 'thirdparty' %}active{% endif %}" id="thirdpartytab">
-                    <a href="/projects/thirdparty/"><span>{{ sidebar_third_party }}</span></a>
+                    <a href="/projects/thirdparty/"><span>{{ third_party_tab_label }}</span></a>
                 </li>
 
                 <li class="{% if active_tab == 'public' %}active{% endif %}" id="publictab">
-                    <a href="/projects/public/"><span>{{ sidebar_public_projects }}</span></a>
+                    <a href="/projects/public/"><span>{{ public_tab_label }}</span></a>
                 </li>
             </ul>
            <div id="projects" class="tab-pane active">
                 <div class="user-statistics__recent-progress">
-                    <!--<div class="user-statistics__recent-progress-title stripy-heading">-->
-                        <!--<span class="stripy-heading__before"></span>-->
-                        <!--<span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ page_title }}</span>-->
-                        <!--<a href="" class="btn helped-block btn-minier btn-link"-->
-                           <!--ng-click="startNewProject()"-->
-                           <!--help-text="{% trans 'Click this button to create new project' %}"-->
-                           <!--style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>-->
-                        <!--<span class="stripy-heading__after"></span>-->
-                    <!--</div>-->
-
                     <div class="user-statistics__recent-progress-table">
                         <table cellpadding="0" cellspacing="0" class="user-statistics-table">
                             <tbody>
