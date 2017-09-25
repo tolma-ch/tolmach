@@ -74,7 +74,7 @@
                         <div class="user-statistics__recent-progress-title stripy-heading">
                             <span class="stripy-heading__before"></span>
                             <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ recent_proj_label }}</span>
-                            <a href="" class="btn helped-block btn-minier btn-link"
+                            <a href="" class="btn helped-block btn-minier btn-link new-proj-inline-btn"
                                ng-click="startNewProject()"
                                help-text="{% trans 'Click this button to create new project' %}"
                                style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
@@ -106,6 +106,9 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                            <a href="" class="btn helped-block btn-minier new-proj-block-btn"
+                               ng-click="startNewProject()"
+                               help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>
                         </div>
                     </div>
 
@@ -143,6 +146,14 @@
                         @media (max-width: 467px) {
                             #stats-block-3 {
                                 display: none;
+                            }
+                            .new-proj-inline-btn {
+                                display: none;
+                            }
+                            .new-proj-block-btn {
+                                margin-top: 15px;
+                                padding: 5px;
+                                display: block;
                             }
                         }
                         @media (max-width: 400px) {
