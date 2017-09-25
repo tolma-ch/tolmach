@@ -2,16 +2,7 @@
 {% load i18n %}
 
 {% block tab-content %}
-            <style>
-                .project-type-selector {
-                    margin: 0;
-                }
-                .project-type-selector li a {
-                    background-color: white;
-                    border: none;
-                }
-            </style>
-            <ul class="pagination project-type-selector">
+            <ul class="project-type-selector">
                 <li class="{% if active_tab == 'my' %}active{% endif %}">
                     <a href="/projects/my/">{{ sidebar_my_projects }}</a>
                 </li>
