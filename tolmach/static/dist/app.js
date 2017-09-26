@@ -178,8 +178,13 @@
             link : function($scope,$element,$attr) {
                 $scope.$watch($attr.focusOn,function(_focusVal) {
                     $timeout(function() {
-                        _focusVal ? $element[0].focus() :
+                        //_focusVal ? $element[0].focus() : $element[0].blur();
+                        if (_focusVal) {
+                            $element[0].focus();
+                            $element[0].setSelectionRange(0, $element[0].value.length);
+                        } else {
                             $element[0].blur();
+                        }
                     });
                 });
             }
@@ -1769,11 +1774,31 @@
                     }
                 }
             };
+            $scope.showDictModal = false;
+            $scope.lastFocusedEntryInputId = '';
+            $scope.dictOpener = function () {
+                $scope.showDictModal = !$scope.showDictModal;
+            };
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (event.ctrlKey && event.altKey) {
                     if (code === 84) { // Ctrl- Alt - t
                         translate();
+                    }
+                    if (code === 68) { // Ctrl - Alt - d
+                        if (!$scope.showDictModal) {
+                            console.log(document.activeElement.id);
+                            var curFocus = document.activeElement.id;
+                            if (curFocus.startsWith("entry-suggestion-")) {
+                                $scope.lastFocusedEntryInputId = curFocus;
+                            }
+                        } else {
+                            if ($scope.lastFocusedEntryInputId) {
+                                document.getElementById($scope.lastFocusedEntryInputId).focus();
+                                $scope.lastFocusedEntryInputId = '';
+                            }
+                        }
+                        $scope.showDictModal = !$scope.showDictModal;
                     }
                     return;
                 }
@@ -2734,15 +2759,6 @@
             $scope.showChatroom = false;
             $scope.toggleChat = function () {
                 $scope.showChatroom = !$scope.showChatroom;
-            };
-            $scope.showDictModal = false;
-            $scope.dictOpener = function () {
-                $scope.showDictModal = !$scope.showDictModal;
-                if ($scope.showDictModal){
-                    console.log('ololo');
-                    document.getElementById('dict-search-word-input').focus();
-                }
-                console.log($scope.showDictModal);
             };
             $scope.globalResize = function (window) {
                 $scope.$broadcast('GlobalResize', window);
