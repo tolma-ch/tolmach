@@ -3,6 +3,7 @@
 
     angular.module('dictModule', [
         'dictServices',
-        'dictControllers'
+        'dictControllers',
+        'dictDirectives'
     ]);
 }());
