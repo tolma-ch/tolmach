@@ -1132,7 +1132,7 @@ def dict_search(request):
         post = request.POST or json.loads(request.body)
         print post
         import urllib2
-        word = post['params']['phrase']
+        word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
         target_lang = post['params']['dest']
         url = "https://glosbe.com/gapi/translate?from=%s&dest=%s&format=json&phrase=%s&pretty=true" % (source_lang, target_lang, word)
@@ -1160,6 +1160,8 @@ def dict_search(request):
                             element["meanings"].append(item["text"])
 
         return HttpResponse(json.dumps(out_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 @login_required
