@@ -1074,8 +1074,6 @@ msgid "enter word"
 msgstr "введите слово"
 
 #: templates/translations/view-text.html:20
-#, fuzzy
-#| msgid "Not found"
 msgid "Nothing found"
 msgstr "Не найдено"
 
