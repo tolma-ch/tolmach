@@ -431,11 +431,31 @@
                     }
                 }
             };
+            $scope.showDictModal = false;
+            $scope.lastFocusedEntryInputId = '';
+            $scope.dictOpener = function () {
+                $scope.showDictModal = !$scope.showDictModal;
+            };
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (event.ctrlKey && event.altKey) {
                     if (code === 84) { // Ctrl- Alt - t
                         translate();
+                    }
+                    if (code === 68) { // Ctrl - Alt - d
+                        if (!$scope.showDictModal) {
+                            console.log(document.activeElement.id);
+                            var curFocus = document.activeElement.id;
+                            if (curFocus.startsWith("entry-suggestion-")) {
+                                $scope.lastFocusedEntryInputId = curFocus;
+                            }
+                        } else {
+                            if ($scope.lastFocusedEntryInputId) {
+                                document.getElementById($scope.lastFocusedEntryInputId).focus();
+                                $scope.lastFocusedEntryInputId = '';
+                            }
+                        }
+                        $scope.showDictModal = !$scope.showDictModal;
                     }
                     return;
                 }

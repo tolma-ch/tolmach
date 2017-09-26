@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-25 14:03+0400\n"
+"POT-Creation-Date: 2017-09-26 20:54+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -602,11 +602,11 @@ msgstr "概述"
 msgid "Recent projects"
 msgstr "最近项目"
 
-#: templates/tolmach/profile.html:79 templates/translations/projects.html:45
+#: templates/tolmach/profile.html:79 templates/tolmach/profile.html:111
 msgid "Click this button to create new project"
 msgstr "点击此按钮创建新项目"
 
-#: templates/tolmach/profile.html:161 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:177 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译片单"
@@ -634,7 +634,7 @@ msgstr "项目短名"
 msgid "Short project description"
 msgstr "项目短说明"
 
-#: templates/tolmach/view_user.html:13 templates/translations/projects.html:6
+#: templates/tolmach/view_user.html:13 templates/translations/projects.html:7
 msgid "Public"
 msgstr "公开"
 
@@ -870,12 +870,12 @@ msgid "Go to translation"
 msgstr ""
 
 #: templates/translations/project.html:174
-#: templates/translations/view-text.html:349
+#: templates/translations/view-text.html:351
 msgid "Fragments approved:"
 msgstr ""
 
 #: templates/translations/project.html:175
-#: templates/translations/view-text.html:350
+#: templates/translations/view-text.html:352
 msgid "Fragments translated:"
 msgstr ""
 
@@ -954,11 +954,11 @@ msgstr "添加用户"
 msgid "Username:"
 msgstr "用户名："
 
-#: templates/translations/projects.html:4
+#: templates/translations/projects.html:5
 msgid "My"
 msgstr "我的"
 
-#: templates/translations/projects.html:5
+#: templates/translations/projects.html:6
 msgid "Third-party"
 msgstr "第三方"
 
@@ -1006,58 +1006,64 @@ msgstr "翻译"
 msgid "Add with"
 msgstr "保存用"
 
-#: templates/translations/view-text.html:92
+#: templates/translations/view-text.html:19
+msgid "enter word"
+msgstr "输入词"
+
+#: templates/translations/view-text.html:20
+msgid "Nothing found"
+msgstr "未找到"
+
+#: templates/translations/view-text.html:94
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:105
+#: templates/translations/view-text.html:107
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:106
+#: templates/translations/view-text.html:108
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:240
+#: templates/translations/view-text.html:242
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:327
-#, fuzzy
-#| msgid "Dictionaries"
+#: templates/translations/view-text.html:329
 msgid "Dictionary"
-msgstr "字典"
+msgstr "词典"
 
-#: templates/translations/view-text.html:472
+#: templates/translations/view-text.html:474
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:473
+#: templates/translations/view-text.html:475
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:474
+#: templates/translations/view-text.html:476
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:475
+#: templates/translations/view-text.html:477
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:476
+#: templates/translations/view-text.html:478
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:477
+#: templates/translations/view-text.html:479
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:478
+#: templates/translations/view-text.html:480
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:479
+#: templates/translations/view-text.html:481
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
