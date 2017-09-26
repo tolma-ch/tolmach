@@ -431,7 +431,7 @@
                 }
             </style>
             <form ng-submit="searchWord()" name="dictInputForm">
-                <input type="text" ng-model="word" name="wordToSearch" id="dict-search-word-input" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all dict-word-input" set-focus="123">
+                <input type="text" ng-model="word" name="wordToSearch" id="dict-search-word-input" placeholder="enter word" autocomplete="off" class="text ui-widget-content ui-corner-all dict-word-input" focus-on="!!showDictModal">
                 <div class="dict-button-group">
                     <select class="selectpicker dict-dropdown" ng-model="dictSourceLang">
                         {% for code in language_codes %}
