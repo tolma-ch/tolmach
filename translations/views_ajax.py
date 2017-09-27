@@ -659,13 +659,13 @@ def tmx_ajax(request, project):
         if not tmx.owner == request.user:
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
 
-        text_meta_all = TextMeta.objects.filter(meta_type="tmdb_to_write")
-        for text_meta in text_meta_all:
-            tmdbs_to_write = filter(None, text_meta.meta_data.split(","))
+        text_translation_meta_all = TextTranslationMeta.objects.filter(meta_type="tmdb_to_write")
+        for translation_meta in text_translation_meta_all:
+            tmdbs_to_write = filter(None, translation_meta.meta_data.split(","))
             if str(tmx.id) in tmdbs_to_write:
                 tmdbs_to_write.remove(str(tmx.id))
-            text_meta.meta_data = ",".join(tmdbs_to_write)
-            text_meta.save()
+            translation_meta.meta_data = ",".join(tmdbs_to_write)
+            translation_meta.save()
         tmx.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
