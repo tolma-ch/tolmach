@@ -1787,6 +1787,9 @@
                         translate();
                     }
                     if (code === 68) { // Ctrl - Alt - d
+                        event.stopPropagation();
+                        event.preventDefault();
+                        e.preventDefault();
                         // hotkey for showing dictionary window
                         if (!$scope.showDictModal) {
                             // if dict window is not shown right now
@@ -1822,6 +1825,7 @@
                     if (code === 68) { // Alt - d
                         event.stopPropagation();
                         event.preventDefault();
+                        e.preventDefault();
                         // hotkey for showing dictionary window
                         if (!$scope.showDictModal) {
                             // if dict window is not shown right now
