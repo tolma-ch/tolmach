@@ -212,6 +212,9 @@ class TextTranslation(models.Model):
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
+    def __unicode__(self):
+        return unicode("%s - %s" % (self.text, self.target_lang))
+
     def get_progress(self):
         """
         Get progress percentage of the current text and return Int from 0 to 100
