@@ -1776,6 +1776,7 @@
             };
             $scope.showDictModal = false;
             $scope.lastFocusedEntryInputId = '';
+            $scope.lastFocusedEntryInputPosition = 0;
             $scope.dictOpener = function () {
                 $scope.showDictModal = !$scope.showDictModal;
             };
@@ -1786,15 +1787,65 @@
                         translate();
                     }
                     if (code === 68) { // Ctrl - Alt - d
+                        // hotkey for showing dictionary window
                         if (!$scope.showDictModal) {
-                            console.log(document.activeElement.id);
+                            // if dict window is not shown right now
+                            // looking for current element focused
                             var curFocus = document.activeElement.id;
                             if (curFocus.startsWith("entry-suggestion-")) {
                                 $scope.lastFocusedEntryInputId = curFocus;
+                                var range = window.getSelection().getRangeAt(0);
+                                $scope.lastFocusedEntryInputPosition = range.endOffset;
                             }
                         } else {
                             if ($scope.lastFocusedEntryInputId) {
                                 document.getElementById($scope.lastFocusedEntryInputId).focus();
+
+                                var textNode = document.getElementById($scope.lastFocusedEntryInputId).firstChild;
+                                if (textNode !== null) {
+                                    var caret = $scope.lastFocusedEntryInputPosition; // insert caret after the 10th character say
+                                    var range = document.createRange();
+                                    range.setStart(textNode, caret);
+                                    range.setEnd(textNode, caret);
+                                    var sel = window.getSelection();
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
+                                $scope.lastFocusedEntryInputId = '';
+                            }
+                        }
+                        $scope.showDictModal = !$scope.showDictModal;
+                    }
+                    return;
+                }
+                if (event.altKey) {
+                    if (code === 68) { // Alt - d
+                        event.stopPropagation();
+                        event.preventDefault();
+                        // hotkey for showing dictionary window
+                        if (!$scope.showDictModal) {
+                            // if dict window is not shown right now
+                            // looking for current element focused
+                            var curFocus = document.activeElement.id;
+                            if (curFocus.startsWith("entry-suggestion-")) {
+                                $scope.lastFocusedEntryInputId = curFocus;
+                                var range = window.getSelection().getRangeAt(0);
+                                $scope.lastFocusedEntryInputPosition = range.endOffset;
+                            }
+                        } else {
+                            if ($scope.lastFocusedEntryInputId) {
+                                document.getElementById($scope.lastFocusedEntryInputId).focus();
+
+                                var textNode = document.getElementById($scope.lastFocusedEntryInputId).firstChild;
+                                if (textNode !== null) {
+                                    var caret = $scope.lastFocusedEntryInputPosition; // insert caret after the 10th character say
+                                    var range = document.createRange();
+                                    range.setStart(textNode, caret);
+                                    range.setEnd(textNode, caret);
+                                    var sel = window.getSelection();
+                                    sel.removeAllRanges();
+                                    sel.addRange(range);
+                                }
                                 $scope.lastFocusedEntryInputId = '';
                             }
                         }
