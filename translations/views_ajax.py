@@ -1131,11 +1131,22 @@ def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
         print post
+        import urllib
         import urllib2
+
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
         target_lang = post['params']['dest']
-        url = "https://glosbe.com/gapi/translate?from=%s&dest=%s&format=json&phrase=%s&pretty=true" % (source_lang, target_lang, word)
+        data = urllib.urlencode(
+            {
+                'from': source_lang,
+                'dest': target_lang,
+                'phrase': word,
+                'format': 'json',
+                'pretty': 'true'
+            }
+        )
+        url = "https://glosbe.com/gapi/translate?%s" % data
         print url
         f = urllib2.urlopen(url)
 
