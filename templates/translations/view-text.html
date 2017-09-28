@@ -109,11 +109,23 @@
                                 </div>
                             </div>
                         </div>
+                        <style>
+                            .disabled-div{
+                              opacity: 0.5;
+                              pointer-events: none;
 
+                              > * {
+                                opacity: 0.5;
+                                pointer-events: none;
+                              }
+                            }
+                        </style>
                         <div class="text-piece__editor"
                              ng-if="($parent.activeEntry === entry)">
                             <div class="translation-editor"
-                                 ng-class="{'translation-editor_active': entry.editing}">
+                                 ng-class="{'translation-editor_active': entry.editing,
+                                            'disabled-div': entrySuggestSending}"
+                                 ng-disabled="entrySuggestSending">
                                 <div class="translation-editor__tabs"
                                      ng-if="entry.meta.msgid_plural && entry.editing">
                                     <div class="switcher2">
