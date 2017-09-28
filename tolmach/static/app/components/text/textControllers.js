@@ -290,6 +290,7 @@
                     updateTranslation(entry);
                 });
             };
+            $scope.entrySuggestSending = false;
             $scope.suggestTranslation = function (entry) {
                 if (entry['meta'] && entry['meta']['msgid_plural']) {
                     entry.pluralVariants[entry.plural] = entry.suggestion;
@@ -305,6 +306,8 @@
                     data['translation_id'] = suggestionId;
                 }
                 entry.suggestionId = false;
+
+                $scope.entrySuggestSending = true;
                 $http.post('/ajax/entry-translate/', data).success(function (data) {
                     if (suggestionId) {
                         var i,
@@ -332,7 +335,8 @@
                     } else {
                         updateTranslation(entry);
                     }
-                })
+                    $scope.entrySuggestSending = false;
+                });
             };
             $scope.editTranslation = function (entry, translation) {
                 entry.editing = true;
