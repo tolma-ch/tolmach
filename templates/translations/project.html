@@ -132,7 +132,7 @@
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
                                 <div class="project-list-text__cell-btn">
-                                    <i class="flag flag-{=:: text.sourceLang =}"></i>
+                                    <i class="flag flag-Russian"></i>
                                 </div>
                                 <div class="project-list-text__title">
                                     {=:: text.title =}
@@ -168,7 +168,7 @@
                                             <span class="project-list-text__language"
                                                   tooltip="{% trans 'Go to translation' %}"
                                                   tooltip-append-to-body="true">
-                                                <i class="flag flag-{=:: translation.langFull =}"><span class="flag__text">{=:: translation.lang =}</span></i>
+                                                <i class="flag flag-English"><span class="flag__text">{=:: translation.lang =}</span></i>
                                             </span>
                                             <span class="project-list-text__progress"
                                                   tooltip="{% trans 'Fragments approved:' %} {=:: translation.counts[2] =}
