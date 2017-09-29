@@ -1650,7 +1650,6 @@
                 }
                 entry.suggestionId = false;
 
-                console.log('click start: '+ $scope.entrySuggestSending);
                 $scope.entrySuggestSending = true;
                 $http.post('/ajax/entry-translate/', data).success(function (data) {
                     if (suggestionId) {
@@ -1679,9 +1678,7 @@
                     } else {
                         updateTranslation(entry);
                     }
-                    console.log('click process: '+ $scope.entrySuggestSending);
                     $scope.entrySuggestSending = false;
-                    console.log('click end: '+ $scope.entrySuggestSending);
                 });
             };
             $scope.editTranslation = function (entry, translation) {
