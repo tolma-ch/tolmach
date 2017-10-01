@@ -5,6 +5,7 @@
 {% trans 'My' as my_tab_label %}
 {% trans 'Third-party' as third_party_tab_label %}
 {% trans 'Public' as public_tab_label %}
+{% trans "There're no projects here at the moment." as empty_projects_label %}
             <ul class="project-type-selector">
                 <li class="{% if active_tab == 'my' %}active{% endif %}" id="mytab">
                     <a href="/projects/my/"><span>{{ my_tab_label }}</span></a>
@@ -52,26 +53,13 @@
                                             </i>
                                         </span>
                                         <span class="projects-background__text">
-                                            Тут пока нет ни одного проекта.
+                                            {{ empty_projects_label }}
                                         </span>
                                     </div>
                                 </div>
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <style>
-                            .projects-paginator li a {
-                                background: none;
-                                border: none;
-                            }
-                            .projects-paginator li a:hover {
-                                background: #F5F5F5;
-                            }
-                            .projects-paginator li a:hover {
-                                background: #F5F5F5;
-                                border: none;
-                            }
-                        </style>
                         {% if projects.paginator.num_pages > 1 %}
                         <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
                         <ul class="pagination projects-paginator">

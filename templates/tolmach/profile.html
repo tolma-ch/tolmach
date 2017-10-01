@@ -8,6 +8,7 @@
 {% trans 'Start new' as start_new_label %}
 {% trans 'Overview' as overview_label %}
 {% trans 'Recent projects' as recent_proj_label %}
+{% trans "There're no projects here at the moment." as empty_projects_label %}
     <script>
     window.userData = {{ userData | safe }};
     </script>
@@ -24,36 +25,8 @@
         {% include "tolmach/partial/profile-sidebar.html" %}
     </aside>
     <section class="profile-content">
-        <div class="tabbable">
-            <style>
-                .tabbable {
-                    padding-top: 15px;
-                }
-                .nav-tabs {
-                    overflow: hidden;
-                }
-                .tab-content {
-                    border: none;
-                }
-                .nav-tabs li a:hover,
-                .nav-tabs li.active a:hover,
-                .nav-tabs li.active a:focus,
-                .nav-tabs li.active a,
-                .nav-tabs li a {
-                    border-left: none;
-                    border-right: none;
-                    border-top: none;
-                    border-bottom: none;
-                    background: none;
-                    box-shadow: none;
-                    text-transform: uppercase;
-                }
-                .nav-tabs li.active {
-                    border-bottom: 5px solid #02C14F;
-                }
-
-            </style>
-            <ul class="nav nav-tabs" id="ololo">
+        <div class="tabbable section-tabs">
+            <ul class="nav nav-tabs">
                 <li class="{% if active_tab == 'main' %}active{% endif %}">
                     <a href="/">
                         {{ overview_label }}
@@ -107,7 +80,7 @@
                                             </i>
                                         </span>
                                         <span class="projects-background__text">
-                                            Тут пока нет ни одного проекта.
+                                            {{ empty_projects_label }}
                                         </span>
                                     </div>
                                     {% endfor %}
