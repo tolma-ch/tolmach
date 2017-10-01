@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-26 20:54+0400\n"
+"POT-Creation-Date: 2017-10-01 13:29+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,18 +124,6 @@ msgstr ""
 
 #: templates/main/partial/footer.html:6
 msgid "Tolma.ch on Facebook"
-msgstr ""
-
-#: templates/main/partial/header.html:4
-msgid "Translating together"
-msgstr ""
-
-#: templates/main/partial/header.html:5
-msgid "Better than ever!"
-msgstr ""
-
-#: templates/main/partial/header.html:6
-msgid "Start with"
 msgstr ""
 
 #: templates/main/partial/navbar-loggedin.html:2
@@ -597,11 +585,15 @@ msgstr ""
 msgid "Recent projects"
 msgstr ""
 
-#: templates/tolmach/profile.html:79 templates/tolmach/profile.html:111
+#: templates/tolmach/profile.html:11 templates/translations/projects.html:8
+msgid "There're no projects here at the moment."
+msgstr ""
+
+#: templates/tolmach/profile.html:92 templates/translations/projects.html:122
 msgid "Click this button to create new project"
 msgstr ""
 
-#: templates/tolmach/profile.html:177 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:108 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
@@ -857,12 +849,12 @@ msgid "Go to translation"
 msgstr ""
 
 #: templates/translations/project.html:174
-#: templates/translations/view-text.html:351
+#: templates/translations/view-text.html:366
 msgid "Fragments approved:"
 msgstr ""
 
 #: templates/translations/project.html:175
-#: templates/translations/view-text.html:352
+#: templates/translations/view-text.html:367
 msgid "Fragments translated:"
 msgstr ""
 
@@ -1013,44 +1005,44 @@ msgstr ""
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:242
+#: templates/translations/view-text.html:254
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:329
+#: templates/translations/view-text.html:344
 msgid "Dictionary"
 msgstr ""
 
-#: templates/translations/view-text.html:474
+#: templates/translations/view-text.html:489
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:475
+#: templates/translations/view-text.html:490
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:476
+#: templates/translations/view-text.html:491
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:477
+#: templates/translations/view-text.html:492
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:478
+#: templates/translations/view-text.html:493
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:479
+#: templates/translations/view-text.html:494
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:480
+#: templates/translations/view-text.html:495
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:481
+#: templates/translations/view-text.html:496
 msgid "All the text with translated fragments"
 msgstr ""
 
