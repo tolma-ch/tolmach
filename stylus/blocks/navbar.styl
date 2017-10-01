@@ -129,3 +129,23 @@
 			position fixed
 
 
+.breadcrumbs2
+	margin 0
+	padding: 18px 0 0;
+	&__item
+		color white
+		display: inline-block
+		a
+			color white
+		&:before
+			content " "
+			display block
+			float left
+			height 24px
+			width 6px
+			margin: -2px 8px;
+			background url('/static/images/arr-breadcrumbs.png') no-repeat
+	&__btn
+		display: inline-block;
+		margin: 0 10px;
+		color: white;
