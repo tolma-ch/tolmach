@@ -1,0 +1,46 @@
+<div class="dictionary"
+     ng-show="showDictModal"
+     ng-cloak
+     ng-controller="DictCtrl"
+     ng-style="style"
+     data-drag="true"
+     jqyoui-draggable
+     data-jqyoui-options="{handle: '.dictionary__title'}"
+     style="position: fixed">
+    <div class="dictionary__title">
+        <form ng-submit="searchWord()" name="dictInputForm">
+            <input type="text" ng-model="word" name="wordToSearch" id="dict-search-word-input" placeholder="{{ dict_input_placeholder }}" autocomplete="off" class="text ui-widget-content ui-corner-all dict-word-input" focus-on="!!showDictModal">
+            <i class="fa fa-refresh fa-spin fa-fw" id="dict-progress-anim"></i>
+            <div class="dict-button-group">
+                <select class="selectpicker dict-dropdown" ng-model="dictSourceLang">
+                    {% for code in language_codes %}
+                        <option {% if code == source_lang %} selected value="{{ code }}"{% endif %}>{{ code }}</option>
+                    {% endfor %}
+                </select>
+                <a class="dict-switch" ng-click="dictSwitchLangs()">
+                    <i class="fa fa-chevron-right"></i>
+                    <i class="fa fa-exchange"></i>
+                </a>
+                <select class="selectpicker dict-dropdown" ng-model="dictTargetLang">
+                    {% for code in language_codes %}
+                        <option {% if code == target_lang %} selected value="{{ code }}"{% endif %}>{{ code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+        </form>
+    </div>
+    <div class="dictionary__body" id="dict-body">
+        <h4>{= wordToFind =}</h4>
+        <p class="dictionary__nothing_found" id="dict-nothing-found">{{ dict_nothing_found }} =(</p>
+        <h5>
+            <p style="display: inline-block" ng-repeat="x in foundWords">
+                <!--<a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp-->
+                <a class="found-word" id="word-{=x.id=}">{=x.word=}</a>,&nbsp
+                <a class="meanings" id="meanings-{=x.id=}">
+                    {=x.meanings=}
+                </a>
+            </p>
+        </h5>
+    </div>
+</div>
