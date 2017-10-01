@@ -74,10 +74,6 @@
                         <div class="user-statistics__recent-progress-title stripy-heading">
                             <span class="stripy-heading__before"></span>
                             <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{{ recent_proj_label }}</span>
-                            <a href="" class="btn helped-block btn-minier btn-link new-proj-inline-btn"
-                               ng-click="startNewProject()"
-                               help-text="{% trans 'Click this button to create new project' %}"
-                               style="margin-bottom: 6px;padding-left: 0px !important;">{{ start_new_label }}</a>
                             <span class="stripy-heading__after"></span>
                         </div>
                         <div class="user-statistics__recent-progress-table">
@@ -103,12 +99,25 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    {% empty %}
+                                    <div class="projects-background">
+                                        <span class="projects-background__icon">
+                                            <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">
+                                                <i class="fa fa-file-text-o projects-background__icon__front" aria-hidden="true"></i>
+                                            </i>
+                                        </span>
+                                        <span class="projects-background__text">
+                                            Тут пока нет ни одного проекта.
+                                        </span>
+                                    </div>
                                     {% endfor %}
                                 </tbody>
                             </table>
-                            <a href="" class="btn helped-block btn-minier new-proj-block-btn"
+
+                            <a href="" class="btn helped-block btn-sm new-proj-block-btn"
                                ng-click="startNewProject()"
                                help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>
+
                         </div>
                     </div>
 
@@ -150,11 +159,11 @@
                             .new-proj-inline-btn {
                                 display: none;
                             }
-                            .new-proj-block-btn {
-                                margin-top: 15px;
-                                padding: 5px;
-                                display: block;
-                            }
+                            /*.new-proj-block-btn {*/
+                                /*margin-top: 15px;*/
+                                /*padding: 5px;*/
+                                /*display: block;*/
+                            /*}*/
                         }
                         @media (max-width: 400px) {
                             #stats-block-2 {

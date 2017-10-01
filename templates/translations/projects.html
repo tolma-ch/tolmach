@@ -43,6 +43,19 @@
                                         </div>
                                     </td>
                                 </tr>
+                                {% empty %}
+                                <div class="projects-background">
+                                    <div class="projects-background__tabs">
+                                        <span class="projects-background__icon">
+                                            <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">
+                                                <i class="fa fa-file-text-o projects-background__icon__front" aria-hidden="true"></i>
+                                            </i>
+                                        </span>
+                                        <span class="projects-background__text">
+                                            Тут пока нет ни одного проекта.
+                                        </span>
+                                    </div>
+                                </div>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -60,6 +73,7 @@
                             }
                         </style>
                         {% if projects.paginator.num_pages > 1 %}
+                        <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
                         <ul class="pagination projects-paginator">
                             {% if projects.has_previous %}
                             <li>
@@ -100,7 +114,11 @@
                             </li>
                             {% endif %}
                         </ul>
+                        </div>
                         {% endif %}
+                        <a href="" class="btn helped-block btn-sm new-proj-block-btn"
+                               ng-click="startNewProject()"
+                               help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>
                     </div>
                 </div>
             </div>

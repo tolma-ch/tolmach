@@ -102,10 +102,35 @@
   }
 }
 
-@media (min-width: 468px) {
-  .new-proj-block-btn {
-    display: none !important;
+.projects-background {
+  &__tabs {
+    margin-top: 30px;
   }
+
+  &__icon {
+    color: #F2F2F2;
+    font-size: 64px;
+    display: block;
+    margin-left: 90px;
+    margin-bottom: 15px;
+
+    &__front {
+      position: relative;
+      top: 15px;
+      right: 75%;
+      background: #ffffff;
+    }
+  }
+
+  &__text {
+    font-size: 13px;
+    line-height: 1;
+    color: #bbbbbb;
+  }
+}
+
+.new-proj-block-btn {
+  margin-top: 15px !important;
 }
 
 @media (max-width: 1242px) {
