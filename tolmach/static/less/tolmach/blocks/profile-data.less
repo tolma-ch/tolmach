@@ -42,7 +42,7 @@
 
     &__progress {
       padding: 8px 0;
-      width: 350px;
+      width: 300px;
 
       .progress-bar {
         height: 18px;
@@ -162,6 +162,25 @@
 }
 
 @media (max-width: 1242px) {
+  .user-statistics-table {
+    &__progress {
+      padding: 8px 0;
+      width: 250px;
+
+      .progress-bar {
+        height: 18px;
+        background: #d9d9d9;
+
+        &__value {
+          color: #fff;
+          line-height: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
   .user-statistics {
     &-table {
       &__progress {
