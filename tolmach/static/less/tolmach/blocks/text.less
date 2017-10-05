@@ -1,9 +1,10 @@
 .workbench-layout {
   height: 100%;
-  //max-width: 1600px;
+  max-width: 1400px;
   margin: 0 auto;
   &__row {
     height: 100%;
+    box-shadow: 0px 0px 35px 0px rgba(167, 167, 167, 0.75);
   }
   &__col {
     height: 100%;
@@ -106,7 +107,7 @@
   overflow-y: auto;
   font-weight: 300;
   & > .text-piece {
-    border-bottom: 1px dashed grey;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.3);
     &:last-child {
       border-bottom: none;
     }
@@ -148,6 +149,15 @@
       }
     }
   }
+  &__body {
+    margin-right: 25px;
+    display: block;
+    &:before {
+        content: ".";
+        font-size: 0px;
+        visibility: hidden;
+    }
+  }
   &_closed {
     background: @grayBg;
     cursor: pointer;
@@ -175,6 +185,16 @@
   }
   &_approved &__variants {
     display: block;
+  }
+}
+
+.disabled-div{
+  opacity: 0.5;
+  pointer-events: none;
+
+  > * {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 

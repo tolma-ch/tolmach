@@ -8,7 +8,13 @@
         isUserManager = {{ is_user_manager }};
         languages = {{ languagesData | safe }};
     </script>
-    <div ng-controller="projectCtrl" ng-cloak>
+    <style>
+        .project-page {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+    </style>
+    <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
             <h1>
                 <span ng-show="!editingName">
