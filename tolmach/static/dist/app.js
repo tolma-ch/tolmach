@@ -1751,6 +1751,50 @@
                     }
                 }
             };
+
+            $scope.showEntryCommentsModal = false;
+            $scope.currentActiveCommentEntry = '';
+            $scope.entryCommentsOpener = function ($event, commentEntryId, entryText) {
+                var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+                var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+                var leftPanelWidth = document.getElementsByClassName('text-piece')[0].offsetWidth;
+
+                if (!$scope.currentActiveCommentEntry) {
+                    $scope.currentActiveCommentEntry = angular.element($event.target)[0];
+                }
+                var currentCommBtn = angular.element($event.target)[0];
+
+                var bodyRect = document.body.getBoundingClientRect(),
+                    elemRect = currentCommBtn.getBoundingClientRect(),
+                    offset   = elemRect.top - bodyRect.top;
+
+                if ($scope.showEntryCommentsModal) {
+                    document.getElementById('commentedEntryId').value = 0;
+                    $scope.currentActiveCommentEntry.classList.remove('text-piece__comment-button-absolute-active');
+                    $scope.currentActiveCommentEntry = '';
+                } else {
+                    $scope.currentActiveCommentEntry.classList.add('text-piece__comment-button-absolute-active');
+                    document.getElementById('commentedEntryId').value = commentEntryId;
+                    document.getElementsByClassName('text-piece_comment-window__header')[0].innerHTML = entryText;
+                    if (leftPanelWidth >= w) {
+                        document.getElementById('entryCommentWindow').style.left = (leftPanelWidth/2-125) + 'px';
+                        document.getElementById('entryCommentWindow').style.top = offset - 150 + 'px';
+                    } else {
+                        var rect = document.getElementById('entryCommentWindow').getBoundingClientRect();
+                        console.log(rect);
+                        var commentWindowHeight = rect.bottom - rect.top;
+                        console.log('comment window height: '+commentWindowHeight);
+                        console.log('comment window height: '+document.getElementById('entryCommentWindow').offsetHeight);
+                        document.getElementById('entryCommentWindow').style.left = leftPanelWidth + 'px';
+                        document.getElementById('entryCommentWindow').style.top = offset - 150 + 'px';
+                        console.log(document.getElementById('entryCommentWindow').style.top);
+                        console.log(h);
+                    }
+
+                }
+                $scope.showEntryCommentsModal = !$scope.showEntryCommentsModal;
+            };
+
             $scope.showDictModal = false;
             $scope.lastFocusedEntryInputId = '';
             $scope.lastFocusedEntryInputPosition = 0;
