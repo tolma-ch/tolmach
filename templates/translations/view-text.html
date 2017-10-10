@@ -66,6 +66,22 @@
         window['translation_progress'] = {{ translation_progress }};
         window['translation_counts'] = {{ translation_counts }};
     </script>
+    <script>
+        var socket = new WebSocket('ws://dev.tolma.ch:8000');
+
+        socket.onopen = function open() {
+          console.log('WebSockets connection created.');
+        };
+
+        if (socket.readyState == WebSocket.OPEN) {
+          socket.onopen();
+        }
+
+        socket.onmessage = function(message) {
+            var data = JSON.parse(message.data);
+            console.log(data.sender + ': ' + data.message);
+        }
+    </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
         <div class="workbench-layout__row row" ng-cloak>

@@ -156,6 +156,7 @@ INSTALLED_APPS = (
     'translations',
     'entries',
     'chat',
+    'channels',
     'social_auth_widget',
     'social_django',
     'django.contrib.auth',
@@ -267,6 +268,21 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
     }
+}
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+# Channel layer definitions
+# http://channels.readthedocs.org/en/latest/deploying.html#setting-up-a-channel-backend
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Redis channel layer implementation asgi_redis
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+        },
+       "ROUTING": "tolmach.routing.channel_routing", # We will create it in a moment
+    },
 }
 
 try:
