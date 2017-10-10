@@ -7,6 +7,26 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+            $scope.socket = new WebSocket('ws://dev.tolma.ch:8000'
+                + '/text/'
+                + window['textId']
+                + '/'
+                + window['translationTargetLang']
+                + '/');
+
+            $scope.socket.onopen = function open() {
+              console.log('WebSockets connection created.');
+            };
+
+            if ($scope.socket.readyState == WebSocket.OPEN) {
+              $scope.socket.onopen();
+            }
+
+            $scope.socket.onmessage = function(message) {
+                var data = JSON.parse(message.data);
+                console.log(data.sender + ': ' + data.message);
+            };
+
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
