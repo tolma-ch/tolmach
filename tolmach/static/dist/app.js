@@ -1346,7 +1346,7 @@
                 // TODO:
                 // 1) [done] Обновлять у всех пользователей прогресс документа
                 // 2) [] Присылать пользователям новые варианты перевода фрагментов
-                // 3) [] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
+                // 3) [done] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
                 // 4) [] Показывать пользователям, какие фрагменты в данный момент переводят
                 var ws_data = JSON.parse(message.data);
                 if ('progress' in ws_data) {
@@ -1371,10 +1371,6 @@
                             })
                         }
                     });
-                    //translation.isApproved = true;
-                    //entry.approved = true;
-                    //applyTranslation(entry, translation);
-                    //$scope.activeEntry = null;
                 }
                 if ('entry_to_disapprove' in ws_data) {
                     var entry_to_disapprove = ws_data['entry_to_disapprove'];
@@ -1396,16 +1392,40 @@
                             updateTranslation(local_entry_to_disapprove);
                         }
                     });
+                }
+                if ('entry_new_translation' in ws_data) {
+                    var entry_new_translation = ws_data['entry_new_translation'];
+                    $scope.entries.forEach(function(item, x, arr) {
+                        if (item.id == entry_new_translation.id) {
+                            var local_entry_to_translate = item,
+                                translation_to_update = false;
 
-                    //if (translation) {
-                    //    $http.post('/ajax/entry-disapprove/', {id: translation.id}).success(function () {
-                    //        translation.isApproved = false;
-                    //        entry.approved = false;
-                    //        $scope.activeEntry = entry;
-                    //        entry.translation = '';
-                    //        updateTranslation(entry);
-                    //    })
-                    //}
+                            local_entry_to_translate.translations.forEach(function(item_translation, x, a) {
+                                if (item_translation.id == entry_new_translation.translation.id) {
+                                    translation_to_update = item_translation;
+                                }
+                            });
+                            if (translation_to_update) {
+                                // если перевод не новый, а апдейтится уже имеющийся
+                                translation_to_update.body = entry_new_translation.translation.body;
+                                translation_to_update.isApproved = entry_new_translation.translation.isApproved;
+                            } else {
+                                if (!(entry_new_translation.translation in local_entry_to_translate['translations'])) {
+                                    local_entry_to_translate['translations'].push(entry_new_translation.translation);
+                                }
+                            }
+
+                            if (entry_new_translation.translation.isApproved === true) {
+                                if (local_entry_to_translate === $scope.activeEntry) {
+                                    $scope.activeEntry = null;
+                                }
+                                local_entry_to_translate.approved = true;
+                                applyTranslation(local_entry_to_translate, entry_new_translation.translation);
+                            } else {
+                                updateTranslation(local_entry_to_translate);
+                            }
+                        }
+                    })
                 }
                 $scope.$apply();
             };
@@ -1725,7 +1745,9 @@
                             }
                         }
                     } else {
-                        entry['translations'].push(data);
+                        if (!(data in entry['translations'])){
+                            entry['translations'].push(data);
+                        }
                     }
                     entry.editing = false;
                     entry.suggestion = '';

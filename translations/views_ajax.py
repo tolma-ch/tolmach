@@ -891,6 +891,21 @@ def translate_entry_ajax(request):
                 fragments_translated=F('fragments_translated')+1
             )
         entry_translation.save()
+
+        entry_new_translation = {
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            'translation': translation_to_json(entry_translation)
+        }
+        translation_counts, translation_progress = entry_translation.translation.get_progress()
+        entry_translation.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_new_translation': entry_new_translation
+            }
+        )})
+
         from django.utils import timezone
 
         project.last_modified = timezone.now()
