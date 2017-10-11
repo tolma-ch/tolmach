@@ -941,7 +941,21 @@ def remove_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
 
+    entry_translation_to_delete = {
+        'id': entry.id,
+        'idInText': entry.id_in_text,
+        'translation': translation_to_json(entry_translation)
+    }
     entry_translation.delete()
+
+    translation_counts, translation_progress = entry_translation.translation.get_progress()
+    entry_translation.translation.websocket_group.send({'text': json.dumps(
+        {
+            'progress': {'translation_progress': translation_progress,
+                         'translation_counts': translation_counts},
+            'remove_translation': entry_translation_to_delete
+        }
+    )})
 
     return HttpResponse(json.dumps(True), content_type="application/json")
 
