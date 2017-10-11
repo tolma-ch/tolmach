@@ -1323,6 +1323,8 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+
+            $scope.ws_active = false;
             $scope.socket = new WebSocket('ws://dev.tolma.ch:8000'
                 + '/text/'
                 + window['textId']
@@ -1331,10 +1333,14 @@
                 + '/');
 
             $scope.socket.onopen = function open() {
-              console.log('WebSockets connection created.');
+                console.log('WebSockets connection created.');
+                $scope.ws_active = true;
+                $scope.$apply()
             };
             $scope.socket.onclose = function () {
                 console.log("Disconnected from translation socket");
+                $scope.ws_active = false;
+                $scope.$apply()
             };
 
             if ($scope.socket.readyState == WebSocket.OPEN) {
@@ -1410,6 +1416,8 @@
                                 translation_to_update.body = entry_new_translation.translation.body;
                                 translation_to_update.isApproved = entry_new_translation.translation.isApproved;
                             } else {
+                                // а если перевод новый, то проверяем, не закинут ли он ещё в общий пул аяксом
+                                // и добавляем его
                                 if (!(entry_new_translation.translation in local_entry_to_translate['translations'])) {
                                     local_entry_to_translate['translations'].push(entry_new_translation.translation);
                                 }
@@ -1427,6 +1435,37 @@
                         }
                     })
                 }
+                //var find_entry_translation = function (entry, translation_id) {
+                //        entry.translations.forEach(function(item_translation, x, a) {
+                //            if (item_translation.id == translation_id) {
+                //                return item_translation;
+                //            }
+                //        });
+                //    },
+                //    find_entry = function (entry_id) {
+                //        $scope.entries.forEach(function(item, x, arr) {
+                //            if (item.id == entry_id) {
+                //                return item;
+                //            }
+                //        })
+                //    };
+                if ('remove_translation' in ws_data) {
+                    //var local_entry = find_entry(ws_data['remove_translation'].id);
+                    //var local_translation_to_remove = find_entry_translation(local_entry, ws_data['remove_translation'].translation.id);
+                    $scope.entries.forEach(function(item, x, arr) {
+                        if (item.id == ws_data['remove_translation'].id) {
+                            var i;
+                            for (i = 0; i < item.translations.length; i++) {
+                                var translation = item.translations[i];
+                                if (translation.id === ws_data['remove_translation'].translation.id) {
+                                    delete item.translations.splice(i, 1);
+                                    break;
+                                }
+                            }
+                            updateTranslation(item);
+                        }
+                    })
+                }
                 $scope.$apply();
             };
 
@@ -1437,15 +1476,17 @@
                     return div.textContent || div.innerText || "";
                 },
                 updateTranslationProgress = function () {
-                    $http.post('/ajax/get-translation-progress/', {
-                        text: textId,
-                        target_lang: window['translationTargetLang']
-                    }).success(function (data) {
-                        $scope.translationProgress = data['translation_progress'];
-                        $scope.translationCounts = data['translation_counts'];
-                    }).error(function (a) {
-                        //console.error(a);
-                    });
+                    if (!$scope.ws_active) {
+                        $http.post('/ajax/get-translation-progress/', {
+                            text: textId,
+                            target_lang: window['translationTargetLang']
+                        }).success(function (data) {
+                            $scope.translationProgress = data['translation_progress'];
+                            $scope.translationCounts = data['translation_counts'];
+                        }).error(function (a) {
+                            //console.error(a);
+                        });
+                    }
                 },
                 applyTranslation = function (entry, translation) {
                     entry.translation = (clearTranslation(entry, translation));

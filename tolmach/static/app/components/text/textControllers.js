@@ -7,6 +7,8 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+
+            $scope.ws_active = false;
             $scope.socket = new WebSocket('ws://dev.tolma.ch:8000'
                 + '/text/'
                 + window['textId']
@@ -15,10 +17,14 @@
                 + '/');
 
             $scope.socket.onopen = function open() {
-              console.log('WebSockets connection created.');
+                console.log('WebSockets connection created.');
+                $scope.ws_active = true;
+                $scope.$apply()
             };
             $scope.socket.onclose = function () {
                 console.log("Disconnected from translation socket");
+                $scope.ws_active = false;
+                $scope.$apply()
             };
 
             if ($scope.socket.readyState == WebSocket.OPEN) {
@@ -29,12 +35,12 @@
                 console.log(message.data);
                 // TODO:
                 // 1) [done] Обновлять у всех пользователей прогресс документа
-                // 2) [] Присылать пользователям новые варианты перевода фрагментов
+                // 2) [done] Присылать пользователям новые варианты перевода фрагментов и удалять удалённые
                 // 3) [done] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
                 // 4) [] Показывать пользователям, какие фрагменты в данный момент переводят
                 var ws_data = JSON.parse(message.data);
                 if ('progress' in ws_data) {
-                    console.log('updating progressbars');
+                    //console.log('updating progressbars');
                     $scope.translationProgress = ws_data['progress']['translation_progress'];
                     $scope.translationCounts = ws_data['progress']['translation_counts'];
                 }
@@ -43,11 +49,11 @@
                     $scope.entries.forEach(function(item, i, arr) {
                         if (item.id == entry_to_approve.id) {
                             var local_entry_to_approve = item;
-                            console.log("entry: " + item);
+                            //console.log("entry: " + item);
                             local_entry_to_approve['translations'].forEach(function(item_translation, x, a) {
                                 if (item_translation.id == entry_to_approve.translation.id) {
                                     var local_translation_to_approve = item_translation;
-                                    console.log("entry translation: " + item_translation);
+                                    //console.log("entry translation: " + item_translation);
                                     item_translation.isApproved = true;
                                     item.approved = true;
                                     applyTranslation(item, item_translation);
@@ -113,6 +119,21 @@
                         }
                     })
                 }
+                if ('remove_translation' in ws_data) {
+                    $scope.entries.forEach(function(item, x, arr) {
+                        if (item.id == ws_data['remove_translation'].id) {
+                            var i;
+                            for (i = 0; i < item.translations.length; i++) {
+                                var translation = item.translations[i];
+                                if (translation.id === ws_data['remove_translation'].translation.id) {
+                                    delete item.translations.splice(i, 1);
+                                    break;
+                                }
+                            }
+                            updateTranslation(item);
+                        }
+                    })
+                }
                 $scope.$apply();
             };
 
@@ -123,15 +144,17 @@
                     return div.textContent || div.innerText || "";
                 },
                 updateTranslationProgress = function () {
-                    $http.post('/ajax/get-translation-progress/', {
-                        text: textId,
-                        target_lang: window['translationTargetLang']
-                    }).success(function (data) {
-                        $scope.translationProgress = data['translation_progress'];
-                        $scope.translationCounts = data['translation_counts'];
-                    }).error(function (a) {
-                        //console.error(a);
-                    });
+                    if (!$scope.ws_active) {
+                        $http.post('/ajax/get-translation-progress/', {
+                            text: textId,
+                            target_lang: window['translationTargetLang']
+                        }).success(function (data) {
+                            $scope.translationProgress = data['translation_progress'];
+                            $scope.translationCounts = data['translation_counts'];
+                        }).error(function (a) {
+                            //console.error(a);
+                        });
+                    }
                 },
                 applyTranslation = function (entry, translation) {
                     entry.translation = (clearTranslation(entry, translation));
