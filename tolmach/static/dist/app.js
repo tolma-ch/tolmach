@@ -1333,14 +1333,81 @@
             $scope.socket.onopen = function open() {
               console.log('WebSockets connection created.');
             };
+            $scope.socket.onclose = function () {
+                console.log("Disconnected from translation socket");
+            };
 
             if ($scope.socket.readyState == WebSocket.OPEN) {
               $scope.socket.onopen();
             }
 
             $scope.socket.onmessage = function(message) {
-                var data = JSON.parse(message.data);
-                console.log(data.sender + ': ' + data.message);
+                console.log(message.data);
+                // TODO:
+                // 1) [done] Обновлять у всех пользователей прогресс документа
+                // 2) [] Присылать пользователям новые варианты перевода фрагментов
+                // 3) [] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
+                // 4) [] Показывать пользователям, какие фрагменты в данный момент переводят
+                var ws_data = JSON.parse(message.data);
+                if ('progress' in ws_data) {
+                    console.log('updating progressbars');
+                    $scope.translationProgress = ws_data['progress']['translation_progress'];
+                    $scope.translationCounts = ws_data['progress']['translation_counts'];
+                }
+                if ('entry_to_approve' in ws_data) {
+                    var entry_to_approve = ws_data['entry_to_approve'];
+                    $scope.entries.forEach(function(item, i, arr) {
+                        if (item.id == entry_to_approve.id) {
+                            var local_entry_to_approve = item;
+                            console.log("entry: " + item);
+                            local_entry_to_approve['translations'].forEach(function(item_translation, x, a) {
+                                if (item_translation.id == entry_to_approve.translation.id) {
+                                    var local_translation_to_approve = item_translation;
+                                    console.log("entry translation: " + item_translation);
+                                    item_translation.isApproved = true;
+                                    item.approved = true;
+                                    applyTranslation(item, item_translation);
+                                }
+                            })
+                        }
+                    });
+                    //translation.isApproved = true;
+                    //entry.approved = true;
+                    //applyTranslation(entry, translation);
+                    //$scope.activeEntry = null;
+                }
+                if ('entry_to_disapprove' in ws_data) {
+                    var entry_to_disapprove = ws_data['entry_to_disapprove'];
+                    $scope.entries.forEach(function(item, x, arr) {
+                        if (item.id == entry_to_disapprove.id) {
+                            var local_entry_to_disapprove = item;
+                            var i,
+                                someTranslation,
+                                translation;
+                            for (i = 0; i < local_entry_to_disapprove.translations.length; i++) {
+                                someTranslation = local_entry_to_disapprove.translations[i];
+                                if (someTranslation.isApproved) {
+                                    translation = someTranslation;
+                                }
+                            }
+                            translation.isApproved = false;
+                            local_entry_to_disapprove.approved = false;
+                            local_entry_to_disapprove.translation = '';
+                            updateTranslation(local_entry_to_disapprove);
+                        }
+                    });
+
+                    //if (translation) {
+                    //    $http.post('/ajax/entry-disapprove/', {id: translation.id}).success(function () {
+                    //        translation.isApproved = false;
+                    //        entry.approved = false;
+                    //        $scope.activeEntry = entry;
+                    //        entry.translation = '';
+                    //        updateTranslation(entry);
+                    //    })
+                    //}
+                }
+                $scope.$apply();
             };
 
             var clearTags = function (text) {
