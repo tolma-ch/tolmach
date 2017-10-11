@@ -953,6 +953,20 @@ def approve_entry_ajax(request):
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
+        entry_to_approve = {
+            'id': entry.parent_entry.id,
+            'idInText': entry.parent_entry.id_in_text,
+            'approved': entry.is_approved,
+            'translation': translation_to_json(entry)
+        }
+        translation_counts, translation_progress = entry.translation.get_progress()
+        entry.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_to_approve': entry_to_approve
+            }
+        )})
         return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
@@ -976,6 +990,18 @@ def disapprove_entry_ajax(request):
         if text.project.is_user_manager(request.user):
             entry.is_approved = False
             entry.save()
+            entry_to_disapprove = {
+                'id': entry.parent_entry.id,
+                'idInText': entry.parent_entry.id_in_text,
+            }
+            translation_counts, translation_progress = entry.translation.get_progress()
+            entry.translation.websocket_group.send({'text': json.dumps(
+                {
+                    'progress': {'translation_progress': translation_progress,
+                                 'translation_counts': translation_counts},
+                    'entry_to_disapprove': entry_to_disapprove
+                }
+            )})
             return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
         else:
             return HttpResponse(json.dumps(_('You have to be a manager of project')),
