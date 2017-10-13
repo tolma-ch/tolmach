@@ -8,6 +8,7 @@
   }
   &__col {
     height: 100%;
+    background-color: #f5f5f5;
     & > .text-pieces {
       margin: 0 -15px;
     }
@@ -70,6 +71,19 @@
       padding: 6px 5px 9px 5px;
       &:hover {
         background: #E4E4E4;
+      }
+    }
+    &__mobile {
+      display: none;
+      @media (max-width: 767px) {
+        float: none !important;
+        display: block;
+        position: relative;
+        text-align: center;
+        font-size: 20px;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #d2d2d2;
       }
     }
   }
@@ -157,6 +171,19 @@
         content: ".";
         font-size: 0px;
         visibility: hidden;
+    }
+  }
+  &__now-editing {
+    display: inline-block;
+    visibility: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    .fa-pencil {
+      position :relative;
+      margin-left: -5px;
+      bottom: 2px;
     }
   }
   &_someone-editing {

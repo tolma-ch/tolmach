@@ -58,22 +58,6 @@
             margin-left: 0 !important;
         }
     </style>
-    <style>
-        .text-piece__now-editing {
-            display: inline-block;
-            visibility: hidden;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .text-piece__now-editing .fa-pencil {
-            position :relative;
-            margin-left: -5px;
-            bottom: 2px;
-        }
-    </style>
 
     <script>
         window['textId'] = {{ text.id }};
@@ -89,6 +73,7 @@
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
                      ng-show="!busy">
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
@@ -286,6 +271,7 @@
                             </div>
                         </div>
                     </div>
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                 </div>
             </div>
 
@@ -294,22 +280,7 @@
                     <div class="text-overview__table">
                         <div class="text-overview__row text-overview__row_thin">
                             <div class="text-overview__cell">
-                                <div class="text-overview__paginator"
-                                     ng-show="pagesCount > 1">
-                                    <a href=""
-                                       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
-                                <span class="text-overview__paginator-text"
-                                      ng-show="!editPage"
-                                      ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
-                                    <input type="text"
-                                           ng-show="editPage"
-                                           focus-me="focusPaginator"
-                                           ng-model="page"
-                                           ng-keypress="paginatorKeypress($event)"
-                                           ng-blur="paginatorBlur()">
-                                    <a href=""
-                                       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
-                                </div>
+                                {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
                                     <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
                                     <style>
