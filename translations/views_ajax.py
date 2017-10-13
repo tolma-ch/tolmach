@@ -770,7 +770,8 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': entry_translation
+                'translation': entry_translation,
+                'isBeingEdited': {}
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
@@ -902,7 +903,8 @@ def translate_entry_ajax(request):
             {
                 'progress': {'translation_progress': translation_progress,
                              'translation_counts': translation_counts},
-                'entry_new_translation': entry_new_translation
+                'entry_new_translation': entry_new_translation,
+                'user': request.user.id
             }
         )})
 
@@ -953,7 +955,8 @@ def remove_entry_ajax(request):
         {
             'progress': {'translation_progress': translation_progress,
                          'translation_counts': translation_counts},
-            'remove_translation': entry_translation_to_delete
+            'remove_translation': entry_translation_to_delete,
+            'user': request.user.id
         }
     )})
 
@@ -993,7 +996,8 @@ def approve_entry_ajax(request):
             {
                 'progress': {'translation_progress': translation_progress,
                              'translation_counts': translation_counts},
-                'entry_to_approve': entry_to_approve
+                'entry_to_approve': entry_to_approve,
+                'user': request.user.id
             }
         )})
         return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
@@ -1028,7 +1032,8 @@ def disapprove_entry_ajax(request):
                 {
                     'progress': {'translation_progress': translation_progress,
                                  'translation_counts': translation_counts},
-                    'entry_to_disapprove': entry_to_disapprove
+                    'entry_to_disapprove': entry_to_disapprove,
+                    'user': request.user.id
                 }
             )})
             return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
