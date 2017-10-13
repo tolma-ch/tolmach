@@ -43,8 +43,11 @@ def ws_text_translation_message(message, text_id, target_lang):
     lang = Language.objects.get(code=target_lang)
     print lang
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
-    translation.websocket_group.send({'text': json.dumps({'message': message.content['text'],
-                                            'sender': message.reply_channel.name})})
+    print json.loads(message.content['text'])['text']
+    if 'current_edit_start' in message.content['text'] or 'current_edit_stop' in message.content['text']:
+        translation.websocket_group.send({'text': json.dumps(
+            json.loads(message.content['text'])['text']
+        )})
 
 
 @channel_session_user
@@ -58,4 +61,10 @@ def ws_text_translation_disconnect(message, text_id, target_lang):
     lang = Language.objects.get(code=target_lang)
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
 
+    translation.websocket_group.send({'text': json.dumps(
+        {
+            'current_edit_start': 0,
+            'user': message.user.id
+        }
+    )})
     translation.websocket_group.discard(message.reply_channel)
