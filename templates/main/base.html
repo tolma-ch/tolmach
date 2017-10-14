@@ -10,7 +10,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="/static/img/favicon.ico" rel="shortcut icon">
 
-        {% with front_version="1.7.4" %}
+        {% with front_version="1.8" %}
 
         {% if debug == 'false' %}
             <link rel="stylesheet" href="/static/dist/tolmach.min.css?v={{ front_version }}">
@@ -245,6 +245,7 @@
 		<script src="/static/js/ace-elements.min.js?v={{ front_version }}"></script>
         <script src="/static/js/ace.js?v={{ front_version }}"></script>
         <script src="/static/js/ace-extra.js?v={{ front_version }}"></script>
+        <script src="/static/js/reconnecting-websocket.min.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular/angular.min.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-bootstrap/ui-bootstrap-tpls.js?v={{ front_version }}"></script>
         <script src="/static/assets/angular-elastic/elastic.js?v={{ front_version }}"></script>
