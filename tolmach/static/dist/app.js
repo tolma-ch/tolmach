@@ -1329,7 +1329,7 @@
             };
 
             $scope.ws_active = false;
-            $scope.socket = new WebSocket('ws://dev.tolma.ch:8000'
+            $scope.socket = new ReconnectingWebSocket(window['wsTextConnectHost']
                 + '/text/'
                 + window['textId']
                 + '/'

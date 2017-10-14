@@ -13,7 +13,7 @@
             };
 
             $scope.ws_active = false;
-            $scope.socket = new WebSocket('ws://dev.tolma.ch:8000'
+            $scope.socket = new ReconnectingWebSocket(window['wsTextConnectHost']
                 + '/text/'
                 + window['textId']
                 + '/'
@@ -36,7 +36,7 @@
             }
 
             $scope.socket.onmessage = function(message) {
-                console.log(message.data);
+                //console.log(message.data);
                 // TODO:
                 // 1) [done] Обновлять у всех пользователей прогресс документа
                 // 2) [done] Присылать пользователям новые варианты перевода фрагментов и удалять удалённые
@@ -60,7 +60,7 @@
                     }
                 }
                 if ('current_edit_stop' in ws_data) {
-                    console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
+                    //console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
                     if (!($scope.user == ws_data['user'])) {
                         $scope.entries.forEach(function (item, i, arr) {
                             if (item.id == ws_data['current_edit_stop']) {
