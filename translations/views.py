@@ -223,7 +223,7 @@ def view_translation(request, text_id, target_lang):
             'target_lang': target_lang,
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
-            'ws_connect_host': "wss://ws.tolma.ch" if local_settings.PROD == True else "ws://dev.tolma.ch:8000",
+            'ws_connect_host': "wss://tolma.ch" if local_settings.PROD == True else "ws://dev.tolma.ch:4567",
             'language_codes': [x.code for x in Language.objects.all()]
             }
     template = 'translations/view-text.html'

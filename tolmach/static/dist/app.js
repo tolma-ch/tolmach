@@ -1330,7 +1330,7 @@
 
             $scope.ws_active = false;
             $scope.socket = new ReconnectingWebSocket(window['wsTextConnectHost']
-                + '/text/'
+                + '/ws/text/'
                 + window['textId']
                 + '/'
                 + window['translationTargetLang']
@@ -1352,7 +1352,7 @@
             }
 
             $scope.socket.onmessage = function(message) {
-                console.log(message.data);
+                //console.log(message.data);
                 // TODO:
                 // 1) [done] Обновлять у всех пользователей прогресс документа
                 // 2) [done] Присылать пользователям новые варианты перевода фрагментов и удалять удалённые
@@ -1363,27 +1363,6 @@
                     //console.log('updating progressbars');
                     $scope.translationProgress = ws_data['progress']['translation_progress'];
                     $scope.translationCounts = ws_data['progress']['translation_counts'];
-                }
-                if ('current_edit_start' in ws_data) {
-                    if (!($scope.user == ws_data['user'])) {
-                        $scope.entries.forEach(function (item, i, arr) {
-                            if (item.id == ws_data['current_edit_start']) {
-                                item.isBeingEdited[ws_data['user']] = ".";
-                            } else {
-                                delete item.isBeingEdited[ws_data['user']];
-                            }
-                        });
-                    }
-                }
-                if ('current_edit_stop' in ws_data) {
-                    console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
-                    if (!($scope.user == ws_data['user'])) {
-                        $scope.entries.forEach(function (item, i, arr) {
-                            if (item.id == ws_data['current_edit_stop']) {
-                                delete item.isBeingEdited[ws_data['user']];
-                            }
-                        });
-                    }
                 }
                 if ('entry_to_approve' in ws_data) {
                     if (!($scope.user == ws_data['user'])) {
@@ -1481,6 +1460,27 @@
                                 updateTranslation(item);
                             }
                         })
+                    }
+                }
+                if ('current_edit_start' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_start']) {
+                                item.isBeingEdited[ws_data['user']] = ".";
+                            } else {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
+                    }
+                }
+                if ('current_edit_stop' in ws_data) {
+                    //console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_stop']) {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
                     }
                 }
                 $scope.$apply();

@@ -10,7 +10,7 @@ def message_handler(message):
 
 channel_routing = [
     #route("websocket.receive", message_handler),  # we register our message handler
-    route('websocket.connect', 'translations.consumers.ws_text_translation_connect', path=r'^/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
-    route('websocket.receive', 'translations.consumers.ws_text_translation_message', path=r'^/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
-    route('websocket.disconnect', 'translations.consumers.ws_text_translation_disconnect', path=r'^/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
+    route('websocket.connect', 'translations.consumers.ws_text_translation_connect', path=r'^/ws/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
+    route('websocket.receive', 'translations.consumers.ws_text_translation_message', path=r'^/ws/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
+    route('websocket.disconnect', 'translations.consumers.ws_text_translation_disconnect', path=r'^/ws/text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$'),
 ]
