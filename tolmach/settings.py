@@ -285,6 +285,8 @@ CHANNEL_LAYERS = {
     },
 }
 
+WS_HOST = "wss://tolma.ch"
+
 try:
     from tolmach.local_settings import *
 except ImportError:
