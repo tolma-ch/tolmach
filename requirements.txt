@@ -6,6 +6,8 @@ social-auth-app-django==1.1.0
 social-auth-core==1.2.0
 uWSGI==1.9.17.1
 wsgiref==0.1.2
+channels
+asgi_redis
 yandex.translate
 lxml
 elasticsearch

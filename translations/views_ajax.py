@@ -770,7 +770,8 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': entry_translation
+                'translation': entry_translation,
+                'isBeingEdited': {}
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
@@ -891,6 +892,22 @@ def translate_entry_ajax(request):
                 fragments_translated=F('fragments_translated')+1
             )
         entry_translation.save()
+
+        entry_new_translation = {
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            'translation': translation_to_json(entry_translation)
+        }
+        translation_counts, translation_progress = entry_translation.translation.get_progress()
+        entry_translation.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_new_translation': entry_new_translation,
+                'user': request.user.id
+            }
+        )})
+
         from django.utils import timezone
 
         project.last_modified = timezone.now()
@@ -926,7 +943,22 @@ def remove_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
 
+    entry_translation_to_delete = {
+        'id': entry.id,
+        'idInText': entry.id_in_text,
+        'translation': translation_to_json(entry_translation)
+    }
     entry_translation.delete()
+
+    translation_counts, translation_progress = entry_translation.translation.get_progress()
+    entry_translation.translation.websocket_group.send({'text': json.dumps(
+        {
+            'progress': {'translation_progress': translation_progress,
+                         'translation_counts': translation_counts},
+            'remove_translation': entry_translation_to_delete,
+            'user': request.user.id
+        }
+    )})
 
     return HttpResponse(json.dumps(True), content_type="application/json")
 
@@ -953,6 +985,21 @@ def approve_entry_ajax(request):
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
+        entry_to_approve = {
+            'id': entry.parent_entry.id,
+            'idInText': entry.parent_entry.id_in_text,
+            'approved': entry.is_approved,
+            'translation': translation_to_json(entry)
+        }
+        translation_counts, translation_progress = entry.translation.get_progress()
+        entry.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_to_approve': entry_to_approve,
+                'user': request.user.id
+            }
+        )})
         return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
@@ -976,6 +1023,19 @@ def disapprove_entry_ajax(request):
         if text.project.is_user_manager(request.user):
             entry.is_approved = False
             entry.save()
+            entry_to_disapprove = {
+                'id': entry.parent_entry.id,
+                'idInText': entry.parent_entry.id_in_text,
+            }
+            translation_counts, translation_progress = entry.translation.get_progress()
+            entry.translation.websocket_group.send({'text': json.dumps(
+                {
+                    'progress': {'translation_progress': translation_progress,
+                                 'translation_counts': translation_counts},
+                    'entry_to_disapprove': entry_to_disapprove,
+                    'user': request.user.id
+                }
+            )})
             return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
         else:
             return HttpResponse(json.dumps(_('You have to be a manager of project')),

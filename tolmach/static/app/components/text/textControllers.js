@@ -7,6 +7,169 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+
+            $scope.keyLength = function (obj) {
+                return Object.keys(obj).length;
+            };
+
+            $scope.ws_active = false;
+            $scope.socket = new ReconnectingWebSocket(window['wsTextConnectHost']
+                + '/ws/text/'
+                + window['textId']
+                + '/'
+                + window['translationTargetLang']
+                + '/');
+
+            $scope.socket.onopen = function open() {
+                console.log('WebSockets connection created.');
+                $scope.ws_active = true;
+                $scope.$apply()
+            };
+            $scope.socket.onclose = function () {
+                console.log("Disconnected from translation socket");
+                $scope.ws_active = false;
+                $scope.$apply()
+            };
+
+            if ($scope.socket.readyState == WebSocket.OPEN) {
+              $scope.socket.onopen();
+            }
+
+            $scope.socket.onmessage = function(message) {
+                //console.log(message.data);
+                // TODO:
+                // 1) [done] Обновлять у всех пользователей прогресс документа
+                // 2) [done] Присылать пользователям новые варианты перевода фрагментов и удалять удалённые
+                // 3) [done] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
+                // 4) [done] Показывать пользователям, какие фрагменты в данный момент переводят
+                var ws_data = JSON.parse(message.data);
+                if ('progress' in ws_data) {
+                    //console.log('updating progressbars');
+                    $scope.translationProgress = ws_data['progress']['translation_progress'];
+                    $scope.translationCounts = ws_data['progress']['translation_counts'];
+                }
+                if ('entry_to_approve' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_approve = ws_data['entry_to_approve'];
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == entry_to_approve.id) {
+                                var local_entry_to_approve = item;
+                                //console.log("entry: " + item);
+                                local_entry_to_approve['translations'].forEach(function (item_translation, x, a) {
+                                    if (item_translation.id == entry_to_approve.translation.id) {
+                                        var local_translation_to_approve = item_translation;
+                                        //console.log("entry translation: " + item_translation);
+                                        item_translation.isApproved = true;
+                                        item.approved = true;
+                                        applyTranslation(item, item_translation);
+                                    }
+                                })
+                            }
+                        });
+                    }
+                }
+                if ('entry_to_disapprove' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_disapprove = ws_data['entry_to_disapprove'];
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == entry_to_disapprove.id) {
+                                var local_entry_to_disapprove = item;
+                                var i,
+                                    someTranslation,
+                                    translation;
+                                for (i = 0; i < local_entry_to_disapprove.translations.length; i++) {
+                                    someTranslation = local_entry_to_disapprove.translations[i];
+                                    if (someTranslation.isApproved) {
+                                        translation = someTranslation;
+                                    }
+                                }
+                                translation.isApproved = false;
+                                local_entry_to_disapprove.approved = false;
+                                local_entry_to_disapprove.translation = '';
+                                updateTranslation(local_entry_to_disapprove);
+                            }
+                        });
+                    }
+                }
+                if ('entry_new_translation' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_new_translation = ws_data['entry_new_translation'];
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == entry_new_translation.id) {
+                                var local_entry_to_translate = item,
+                                    translation_to_update = false;
+
+                                local_entry_to_translate.translations.forEach(function (item_translation, x, a) {
+                                    if (item_translation.id == entry_new_translation.translation.id) {
+                                        translation_to_update = item_translation;
+                                    }
+                                });
+                                if (translation_to_update) {
+                                    // если перевод не новый, а апдейтится уже имеющийся
+                                    translation_to_update.body = entry_new_translation.translation.body;
+                                    translation_to_update.isApproved = entry_new_translation.translation.isApproved;
+                                } else {
+                                    // а если перевод новый, то проверяем, не закинут ли он ещё в общий пул аяксом
+                                    // и добавляем его
+                                    if (!(entry_new_translation.translation in local_entry_to_translate['translations'])) {
+                                        local_entry_to_translate['translations'].push(entry_new_translation.translation);
+                                    }
+                                }
+
+                                if (entry_new_translation.translation.isApproved === true) {
+                                    if (local_entry_to_translate === $scope.activeEntry) {
+                                        $scope.activeEntry = null;
+                                    }
+                                    local_entry_to_translate.approved = true;
+                                    applyTranslation(local_entry_to_translate, entry_new_translation.translation);
+                                } else {
+                                    updateTranslation(local_entry_to_translate);
+                                }
+                            }
+                        })
+                    }
+                }
+                if ('remove_translation' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == ws_data['remove_translation'].id) {
+                                var i;
+                                for (i = 0; i < item.translations.length; i++) {
+                                    var translation = item.translations[i];
+                                    if (translation.id === ws_data['remove_translation'].translation.id) {
+                                        delete item.translations.splice(i, 1);
+                                        break;
+                                    }
+                                }
+                                updateTranslation(item);
+                            }
+                        })
+                    }
+                }
+                if ('current_edit_start' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_start']) {
+                                item.isBeingEdited[ws_data['user']] = ".";
+                            } else {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
+                    }
+                }
+                if ('current_edit_stop' in ws_data) {
+                    //console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_stop']) {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
+                    }
+                }
+                $scope.$apply();
+            };
+
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
@@ -14,15 +177,17 @@
                     return div.textContent || div.innerText || "";
                 },
                 updateTranslationProgress = function () {
-                    $http.post('/ajax/get-translation-progress/', {
-                        text: textId,
-                        target_lang: window['translationTargetLang']
-                    }).success(function (data) {
-                        $scope.translationProgress = data['translation_progress'];
-                        $scope.translationCounts = data['translation_counts'];
-                    }).error(function (a) {
-                        //console.error(a);
-                    });
+                    if (!$scope.ws_active) {
+                        $http.post('/ajax/get-translation-progress/', {
+                            text: textId,
+                            target_lang: window['translationTargetLang']
+                        }).success(function (data) {
+                            $scope.translationProgress = data['translation_progress'];
+                            $scope.translationCounts = data['translation_counts'];
+                        }).error(function (a) {
+                            //console.error(a);
+                        });
+                    }
                 },
                 applyTranslation = function (entry, translation) {
                     entry.translation = (clearTranslation(entry, translation));
@@ -207,6 +372,19 @@
                         }, 500);
                     }, 100);
                 },
+                entrySetEditingStatus = function (entry, status) {
+                    if (status == "start") {
+                        $scope.socket.send(JSON.stringify({"text": {
+                                "current_edit_start" : entry.id,
+                                "user": $scope.user
+                            }}));
+                    } else if (status == "stop") {
+                        $scope.socket.send(JSON.stringify({"text": {
+                                "current_edit_stop" : entry.id,
+                                "user": $scope.user
+                            }}));
+                    }
+                },
                 expandEntry = function (entry) {
                     if (!entry.approved) {
                         $scope.activeEntry = entry;
@@ -217,6 +395,7 @@
                                 $('#entry-suggestion-' + entry.id).focus();
                             }, 10);
                         }
+                        entrySetEditingStatus(entry, 'start');
                     }
                     scrollToEntry(entry);
                 };
@@ -239,6 +418,7 @@
                     translation.isApproved = true;
                     entry.approved = true;
                     applyTranslation(entry, translation);
+                    entrySetEditingStatus(entry, 'stop');
                     $scope.activeEntry = null;
                     var t;
                     for (var i = entry['translations'].length - 1; i >= 0; i--) {
@@ -264,6 +444,7 @@
                         translation.isApproved = false;
                         entry.approved = false;
                         $scope.activeEntry = entry;
+                        entrySetEditingStatus(entry, 'start');
                         entry.translation = '';
                         updateTranslation(entry);
                     })
@@ -322,7 +503,9 @@
                             }
                         }
                     } else {
-                        entry['translations'].push(data);
+                        if (!(data in entry['translations'])){
+                            entry['translations'].push(data);
+                        }
                     }
                     entry.editing = false;
                     entry.suggestion = '';
@@ -386,6 +569,7 @@
             };
             $scope.cancelEditing = function (entry) {
                 entry.editing = false;
+                entrySetEditingStatus(entry, 'stop');
                 entry.suggestion = '';
                 entry.suggestionId = false;
             };

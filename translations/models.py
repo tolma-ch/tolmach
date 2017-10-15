@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db import models
 import math
+
+from channels import Group
+
 from entries.models import Subject, Language
 
 
@@ -238,6 +241,14 @@ class TextTranslation(models.Model):
             return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
         else:
             return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
+
+    @property
+    def websocket_group(self):
+        """
+        Returns the Channels Group that sockets should subscribe to to get sent
+        messages as they are generated.
+        """
+        return Group("text-translation-%d" % self.id)
 
 
 class TextTranslationMeta(models.Model):
