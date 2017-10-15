@@ -58,6 +58,7 @@
             margin-left: 0 !important;
         }
     </style>
+
     <script>
         window['textId'] = {{ text.id }};
         window['useMachine'] = {{ use_machine }};
@@ -65,6 +66,7 @@
         window['translationSourceLang'] = '{{ source_lang }}';
         window['translation_progress'] = {{ translation_progress }};
         window['translation_counts'] = {{ translation_counts }};
+        window['wsTextConnectHost'] = '{{ ws_connect_host }}';
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -72,6 +74,7 @@
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
                      ng-show="!busy">
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
@@ -79,15 +82,20 @@
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
                                     'text-piece_approved': entry.approved,
-                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0)}">
+                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0),
+                                    'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}">
 
                         <div class="text-piece__original" ng-mouseup="mouseup()">
                             <div ng-if="$parent.activeEntry !== entry">
                                 <div ng-if="!entry.approved">
                                     <span html-content="entry.body"></span>
+                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
                                 <div ng-if="entry.approved">
-                                    <span class="text-piece__body" html-content="entry.translation"></span>
+                                    <span class="text-piece__body">
+                                        <span html-content="entry.translation"></span>
+                                        {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    </span>
                                     <div class="text-piece__icons">
                                         <a class="active"
                                            ng-click="disapproveEntry(entry)"
@@ -102,6 +110,7 @@
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
                                     <span html-content="entry.body"></span>
+                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
                                 <div ng-if="entry.meta.msgid_plural">
                                     <span class="grey">{% trans 'singular:' %}</span> <span html-content="entry.body"></span> <br>
@@ -263,6 +272,7 @@
                             </div>
                         </div>
                     </div>
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                 </div>
             </div>
 
@@ -271,22 +281,7 @@
                     <div class="text-overview__table">
                         <div class="text-overview__row text-overview__row_thin">
                             <div class="text-overview__cell">
-                                <div class="text-overview__paginator"
-                                     ng-show="pagesCount > 1">
-                                    <a href=""
-                                       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
-                                <span class="text-overview__paginator-text"
-                                      ng-show="!editPage"
-                                      ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
-                                    <input type="text"
-                                           ng-show="editPage"
-                                           focus-me="focusPaginator"
-                                           ng-model="page"
-                                           ng-keypress="paginatorKeypress($event)"
-                                           ng-blur="paginatorBlur()">
-                                    <a href=""
-                                       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
-                                </div>
+                                {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
                                     <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
                                     <style>

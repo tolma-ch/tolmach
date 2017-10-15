@@ -17,7 +17,7 @@ from translations.models import Project, Text, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
-from tolmach import local_settings
+from tolmach import settings
 
 
 @login_required
@@ -223,6 +223,8 @@ def view_translation(request, text_id, target_lang):
             'target_lang': target_lang,
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
+            # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
+            'ws_connect_host': settings.WS_HOST,
             'language_codes': [x.code for x in Language.objects.all()]
             }
     template = 'translations/view-text.html'
@@ -232,7 +234,7 @@ def view_translation(request, text_id, target_lang):
 @login_required
 def export_translation(request, text_id, target_lang, extra=None):
     import os
-    EXPORTS_DIR = local_settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
+    EXPORTS_DIR = settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
     text = get_object_or_404(Text, id=text_id)
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
