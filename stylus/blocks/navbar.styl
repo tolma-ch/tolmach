@@ -35,12 +35,11 @@
 	&-nav
 		margin 0
 		min-width 150px
-		.open
-			.dropdown-menu
-				@media (max-width: 768px)
-					position absolute
-					background-color white
-					box-shadow 0 0 10px 0 rgba(0, 0, 0, 0.5)
+		.dropdown-menu
+			@media (max-width: 768px)
+				position absolute !important
+				background-color white !important
+				box-shadow 0 0 10px 0 rgba(0, 0, 0, 0.5) !important
 
 		&__button 
 			display block
