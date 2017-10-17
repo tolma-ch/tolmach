@@ -105,6 +105,31 @@ def projects(request, proj_type):
 
 
 @login_required
+def project_lang_stats(request):
+    data = {}
+    all_projects = Project.objects.all()
+    for proj in all_projects:
+        proj_texts = Text.objects.filter(project=proj)
+        for text in proj_texts:
+            text_translations = TextTranslation.objects.filter(text=text)
+            for trans in text_translations:
+                lang_pair = "%s-%s" % (text.source_lang.code, trans.target_lang.code)
+                if proj.id in data:
+                    if not lang_pair in data[proj.id]:
+                        data[proj.id].append(lang_pair)
+                else:
+                    data[proj.id] = []
+                    data[proj.id].append(lang_pair)
+
+    new_data = {}
+    for key, value in data.iteritems():
+        if len(data[key]) > 1:
+            new_data[key] = value
+    print json.dumps(new_data)
+    return HttpResponse(json.dumps(new_data))
+
+
+@login_required
 def project(request, proj_id=0):
     projects_text = ''
     projects_url = ''
