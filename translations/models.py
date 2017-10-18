@@ -65,6 +65,7 @@ class Project(models.Model):
     """
     name = models.CharField(max_length=256)
     description = models.TextField(default="")
+    source_lang = models.ForeignKey('entries.Language', related_name='project_source_lang')
     manager = models.ForeignKey('auth.User')
     is_private = models.BooleanField(default=True)
     members = models.TextField(default="")
@@ -136,6 +137,17 @@ class Project(models.Model):
                 project_progress = 0
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
         return project_progress
+
+
+class ProjectTranslation(models.Model):
+    project = models.ForeignKey('translations.Project', related_name='project_translations')
+    target_lang = models.ForeignKey('entries.Language', related_name='project_translations_target_lang')
+    glossaries_list = models.ManyToManyField(Glossary)
+    tmdatabases_list = models.ManyToManyField(TMDatabase)
+
+    def __unicode__(self):
+        return unicode("%s - %s" % (self.project, self.target_lang))
+
 
 
 class Text(models.Model):
@@ -210,6 +222,7 @@ class TextMeta(models.Model):
 
 
 class TextTranslation(models.Model):
+    project_transation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation")
     text = models.ForeignKey('translations.Text', related_name='text_translations')
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
     glossaries_list = models.ManyToManyField(Glossary)
