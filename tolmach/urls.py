@@ -33,6 +33,7 @@ urlpatterns = patterns('',
 
     # dev needs
     url(r'^project_lang_stats/$', trans_views.project_lang_stats),
+    url(r'^new_project_page/$', trans_views.new_project_page),
     
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),

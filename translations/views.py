@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, Text, TextTranslation
+from translations.models import Project, ProjectTranslation, Text, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -127,6 +127,41 @@ def project_lang_stats(request):
             new_data[key] = value
     print json.dumps(new_data)
     return HttpResponse(json.dumps(new_data))
+
+
+@login_required
+def new_project_page(request):
+    pr = Project.objects.get(id=7)
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+    project_translation = ProjectTranslation.objects.get(project=pr)
+    pr.translation = project_translation
+
+    data ={
+        'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'project': pr,
+        'projectData': json.dumps({
+            'id': pr.id,
+            'name': pr.name,
+            'description': pr.description,
+        }),
+        'languages': lang_list,
+        'languagesData': json.dumps([{
+                                     'code': lang.code,
+                                     'langFull': lang.name,
+                                     'langLocal': lang.localized_name,
+                                     'id': lang.id
+                                     } for lang in lang_list]),
+        'subjects': Subject.objects.all(),}
+    # print json.dumps(data)
+    template = 'translations/dev_new_project.html'
+    return render_to_response(template, data, RequestContext(request))
 
 
 @login_required
