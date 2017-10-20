@@ -6,12 +6,44 @@
         project={{ projectData | safe }};
         projectId={{ project.id }};
         isUserManager = {{ is_user_manager }};
+        managerId = {{ manager_id }};
         languages = {{ languagesData | safe }};
     </script>
     <style>
+        .page-header {
+            border-bottom: none;
+        }
         .project-page {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+        }
+        .project-select-translation {
+            display: inline-block;
+        }
+        .project-select-translation .dropdown-toggle {
+            vertical-align: 0px;
+            padding: 0 !important;
+            border: 1px solid #ffffff !important;
+        }
+        .project-select-translation .dropdown-toggle:hover {
+            background-color: #ffffff !important;
+            /* border-color: #ABBAC3; */
+            border: 1px solid #b3b3b3 !important;
+            border-radius: 5px !important;
+            padding: 0px 5px !important;
+        }
+        .project-select-translation.open .dropdown-toggle {
+            background-color: #ffffff !important;
+            /* border-color: #ABBAC3; */
+            border: 1px solid #b3b3b3 !important;
+            border-radius: 5px !important;
+            padding: 0px 5px !important;
+        }
+        .project-list-texts__heading .stripy-heading__after {
+            width: 50%;
+        }
+        .project-list-texts__heading .stripy-heading__before {
+            width: 50%;
         }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
@@ -39,7 +71,18 @@
                 <!--{% endif %}-->
                 <i class="flag flag-{{ project.source_lang }}"></i>
                 <i class="fa fa-chevron-right"></i>
-                <i class="flag flag-{{ project.translation.target_lang }}"></i>
+                <!--<i class="flag flag-{{ project.translation.target_lang }}"></i>-->
+                <div class="dropdown project-select-translation">
+                  <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
+                      <i class="flag flag-{{ project.translation.target_lang }}"></i> {{ project.translation.target_lang }}
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>HTML</a></li>
+                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>CSS</a></li>
+                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>JavaScript</a></li>
+                  </ul>
+                </div>
+
             </h1>
         </div>
 
@@ -68,30 +111,32 @@
             <!--</div>-->
             <div class="col-sm-8">
                 <div class="widget-box">
-                    <div class="widget-header widget-header-flat">
-                        <h5>
-                            {% trans "Documents" %}
-                        </h5>
-                        <div class="widget-toolbar no-border"
-                             ng-show="isUserManager">
-                            <a href=""
-                               class="helped-block"
-                               help-text='{% trans "Click here to add new document to translate" %}'
-                               tooltip="{% trans 'Add' %}"
-                               tooltip-append-to-body="true"
-                               ng-click="addText()">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                        </div>
+                    <!--<div class="widget-header widget-header-flat">-->
+                        <!--<h5>-->
+                            <!--{% trans "Documents" %}-->
+                        <!--</h5>-->
+                        <!--<div class="widget-toolbar no-border"-->
+                             <!--ng-show="isUserManager">-->
+                            <!--<a href=""-->
+                               <!--class="helped-block"-->
+                               <!--help-text='{% trans "Click here to add new document to translate" %}'-->
+                               <!--tooltip="{% trans 'Add' %}"-->
+                               <!--tooltip-append-to-body="true"-->
+                               <!--ng-click="addText()">-->
+                                <!--<i class="fa fa-plus-circle"></i>-->
+                            <!--</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <div class="project-list-texts__heading stripy-heading">
+                        <span class="stripy-heading__before"></span>
+                        <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{% trans "Documents" %}</span>
+                        <span class="stripy-heading__after"></span>
                     </div>
-                    <div class="widget-body">
+                    <div class="">
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
-                                <div class="project-list-text__cell-btn">
-                                    <i class="flag flag-{=:: text.sourceLang =}"></i>
-                                </div>
                                 <div class="project-list-text__title">
-                                    {=:: text.title =}
+                                    [{=:: text.sourceLang =}-{=:: text.translations[0].lang =}]{=:: text.title =}
                                     &nbsp;&nbsp;
                                     <a href=""
                                        ng-show="isUserManager"
@@ -121,11 +166,6 @@
                                             </li>
                                         </ul>
                                         <a href="/text/{=:: text.id =}/{=:: translation.lang =}/" class="project-list-text__item">
-                                            <span class="project-list-text__language"
-                                                  tooltip="{% trans 'Go to translation' %}"
-                                                  tooltip-append-to-body="true">
-                                                <i class="flag flag-{=:: translation.langFull =}"><span class="flag__text">{=:: translation.lang =}</span></i>
-                                            </span>
                                             <span class="project-list-text__progress"
                                                   tooltip="{% trans 'Fragments approved:' %} {=:: translation.counts[2] =}
                                                   {% trans 'Fragments translated:' %} {=:: translation.counts[1] =}"
@@ -141,6 +181,13 @@
                                 </div>
                             </div>
                         </div>
+                        <a href=""
+                           class="btn helped-block btn-sm new-proj-block-btn"
+                           ng-click="addText()"
+                           ng-show="isUserManager"
+                           tooltip="{% trans 'Add' %}"
+                           tooltip-append-to-body="true"
+                           help-text='{% trans "Click here to add new document to translate" %}'>{% trans 'Add' %}</a>
                     </div><!-- /widget-body -->
                 </div>
             </div>
@@ -151,7 +198,11 @@
                     }
                     .project-page-tabs-content {
                         border: none;
+                        border-top: 1px solid #C4D0DB;
                         padding: 0 0;
+                    }
+                    .project-page-tabs li {
+                        margin-bottom: 0px;
                     }
                     .project-page-tabs li.active a {
                         border-bottom: 5px solid #38c150 !important;
@@ -161,6 +212,7 @@
                         border-right: none !important;
                     }
                     .project-page-tabs li a {
+                        text-transform: uppercase;
                         border: none !important;
                         box-shadow: none !important;
                         background: none;
@@ -172,7 +224,7 @@
                             <a  href="#1" data-toggle="tab">{% trans "Participants" %}</a>
                         </li>
                         <li>
-                            <a href="#2" data-toggle="tab">{% trans "TMX/Glossaries" %}</a>
+                            <a href="#2" data-toggle="tab">Инструменты</a>
                         </li>
                         <li>
                             <a href="#3" data-toggle="tab">О проекте</a>
@@ -200,7 +252,7 @@
                                         <a class="project-list-participant__btn tooltip-warning" href=""
                                            tooltip="{% trans "Remove participant" %}"
                                            tooltip-append-to-body="true"
-                                           ng-show="isUserManager"
+                                           ng-show="isUserManager && !(participant.id == managerId)"
                                            popover-template="'participantRemovePopover.html'"
                                            popover-placement="left"
                                            popover-append-to-body="true"
@@ -222,7 +274,7 @@
                             <div class="widget-main">
                                 <div class="project-list-glossary" ng-repeat="tmx in tmxes">
                                     <div class="project-list-glossary__name">
-                                        <i class="fa fa-language"></i>
+                                        <i class="fa fa-th-list"></i>
                                         {=:: tmx.name =}
                                     </div>
                                     <div class="project-list-glossary__btns">
@@ -250,31 +302,36 @@
                         </div><!-- /widget-body -->
                     </div>
                     <div class="tab-pane" id="3">
-                        <p ng-show="!editingDescription">{= project.description =}</p>
-                        <textarea class="form-control" name="" id="" cols="30" rows="10"
-                                  ng-model="projectDescription"
-                                  ng-show="editingDescription"></textarea>
-                        {% if is_user_manager == 'true' %}
-                        <a class="float-right"
-                                  href=""
-                                  ng-show="editingDescription"
-                                  ng-click="saveDescription()"><i class="fa fa-check"></i></a>
-                        <a class="float-right"
-                           href=""
-                           ng-show="editingDescription"
-                           ng-click="cancelEditDescription()"><i class="fa fa-times"></i></a>
-                        <a class="float-right"
-                                  href=""
-                                  ng-show="!editingDescription"
-                                  ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
-                        {% endif %}
-                        {% if is_user_manager == 'true' %}
-                        <div class="pull-right">
-                            <a popover-template="'projectRemovePopover.html'"
-                               popover-placement="left"
-                               class="btn btn-default">{% trans "Remove Project" %}</a>
+                        <div class="widget-main">
+                            <h4>Описание</h4>
+                            <p ng-show="!editingDescription">{= project.description =}</p>
+                            <textarea class="form-control" name="" id="" cols="30" rows="10"
+                                      ng-model="projectDescription"
+                                      ng-show="editingDescription"></textarea>
+                            {% if is_user_manager == 'true' %}
+                            <a class="float-right"
+                                      href=""
+                                      ng-show="editingDescription"
+                                      ng-click="saveDescription()"><i class="fa fa-check"></i></a>
+                            <a class="float-right"
+                               href=""
+                               ng-show="editingDescription"
+                               ng-click="cancelEditDescription()"><i class="fa fa-times"></i></a>
+                            <a class="float-right"
+                                      href=""
+                                      ng-show="!editingDescription"
+                                      ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
+                            {% endif %}
+                            {% if is_user_manager == 'true' %}
+                            <h4>Внимание</h4>
+                            <div class="">
+                                <a popover-template="'projectRemovePopover.html'"
+                                   popover-placement="right"
+                                   style="z-index: 999;"
+                                   class="btn btn-xs btn-danger">{% trans "Remove Project" %}</a>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                 </div>
               </div>

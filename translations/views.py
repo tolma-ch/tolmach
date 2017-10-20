@@ -145,6 +145,7 @@ def new_project_page(request):
 
     data ={
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'manager_id': pr.manager.id,
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,
