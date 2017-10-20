@@ -112,7 +112,7 @@ def participant_ajax(request, project):
         else:
             members = []
         users = User.objects.filter(id__in=members)
-        result = []
+        result = [user_to_json(project.manager)]
         for user in users:
             result.append(user_to_json(user))
         return HttpResponse(json.dumps(result), content_type="application/json")

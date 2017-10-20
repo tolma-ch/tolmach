@@ -499,6 +499,7 @@
             $scope.project = window['project'];
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
+            $scope.managerId = window['managerId'];
             $scope.languages = window['languages'];
             $scope.participants = [];
             $http.get('/ajax/participant', {params: {project: $scope.projectId}})
