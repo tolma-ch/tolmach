@@ -164,7 +164,6 @@ def new_project_page(request):
     template = 'translations/dev_new_project.html'
     return render_to_response(template, data, RequestContext(request))
 
-
 @login_required
 def project(request, proj_id=0):
     projects_text = ''
@@ -172,6 +171,28 @@ def project(request, proj_id=0):
 
     try:
         pr = Project.objects.get(id=proj_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+    if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
+        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
+        return HttpResponseRedirect('/')
+
+    project_default_translation = ProjectTranslation.objects.filter(project=pr)[0]
+    return HttpResponseRedirect('/project/%s/%s/' % (proj_id, project_default_translation.target_lang.code))
+
+
+@login_required
+def project_by_translation(request, target_lang, proj_id=0):
+    projects_text = ''
+    projects_url = ''
+
+    try:
+        pr = Project.objects.get(id=proj_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+    try:
+        project_translation = ProjectTranslation.objects.get(project=pr,
+                                                         target_lang=Language.objects.get(code=target_lang))
     except Project.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
     if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
@@ -200,8 +221,12 @@ def project(request, proj_id=0):
         localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
 
+    pr.translation = project_translation
+
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'manager_id': pr.manager.id,
+        'target_lang': target_lang,
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,
@@ -221,7 +246,7 @@ def project(request, proj_id=0):
                        [pr.name, ''],
         ],
     }
-    template = 'translations/project.html'
+    template = 'translations/dev_new_project.html'
     return render_to_response(template, data, RequestContext(request))
 
 

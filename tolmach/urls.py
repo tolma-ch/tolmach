@@ -36,6 +36,7 @@ urlpatterns = patterns('',
     url(r'^new_project_page/$', trans_views.new_project_page),
     
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
+    url(r'^project/(?P<proj_id>\d+)/(?P<target_lang>\w+)/$', trans_views.project_by_translation, name='project_by_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),

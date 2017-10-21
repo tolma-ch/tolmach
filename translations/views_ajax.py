@@ -206,14 +206,12 @@ def participant_ajax(request, project):
 @login_required
 def text_ajax(request, project):
     if request.method == 'GET':
+        params = request.GET
         texts = Text.objects.filter(project=project)
-        translations = TextTranslation.objects.filter(text__in=texts)
+        translations = TextTranslation.objects.filter(text__in=texts, target_lang=Language.objects.get(code=params['project_target_lang']))
         text_dict = {}
         for i in translations:
-            if not i.text in text_dict:
-                text_dict[i.text] = [i]
-            else:
-                text_dict[i.text].append(i)
+            text_dict[i.text] = i
         result = []
         for text in texts:
             result.append(text_to_json(text, text_dict[text], request.LANGUAGE_CODE))
@@ -238,53 +236,6 @@ def text_ajax(request, project):
             text_options = json.loads(text.options)
             text_options['machine'] = post['machine']
             text.options = json.dumps(text_options)
-
-            # text.subject = subject
-            if 'translations' in post:
-                all_text_translations = [x.target_lang for x in TextTranslation.objects.filter(text=text)]
-                for translation in post['translations']:
-                    try:
-                        target_lang = Language.objects.get(id=translation['targetLangId'])
-                    except Language.DoesNotExist:
-                        return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-
-                    try:
-                        all_text_translations.remove(target_lang)
-                    except:
-                        pass
-
-                    try:
-                        text_translation = TextTranslation.objects.get(text=text,
-                                                                       target_lang=target_lang)
-                    except TextTranslation.DoesNotExist:
-                        text_translation = translation_ajax(request, text, target_lang, local_call=True, method="POST")
-
-                    if 'glossaries' in translation:
-                        glossary_ids_list = [str(x) for x in translation['glossaries']]
-                        text_translation.glossaries_list.clear()
-                        for glossary_id in glossary_ids_list:
-                            text_translation.glossaries_list.add(Glossary.objects.get(id=glossary_id))
-                    else:
-                        text_translation.glossaries_list.clear()
-
-                    # clearing text translation cache after glossaries update
-                    cache.delete("%d_translation_entries" % text_translation.id)
-
-                    if 'tmxes' in translation:
-                        tmdb_ids_list = [str(x) for x in translation['tmxes']]
-                        text_translation.tmdatabases_list.clear()
-                        for tmx_id in tmdb_ids_list:
-                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=tmx_id))
-                    else:
-                        text_translation.tmdatabases_list.clear()
-                    text_translation.save()
-                for target_lang in all_text_translations:
-                    try:
-                        translation = TextTranslation.objects.get(text=text,
-                                                                  target_lang=target_lang)
-                        translation.delete()
-                    except TextTranslation.DoesNotExist:
-                        pass
 
             text.save()
         else:
@@ -360,8 +311,8 @@ def text_ajax(request, project):
             else:
                 return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
-        translations = TextTranslation.objects.filter(text=text)
-        result = text_to_json(text, translations, request.LANGUAGE_CODE)
+        translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['project_target_lang']))
+        result = text_to_json(text, translation, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'text' not in request.GET:

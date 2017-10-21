@@ -9,6 +9,7 @@
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
             $scope.managerId = window['managerId'];
+            $scope.targetLang = window['targetLang'];
             $scope.languages = window['languages'];
             $scope.participants = [];
             $http.get('/ajax/participant', {params: {project: $scope.projectId}})
@@ -16,7 +17,7 @@
                     $scope.participants = response.data;
                 });
             $scope.texts = [];
-            $http.get('/ajax/text', {params: {project: $scope.projectId}})
+            $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.texts = response.data;
                 });
@@ -88,15 +89,6 @@
                     resolve: {
                         text: function () {
                             return text;
-                        },
-                        glossaries: function () {
-                            return $scope.glossaries;
-                        },
-                        tmxes: function () {
-                            return $scope.tmxes;
-                        },
-                        languages: function () {
-                            return $scope.languages;
                         }
                     }
                 });
@@ -518,85 +510,10 @@
             };
         }
     ]);
-    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text', 'glossaries', 'tmxes', 'languages',
-        function ($scope, $modalInstance, $http, text, glossaries, tmxes, languages) {
+    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text',
+        function ($scope, $modalInstance, $http, text) {
             $scope.text = text;
             $scope.options = {};
-            if ($scope.text.translations.length) {
-                $scope.options.currentTranslation = $scope.text.translations[0];
-            } else {
-                $scope.options.currentTranslation = null;
-            }
-            $scope.options.addNewTranslation = false;
-            $scope.glossaries = glossaries;
-            $scope.tmxes = tmxes;
-            $scope.tab = 0;
-            $scope.addTranslation = function (targetLang) {
-                if (!targetLang) {
-                    return;
-                }
-                $scope.text.translations.push({
-                    targetLangId: targetLang.id,
-                    lang: targetLang.code,
-                    langFull: targetLang.langFull,
-                    langLocal: targetLang.langLocal
-                });
-                $scope.options.NewTranslationTargetLang = null;
-                $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
-                $scope.options.addNewTranslation = false;
-            };
-            $scope.getLanguages = function () {
-                var result = [],
-                    excludes = [],
-                    i;
-                for (i = 0; i < $scope.text.translations.length; i++) {
-                    var translation = $scope.text.translations[i];
-                    excludes.push(Number(translation.targetLangId));
-                }
-                for (i = 0; i < languages.length; i++) {
-                    var language = languages[i];
-                    if (excludes.indexOf(Number(language.id)) === -1) {
-                        result.push(language);
-                    }
-                }
-                return result;
-            };
-            $scope.toggleGlossary = function (id) {
-                if (typeof id === 'undefined') {
-                    $scope.options.currentTranslation.allGlossaries = !$scope.options.currentTranslation.allGlossaries;
-                    if ($scope.options.currentTranslation.allGlossaries) {
-                        $scope.options.currentTranslation.glossaries = $scope.glossaries.map(function (item) {return item.id;});
-                    } else {
-                        $scope.options.currentTranslation.glossaries = [];
-                    }
-                } else {
-                    var index = $scope.options.currentTranslation.glossaries.indexOf(id);
-                    if (index > -1) {
-                        $scope.options.currentTranslation.glossaries.splice(index, 1);
-                    } else {
-                        $scope.options.currentTranslation.glossaries.push(id);
-                    }
-                    $scope.options.currentTranslation.allGlossaries = $scope.options.currentTranslation.glossaries.length === $scope.glossaries.length;
-                }
-            };
-            $scope.toggleTmx = function (id) {
-                if (typeof id === 'undefined') {
-                    $scope.options.currentTranslation.allTmxes = !$scope.options.currentTranslation.allTmxes;
-                    if ($scope.options.currentTranslation.allTmxes) {
-                        $scope.options.currentTranslation.tmxes = $scope.tmxes.map(function (item) {return item.id;});
-                    } else {
-                        $scope.options.currentTranslation.tmxes = [];
-                    }
-                } else {
-                    var index = $scope.options.currentTranslation.tmxes.indexOf(id);
-                    if (index > -1) {
-                        $scope.options.currentTranslation.tmxes.splice(index, 1);
-                    } else {
-                        $scope.options.currentTranslation.tmxes.push(id);
-                    }
-                    $scope.options.currentTranslation.allTmxes = $scope.options.currentTranslation.tmxes.length === $scope.tmxes.length;
-                }
-            };
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';
@@ -615,13 +532,12 @@
                     project: window['projectId'],
                     id: $scope.text.id,
                     title: $scope.text.title,
+                    project_target_lang: window['targetLang'],
                     machine: $scope.text.machine,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
-                    glossaries: $scope.text.glossaries,
                     translations: $scope.text.translations,
-                    tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
                 $http.post('/ajax/text/', data)

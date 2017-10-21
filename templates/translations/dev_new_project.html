@@ -7,6 +7,7 @@
         projectId={{ project.id }};
         isUserManager = {{ is_user_manager }};
         managerId = {{ manager_id }};
+        targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
     </script>
     <style>
@@ -45,6 +46,13 @@
         .project-list-texts__heading .stripy-heading__before {
             width: 50%;
         }
+        .project-list-text__edit-button {
+            display: table-cell;
+            max-width: 5px;
+            vertical-align: middle;
+            margin-right: -15px;
+            padding: 12px;
+        }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
@@ -52,26 +60,8 @@
                 <span ng-show="!editingName">
                     {= project.name =}
                 </span>
-                <!--{% if is_user_manager == 'true' %}-->
-                <!--<input class="form-contrl" type="text"-->
-                       <!--ng-show="editingName"-->
-                       <!--ng-model="projectName"/>-->
-                <!--<small><a class="float-right"-->
-                          <!--href=""-->
-                          <!--ng-show="!editingName"-->
-                          <!--ng-click="editName()"><i class="fa fa-pencil"></i></a></small>-->
-                <!--<small><a class="float-right"-->
-                          <!--href=""-->
-                          <!--ng-show="editingName"-->
-                          <!--ng-click="saveName()"><i class="fa fa-check"></i></a></small>-->
-                <!--<small><a class="float-right"-->
-                          <!--href=""-->
-                          <!--ng-show="editingName"-->
-                          <!--ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>-->
-                <!--{% endif %}-->
                 <i class="flag flag-{{ project.source_lang }}"></i>
                 <i class="fa fa-chevron-right"></i>
-                <!--<i class="flag flag-{{ project.translation.target_lang }}"></i>-->
                 <div class="dropdown project-select-translation">
                   <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
                       <i class="flag flag-{{ project.translation.target_lang }}"></i> {{ project.translation.target_lang }}
@@ -88,45 +78,8 @@
 
 
         <div class="row">
-            <!--<div class="col-sm-3">-->
-                <!--<div class="widget-box">-->
-                    <!--<div class="widget-header widget-header-flat">-->
-                        <!--<h5>-->
-                            <!--{% trans "Participants" %}-->
-                        <!--</h5>-->
-                        <!--<div class="widget-toolbar no-border"-->
-                             <!--tooltip="{% trans 'Add' %}"-->
-                             <!--tooltip-append-to-body="true"-->
-                             <!--ng-show="isUserManager">-->
-                            <!--<a href=""-->
-                               <!--class="helped-block"-->
-                               <!--help-text='{% trans "Click here to add member" %}'-->
-                               <!--ng-click="addParticipant()">-->
-                                <!--<i class="fa fa-plus-circle"></i>-->
-                            <!--</a>-->
-                        <!--</div>-->
-                    <!--</div>-->
-
-                <!--</div>-->
-            <!--</div>-->
             <div class="col-sm-8">
                 <div class="widget-box">
-                    <!--<div class="widget-header widget-header-flat">-->
-                        <!--<h5>-->
-                            <!--{% trans "Documents" %}-->
-                        <!--</h5>-->
-                        <!--<div class="widget-toolbar no-border"-->
-                             <!--ng-show="isUserManager">-->
-                            <!--<a href=""-->
-                               <!--class="helped-block"-->
-                               <!--help-text='{% trans "Click here to add new document to translate" %}'-->
-                               <!--tooltip="{% trans 'Add' %}"-->
-                               <!--tooltip-append-to-body="true"-->
-                               <!--ng-click="addText()">-->
-                                <!--<i class="fa fa-plus-circle"></i>-->
-                            <!--</a>-->
-                        <!--</div>-->
-                    <!--</div>-->
                     <div class="project-list-texts__heading stripy-heading">
                         <span class="stripy-heading__before"></span>
                         <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{% trans "Documents" %}</span>
@@ -135,17 +88,32 @@
                     <div class="">
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
-                                <div class="project-list-text__title">
-                                    [{=:: text.sourceLang =}-{=:: text.translations[0].lang =}]{=:: text.title =}
-                                    &nbsp;&nbsp;
+                                <div class="project-list-text__edit-button"
+                                     ng-if="isUserManager">
                                     <a href=""
-                                       ng-show="isUserManager"
                                        ng-click="editText(text)"
                                        tooltip="{% trans 'Edit text' %}"
                                        tooltip-append-to-body="true"><i class="fa fa-pencil"></i></a>
                                 </div>
+                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/">
+                                    <div class="project-list-text__title">
+                                        {=:: text.title =}
+                                    </div>
+                                </a>
                                 <div class="project-list-text__cell">
-                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations" style="position: relative;">
+                                    <div class="project-list-text__translation" style="position: relative;">
+                                        <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/" class="project-list-text__item">
+                                            <span class="project-list-text__progress"
+                                                  tooltip="{% trans 'Fragments approved:' %} {=:: text.translation.counts[2] =}
+                                                  {% trans 'Fragments translated:' %} {=:: text.translation.counts[1] =}"
+                                                  tooltip-append-to-body="true">
+                                                <div class="progress-bar">
+                                                    <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>
+                                                    <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
+                                                    <span class="progress-bar__value">{=:: text.translation.progress[1] =}%</span>
+                                                </div>
+                                            </span>
+                                        </a>
                                         <a class="project-list-text__btn dropdown"
                                            href="#"
                                            data-toggle="dropdown"
@@ -153,30 +121,18 @@
                                            tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
                                         <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                                             <li>
-                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/">
+                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/">
                                                     <i class="fa-off"></i>
                                                     {% trans 'Translated document' %}
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/pairs/">
+                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/pairs/">
                                                     <i class="fa-off"></i>
                                                     {% trans 'Bilingual DOCX' %}
                                                 </a>
                                             </li>
                                         </ul>
-                                        <a href="/text/{=:: text.id =}/{=:: translation.lang =}/" class="project-list-text__item">
-                                            <span class="project-list-text__progress"
-                                                  tooltip="{% trans 'Fragments approved:' %} {=:: translation.counts[2] =}
-                                                  {% trans 'Fragments translated:' %} {=:: translation.counts[1] =}"
-                                                  tooltip-append-to-body="true">
-                                                <div class="progress-bar">
-                                                    <div class="progress-bar__gauge" style="width:{=:: translation.progress[1] =}%;background:#02c14f"></div>
-                                                    <div class="progress-bar__gauge" style="width: {=:: translation.progress[0] - translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
-                                                    <span class="progress-bar__value">{=:: translation.progress[1] =}%</span>
-                                                </div>
-                                            </span>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
