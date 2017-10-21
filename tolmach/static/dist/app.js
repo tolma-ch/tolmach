@@ -878,17 +878,12 @@
                     $scope.error = 'Subject is lost';
                     return;
                 }
-                if (!$scope.text.sourceLang) {
-                    $scope.error = 'Langauges is not set?';
-                    return;
-                }
                 $scope.error = '';
                 var data = {
                     project: window['projectId'],
                     title: $scope.text.title,
-                    subject: $scope.text.subject,
-                    sourceLang: $scope.text.sourceLang,
-                    targetLang: $scope.text.targetLang
+                    project_target_lang: window['targetLang'],
+                    subject: $scope.text.subject
                 };
                 if ($scope.tab === 0) {
                     if (!$scope.text.files || !$scope.text.files.length) {
@@ -950,9 +945,8 @@
                                     var data = {
                                         project: window['projectId'],
                                         title: $scope.text.title,
+                                        project_target_lang: window['targetLang'],
                                         subject: $scope.text.subject,
-                                        sourceLang: $scope.text.sourceLang,
-                                        targetLang: $scope.text.targetLang,
                                         file_name: serverFileName,
                                         file_type: serverFileType,
                                         custom_parse: ranges
@@ -1005,81 +999,6 @@
         function ($scope, $modalInstance, $http, text) {
             $scope.text = text;
             $scope.options = {};
-            //if ($scope.text.translations.length) {
-            //    $scope.options.currentTranslation = $scope.text.translations[0];
-            //} else {
-            //    $scope.options.currentTranslation = null;
-            //}
-            //$scope.options.addNewTranslation = false;
-            //$scope.glossaries = glossaries;
-            //$scope.tmxes = tmxes;
-            //$scope.tab = 0;
-            //$scope.addTranslation = function (targetLang) {
-            //    if (!targetLang) {
-            //        return;
-            //    }
-            //    $scope.text.translations.push({
-            //        targetLangId: targetLang.id,
-            //        lang: targetLang.code,
-            //        langFull: targetLang.langFull,
-            //        langLocal: targetLang.langLocal
-            //    });
-            //    $scope.options.NewTranslationTargetLang = null;
-            //    $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
-            //    $scope.options.addNewTranslation = false;
-            //};
-            //$scope.getLanguages = function () {
-            //    var result = [],
-            //        excludes = [],
-            //        i;
-            //    for (i = 0; i < $scope.text.translations.length; i++) {
-            //        var translation = $scope.text.translations[i];
-            //        excludes.push(Number(translation.targetLangId));
-            //    }
-            //    for (i = 0; i < languages.length; i++) {
-            //        var language = languages[i];
-            //        if (excludes.indexOf(Number(language.id)) === -1) {
-            //            result.push(language);
-            //        }
-            //    }
-            //    return result;
-            //};
-            //$scope.toggleGlossary = function (id) {
-            //    if (typeof id === 'undefined') {
-            //        $scope.options.currentTranslation.allGlossaries = !$scope.options.currentTranslation.allGlossaries;
-            //        if ($scope.options.currentTranslation.allGlossaries) {
-            //            $scope.options.currentTranslation.glossaries = $scope.glossaries.map(function (item) {return item.id;});
-            //        } else {
-            //            $scope.options.currentTranslation.glossaries = [];
-            //        }
-            //    } else {
-            //        var index = $scope.options.currentTranslation.glossaries.indexOf(id);
-            //        if (index > -1) {
-            //            $scope.options.currentTranslation.glossaries.splice(index, 1);
-            //        } else {
-            //            $scope.options.currentTranslation.glossaries.push(id);
-            //        }
-            //        $scope.options.currentTranslation.allGlossaries = $scope.options.currentTranslation.glossaries.length === $scope.glossaries.length;
-            //    }
-            //};
-            //$scope.toggleTmx = function (id) {
-            //    if (typeof id === 'undefined') {
-            //        $scope.options.currentTranslation.allTmxes = !$scope.options.currentTranslation.allTmxes;
-            //        if ($scope.options.currentTranslation.allTmxes) {
-            //            $scope.options.currentTranslation.tmxes = $scope.tmxes.map(function (item) {return item.id;});
-            //        } else {
-            //            $scope.options.currentTranslation.tmxes = [];
-            //        }
-            //    } else {
-            //        var index = $scope.options.currentTranslation.tmxes.indexOf(id);
-            //        if (index > -1) {
-            //            $scope.options.currentTranslation.tmxes.splice(index, 1);
-            //        } else {
-            //            $scope.options.currentTranslation.tmxes.push(id);
-            //        }
-            //        $scope.options.currentTranslation.allTmxes = $scope.options.currentTranslation.tmxes.length === $scope.tmxes.length;
-            //    }
-            //};
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';

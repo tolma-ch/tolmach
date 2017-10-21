@@ -239,14 +239,7 @@ def text_ajax(request, project):
 
             text.save()
         else:
-            try:
-                source_lang = Language.objects.get(id=post['sourceLang'])
-            except Language.DoesNotExist:
-                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-            try:
-                target_lang = Language.objects.get(id=post['targetLang'])
-            except Language.DoesNotExist:
-                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+            source_lang = project.source_lang
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
 
@@ -292,7 +285,6 @@ def text_ajax(request, project):
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
-                      'target_lang': target_lang.code,
                       'custom_parse': json.dumps(custom_parse)
                       }
 

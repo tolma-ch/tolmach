@@ -387,17 +387,12 @@
                     $scope.error = 'Subject is lost';
                     return;
                 }
-                if (!$scope.text.sourceLang) {
-                    $scope.error = 'Langauges is not set?';
-                    return;
-                }
                 $scope.error = '';
                 var data = {
                     project: window['projectId'],
                     title: $scope.text.title,
-                    subject: $scope.text.subject,
-                    sourceLang: $scope.text.sourceLang,
-                    targetLang: $scope.text.targetLang
+                    project_target_lang: window['targetLang'],
+                    subject: $scope.text.subject
                 };
                 if ($scope.tab === 0) {
                     if (!$scope.text.files || !$scope.text.files.length) {
@@ -459,9 +454,8 @@
                                     var data = {
                                         project: window['projectId'],
                                         title: $scope.text.title,
+                                        project_target_lang: window['targetLang'],
                                         subject: $scope.text.subject,
-                                        sourceLang: $scope.text.sourceLang,
-                                        targetLang: $scope.text.targetLang,
                                         file_name: serverFileName,
                                         file_type: serverFileType,
                                         custom_parse: ranges

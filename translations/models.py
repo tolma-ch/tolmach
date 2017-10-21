@@ -222,7 +222,7 @@ class TextMeta(models.Model):
 
 
 class TextTranslation(models.Model):
-    project_transation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation")
+    project_translation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation")
     text = models.ForeignKey('translations.Text', related_name='text_translations')
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
     glossaries_list = models.ManyToManyField(Glossary)
