@@ -1195,7 +1195,9 @@
                 var data = {
                     'name': $scope.name,
                     'description': $scope.description || " ",
-                    'type': $scope.type
+                    'type': $scope.type,
+                    'source_lang': $scope.source_lang,
+                    'target_lang': $scope.target_lang
                 };
                 $scope.busy = true;
                 $http.post('/ajax/project-create/', data)

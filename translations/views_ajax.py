@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
@@ -13,7 +14,7 @@ from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
-from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectTranslation, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
@@ -76,11 +77,22 @@ def create_project_ajax(request):
         if 'type' not in post:
             return HttpResponse(json.dumps(_('Project type is not set')), content_type="application/json", status=400)
         access = post['type']
-        project = Project(name=name,
-                          description=description,
-                          is_private=access == 'private',
-                          manager=request.user)
-        project.save()
+        if 'source_lang' not in post:
+            return HttpResponse(json.dumps(_('Source language is not set')), content_type="application/json", status=400)
+        source_lang_id = post['source_lang']
+        if 'target_lang' not in post:
+            return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+        target_lang_id = post['target_lang']
+        with transaction.atomic():
+            project = Project(name=name,
+                              description=description,
+                              source_lang=Language.objects.get(id=source_lang_id),
+                              is_private=access == 'private',
+                              manager=request.user)
+            project.save()
+            project_translation = ProjectTranslation(project=project,
+                                                     target_lang=Language.objects.get(id=target_lang_id))
+            project_translation.save()
         return HttpResponse(json.dumps(project.id), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 

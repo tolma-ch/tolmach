@@ -79,6 +79,15 @@ def projects(request, proj_type):
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_proj_list = paginator.page(paginator.num_pages)
 
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+
     for proj in result_proj_list:
         proj.progress = proj.get_progress()
 
@@ -95,6 +104,7 @@ def projects(request, proj_type):
             'page_title': page_title,
             'active_tab': active_tab,
             'breadcrumbs': [[page_title, page_url], ],
+            'languages': lang_list,
             'projects': result_proj_list,
             'projects_page_active': True,
             'messages': messages.get_messages(request)
@@ -221,7 +231,8 @@ def project_by_translation(request, target_lang, proj_id=0):
         localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
 
-    pr.translation = project_translation
+    pr.current_translation = project_translation
+    pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
 
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
