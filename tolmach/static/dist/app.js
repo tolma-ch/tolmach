@@ -554,6 +554,18 @@
                         $scope.busy = false;
                     });
             };
+            $scope.addProjectTranslation = function () {
+                if (!$scope.isUserManager) {
+                    return;
+                }
+                var modalInstance = $modal.open({
+                    templateUrl: 'addProjectTranslationModal.html',
+                    controller: 'AddProjectTranslationModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {}
+                });
+            };
             $scope.addText = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'addTextModal.html',
@@ -801,6 +813,31 @@
                     });
             };
 
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddProjectTranslationModalCtrl', ['$scope', '$modalInstance', '$http',
+        function ($scope, $modalInstance, $http) {
+            $scope.error = '';
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'target_lang': $scope.target_lang
+                };
+                $scope.busy = true;
+                $http.post('/ajax/project-add-translation/', data)
+                    .success(function (data) {
+                        location.href = '/project/' + data['project_id'] + '/' + data['target_lang'] + '/';
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                        //$modalInstance.close();
+                    });
+            };
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
