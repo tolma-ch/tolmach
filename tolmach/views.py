@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 
 from translations.models import Project, Text, TextTranslation, TextEntry
+from entries.models import Language, Subject
 
 from tolmach.models import UserMeta, PairStats
 from tolmach import utils
@@ -31,6 +32,15 @@ def index(request):
         for proj in recent_projects:
             proj.progress = proj.get_progress()
 
+        lang_list = []
+        # Получаем список названий языков для текущей локали
+        from babel import Locale
+        for lang in Language.objects.all():
+            lang_name = Locale(lang.code)
+            localized_lang = lang
+            localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+            lang_list.append(localized_lang)
+
         # Костыль для выведения пустых столбиков статистики
         empty_list = []
         if len(ordered_stat) < 3:
@@ -49,6 +59,7 @@ def index(request):
                 'username': request.user.username,
                 'website': usermeta.website,
             }),
+            'languages': lang_list,
             'active_tab': 'main',
             'stat': ordered_stat,
             'empty_list': empty_list,

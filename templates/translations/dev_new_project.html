@@ -64,12 +64,13 @@
                 <i class="fa fa-chevron-right"></i>
                 <div class="dropdown project-select-translation">
                   <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
-                      <i class="flag flag-{{ project.translation.target_lang }}"></i> {{ project.translation.target_lang }}
+                      <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang }}
                   <span class="caret"></span></button>
                   <ul class="dropdown-menu">
-                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>HTML</a></li>
-                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>CSS</a></li>
-                    <li><a href="#"><i class="flag flag-{{ project.translation.target_lang }}"></i>JavaScript</a></li>
+                      {% for pr_translation in pr.translations %}
+                    <li><a href="#"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation }}</a></li>
+                      {% endfor %}
+                    <li><a href="#"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
                   </ul>
                 </div>
 
