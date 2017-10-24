@@ -98,6 +98,70 @@ def create_project_ajax(request):
 
 
 @login_required
+def add_project_translation(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        if 'project' not in post or not post['project']:
+            return HttpResponse(json.dumps(_('Project is not set')),
+                                content_type="application/json",
+                                status=400)
+        project_id = post['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+        if 'target_lang' not in post:
+            return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+        target_lang_id = post['target_lang']
+        target_lang = Language.objects.get(id=target_lang_id)
+
+        check_project_translation = ProjectTranslation.objects.filter(project=project,
+                                                                      target_lang=target_lang)
+        if check_project_translation:
+            return HttpResponse(json.dumps(_('There is already such project translation')), content_type="application/json", status=400)
+
+        with transaction.atomic():
+            project_translation = ProjectTranslation(project=project,
+                                                     target_lang=Language.objects.get(id=target_lang_id))
+            project_translation.save()
+
+            all_project_texts = Text.objects.filter(project=project)
+
+            for project_text in all_project_texts:
+                translation_meta = {}
+                all_text_translations = TextTranslation.objects.filter(text=project_text)
+                if all_text_translations:
+                    gettext_meta = TextTranslationMeta.objects.filter(translation=all_text_translations[0], meta_type='gettext_metadata')
+                    if gettext_meta:
+                        translation_meta = json.loads(gettext_meta)
+                        target_lang = target_lang
+                        plural_examples = utils.get_plural_examples(target_lang.plural_forms)
+                        translation_meta["meta_data"]["all_meta"]["Plural-Forms"] = target_lang.plural_forms
+                        translation_meta["meta_data"]["all_meta"]["Language"] = target_lang.code
+                        translation_meta["meta_data"]["plural_examples"] = plural_examples
+
+                # проверяем, нет ли ещё такого перевода у текста
+                check_translation = TextTranslation.objects.filter(target_lang=target_lang, text=project_text)
+                if not check_translation:
+                    new_translation = TextTranslation(project_translation=project_translation,
+                                                      text=project_text,
+                                                      target_lang=target_lang)
+                    new_translation.save()
+
+                    if translation_meta:
+                        trans_meta = TextTranslationMeta(translation=new_translation,
+                                                         meta_type=translation_meta["meta_type"],
+                                                         meta_data=json.dumps(translation_meta["meta_data"]),
+                                                         )
+                        trans_meta.save()
+
+        return HttpResponse(json.dumps({'project_id': project.id,
+                                        'target_lang': project_translation.target_lang.code}),
+                            content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+@login_required
 def get_users_ajax(request):
     r = request.GET['q'] if 'q' in request.GET else False
     if r:

@@ -43,6 +43,7 @@ urlpatterns = patterns('',
 
     # ajax
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
+    url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),
     url(r'^ajax/project/$', trans_ajax.project_ajax, name='project_ajax'),
     url(r'^ajax/entry/(?:(?P<action>\w+)/)?$', trans_ajax.entry_ajax, name='entry_action_ajax'),
     url(r'^ajax/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),

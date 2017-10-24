@@ -67,10 +67,10 @@
                       <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang }}
                   <span class="caret"></span></button>
                   <ul class="dropdown-menu">
-                      {% for pr_translation in pr.translations %}
-                    <li><a href="#"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation }}</a></li>
+                      {% for pr_translation in project.translations %}
+                    <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang }}</a></li>
                       {% endfor %}
-                    <li><a href="#"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
+                    <li><a href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
                   </ul>
                 </div>
 
@@ -300,6 +300,7 @@
     {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
     {% include "translations/partial/add_text_modal.html" %}
+    {% include "translations/partial/add_project_translation_modal.html" %}
     {% include "translations/partial/select_text_ranges_modal.html" %}
     {% include "translations/partial/edit_text_modal.html" %}
     {% include "translations/partial/text_remove_popover.html" %}
