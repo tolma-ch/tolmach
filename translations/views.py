@@ -270,21 +270,6 @@ def view_translation(request, text_id, target_lang):
     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
-    projects_text = ''
-    projects_url = ''
-    # res = ''
-    # body = text.body
-    # page = 1
-    # start = 101
-    # prefix = ''
-    # while body:
-    #     splited = body.split('<span data-entry="%d">' % start, 1)
-    #     res += ('<div entry-page="%d">' % page) + prefix + splited[0] + '</div>'
-    #     prefix = '<span data-entry="%d">' % start
-    #     page += 1
-    #     start += 100
-    #     body = splited[1] if len(splited) > 1 else False
-    # text.body = res
 
     pr = Project.objects.get(id=text.project.id)
     if pr.is_user_manager(request.user):
@@ -311,7 +296,7 @@ def view_translation(request, text_id, target_lang):
             'page_title': text.title,
             'breadcrumbs': [
                 [projects_text, projects_url],
-                [text.project.name, '/project/%d/' % text.project.id],
+                [text.project.name, '/project/%d/%s/' % (text.project.id, translation.target_lang.code)],
                 [text.title, ''],
             ],
             'text': text,

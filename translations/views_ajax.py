@@ -427,45 +427,45 @@ def update_text(request, text):
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
-def translation_ajax(request, text, target_lang, local_call=False, method=None):
-    method = method if method else request.method
-
-    if method == "POST":
-        text_translation = TextTranslation(text=text,
-                                           target_lang=target_lang,
-                                           )
-        text_translation.save()
-
-        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
-        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
-            gettext_meta = {
-                'all_meta': {
-                    'Project-Id-Version': '1.0',
-                    'Report-Msgid-Bugs-To': 'you@example.com',
-                    'POT-Creation-Date': '2007-10-18 14:00+0100',
-                    'PO-Revision-Date': '2007-10-18 14:00+0100',
-                    'Last-Translator': 'you <you@example.com>',
-                    'Language-Team': 'English <yourteam@example.com>',
-                    'Language': target_lang.code,
-                    'MIME-Version': '1.0',
-                    'Content-Type': 'text/plain; charset=utf-8',
-                    'Content-Transfer-Encoding': '8bit',
-                    'Plural-Forms': target_lang.plural_forms,
-                },
-                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
-            }
-
-            text_translation_meta = TextTranslationMeta(translation=text_translation,
-                                                        meta_type="gettext_metadata",
-                                                        meta_data=json.dumps(gettext_meta),
-                                                        )
-            text_translation_meta.save()
-
-        if local_call:
-            return text_translation
-        else:
-            return HttpResponse(json.dumps(True), content_type="application/json")
-    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+# def translation_ajax(request, text, target_lang, local_call=False, method=None):
+#     method = method if method else request.method
+#
+#     if method == "POST":
+#         text_translation = TextTranslation(text=text,
+#                                            target_lang=target_lang,
+#                                            )
+#         text_translation.save()
+#
+#         # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
+#         if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
+#             gettext_meta = {
+#                 'all_meta': {
+#                     'Project-Id-Version': '1.0',
+#                     'Report-Msgid-Bugs-To': 'you@example.com',
+#                     'POT-Creation-Date': '2007-10-18 14:00+0100',
+#                     'PO-Revision-Date': '2007-10-18 14:00+0100',
+#                     'Last-Translator': 'you <you@example.com>',
+#                     'Language-Team': 'English <yourteam@example.com>',
+#                     'Language': target_lang.code,
+#                     'MIME-Version': '1.0',
+#                     'Content-Type': 'text/plain; charset=utf-8',
+#                     'Content-Transfer-Encoding': '8bit',
+#                     'Plural-Forms': target_lang.plural_forms,
+#                 },
+#                 'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
+#             }
+#
+#             text_translation_meta = TextTranslationMeta(translation=text_translation,
+#                                                         meta_type="gettext_metadata",
+#                                                         meta_data=json.dumps(gettext_meta),
+#                                                         )
+#             text_translation_meta.save()
+#
+#         if local_call:
+#             return text_translation
+#         else:
+#             return HttpResponse(json.dumps(True), content_type="application/json")
+#     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 @login_required
