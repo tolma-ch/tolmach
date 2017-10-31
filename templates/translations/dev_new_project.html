@@ -77,6 +77,9 @@
             left: 13px;
             font-size: 20px;
         }
+        .project-sidebar__instruments-block {
+            min-height: 100px;
+        }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
@@ -262,7 +265,7 @@
                     <div class="tab-pane" id="2">
                         <div class="helped-block"
                              help-text='{% trans "Here will be TMXes and glossaries" %}'>
-                            <div class="widget-main">
+                            <div class="widget-main project-sidebar__instruments-block">
                                 <div class="project-list-participant helped-block"
                                      help-text='{% trans "Click here to translation memory or glossary" %}'>
                                     <a data-toggle="dropdown"
