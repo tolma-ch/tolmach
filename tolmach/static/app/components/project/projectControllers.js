@@ -22,7 +22,7 @@
                     $scope.texts = response.data;
                 });
             $scope.glossaries = [];
-            $http.get('/ajax/glossary', {params: {project: $scope.projectId}})
+            $http.get('/ajax/glossary', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
@@ -632,6 +632,7 @@
                 $scope.busy = true;
                 var data = $scope.glossary;
                 data['project'] = window['projectId'];
+                data['target_lang'] = window['targetLang'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
                     $http.post('/ajax/glossary/', data)

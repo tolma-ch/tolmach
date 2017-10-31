@@ -508,8 +508,14 @@ def glossary_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            project_owner = project.manager
-            glossaries = project.glossaries_list.all()
+            try:
+                project_translation = ProjectTranslation.objects.get(
+                    project = project,
+                    target_lang = Language.objects.get(code=request.GET['target_lang'])
+                )
+            except:
+                return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json", status=400)
+            glossaries = project_translation.glossaries_list.all()
             result = []
             for glossary in glossaries:
                 result.append({
@@ -546,7 +552,6 @@ def glossary_ajax(request, project):
                                     status=400)
 
             pairs_array = utils.parse_glossary(file_path, file_type)
-            os.remove(file_path)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
@@ -563,7 +568,14 @@ def glossary_ajax(request, project):
             glossary = Glossary(name=glossary_name,
                                 owner=request.user)
             glossary.save()
-            project.glossaries_list.add(Glossary.objects.get(id=glossary.id))
+            try:
+                project_translation = ProjectTranslation.objects.get(
+                    project = project,
+                    target_lang = Language.objects.get(code=post['target_lang'])
+                )
+            except:
+                return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json", status=400)
+            project_translation.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         for pair in pairs_array:
             try:
                 test = pair[0]
@@ -572,7 +584,7 @@ def glossary_ajax(request, project):
                 continue
             if test == '' or test1 == '':
                 continue
-            glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
+            glossary_entry = GlossaryEntry(glossary=glossary,
                                            source_entry=pair[0],
                                            target_entry=pair[1])
             glossary_entry.save()
@@ -703,7 +715,9 @@ def entry_ajax(request, action, text):
         text_translation = TextTranslation.objects.get(text=text,
                                                        target_lang=lang,
                                                        )
-
+        project_translation = ProjectTranslation.objects.get(project=text.project,
+                                                       target_lang=lang,
+                                                       )
         if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
             has_plurals = True
             plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
@@ -743,19 +757,19 @@ def entry_ajax(request, action, text):
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
 
         # Если глоссарии привязаны к тексту, то
-        if text_translation.glossaries_list:
+        if project_translation.glossaries_list:
             for entry in base_entries:
                 pre_glossary_text.append(entry.body)
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), project_translation.glossaries_list.all()).split('†')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
         for entry in base_entries:
-            if not text_translation.glossaries_list:
+            if not project_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
             if has_plurals:
