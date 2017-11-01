@@ -26,7 +26,7 @@
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
-            $http.get('/ajax/tmx', {params: {project: $scope.projectId}})
+            $http.get('/ajax/tmx', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.tmxes = response.data;
                 });
