@@ -232,7 +232,12 @@ def project_by_translation(request, target_lang, proj_id=0):
         lang_list.append(localized_lang)
 
     pr.current_translation = project_translation
+    pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
+
     pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
+    for pr_translation in pr.translations:
+        lang_name = Locale(pr_translation.target_lang.code)
+        pr_translation.target_lang_local = lang_name.get_language_name(request.LANGUAGE_CODE)
 
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',

@@ -439,6 +439,16 @@
 		height 40px
 		background #F7F7F7
 		cursor pointer
+	&__add
+		float left
+		height 40px
+		width 40px
+		display block
+		i
+			position relative
+			top 11px
+			left 13px
+			font-size 20px
 
 	&:hover &__menu
 		display block
@@ -501,6 +511,11 @@
 		color #555
 		font-size 16px
 		padding: 3px 0 1px;
+	&__edit-button
+		display table-cell
+		max-width 5px
+		vertical-align middle
+		padding 0 3px 0 10px
 	&__item
 		&:hover
 			.flag
@@ -568,6 +583,7 @@
 	width 100%
 	text-align center
 	padding 30px
+	min-height 150px
 
 	&-inner
 		width 250px
@@ -581,6 +597,31 @@
 	&.drag-over
 		background: #eeeeee;
 		border-color: rgb(67, 142, 185);
+
+.project-select-translation
+	display inline-block
+	margin-top -6px
+	&.open &__button
+		background-color #ffffff !important
+		padding 0px 5px !important
+		box-shadow inset 0 0 5px rgba(0, 0, 0, 0.4) !important
+	&__button
+		padding 0 !important
+		border 1px solid #ffffff !important
+		line-height 30px !important
+		margin-top -5px !important
+		background-color white !important
+		color #4d8ebc !important
+		text-shadow none !important
+		&:hover
+			padding 0px 5px !important
+			background-color #eaeaea !important
+	&__menu
+		li a
+			line-height 34px
+			.flag
+				vertical-align -6px !important
+				margin-right 5px !important
 
 .project-list
 	min-height 85px
