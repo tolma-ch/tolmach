@@ -631,7 +631,9 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            tmxes = project.tmdatabases_list.all()
+            target_lang = request.GET['target_lang']
+            project_translation = ProjectTranslation.objects.get(project=project, target_lang=Language.objects.get(code=target_lang))
+            tmxes = project_translation.tmdatabases_list.all()
             result = []
             for tmx in tmxes:
                 result.append({
@@ -1144,9 +1146,10 @@ def tmdb_search(request):
         text = entry.text
         tlang = Language.objects.get(code=post['lang_pair'].split('-')[1])
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
+        project_translation = ProjectTranslation.objects.get(project=text.project, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else []
+        translation_tmx_list = [int(x.id) for x in filter(None, project_translation.tmdatabases_list.all())] if project_translation.tmdatabases_list.all() else []
 
         search_results = []
 
