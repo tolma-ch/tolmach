@@ -257,7 +257,7 @@ def project_by_translation(request, target_lang, proj_id=0):
                        [pr.name, ''],
         ],
     }
-    template = 'translations/dev_new_project.html'
+    template = 'translations/project.html'
     return render_to_response(template, data, RequestContext(request))
 
 

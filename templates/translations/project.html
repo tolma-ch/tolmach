@@ -6,12 +6,79 @@
         project={{ projectData | safe }};
         projectId={{ project.id }};
         isUserManager = {{ is_user_manager }};
+        managerId = {{ manager_id }};
+        targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
     </script>
     <style>
+        .page-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
         .project-page {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+        }
+        .project-select-translation {
+            display: inline-block;
+            margin-top: -6px;
+        }
+        .project-select-translation .dropdown-toggle {
+            padding: 0 !important;
+            border: 1px solid #ffffff !important;
+            line-height: 30px !important;
+            margin-top: -5px !important;
+        }
+        .project-select-translation .dropdown-toggle:hover {
+            padding: 0px 5px !important;
+            background-color: #eaeaea !important;
+        }
+        .project-select-translation.open .dropdown-toggle {
+            background-color: #ffffff !important;
+            padding: 0px 5px !important;
+            /*margin-top: -10px !important;*/
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4) !important;
+        }
+        .project-select-translation button i {
+            /*vertical-align: -6px !important;*/
+        }
+        .project-select-translation .dropdown-menu li a {
+            line-height: 34px;
+        }
+        .project-select-translation .dropdown-menu li a .flag {
+            vertical-align: -6px !important;
+            margin-right: 5px !important;
+        }
+        .project-list-texts__heading .stripy-heading__after {
+            width: 50%;
+        }
+        .project-list-texts__heading .stripy-heading__before {
+            width: 50%;
+        }
+        .project-list-text__edit-button {
+            display: table-cell;
+            max-width: 5px;
+            vertical-align: middle;
+            padding: 0 3px 0 10px;
+        }
+        .new-proj-block-btn {
+            left: 43%;
+        }
+        .project-list-participant__add {
+            float: left;
+            height: 40px;
+            width: 40px;
+            display: block;
+        }
+        .project-list-participant__add i {
+            position: relative;
+            top: 11px;
+            left: 13px;
+            font-size: 20px;
+        }
+        .project-sidebar__instruments-block {
+            min-height: 100px;
         }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
@@ -20,137 +87,61 @@
                 <span ng-show="!editingName">
                     {= project.name =}
                 </span>
-                {% if is_user_manager == 'true' %}
-                <input class="form-contrl" type="text"
-                       ng-show="editingName"
-                       ng-model="projectName"/>
-                <small><a class="float-right"
-                          href=""
-                          ng-show="!editingName"
-                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
-                <small><a class="float-right"
-                          href=""
-                          ng-show="editingName"
-                          ng-click="saveName()"><i class="fa fa-check"></i></a></small>
-                <small><a class="float-right"
-                          href=""
-                          ng-show="editingName"
-                          ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
-                {% endif %}
+                <i class="flag flag-{{ project.source_lang }}"></i>
+                <i class="fa fa-chevron-right"></i>
+                <div class="dropdown project-select-translation">
+                  <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
+                      <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang }}
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu">
+                      {% for pr_translation in project.translations %}
+                    <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang }}</a></li>
+                      {% endfor %}
+                    <li><a href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
+                  </ul>
+                </div>
+
             </h1>
-            <blockquote>
-                {% if is_user_manager == 'true' %}
-                <a class="float-right"
-                          href=""
-                          ng-show="editingDescription"
-                          ng-click="saveDescription()"><i class="fa fa-check"></i></a>
-                <a class="float-right"
-                   href=""
-                   ng-show="editingDescription"
-                   ng-click="cancelEditDescription()"><i class="fa fa-times"></i></a>
-                <a class="float-right"
-                          href=""
-                          ng-show="!editingDescription"
-                          ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
-                {% endif %}
-                <p ng-show="!editingDescription">{= project.description =}</p>
-                <textarea class="form-control" name="" id="" cols="30" rows="10"
-                          ng-model="projectDescription"
-                          ng-show="editingDescription"></textarea>
-            </blockquote>
         </div>
 
 
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <div class="widget-box">
-                    <div class="widget-header widget-header-flat">
-                        <h5>
-                            {% trans "Participants" %}
-                        </h5>
-                        <div class="widget-toolbar no-border"
-                             tooltip="{% trans 'Add' %}"
-                             tooltip-append-to-body="true"
-                             ng-show="isUserManager">
-                            <a href=""
-                               class="helped-block"
-                               help-text='{% trans "Click here to add member" %}'
-                               ng-click="addParticipant()">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                        </div>
+                    <div class="project-list-texts__heading stripy-heading">
+                        <span class="stripy-heading__before"></span>
+                        <span class="stripy-heading__text" style="padding: 10px 10px 10px 20px;">{% trans "Documents" %}</span>
+                        <span class="stripy-heading__after"></span>
                     </div>
-                    <div class="widget-body helped-block" ng-init="activeParticipant = null"
-                               help-text='{% trans "Here you can see all the members" %}'>
-                        <div class="widget-main">
-                            <div class="project-list-participant"
-                                 ng-repeat="participant in participants"
-                                 ng-click="activeParticipant = participant"
-                                 ng-class="{'project-list-participant_active': activeParticipant === participant}">
-                                <div class="project-list-participant__ava">
-                                    <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
-                                </div>
-                                <div class="project-list-participant__name">
-                                    {=:: participant.name =}
-                                </div>
-                                <div class="project-list-participant__btns">
-                                    <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
-                                    <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
-                                    <a class="project-list-participant__btn tooltip-warning" href=""
-                                       tooltip="{% trans "Remove participant" %}"
-                                       tooltip-append-to-body="true"
-                                       ng-show="isUserManager"
-                                       popover-template="'participantRemovePopover.html'"
-                                       popover-placement="left"
-                                       popover-append-to-body="true"
-                                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
-                                </div>
-                                <div class="project-list-participant__menu"
-                                        ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
-                                    <i class="fa fa-bars"></i>
-                                </div>
-                            </div>
-
-
-                        </div><!-- /widget-main -->
-                    </div><!-- /widget-body -->
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div class="widget-box">
-                    <div class="widget-header widget-header-flat">
-                        <h5>
-                            {% trans "Documents" %}
-                        </h5>
-                        <div class="widget-toolbar no-border"
-                             ng-show="isUserManager">
-                            <a href=""
-                               class="helped-block"
-                               help-text='{% trans "Click here to add new document to translate" %}'
-                               tooltip="{% trans 'Add' %}"
-                               tooltip-append-to-body="true"
-                               ng-click="addText()">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="widget-body">
+                    <div class="">
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
-                                <div class="project-list-text__cell-btn">
-                                    <i class="flag flag-{=:: text.sourceLang =}"></i>
-                                </div>
-                                <div class="project-list-text__title">
-                                    {=:: text.title =}
-                                    &nbsp;&nbsp;
+                                <div class="project-list-text__edit-button"
+                                     ng-if="isUserManager">
                                     <a href=""
-                                       ng-show="isUserManager"
                                        ng-click="editText(text)"
                                        tooltip="{% trans 'Edit text' %}"
                                        tooltip-append-to-body="true"><i class="fa fa-pencil"></i></a>
                                 </div>
+                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/">
+                                    <div class="project-list-text__title">
+                                        {=:: text.title =}
+                                    </div>
+                                </a>
                                 <div class="project-list-text__cell">
-                                    <div class="project-list-text__translation" ng-repeat="translation in text.translations" style="position: relative;">
+                                    <div class="project-list-text__translation" style="position: relative;">
+                                        <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/" class="project-list-text__item">
+                                            <span class="project-list-text__progress"
+                                                  tooltip="{% trans 'Fragments approved:' %} {=:: text.translation.counts[2] =}
+                                                  {% trans 'Fragments translated:' %} {=:: text.translation.counts[1] =}"
+                                                  tooltip-append-to-body="true">
+                                                <div class="progress-bar">
+                                                    <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>
+                                                    <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
+                                                    <span class="progress-bar__value">{=:: text.translation.progress[1] =}%</span>
+                                                </div>
+                                            </span>
+                                        </a>
                                         <a class="project-list-text__btn dropdown"
                                            href="#"
                                            data-toggle="dropdown"
@@ -158,124 +149,224 @@
                                            tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
                                         <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                                             <li>
-                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/">
+                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/">
                                                     <i class="fa-off"></i>
                                                     {% trans 'Translated document' %}
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="/text/{=:: text.id =}/{=:: translation.lang =}/export/pairs/">
+                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/pairs/">
                                                     <i class="fa-off"></i>
                                                     {% trans 'Bilingual DOCX' %}
                                                 </a>
                                             </li>
                                         </ul>
-                                        <a href="/text/{=:: text.id =}/{=:: translation.lang =}/" class="project-list-text__item">
-                                            <span class="project-list-text__language"
-                                                  tooltip="{% trans 'Go to translation' %}"
-                                                  tooltip-append-to-body="true">
-                                                <i class="flag flag-{=:: translation.langFull =}"><span class="flag__text">{=:: translation.lang =}</span></i>
-                                            </span>
-                                            <span class="project-list-text__progress"
-                                                  tooltip="{% trans 'Fragments approved:' %} {=:: translation.counts[2] =}
-                                                  {% trans 'Fragments translated:' %} {=:: translation.counts[1] =}"
-                                                  tooltip-append-to-body="true">
-                                                <div class="progress-bar">
-                                                    <div class="progress-bar__gauge" style="width:{=:: translation.progress[1] =}%;background:#02c14f"></div>
-                                                    <div class="progress-bar__gauge" style="width: {=:: translation.progress[0] - translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
-                                                    <span class="progress-bar__value">{=:: translation.progress[1] =}%</span>
-                                                </div>
-                                            </span>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <a href=""
+                           class="btn helped-block btn-sm new-proj-block-btn"
+                           ng-click="addText()"
+                           ng-show="isUserManager"
+                           tooltip="{% trans 'Add' %}"
+                           tooltip-append-to-body="true"
+                           help-text='{% trans "Click here to add new document to translate" %}'>{% trans 'Add' %}</a>
                     </div><!-- /widget-body -->
                 </div>
             </div>
-            <div class="col-sm-3">
-                <div class="widget-box">
-                    <div class="widget-header widget-header-flat">
-                        <h5>
-                            {% trans "TMX/Glossaries" %}
-                        </h5>
-                        <div class="widget-toolbar no-border"
-                             ng-show="isUserManager">
-                            <a data-toggle="dropdown"
-                               class="dropdown-toggle helped-block"
-                               help-text='{% trans "Click here to translation memory or glossary" %}'
-                               tooltip="{% trans 'Add' %}"
-                               tooltip-append-to-body="true"
-                               href="">
-                                <i class="fa fa-plus-circle"></i>
-                            </a>
-                            <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-								<!--<li>-->
-									<!--<a href="#"-->
-                                       <!--ng-click="addTmx()">-->
-										<!--<i class="fa fa-language"></i>-->
-										<!--{% trans "TMX" %}-->
-									<!--</a>-->
-								<!--</li>-->
+            <div class="col-sm-4">
+                <style>
+                    .project-page-tabs {
+                        border: none;
+                    }
+                    .project-page-tabs-content {
+                        border: none;
+                        border-top: 1px solid #C4D0DB;
+                        padding: 0 0;
+                    }
+                    .project-page-tabs li {
+                        margin-bottom: 0px;
+                    }
+                    .project-page-tabs li.active a {
+                        border-bottom: 5px solid #38c150 !important;
+                        box-shadow: none !important;
+                        border-top: none !important;
+                        border-left: none !important;
+                        border-right: none !important;
+                    }
+                    .project-page-tabs li a {
+                        text-transform: uppercase;
+                        border: none !important;
+                        box-shadow: none !important;
+                        background: none;
+                    }
+                </style>
+                <div id="exTab2" class="">
+                    <ul class="nav nav-tabs project-page-tabs">
+                        <li class="active">
+                            <a  href="#1" data-toggle="tab">{% trans "Participants" %}</a>
+                        </li>
+                        <li>
+                            <a href="#2" data-toggle="tab">Инструменты</a>
+                        </li>
+                        <li>
+                            <a href="#3" data-toggle="tab">О проекте</a>
+                        </li>
+                    </ul>
 
-								<li>
-									<a href="#"
-                                       ng-click="addGlossary()">
+                <div class="tab-content project-page-tabs-content">
+                    <div class="tab-pane active" id="1">
+                        <div class="helped-block" ng-init="activeParticipant = null"
+                                   help-text='{% trans "Here you can see all the members" %}'>
+                            <div class="widget-main">
+                                <div class="project-list-participant helped-block"
+                                     help-text='{% trans "Click here to add member" %}'
+                                     ng-click="addParticipant()">
+                                    <div class="project-list-participant__add">
+                                        <i class="fa fa-plus"></i>
+                                    </div>
+                                    <div class="project-list-participant__name">
+                                        {% trans 'Add' %}
+                                    </div>
+                                </div>
+                                <div class="project-list-participant"
+                                     ng-repeat="participant in participants"
+                                     ng-click="activeParticipant = participant"
+                                     ng-class="{'project-list-participant_active': activeParticipant === participant}">
+                                    <div class="project-list-participant__ava">
+                                        <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
+                                    </div>
+                                    <div class="project-list-participant__name">
+                                        {=:: participant.name =}
+                                    </div>
+                                    <div class="project-list-participant__btns">
+                                        <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
+                                        <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
+                                        <a class="project-list-participant__btn tooltip-warning" href=""
+                                           tooltip="{% trans "Remove participant" %}"
+                                           tooltip-append-to-body="true"
+                                           ng-show="isUserManager && !(participant.id == managerId)"
+                                           popover-template="'participantRemovePopover.html'"
+                                           popover-placement="left"
+                                           popover-append-to-body="true"
+                                           class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                                    </div>
+                                    <div class="project-list-participant__menu"
+                                            ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
+                                        <i class="fa fa-bars"></i>
+                                    </div>
+                                </div>
+
+
+                            </div><!-- /widget-main -->
+                        </div><!-- /widget-body -->
+                    </div>
+                    <div class="tab-pane" id="2">
+                        <div class="helped-block"
+                             help-text='{% trans "Here will be TMXes and glossaries" %}'>
+                            <div class="widget-main project-sidebar__instruments-block">
+                                <div class="project-list-participant helped-block"
+                                     help-text='{% trans "Click here to translation memory or glossary" %}'>
+                                    <a data-toggle="dropdown"
+                                       class="dropdown-toggle"
+                                       href="">
+                                            <div class="project-list-participant__add">
+                                                <i class="fa fa-plus"></i>
+                                            </div>
+                                            <div class="project-list-participant__name">
+                                                {% trans 'Add' %}
+                                            </div>
+                                    </a>
+                                    <ul class="pull-left dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                                        <!--<li>-->
+                                            <!--<a href="#"-->
+                                               <!--ng-click="addTmx()">-->
+                                                <!--<i class="fa fa-th-list"></i>-->
+                                                <!--{% trans "TMX" %}-->
+                                            <!--</a>-->
+                                        <!--</li>-->
+                                        <li>
+                                            <a href="#"
+                                               ng-click="addGlossary()">
+                                                <i class="fa fa-book"></i>
+                                                {% trans "Glossary" %}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="project-list-glossary" ng-repeat="tmx in tmxes">
+                                    <div class="project-list-glossary__name">
+                                        <i class="fa fa-th-list"></i>
+                                        {=:: tmx.name =}
+                                    </div>
+                                    <div class="project-list-glossary__btns">
+                                        <a class="project-list-glossary__btn" href=""
+                                           ng-show="isUserManager"
+                                           popover-template="'tmxRemovePopover.html'"
+                                           popover-placement="left"
+                                           class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                                    </div>
+                                </div>
+                                <div class="project-list-glossary" ng-repeat="glossary in glossaries">
+                                    <div class="project-list-glossary__name" ng-click="editGlossary(glossary)">
                                         <i class="fa fa-book"></i>
-										{% trans "Glossary" %}
-									</a>
-								</li>
-							</ul>
+                                        {=:: glossary.name =}
+                                    </div>
+                                    <div class="project-list-glossary__btns">
+                                        <a class="project-list-glossary__btn" href=""
+                                           ng-show="isUserManager"
+                                           popover-template="'glossaryRemovePopover.html'"
+                                           popover-placement="left"
+                                           class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                                    </div>
+                                </div>
+                            </div><!-- /widget-main -->
+                        </div><!-- /widget-body -->
+                    </div>
+                    <div class="tab-pane" id="3">
+                        <div class="widget-main">
+                            <h4>Описание</h4>
+                            <p ng-show="!editingDescription">{= project.description =}</p>
+                            <textarea class="form-control" name="" id="" cols="30" rows="10"
+                                      ng-model="projectDescription"
+                                      ng-show="editingDescription"></textarea>
+                            {% if is_user_manager == 'true' %}
+                            <a class="float-right"
+                                      href=""
+                                      ng-show="editingDescription"
+                                      ng-click="saveDescription()"><i class="fa fa-check"></i></a>
+                            <a class="float-right"
+                               href=""
+                               ng-show="editingDescription"
+                               ng-click="cancelEditDescription()"><i class="fa fa-times"></i></a>
+                            <a class="float-right"
+                                      href=""
+                                      ng-show="!editingDescription"
+                                      ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
+                            {% endif %}
+                            {% if is_user_manager == 'true' %}
+                            <h4>Внимание</h4>
+                            <div class="">
+                                <a popover-template="'projectRemovePopover.html'"
+                                   popover-placement="right"
+                                   style="z-index: 999;"
+                                   class="btn btn-xs btn-danger">{% trans "Remove Project" %}</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="widget-body helped-block"
-                         help-text='{% trans "Here will be TMXes and glossaries" %}'>
-                        <div class="widget-main">
-                            <div class="project-list-glossary" ng-repeat="tmx in tmxes">
-                                <div class="project-list-glossary__name">
-                                    <i class="fa fa-language"></i>
-                                    {=:: tmx.name =}
-                                </div>
-                                <div class="project-list-glossary__btns">
-                                    <a class="project-list-glossary__btn" href=""
-                                       ng-show="isUserManager"
-                                       popover-template="'tmxRemovePopover.html'"
-                                       popover-placement="left"
-                                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
-                                </div>
-                            </div>
-                            <div class="project-list-glossary" ng-repeat="glossary in glossaries">
-                                <div class="project-list-glossary__name" ng-click="editGlossary(glossary)">
-                                    <i class="fa fa-book"></i>
-                                    {=:: glossary.name =}
-                                </div>
-                                <div class="project-list-glossary__btns">
-                                    <a class="project-list-glossary__btn" href=""
-                                       ng-show="isUserManager"
-                                       popover-template="'glossaryRemovePopover.html'"
-                                       popover-placement="left"
-                                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
-                                </div>
-                            </div>
-                        </div><!-- /widget-main -->
-                    </div><!-- /widget-body -->
                 </div>
+              </div>
             </div>
         </div>
-        {% if is_user_manager == 'true' %}
-        <div class="pull-right">
-            <a popover-template="'projectRemovePopover.html'"
-               popover-placement="left"
-               class="btn btn-default">{% trans "Remove Project" %}</a>
-        </div>
-        {% endif %}
     </div>
     {% if is_user_manager == 'true' %}
     {% include "translations/partial/add_participant_modal.html" %}
     {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
     {% include "translations/partial/add_text_modal.html" %}
+    {% include "translations/partial/add_project_translation_modal.html" %}
     {% include "translations/partial/select_text_ranges_modal.html" %}
     {% include "translations/partial/edit_text_modal.html" %}
     {% include "translations/partial/text_remove_popover.html" %}
