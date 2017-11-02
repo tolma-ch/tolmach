@@ -49,7 +49,7 @@
                       {% for pr_translation in project.translations %}
                     <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
                       {% endfor %}
-                    <li><a href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
+                    <li><a ng-if="isUserManager" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
                   </ul>
                 </div>
 
