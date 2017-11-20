@@ -373,16 +373,18 @@
                     }, 100);
                 },
                 entrySetEditingStatus = function (entry, status) {
-                    if (status == "start") {
-                        $scope.socket.send(JSON.stringify({"text": {
-                                "current_edit_start" : entry.id,
-                                "user": $scope.user
-                            }}));
-                    } else if (status == "stop") {
-                        $scope.socket.send(JSON.stringify({"text": {
-                                "current_edit_stop" : entry.id,
-                                "user": $scope.user
-                            }}));
+                    if ($scope.ws_active) {
+                        if (status == "start") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_start" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        } else if (status == "stop") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_stop" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        }
                     }
                 },
                 expandEntry = function (entry) {
