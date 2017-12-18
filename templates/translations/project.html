@@ -36,6 +36,20 @@
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
             <h1>
+                {% if is_user_manager == 'true' %}
+                <input class="form-contrl" type="text"
+                       ng-show="editingName"
+                       ng-model="projectName"/>
+                <small ng-if="!editingName"><a class="float-right"
+                          href=""
+                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
+                <small ng-if="editingName"><a class="float-right"
+                          href=""
+                          ng-click="saveName()"><i class="fa fa-check"></i></a></small>
+                <small ng-if="editingName"><a class="float-right"
+                          href=""
+                          ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
+                {% endif %}
                 <span ng-show="!editingName">
                     {= project.name =}
                 </span>
@@ -189,6 +203,17 @@
                                      ng-class="{'project-list-participant_active': activeParticipant === participant}">
                                     <div class="project-list-participant__ava">
                                         <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
+                                        <i class="fa fa-graduation-cap" aria-hidden="true"
+                                           ng-if="participant.id == managerId"
+                                                style="
+                                                    position: absolute;
+                                                    top: 30px;
+                                                    left: 25px;
+                                                    background: white;
+                                                    border-radius: 50%;
+                                                    border: 1px solid #fff;
+                                                    color: #999999;
+                                                "></i>
                                     </div>
                                     <div class="project-list-participant__name">
                                         {=:: participant.name =}
@@ -197,7 +222,7 @@
                                         <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
                                         <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                         <a class="project-list-participant__btn tooltip-warning" href=""
-                                           tooltip="{% trans "Remove participant" %}"
+                                           tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
                                            ng-show="isUserManager && !(participant.id == managerId)"
                                            popover-template="'participantRemovePopover.html'"
@@ -220,11 +245,11 @@
                              help-text='{% trans "Here will be TMXes and glossaries" %}'>
                             <div class="widget-main project-sidebar__instruments-block">
                                 <div class="project-list-participant helped-block"
+                                     ng-if="isUserManager"
                                      help-text='{% trans "Click here to translation memory or glossary" %}'>
                                     <a data-toggle="dropdown"
                                        class="dropdown-toggle"
-                                       href=""
-                                       ng-show="isUserManager">
+                                       href="">
                                             <div class="project-list-participant__add">
                                                 <i class="fa fa-plus"></i>
                                             </div>
