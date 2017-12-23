@@ -1205,14 +1205,22 @@ def tmdb_search(request):
 
                 tmx = TMDatabase.objects.get(id=tmx_id)
                 import difflib
+                import diff_match_patch
+
+                dmp = diff_match_patch.diff_match_patch()
+
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
                     if seq.ratio() > 0.5:
+                        diffs = dmp.diff_main(item['fields'][entry_source_lang.code][0], entry_body_clean)
+                        dmp.diff_cleanupSemantic(diffs)
+                        tmx_diff =  dmp.diff_prettyHtml(diffs)
                         obj = {
                               'id': 123,
                               'text': item['fields'][entry_target_lang.code][0],
                               'percent': int(seq.ratio()*100),
                               'tmx': tmx.name,
+                              'diff': tmx_diff,
                               }
                         if not obj in search_results:
                             search_results.append(obj)
