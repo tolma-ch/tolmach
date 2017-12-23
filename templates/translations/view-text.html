@@ -196,22 +196,28 @@
                                 </div>
                                 <div class="translation-editor__machine-suggestions">
                                     <div class="machine-suggestions"
-                                         ng-show="entry.tmdbVariants.length">
+                                         ng-show="showText = true; entry.tmdbVariants.length">
                                         <h4 class="machine-suggestions__title">{{ tmtranslations }}</h4>
                                         <ul class="machine-suggestions__list">
                                             <li class="machine-suggestions__item"
-                                                ng-repeat="machine in entry.tmdbVariants"
-                                                ng-click="addMachineSuggestion(entry, machine)">
+                                                ng-repeat="machine in entry.tmdbVariants">
                                                 <div class="machine-suggestion">
                                                     <span class="machine-suggestion__from">{= machine.tmx | limitTo:15 =}</span>
                                                     <span class="machine-suggestion__text"
-                                                          html-content="machine.text"></span>
+                                                          html-content="machine.text"
+                                                          ng-if="showText"
+                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
+                                                    <span class="machine-suggestion__text"
+                                                          html-content="machine.diff"
+                                                          ng-if="!showText"
+                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
                                                     <span class="machine-suggestion__relevance"
                                                           ng-class="{
                                                             'machine-suggestion__relevance_high': machine.percent >= 70,
                                                             'machine-suggestion__relevance_medium': machine.percent> 40 && machine.percent < 70,
                                                             'machine-suggestion__relevance_low': machine.percent <= 40
-                                                          }">{= machine.percent =}%</span>
+                                                          }"
+                                                          ng-click="showText = !showText">{= machine.percent =}%</span>
                                                 </div>
                                             </li>
                                         </ul>

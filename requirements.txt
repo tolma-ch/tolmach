@@ -8,6 +8,7 @@ uWSGI==1.9.17.1
 wsgiref==0.1.2
 channels
 asgi_redis
+diff_match_patch
 yandex.translate
 lxml
 elasticsearch
