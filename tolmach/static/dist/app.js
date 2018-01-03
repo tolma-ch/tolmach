@@ -918,7 +918,7 @@
                 $scope.error = '';
                 var data = {
                     project: window['projectId'],
-                    title: $scope.text.title,
+                    title: $scope.text.title.substring(0, 250),
                     project_target_lang: window['targetLang'],
                     subject: $scope.text.subject
                 };
@@ -1053,7 +1053,7 @@
                 var data = {
                     project: window['projectId'],
                     id: $scope.text.id,
-                    title: $scope.text.title,
+                    title: $scope.text.title.substring(0, 250),
                     project_target_lang: window['targetLang'],
                     machine: $scope.text.machine,
                     subject: $scope.text.subject,
@@ -1123,6 +1123,7 @@
                 $scope.busy = true;
                 var data = $scope.glossary;
                 data['project'] = window['projectId'];
+                data['name'] = data['name'].substring(0, 250);
                 data['target_lang'] = window['targetLang'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
@@ -1168,6 +1169,7 @@
                 $scope.busy = true;
                 $scope.error = '';
                 var data = $scope.tmx;
+                data['name'] = data['name'].substring(0, 250);
                 data['project'] = window['projectId'];
 
                 Upload.upload({
@@ -1231,7 +1233,7 @@
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {
-                    'name': $scope.name,
+                    'name': $scope.name.substring(0, 250),
                     'description': $scope.description || " ",
                     'type': $scope.type,
                     'source_lang': $scope.source_lang,
