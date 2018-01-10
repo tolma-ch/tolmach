@@ -15,6 +15,9 @@ def dict_search(request):
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
         target_lang = post['params']['dest']
+
+        return_data = stardict(word, source_lang, target_lang)
+
         data = urllib.urlencode(
             {
                 'from': source_lang,
@@ -30,24 +33,44 @@ def dict_search(request):
 
         data = json.loads(f.read())
 
-        out_data = []
+        glosbe_data = {"dict": "Glosbe",
+                       "word": word,
+                       "definition": ""}
 
         # print json.dumps(data["tuc"])
-
         if data['result'] == 'ok':
-            element = {
-                "meanings": []
-            }
             for entry in data['tuc']:
-                if not element == {"meanings": []}:
-                    out_data.append(element)
-                element = {"meanings": []}
                 if "phrase" in entry:
-                    element["translation"] = entry["phrase"]["text"]
-                    if "meanings" in entry:
-                        for item in entry["meanings"]:
-                            element["meanings"].append(item["text"])
+                    glosbe_data["definition"] += entry["phrase"]["text"] + ", "
+        if glosbe_data["definition"]:
+            return_data.append(glosbe_data)
 
-        return HttpResponse(json.dumps(out_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
+        return HttpResponse(json.dumps(return_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
     else:
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+def stardict(word, source_lang, target_lang):
+    import os, subprocess
+
+    dicts_dir = "/usr/share/dicts"
+    lang_pair = "%s-%s" % (source_lang, target_lang)
+    datadir = "%s/%s/" % (dicts_dir, lang_pair)
+
+    return_data = []
+
+    if os.path.exists(datadir):
+        cmd = ["/usr/bin/sdcv", "-jn", "-2", datadir, word]
+
+        p = subprocess.Popen(cmd,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT)
+
+        return_data = json.loads(p.stdout.read())
+        for elem in return_data:
+            elem['definition'] = elem['definition'].strip()
+        print return_data
+
+        return return_data
+    else:
+        return return_data
