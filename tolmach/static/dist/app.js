@@ -74,8 +74,8 @@
 
     var module = angular.module('dictControllers', []);
 
-    module.controller('DictCtrl', ['$scope', '$http', '$window', 'Dict',
-        function ($scope, $http, $window, Dict) {
+    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict',
+        function ($scope, $http, $window, $sce, Dict) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
             $scope.dictSourceLang = window['translationSourceLang'];
@@ -124,7 +124,9 @@
                         var results = [];
                         angular.forEach(res, function (elem, key){
                             results.push({id: key,
-                                        word: elem['translation'],
+                                        dict: elem['dict'],
+                                        word: elem['word'],
+                                        definition: elem['definition'].replace(/(\n)+/g, '<br />'),
                                         meanings: elem['meanings']
                             });
                         });
@@ -742,7 +744,7 @@
                 $scope.project.name = $scope.projectName;
                 $http.post('/ajax/project/', {
                         'id': $scope.project.id,
-                        'name': $scope.project.name
+                        'name': $scope.project.name.substring(0, 250)
                     })
                     .success(function (data) {
                     })

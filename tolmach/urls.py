@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 import tolmach.views as main_views
 import translations.views as trans_views
 import translations.views_ajax as trans_ajax
+import dicts.views as dict_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -58,7 +59,7 @@ urlpatterns = patterns('',
     url(r'^ajax/tmx/$', trans_ajax.tmx_ajax, name='tmx_ajax'),
     url(r'^ajax/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
     url(r'^ajax/tmdb-search/$', trans_ajax.tmdb_search, name='tmdb_search'),
-    url(r'^ajax/dict-search/$', trans_ajax.dict_search, name='dict_search'),
+    url(r'^ajax/dict-search/$', dict_views.dict_search, name='dict_search'),
     url(r'^ajax/message/(?:(?P<all>\w+)/)?$', trans_ajax.message_ajax, name='message_ajax'),
     url(r'^ajax/user/$', trans_ajax.user_ajax, name='user_ajax'),
 

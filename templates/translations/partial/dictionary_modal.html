@@ -31,12 +31,20 @@
         </form>
     </div>
     <div class="dictionary__body" id="dict-body">
-        <h4>{= wordToFind =}</h4>
+        <style>
+            .source-word {
+                font-size: 18px;
+                font-weight: 400;
+                display: block;
+            }
+        </style>
         <p class="dictionary__nothing_found" id="dict-nothing-found">{{ dict_nothing_found }} =(</p>
         <h5>
-            <p style="display: inline-block" ng-repeat="x in foundWords">
+            <p style="display: block; margin-top: 15px;" ng-repeat="x in foundWords">
+                <span class="source-word">{= x.word =}</span>
                 <!--<a class="found-word" id="word-{=x.id=}" ng-click="$parent.showMeanings(x.id)">{=x.word=}</a>,&nbsp-->
-                <a class="found-word" id="word-{=x.id=}">{=x.word=}</a>,&nbsp
+                <span class="dict-name">{=x.dict=}</span>
+                <span class="found-word" id="word-{=x.id=}" ng-bind-html="x.definition | trusted"></span>
                 <a class="meanings" id="meanings-{=x.id=}">
                     {=x.meanings=}
                 </a>
