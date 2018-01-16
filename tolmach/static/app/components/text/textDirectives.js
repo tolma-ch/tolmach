@@ -156,7 +156,7 @@
                     modified = false,
                     extendNode,
                     lastBr,
-                    allowBr = false,
+                    allowBr = true,
                     i;
                 angular.forEach(element.childNodes, function (node) {
                     nodes.push(node);

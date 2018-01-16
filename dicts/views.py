@@ -39,9 +39,10 @@ def dict_search(request):
 
         # print json.dumps(data["tuc"])
         if data['result'] == 'ok':
-            for entry in data['tuc']:
-                if "phrase" in entry:
-                    glosbe_data["definition"] += entry["phrase"]["text"] + ", "
+            if 'tuc' in data:
+                for entry in data['tuc']:
+                    if "phrase" in entry:
+                        glosbe_data["definition"] += entry["phrase"]["text"] + ", "
         if glosbe_data["definition"]:
             return_data.append(glosbe_data)
 
