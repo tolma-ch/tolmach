@@ -607,9 +607,11 @@
             $scope.textareaKeydown = function (event, entry) {
                 var code = (event.charCode) ? event.charCode : ((event.which) ? event.which : event.keyCode);
                 if ($scope.savingOptions.btn === 'enter') {
-                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey) {
+                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
                         console.log('just enter');
                         saveHotKey(entry);
+                    } else if (event.shiftKey && (code === 13 || code === 10)) {
+                        console.log('shift-enter to new line');
                     }
                 } else {
                     if (code == 13 && event.metaKey) {
@@ -618,6 +620,9 @@
                     } else if (event.ctrlKey && (code === 13 || code === 10)) {
                         console.log('ctrl enter');
                         saveHotKey(entry);
+                    } else if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                        event.stopPropagation(); // Disabling new-lines with Enter key to prevent a bug when cursor after first
+                        event.preventDefault(); // char on new line moves to the beginning of the line
                     }
                 }
             };
