@@ -262,7 +262,11 @@
                             i, entry;
                         for (i = entries.length - 1; i >= 0; i--) {
                             entry = entries[i];
-                            entry.body = entry.body.replace("\n", '<br>');
+                            entry.body = entry.body.replace(/\n/g, '<br>');
+                            entry.translation = entry.translation.replace(/\n/g, '<br>');
+                            entry.translations.forEach(function(trans) {
+                                trans.body = trans.body.replace(/\n/g, "<br>");
+                            });
                             updateTranslation(entry);
                             entriesById[entry['idInText']] = entry;
                         }
@@ -482,7 +486,7 @@
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
-                        text: entry.suggestion.replace('<br>', "\n"),
+                        text: entry.suggestion.replace(/<br\s*[\/]?>/gi, "\n"),
                         target_lang: window['translationTargetLang']
                     };
                 if (suggestionId) {
@@ -498,7 +502,7 @@
                         for (i = entry['translations'].length - 1; i >= 0; i--) {
                             translation = entry['translations'][i];
                             if (translation.id == suggestionId) {
-                                translation.body = data.body;
+                                translation.body = data.body.replace(/\n/g, "<br>");
                                 translation.isApproved = data.isApproved;
 
                                 break;
