@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from translations.models import Project, ProjectTranslation, Text, TextEntry, TextTranslation, TextTranslationMeta, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation, TextTranslationMeta, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextMeta, TextEntryMeta
 
 
@@ -33,6 +33,10 @@ class ProjectTranslationAdmin(admin.ModelAdmin):
     list_display = ('project', 'target_lang')
 
 
+class ProjectMemberAdmin(admin.ModelAdmin):
+    list_display = ('user', 'status', 'project')
+
+
 class TextTranslationMetaAdmin(admin.ModelAdmin):
     list_display = ('translation', 'meta_type')
 
@@ -58,6 +62,7 @@ class TMDBAdmin(admin.ModelAdmin):
 
 admin.site.register(Project)
 admin.site.register(ProjectTranslation, ProjectTranslationAdmin)
+admin.site.register(ProjectMember, ProjectMemberAdmin)
 admin.site.register(Text, TextAdmin)
 admin.site.register(TextTranslation, TextTranslationAdmin)
 admin.site.register(TextMeta, TextMetaAdmin)

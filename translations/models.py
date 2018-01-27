@@ -47,6 +47,20 @@ class TMDatabaseEntry(models.Model):
     target_edited = models.DateTimeField(null=True, blank=True, default=None)
 
 
+class ProjectMember(models.Model):
+    project = models.ForeignKey('translations.Project', related_name='project_members')
+    user = models.ForeignKey('auth.User')
+    MANAGER = 0
+    TRANSLATOR = 1
+    SPECTATOR = 2
+    MEMBER_TYPES = (
+        (MANAGER, 'Manager'),
+        (TRANSLATOR, 'Translator'),
+        (SPECTATOR, 'Spectator')
+    )
+    status = models.IntegerField(default=TRANSLATOR, choices=MEMBER_TYPES)
+
+
 class Project(models.Model):
     """
     Model for users created projects.
@@ -71,6 +85,7 @@ class Project(models.Model):
     members = models.TextField(default="")
     users_invited = models.TextField(default="")
     users_requested = models.TextField(default="")
+    users = models.ManyToManyField('auth.User', through=ProjectMember, related_name='project_members')
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
     glossaries_list = models.ManyToManyField(Glossary)
@@ -99,8 +114,13 @@ class Project(models.Model):
         if self.is_private is False:
             return True
         else:
-            members = self.members.split(',') if self.members else []
-            if self.manager == user or str(user.id) in members or user.is_staff:
+            try:
+                membership_check = ProjectMember.objects.get(project=self,
+                                                         user=user,
+                                                         )
+            except:
+                membership_check = False
+            if self.manager == user or membership_check or user.is_staff:
                 return True
             else:
                 return False
@@ -109,10 +129,10 @@ class Project(models.Model):
         """
         Check whether provided user is a member of the current project and return Boolean
         """
-        members = self.members.split(',') if self.members else []
-        if str(user.id) in members:
+        try:
+            membership_check = ProjectMember.objects.get(project=self, user=user)
             return True
-        else:
+        except:
             return False
 
     def get_progress(self):
@@ -180,7 +200,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if self.project.manager == user or str(user.id) in self.project.members.split(',') or user.is_staff:
+            if self.project.manager == user or self.project.is_user_a_member(user) or user.is_staff:
                 return True
             else:
                 return False
@@ -190,12 +210,12 @@ class Text(models.Model):
         Check whether provided user is allowed to write within the current text and return Boolean
         """
         if self.project.is_private is False:
-            if str(user.id) in self.project.members.split(',') or self.project.manager == user:
+            if self.project.is_user_a_member(user) or self.project.manager == user:
                 return True
             else:
                 return False
         else:
-            if self.project.manager == user or str(user.id) in self.project.members.split(','):
+            if self.project.manager == user or self.project.is_user_a_member(user):
                 return True
             else:
                 return False

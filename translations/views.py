@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectTranslation, Text, TextTranslation
+from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -44,8 +44,9 @@ def projects(request, proj_type):
     elif proj_type == 'thirdparty':
         page_title = _('Third-party projects')
         page_url = '/projects/thirdparty/'
-        member_of = filter(None, meta.member_of.split(','))
-        user_projects_list = Project.objects.filter(id__in=member_of).order_by('-last_modified')
+        user_memberships = ProjectMember.objects.filter(user=user)
+        user_projects_list = [x.project for x in user_memberships]
+        user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
         for pr in user_projects_list:
             pr.list_button = 'leave'
         active_tab = 'thirdparty'

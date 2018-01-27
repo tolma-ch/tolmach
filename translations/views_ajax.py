@@ -14,7 +14,7 @@ from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
-from translations.models import Project, ProjectTranslation, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
@@ -183,14 +183,10 @@ def get_users_ajax(request):
 @login_required
 def participant_ajax(request, project):
     if request.method == 'GET':
-        if project.members:
-            members = project.members.split(',')
-        else:
-            members = []
-        users = User.objects.filter(id__in=members)
+        members = ProjectMember.objects.filter(project=project)
         result = [user_to_json(project.manager)]
-        for user in users:
-            result.append(user_to_json(user))
+        for memb in members:
+            result.append(user_to_json(memb.user, project))
         return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
@@ -207,19 +203,17 @@ def participant_ajax(request, project):
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
-        members = project.members.split(',') if project.members else []
-        user_meta = UserMeta.objects.get(user=user)
-        user_member_of = user_meta.member_of.split(',')
-        if str(user.id) in members or str(project.id) in user_member_of:
+
+        try:
+            user_in_project = ProjectMember.objects.get(project=project, user=user)
+        except:
+            user_in_project = None
+        if not user_in_project:
+            new_proj_user = ProjectMember(user=user, project=project)
+            new_proj_user.save()
+        else:
             return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
                                 status=400)
-        members.append(str(user.id))
-        project.members = ','.join(members)
-        project.save()
-
-        user_member_of.append(str(project.id))
-        user_meta.member_of = ','.join(user_member_of)
-        user_meta.save()
 
         from django.utils import timezone
         message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
@@ -232,7 +226,7 @@ def participant_ajax(request, project):
         )
         new_message.save()
 
-        result = user_to_json(user)
+        result = user_to_json(user, project)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'user' not in request.GET:
@@ -246,19 +240,17 @@ def participant_ajax(request, project):
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
-        members = project.members.split(',') if project.members else []
-        user_meta = UserMeta.objects.get(user=user)
-        user_member_of = user_meta.member_of.split(',')
-        if str(user.id) not in members or str(project.id) not in user_member_of:
+        print project, user
+        try:
+            user_in_project = ProjectMember.objects.get(project=project, user=user)
+        except:
+            user_in_project = None
+        if not user_in_project:
             return HttpResponse(json.dumps(_('User is not a member of project')),
                                 content_type="application/json",
                                 status=400)
-        members.remove(str(user.id))
-        project.members = ','.join(members)
-        project.save()
-        user_member_of.remove(str(project.id))
-        user_meta.member_of = ','.join(user_member_of)
-        user_meta.save()
+        else:
+            user_in_project.delete()
 
         from django.utils import timezone
         message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
