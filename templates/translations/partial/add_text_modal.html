@@ -1,4 +1,16 @@
 {% load i18n %}
+<style>
+    .drop-box-icon {
+        position: absolute;
+        top: 39%;
+        left: 40%;
+        opacity: .3;
+        font-size: 110px;
+    }
+    .drop-box-inner span {
+        opacity: .99;
+    }
+</style>
 <script type="text/ng-template" id="addTextModal.html">
     <div class="modal-header">
         <button type="button"
@@ -60,27 +72,6 @@
             <div class="form-group" ng-if="tab === 1">
                 <textarea class="form-control" cols="30" rows="10"
                           ng-model="text.textBody"></textarea>
-            </div>
-
-            <div class="glossary-manual ng-scope">
-                <div class="glossary-manual__input">
-                    <select class="form-control"
-                            ng-model="text.sourceLang">
-                            <option value="" disabled selected>{% trans "Source language" %}</option>
-                        {% for language in languages %}
-                            <option value='{{ language.id }}'>{{ language.localized_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="glossary-manual__input">
-                    <select class="form-control"
-                            ng-model="text.targetLang">
-                            <option value="" disabled selected>{% trans "Target language" %}</option>
-                        {% for language in languages %}
-                            <option value='{{ language.id }}'>{{ language.localized_name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
             </div>
 
             <div class="form-group" ng-show="error">

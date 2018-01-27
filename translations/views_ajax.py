@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
@@ -13,7 +14,7 @@ from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats
-from translations.models import Project, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import Project, ProjectTranslation, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
@@ -76,12 +77,87 @@ def create_project_ajax(request):
         if 'type' not in post:
             return HttpResponse(json.dumps(_('Project type is not set')), content_type="application/json", status=400)
         access = post['type']
-        project = Project(name=name,
-                          description=description,
-                          is_private=access == 'private',
-                          manager=request.user)
-        project.save()
+        if 'source_lang' not in post:
+            return HttpResponse(json.dumps(_('Source language is not set')), content_type="application/json", status=400)
+        source_lang_id = post['source_lang']
+        if 'target_lang' not in post:
+            return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+        target_lang_id = post['target_lang']
+        with transaction.atomic():
+            project = Project(name=name,
+                              description=description,
+                              source_lang=Language.objects.get(id=source_lang_id),
+                              is_private=access == 'private',
+                              manager=request.user)
+            project.save()
+            project_translation = ProjectTranslation(project=project,
+                                                     target_lang=Language.objects.get(id=target_lang_id))
+            project_translation.save()
         return HttpResponse(json.dumps(project.id), content_type="application/json")
+    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+@login_required
+def add_project_translation(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        if 'project' not in post or not post['project']:
+            return HttpResponse(json.dumps(_('Project is not set')),
+                                content_type="application/json",
+                                status=400)
+        project_id = post['project']
+        try:
+            project = Project.objects.get(id=project_id)
+        except Project.DoesNotExist:
+            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
+        if 'target_lang' not in post:
+            return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+        target_lang_id = post['target_lang']
+        target_lang = Language.objects.get(id=target_lang_id)
+
+        check_project_translation = ProjectTranslation.objects.filter(project=project,
+                                                                      target_lang=target_lang)
+        if check_project_translation:
+            return HttpResponse(json.dumps(_('There is already such project translation')), content_type="application/json", status=400)
+
+        with transaction.atomic():
+            project_translation = ProjectTranslation(project=project,
+                                                     target_lang=Language.objects.get(id=target_lang_id))
+            project_translation.save()
+
+            all_project_texts = Text.objects.filter(project=project)
+
+            for project_text in all_project_texts:
+                translation_meta = {}
+                all_text_translations = TextTranslation.objects.filter(text=project_text)
+                if all_text_translations:
+                    gettext_meta = TextTranslationMeta.objects.filter(translation=all_text_translations[0], meta_type='gettext_metadata')
+                    if gettext_meta:
+                        translation_meta = json.loads(gettext_meta)
+                        target_lang = target_lang
+                        plural_examples = utils.get_plural_examples(target_lang.plural_forms)
+                        translation_meta["meta_data"]["all_meta"]["Plural-Forms"] = target_lang.plural_forms
+                        translation_meta["meta_data"]["all_meta"]["Language"] = target_lang.code
+                        translation_meta["meta_data"]["plural_examples"] = plural_examples
+
+                # проверяем, нет ли ещё такого перевода у текста
+                check_translation = TextTranslation.objects.filter(target_lang=target_lang, text=project_text)
+                if not check_translation:
+                    new_translation = TextTranslation(project_translation=project_translation,
+                                                      text=project_text,
+                                                      target_lang=target_lang)
+                    new_translation.save()
+
+                    if translation_meta:
+                        trans_meta = TextTranslationMeta(translation=new_translation,
+                                                         meta_type=translation_meta["meta_type"],
+                                                         meta_data=json.dumps(translation_meta["meta_data"]),
+                                                         )
+                        trans_meta.save()
+
+        return HttpResponse(json.dumps({'project_id': project.id,
+                                        'target_lang': project_translation.target_lang.code}),
+                            content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
@@ -112,7 +188,7 @@ def participant_ajax(request, project):
         else:
             members = []
         users = User.objects.filter(id__in=members)
-        result = []
+        result = [user_to_json(project.manager)]
         for user in users:
             result.append(user_to_json(user))
         return HttpResponse(json.dumps(result), content_type="application/json")
@@ -206,14 +282,12 @@ def participant_ajax(request, project):
 @login_required
 def text_ajax(request, project):
     if request.method == 'GET':
+        params = request.GET
         texts = Text.objects.filter(project=project)
-        translations = TextTranslation.objects.filter(text__in=texts)
+        translations = TextTranslation.objects.filter(text__in=texts, target_lang=Language.objects.get(code=params['project_target_lang']))
         text_dict = {}
         for i in translations:
-            if not i.text in text_dict:
-                text_dict[i.text] = [i]
-            else:
-                text_dict[i.text].append(i)
+            text_dict[i.text] = i
         result = []
         for text in texts:
             result.append(text_to_json(text, text_dict[text], request.LANGUAGE_CODE))
@@ -239,63 +313,9 @@ def text_ajax(request, project):
             text_options['machine'] = post['machine']
             text.options = json.dumps(text_options)
 
-            # text.subject = subject
-            if 'translations' in post:
-                all_text_translations = [x.target_lang for x in TextTranslation.objects.filter(text=text)]
-                for translation in post['translations']:
-                    try:
-                        target_lang = Language.objects.get(id=translation['targetLangId'])
-                    except Language.DoesNotExist:
-                        return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-
-                    try:
-                        all_text_translations.remove(target_lang)
-                    except:
-                        pass
-
-                    try:
-                        text_translation = TextTranslation.objects.get(text=text,
-                                                                       target_lang=target_lang)
-                    except TextTranslation.DoesNotExist:
-                        text_translation = translation_ajax(request, text, target_lang, local_call=True, method="POST")
-
-                    if 'glossaries' in translation:
-                        glossary_ids_list = [str(x) for x in translation['glossaries']]
-                        text_translation.glossaries_list.clear()
-                        for glossary_id in glossary_ids_list:
-                            text_translation.glossaries_list.add(Glossary.objects.get(id=glossary_id))
-                    else:
-                        text_translation.glossaries_list.clear()
-
-                    # clearing text translation cache after glossaries update
-                    cache.delete("%d_translation_entries" % text_translation.id)
-
-                    if 'tmxes' in translation:
-                        tmdb_ids_list = [str(x) for x in translation['tmxes']]
-                        text_translation.tmdatabases_list.clear()
-                        for tmx_id in tmdb_ids_list:
-                            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=tmx_id))
-                    else:
-                        text_translation.tmdatabases_list.clear()
-                    text_translation.save()
-                for target_lang in all_text_translations:
-                    try:
-                        translation = TextTranslation.objects.get(text=text,
-                                                                  target_lang=target_lang)
-                        translation.delete()
-                    except TextTranslation.DoesNotExist:
-                        pass
-
             text.save()
         else:
-            try:
-                source_lang = Language.objects.get(id=post['sourceLang'])
-            except Language.DoesNotExist:
-                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
-            try:
-                target_lang = Language.objects.get(id=post['targetLang'])
-            except Language.DoesNotExist:
-                return HttpResponse(json.dumps(_('Language not found')), content_type="application/json", status=400)
+            source_lang = project.source_lang
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
 
@@ -341,7 +361,6 @@ def text_ajax(request, project):
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
-                      'target_lang': target_lang.code,
                       'custom_parse': json.dumps(custom_parse)
                       }
 
@@ -360,8 +379,8 @@ def text_ajax(request, project):
             else:
                 return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
-        translations = TextTranslation.objects.filter(text=text)
-        result = text_to_json(text, translations, request.LANGUAGE_CODE)
+        translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['project_target_lang']))
+        result = text_to_json(text, translation, request.LANGUAGE_CODE)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'text' not in request.GET:
@@ -408,45 +427,45 @@ def update_text(request, text):
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
-def translation_ajax(request, text, target_lang, local_call=False, method=None):
-    method = method if method else request.method
-
-    if method == "POST":
-        text_translation = TextTranslation(text=text,
-                                           target_lang=target_lang,
-                                           )
-        text_translation.save()
-
-        # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
-        if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
-            gettext_meta = {
-                'all_meta': {
-                    'Project-Id-Version': '1.0',
-                    'Report-Msgid-Bugs-To': 'you@example.com',
-                    'POT-Creation-Date': '2007-10-18 14:00+0100',
-                    'PO-Revision-Date': '2007-10-18 14:00+0100',
-                    'Last-Translator': 'you <you@example.com>',
-                    'Language-Team': 'English <yourteam@example.com>',
-                    'Language': target_lang.code,
-                    'MIME-Version': '1.0',
-                    'Content-Type': 'text/plain; charset=utf-8',
-                    'Content-Transfer-Encoding': '8bit',
-                    'Plural-Forms': target_lang.plural_forms,
-                },
-                'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
-            }
-
-            text_translation_meta = TextTranslationMeta(translation=text_translation,
-                                                        meta_type="gettext_metadata",
-                                                        meta_data=json.dumps(gettext_meta),
-                                                        )
-            text_translation_meta.save()
-
-        if local_call:
-            return text_translation
-        else:
-            return HttpResponse(json.dumps(True), content_type="application/json")
-    return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+# def translation_ajax(request, text, target_lang, local_call=False, method=None):
+#     method = method if method else request.method
+#
+#     if method == "POST":
+#         text_translation = TextTranslation(text=text,
+#                                            target_lang=target_lang,
+#                                            )
+#         text_translation.save()
+#
+#         # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
+#         if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
+#             gettext_meta = {
+#                 'all_meta': {
+#                     'Project-Id-Version': '1.0',
+#                     'Report-Msgid-Bugs-To': 'you@example.com',
+#                     'POT-Creation-Date': '2007-10-18 14:00+0100',
+#                     'PO-Revision-Date': '2007-10-18 14:00+0100',
+#                     'Last-Translator': 'you <you@example.com>',
+#                     'Language-Team': 'English <yourteam@example.com>',
+#                     'Language': target_lang.code,
+#                     'MIME-Version': '1.0',
+#                     'Content-Type': 'text/plain; charset=utf-8',
+#                     'Content-Transfer-Encoding': '8bit',
+#                     'Plural-Forms': target_lang.plural_forms,
+#                 },
+#                 'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
+#             }
+#
+#             text_translation_meta = TextTranslationMeta(translation=text_translation,
+#                                                         meta_type="gettext_metadata",
+#                                                         meta_data=json.dumps(gettext_meta),
+#                                                         )
+#             text_translation_meta.save()
+#
+#         if local_call:
+#             return text_translation
+#         else:
+#             return HttpResponse(json.dumps(True), content_type="application/json")
+#     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
 @login_required
@@ -489,8 +508,14 @@ def glossary_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            project_owner = project.manager
-            glossaries = project.glossaries_list.all()
+            try:
+                project_translation = ProjectTranslation.objects.get(
+                    project = project,
+                    target_lang = Language.objects.get(code=request.GET['target_lang'])
+                )
+            except:
+                return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json", status=400)
+            glossaries = project_translation.glossaries_list.all()
             result = []
             for glossary in glossaries:
                 result.append({
@@ -527,7 +552,6 @@ def glossary_ajax(request, project):
                                     status=400)
 
             pairs_array = utils.parse_glossary(file_path, file_type)
-            os.remove(file_path)
         else:
             if 'rows' not in post:
                 return HttpResponse(json.dumps(_('Please, send file or input data manually')),
@@ -544,7 +568,14 @@ def glossary_ajax(request, project):
             glossary = Glossary(name=glossary_name,
                                 owner=request.user)
             glossary.save()
-            project.glossaries_list.add(Glossary.objects.get(id=glossary.id))
+            try:
+                project_translation = ProjectTranslation.objects.get(
+                    project = project,
+                    target_lang = Language.objects.get(code=post['target_lang'])
+                )
+            except:
+                return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json", status=400)
+            project_translation.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         for pair in pairs_array:
             try:
                 test = pair[0]
@@ -553,7 +584,7 @@ def glossary_ajax(request, project):
                 continue
             if test == '' or test1 == '':
                 continue
-            glossary_entry = GlossaryEntry(glossary=Glossary.objects.get(id=glossary.id),
+            glossary_entry = GlossaryEntry(glossary=glossary,
                                            source_entry=pair[0],
                                            target_entry=pair[1])
             glossary_entry.save()
@@ -600,7 +631,9 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            tmxes = project.tmdatabases_list.all()
+            target_lang = request.GET['target_lang']
+            project_translation = ProjectTranslation.objects.get(project=project, target_lang=Language.objects.get(code=target_lang))
+            tmxes = project_translation.tmdatabases_list.all()
             result = []
             for tmx in tmxes:
                 result.append({
@@ -684,7 +717,9 @@ def entry_ajax(request, action, text):
         text_translation = TextTranslation.objects.get(text=text,
                                                        target_lang=lang,
                                                        )
-
+        project_translation = ProjectTranslation.objects.get(project=text.project,
+                                                       target_lang=lang,
+                                                       )
         if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
             has_plurals = True
             plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
@@ -724,19 +759,19 @@ def entry_ajax(request, action, text):
         target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
 
         # Если глоссарии привязаны к тексту, то
-        if text_translation.glossaries_list:
+        if project_translation.glossaries_list:
             for entry in base_entries:
                 pre_glossary_text.append(entry.body)
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), text_translation.glossaries_list.all()).split('†')
+            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), project_translation.glossaries_list.all()).split('†')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
                 clean.glossary_body = post
 
         for entry in base_entries:
-            if not text_translation.glossaries_list:
+            if not project_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []
             if has_plurals:
@@ -770,7 +805,8 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
-                'translation': entry_translation
+                'translation': entry_translation,
+                'isBeingEdited': {}
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,
@@ -891,6 +927,22 @@ def translate_entry_ajax(request):
                 fragments_translated=F('fragments_translated')+1
             )
         entry_translation.save()
+
+        entry_new_translation = {
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            'translation': translation_to_json(entry_translation)
+        }
+        translation_counts, translation_progress = entry_translation.translation.get_progress()
+        entry_translation.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_new_translation': entry_new_translation,
+                'user': request.user.id
+            }
+        )})
+
         from django.utils import timezone
 
         project.last_modified = timezone.now()
@@ -926,7 +978,22 @@ def remove_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
 
+    entry_translation_to_delete = {
+        'id': entry.id,
+        'idInText': entry.id_in_text,
+        'translation': translation_to_json(entry_translation)
+    }
     entry_translation.delete()
+
+    translation_counts, translation_progress = entry_translation.translation.get_progress()
+    entry_translation.translation.websocket_group.send({'text': json.dumps(
+        {
+            'progress': {'translation_progress': translation_progress,
+                         'translation_counts': translation_counts},
+            'remove_translation': entry_translation_to_delete,
+            'user': request.user.id
+        }
+    )})
 
     return HttpResponse(json.dumps(True), content_type="application/json")
 
@@ -953,6 +1020,21 @@ def approve_entry_ajax(request):
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
+        entry_to_approve = {
+            'id': entry.parent_entry.id,
+            'idInText': entry.parent_entry.id_in_text,
+            'approved': entry.is_approved,
+            'translation': translation_to_json(entry)
+        }
+        translation_counts, translation_progress = entry.translation.get_progress()
+        entry.translation.websocket_group.send({'text': json.dumps(
+            {
+                'progress': {'translation_progress': translation_progress,
+                             'translation_counts': translation_counts},
+                'entry_to_approve': entry_to_approve,
+                'user': request.user.id
+            }
+        )})
         return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
@@ -976,6 +1058,19 @@ def disapprove_entry_ajax(request):
         if text.project.is_user_manager(request.user):
             entry.is_approved = False
             entry.save()
+            entry_to_disapprove = {
+                'id': entry.parent_entry.id,
+                'idInText': entry.parent_entry.id_in_text,
+            }
+            translation_counts, translation_progress = entry.translation.get_progress()
+            entry.translation.websocket_group.send({'text': json.dumps(
+                {
+                    'progress': {'translation_progress': translation_progress,
+                                 'translation_counts': translation_counts},
+                    'entry_to_disapprove': entry_to_disapprove,
+                    'user': request.user.id
+                }
+            )})
             return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
         else:
             return HttpResponse(json.dumps(_('You have to be a manager of project')),
@@ -1051,9 +1146,10 @@ def tmdb_search(request):
         text = entry.text
         tlang = Language.objects.get(code=post['lang_pair'].split('-')[1])
         translation = TextTranslation.objects.get(text=text, target_lang=tlang)
+        project_translation = ProjectTranslation.objects.get(project=text.project, target_lang=tlang)
         entry_source_lang = text.source_lang
         entry_target_lang = translation.target_lang
-        translation_tmx_list = [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else []
+        translation_tmx_list = [int(x.id) for x in filter(None, project_translation.tmdatabases_list.all())] if project_translation.tmdatabases_list.all() else []
 
         search_results = []
 
@@ -1109,14 +1205,22 @@ def tmdb_search(request):
 
                 tmx = TMDatabase.objects.get(id=tmx_id)
                 import difflib
+                import diff_match_patch
+
+                dmp = diff_match_patch.diff_match_patch()
+
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
                     if seq.ratio() > 0.5:
+                        diffs = dmp.diff_main(item['fields'][entry_source_lang.code][0], entry_body_clean)
+                        dmp.diff_cleanupSemantic(diffs)
+                        tmx_diff =  dmp.diff_prettyHtml(diffs)
                         obj = {
                               'id': 123,
                               'text': item['fields'][entry_target_lang.code][0],
                               'percent': int(seq.ratio()*100),
                               'tmx': tmx.name,
+                              'diff': tmx_diff,
                               }
                         if not obj in search_results:
                             search_results.append(obj)

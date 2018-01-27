@@ -8,6 +8,7 @@
   }
   &__col {
     height: 100%;
+    background-color: #f5f5f5;
     & > .text-pieces {
       margin: 0 -15px;
     }
@@ -72,6 +73,19 @@
         background: #E4E4E4;
       }
     }
+    &__mobile {
+      display: none;
+      @media (max-width: 767px) {
+        float: none !important;
+        display: block;
+        position: relative;
+        text-align: center;
+        font-size: 20px;
+        margin-top: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #d2d2d2;
+      }
+    }
   }
 
   &__content {
@@ -119,6 +133,10 @@
   background: white;
   font-size: 16px;
   padding: 10px;
+  transition: background-color 0.3s;
+  @media (max-width: 767px) {
+    font-size: 14px;
+  }
 
   &__original {
     position: relative;
@@ -156,6 +174,24 @@
         content: ".";
         font-size: 0px;
         visibility: hidden;
+    }
+  }
+  &__now-editing {
+    display: inline-block;
+    visibility: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    .fa-pencil {
+      position :relative;
+      margin-left: -5px;
+      bottom: 2px;
+    }
+  }
+  &_someone-editing {
+    .text-piece__now-editing {
+      visibility: visible;
     }
   }
   &_closed {
@@ -319,6 +355,10 @@
   }
   &_active &__machine-suggestions {
     display: block;
+    box-shadow: inset rgba(0, 0, 0, 0.3) 0 0 5px;
+    padding: 2px 10px 2px 10px;
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.03);
   }
 }
 
@@ -327,6 +367,9 @@
     font-size: 14px;
     font-weight: 400;
     color: #6f6f6e;
+    @media (max-width: 767px) {
+      font-size: 13px;
+    }
   }
   &__list{
     list-style-type: none;
@@ -334,6 +377,9 @@
     margin: 0;
     font-size: 13px;
     color: #6F6F6F;
+    @media (max-width: 767px) {
+      font-size: 11px;
+    }
   }
   &__item {
     position: relative;
@@ -370,6 +416,13 @@
     position: absolute;
     right: 0;
     top: 0;
+    &:hover {
+      width: 35px;
+      height: 35px;
+      border: 3px double white;
+      top: -3px;
+      right: -3px;
+    }
 
     &_high {
       background: #02c14f;

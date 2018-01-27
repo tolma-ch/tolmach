@@ -13,11 +13,11 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, Text, TextTranslation
+from translations.models import Project, ProjectTranslation, Text, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
-from tolmach import local_settings
+from tolmach import settings
 
 
 @login_required
@@ -79,6 +79,15 @@ def projects(request, proj_type):
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_proj_list = paginator.page(paginator.num_pages)
 
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+
     for proj in result_proj_list:
         proj.progress = proj.get_progress()
 
@@ -95,6 +104,7 @@ def projects(request, proj_type):
             'page_title': page_title,
             'active_tab': active_tab,
             'breadcrumbs': [[page_title, page_url], ],
+            'languages': lang_list,
             'projects': result_proj_list,
             'projects_page_active': True,
             'messages': messages.get_messages(request)
@@ -105,12 +115,94 @@ def projects(request, proj_type):
 
 
 @login_required
+def project_lang_stats(request):
+    data = {}
+    all_projects = Project.objects.all()
+    for proj in all_projects:
+        proj_texts = Text.objects.filter(project=proj)
+        for text in proj_texts:
+            text_translations = TextTranslation.objects.filter(text=text)
+            for trans in text_translations:
+                lang_pair = "%s-%s" % (text.source_lang.code, trans.target_lang.code)
+                if proj.id in data:
+                    if not lang_pair in data[proj.id]:
+                        data[proj.id].append(lang_pair)
+                else:
+                    data[proj.id] = []
+                    data[proj.id].append(lang_pair)
+
+    new_data = {}
+    for key, value in data.iteritems():
+        if len(data[key]) > 1:
+            new_data[key] = value
+    print json.dumps(new_data)
+    return HttpResponse(json.dumps(new_data))
+
+
+@login_required
+def new_project_page(request):
+    pr = Project.objects.get(id=7)
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+    project_translation = ProjectTranslation.objects.get(project=pr)
+    pr.translation = project_translation
+
+    data ={
+        'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'manager_id': pr.manager.id,
+        'project': pr,
+        'projectData': json.dumps({
+            'id': pr.id,
+            'name': pr.name,
+            'description': pr.description,
+        }),
+        'languages': lang_list,
+        'languagesData': json.dumps([{
+                                     'code': lang.code,
+                                     'langFull': lang.name,
+                                     'langLocal': lang.localized_name,
+                                     'id': lang.id
+                                     } for lang in lang_list]),
+        'subjects': Subject.objects.all(),}
+    # print json.dumps(data)
+    template = 'translations/dev_new_project.html'
+    return render_to_response(template, data, RequestContext(request))
+
+@login_required
 def project(request, proj_id=0):
     projects_text = ''
     projects_url = ''
 
     try:
         pr = Project.objects.get(id=proj_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+    if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
+        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
+        return HttpResponseRedirect('/')
+
+    project_default_translation = ProjectTranslation.objects.filter(project=pr)[0]
+    return HttpResponseRedirect('/project/%s/%s/' % (proj_id, project_default_translation.target_lang.code))
+
+
+@login_required
+def project_by_translation(request, target_lang, proj_id=0):
+    projects_text = ''
+    projects_url = ''
+
+    try:
+        pr = Project.objects.get(id=proj_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+    try:
+        project_translation = ProjectTranslation.objects.get(project=pr,
+                                                         target_lang=Language.objects.get(code=target_lang))
     except Project.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
     if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
@@ -139,8 +231,18 @@ def project(request, proj_id=0):
         localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
 
+    pr.current_translation = project_translation
+    pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
+
+    pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
+    for pr_translation in pr.translations:
+        lang_name = Locale(pr_translation.target_lang.code)
+        pr_translation.target_lang_local = lang_name.get_language_name(request.LANGUAGE_CODE)
+
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'manager_id': pr.manager.id,
+        'target_lang': target_lang,
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,
@@ -173,21 +275,6 @@ def view_translation(request, text_id, target_lang):
     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
-    projects_text = ''
-    projects_url = ''
-    # res = ''
-    # body = text.body
-    # page = 1
-    # start = 101
-    # prefix = ''
-    # while body:
-    #     splited = body.split('<span data-entry="%d">' % start, 1)
-    #     res += ('<div entry-page="%d">' % page) + prefix + splited[0] + '</div>'
-    #     prefix = '<span data-entry="%d">' % start
-    #     page += 1
-    #     start += 100
-    #     body = splited[1] if len(splited) > 1 else False
-    # text.body = res
 
     pr = Project.objects.get(id=text.project.id)
     if pr.is_user_manager(request.user):
@@ -214,7 +301,7 @@ def view_translation(request, text_id, target_lang):
             'page_title': text.title,
             'breadcrumbs': [
                 [projects_text, projects_url],
-                [text.project.name, '/project/%d/' % text.project.id],
+                [text.project.name, '/project/%d/%s/' % (text.project.id, translation.target_lang.code)],
                 [text.title, ''],
             ],
             'text': text,
@@ -223,6 +310,8 @@ def view_translation(request, text_id, target_lang):
             'target_lang': target_lang,
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
+            # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
+            'ws_connect_host': settings.WS_HOST,
             'language_codes': [x.code for x in Language.objects.all()]
             }
     template = 'translations/view-text.html'
@@ -232,7 +321,7 @@ def view_translation(request, text_id, target_lang):
 @login_required
 def export_translation(request, text_id, target_lang, extra=None):
     import os
-    EXPORTS_DIR = local_settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
+    EXPORTS_DIR = settings.GLOBAL_DOCUMENTS_DIR + '/exports/'
     text = get_object_or_404(Text, id=text_id)
     if not text.is_user_allowed_to_read(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))

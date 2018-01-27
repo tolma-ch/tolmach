@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db import models
 import math
+
+from channels import Group
+
 from entries.models import Subject, Language
 
 
@@ -62,6 +65,7 @@ class Project(models.Model):
     """
     name = models.CharField(max_length=256)
     description = models.TextField(default="")
+    source_lang = models.ForeignKey('entries.Language', related_name='project_source_lang')
     manager = models.ForeignKey('auth.User')
     is_private = models.BooleanField(default=True)
     members = models.TextField(default="")
@@ -133,6 +137,17 @@ class Project(models.Model):
                 project_progress = 0
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
         return project_progress
+
+
+class ProjectTranslation(models.Model):
+    project = models.ForeignKey('translations.Project', related_name='project_translations')
+    target_lang = models.ForeignKey('entries.Language', related_name='project_translations_target_lang')
+    glossaries_list = models.ManyToManyField(Glossary)
+    tmdatabases_list = models.ManyToManyField(TMDatabase)
+
+    def __unicode__(self):
+        return unicode("%s - %s" % (self.project, self.target_lang))
+
 
 
 class Text(models.Model):
@@ -207,6 +222,7 @@ class TextMeta(models.Model):
 
 
 class TextTranslation(models.Model):
+    project_translation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation")
     text = models.ForeignKey('translations.Text', related_name='text_translations')
     target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
     glossaries_list = models.ManyToManyField(Glossary)
@@ -238,6 +254,14 @@ class TextTranslation(models.Model):
             return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
         else:
             return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
+
+    @property
+    def websocket_group(self):
+        """
+        Returns the Channels Group that sockets should subscribe to to get sent
+        messages as they are generated.
+        """
+        return Group("text-translation-%d" % self.id)
 
 
 class TextTranslationMeta(models.Model):

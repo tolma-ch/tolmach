@@ -35,22 +35,21 @@ def user_to_json(user):
     }
 
 
-def text_to_json(text, text_translations, locale):
+def text_to_json(text, text_translation, locale):
     from babel import Locale
-    translations = []
-    for translation in text_translations:
-        lang_name = Locale(translation.target_lang.code)
-        translation_counts, translation_progress = translation.get_progress()
-        translations.append({
-            'targetLangId': translation.target_lang.id,
-            'lang': translation.target_lang.code,
-            'langFull': str(translation.target_lang),
-            'progress': translation_progress,
-            'counts': translation_counts,
-            'langLocal': lang_name.get_language_name(locale),
-            'glossaries': [int(x.id) for x in filter(None, translation.glossaries_list.all())] if translation.glossaries_list.all() else [],
-            'tmxes': [int(x.id) for x in filter(None, translation.tmdatabases_list.all())] if translation.tmdatabases_list.all() else [],
-        })
+
+    lang_name = Locale(text_translation.target_lang.code)
+    translation_counts, translation_progress = text_translation.get_progress()
+    translation = {
+        'targetLangId': text_translation.target_lang.id,
+        'lang': text_translation.target_lang.code,
+        'langFull': str(text_translation.target_lang),
+        'progress': translation_progress,
+        'counts': translation_counts,
+        'langLocal': lang_name.get_language_name(locale),
+        'glossaries': [int(x.id) for x in filter(None, text_translation.glossaries_list.all())] if text_translation.glossaries_list.all() else [],
+        'tmxes': [int(x.id) for x in filter(None, text_translation.tmdatabases_list.all())] if text_translation.tmdatabases_list.all() else [],
+        }
 
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
@@ -62,5 +61,5 @@ def text_to_json(text, text_translations, locale):
         'subject': text.subject.id,
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
-        'translations': translations,
+        'translation': translation,
     }

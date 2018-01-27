@@ -44,6 +44,26 @@
                            ng-model="name"
                            autofocus>
                 </div>
+                <div class="glossary-manual ng-scope">
+                    <div class="glossary-manual__input">
+                        <select class="form-control"
+                                ng-model="source_lang">
+                                <option value="" disabled selected>{% trans "Source language" %}</option>
+                            {% for language in languages %}
+                                <option value='{{ language.id }}'>{{ language.localized_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="glossary-manual__input">
+                        <select class="form-control"
+                                ng-model="target_lang">
+                                <option value="" disabled selected>{% trans "Target language" %}</option>
+                            {% for language in languages %}
+                                <option value='{{ language.id }}'>{{ language.localized_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
             <a class="btn btn-link" ng-click="addProjectAdvancedOptionsOpener()">{{ advanced_options_label }}</a>
             <div class="new-project__advanced-options"
