@@ -50,11 +50,11 @@ class TMDatabaseEntry(models.Model):
 class ProjectMember(models.Model):
     project = models.ForeignKey('translations.Project', related_name='project_members')
     user = models.ForeignKey('auth.User')
-    MANAGER = 0
+    EDITOR = 0
     TRANSLATOR = 1
     SPECTATOR = 2
     MEMBER_TYPES = (
-        (MANAGER, 'Manager'),
+        (EDITOR, 'Editor'),
         (TRANSLATOR, 'Translator'),
         (SPECTATOR, 'Spectator')
     )
@@ -114,13 +114,7 @@ class Project(models.Model):
         if self.is_private is False:
             return True
         else:
-            try:
-                membership_check = ProjectMember.objects.get(project=self,
-                                                         user=user,
-                                                         )
-            except:
-                membership_check = False
-            if self.manager == user or membership_check or user.is_staff:
+            if self.manager == user or self.is_user_a_member(user) or user.is_staff:
                 return True
             else:
                 return False
