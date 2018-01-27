@@ -184,10 +184,11 @@ def get_users_ajax(request):
 def participant_ajax(request, project):
     if request.method == 'GET':
         members = ProjectMember.objects.filter(project=project)
-        result = [user_to_json(project.manager)]
+        result = []
         for memb in members:
             result.append(user_to_json(memb.user, project))
-        return HttpResponse(json.dumps(result), content_type="application/json")
+        result.sort(key=lambda x: x['status'], reverse=False)
+        return HttpResponse(json.dumps([user_to_json(project.manager)] + result), content_type="application/json")
 
     if request.method == 'POST':
         if not project.is_user_manager(request.user):

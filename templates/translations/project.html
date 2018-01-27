@@ -203,17 +203,13 @@
                                      ng-class="{'project-list-participant_active': activeParticipant === participant}">
                                     <div class="project-list-participant__ava">
                                         <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
-                                        <i class="fa fa-graduation-cap" aria-hidden="true"
-                                           ng-if="participant.id == managerId"
-                                                style="
-                                                    position: absolute;
-                                                    top: 30px;
-                                                    left: 25px;
-                                                    background: white;
-                                                    border-radius: 50%;
-                                                    border: 1px solid #fff;
-                                                    color: #999999;
-                                                "></i>
+                                        <i aria-hidden="true"
+                                           ng-class="{'fa': true,
+                                                      'fa-border': true,
+                                                      'fa-star': participant.status == 10,
+                                                      'fa-pencil-square-o': participant.status == 0,
+                                                      'fa-pencil': participant.status == 1,
+                                                      'fa-eye': participant.status == 2,}"></i>
                                     </div>
                                     <div class="project-list-participant__name">
                                         {=:: participant.name =}
