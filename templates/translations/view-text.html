@@ -16,6 +16,8 @@
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 {% trans 'Add with' as text_options %}
+{% trans 'enter word' as dict_input_placeholder %}
+{% trans 'Nothing found' as dict_nothing_found %}
 
     <style>
         .sidebar {
@@ -56,6 +58,7 @@
             margin-left: 0 !important;
         }
     </style>
+
     <script>
         window['textId'] = {{ text.id }};
         window['useMachine'] = {{ use_machine }};
@@ -63,6 +66,7 @@
         window['translationSourceLang'] = '{{ source_lang }}';
         window['translation_progress'] = {{ translation_progress }};
         window['translation_counts'] = {{ translation_counts }};
+        window['wsTextConnectHost'] = '{{ ws_connect_host }}';
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -70,157 +74,7 @@
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
                      ng-show="!busy">
-                    <style>
-                        .text-piece__comment-button {
-                            background: white;
-                            display: inline-block;
-                            opacity: 0;
-                            transition: visibility, opacity 0.1s linear;
-                            font-size: 12px;
-                            color: #636363;
-                            max-width: 50px;
-                            min-width: 20px;
-                            height: 20px;
-                            text-align: center;
-                            border-radius: 18px;
-                            border: 1px solid #c5c5c5;
-                            padding-left: 3px;
-                            padding-right: 3px;
-                            margin-bottom: -4px;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-                            cursor: pointer;
-                        }
-                        .text-piece__comment-button i {
-                            pointer-events: none;
-                        }
-                        .text-piece__comment-button-active {
-                            visibility: visible;
-                            opacity: 1;
-                        }
-                        .text-piece__comment-button-absolute-active {
-                            visibility: visible !important;
-                            opacity: 1 !important;
-                            border: 2px solid #b3b300 !important;
-                            box-shadow: inset 0 0 5px #b3b300;
-                        }
-                        .text-piece__comment-button-inactive {
-                            visibility: hidden;
-                        }
-                        .text-piece_closed:hover .text-piece__comment-button-inactive {
-                            visibility: visible;
-                            opacity: 1;
-                            transition: visibility, opacity 0.15s linear;
-                            -webkit-transition-delay: 0.5s;
-                            -moz-transition-delay: 0.5s;
-                            -ms-transition-delay: 0.5s;
-                            -o-transition-delay: 0.5s;
-                            transition-delay: 0.5s;
-                        }
-
-                        .text-piece__comment-window {
-                            position: absolute;
-                            min-width: 250px;
-                            max-width: 250px;
-                            max-height: 400px;
-                            top: 70px;
-                            left: 70px;
-                            z-index: 300;
-                            background: white;
-                            box-shadow: 0px 0 20px #b7b7b7;
-                            padding: 5px;
-                        }
-                        .text-piece_comment-window__header {
-                            font-size: 14px;
-                            max-height: 45px;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-                            border-bottom: 1px solid #d2d2d2;
-                            white-space: nowrap;
-                            margin-bottom: 5px;
-                        }
-                        .text-piece__comment-window__items-block {
-                            max-height: 80%;
-                            overflow-y: scroll;
-                            max-height: 300px;
-                        }
-                        .text-piece__comment-window__item {
-                            display: block;
-                            min-height: 50px;
-                            margin: 5px;
-                            border-bottom: 1px solid gainsboro;
-                        }
-                        .text-piece__comment-window__item__own {
-                            background: #ffefaa;
-                            padding: 5px 10px 0px 10px;
-                            margin-left: 40px;
-                        }
-                        .text-piece__comment-window__item__own .text-piece__comment-window__item__ava {
-                            display: none;
-                        }
-                        .text-piece__comment-window__item__ava {
-                            float: left;
-                            top: 0;
-                            width: 40px;
-                            height: 40px;
-                            margin-right: 5px;
-                            border-radius: 50%;
-                            border: 1px solid #c7c7c7;
-                            display: block;
-                        }
-                        .text-piece__comment-window__input {
-                            width: 100%;
-                            margin-bottom: 5px;
-                        }
-                        .text-piece__comment-window__send-btn {
-                            float: left;
-                            width: 45%;
-                        }
-                        .text-piece__comment-window__cancel-btn {
-                            float: right;
-                            width: 45%;
-                        }
-                    </style>
-                    <div class="text-piece__comment-window"
-                         id="entryCommentWindow"
-                            ng-show="showEntryCommentsModal">
-                        <div class="text-piece_comment-window__header">
-                            Обработка всех событий в MaxScale работает через epoll и поддерживает многотредовость.
-                        </div>
-                        <div class="text-piece__comment-window__items-block">
-                            <div class="text-piece__comment-window__item">
-                                <img class="text-piece__comment-window__item__ava" src="/media/avatar/vk_avatar_12870970_hHZLLh7.jpg" alt="User">
-                                <div class="chat-item__time">12:18</div>
-                                <div class="chat-item__name">sukhanovaekaterina</div>
-                                <div class="chat-item__text">You are stupid idiots both!</div>
-                            </div>
-                            <div class="text-piece__comment-window__item">
-                                <img class="text-piece__comment-window__item__ava" src="/media/avatar/tw_avatar_465783759.jpg" alt="User">
-                                <div class="chat-item__time">12:18</div>
-                                <div class="chat-item__name">MashAlexandrova</div>
-                                <div class="chat-item__text">Во вторых, стоит принять во внимание, имеем ли мы дело с транзакцией или нет. Во вторых, стоит принять во внимание, имеем ли мы дело с транзакцией или нет. Во вторых, стоит принять во внимание, имеем ли мы дело с транзакцией или нет. </div>
-                            </div>
-                            <div class="text-piece__comment-window__item">
-                                <img class="text-piece__comment-window__item__ava" src="/media/avatar/vk_avatar_12870970_hHZLLh7.jpg" alt="User">
-                                <div class="chat-item__time">12:18</div>
-                                <div class="chat-item__name">sukhanovaekaterina</div>
-                                <div class="chat-item__text">You are stupid idiots both!</div>
-                            </div>
-                            <div class="text-piece__comment-window__item text-piece__comment-window__item__own">
-                                <img class="text-piece__comment-window__item__ava" src="/media/avatar/vk_avatar_110946620_UQUgNLv.jpg" alt="User">
-                                <div class="chat-item__time">12:18</div>
-                                <div class="chat-item__name">heisenberg</div>
-                                <div class="chat-item__text">You are stupid idiots both!</div>
-                            </div>
-                        </div>
-                        <form ng-submit="searchWord()" name="entryCommentInputForm">
-                            <input type="text" ng-model="word" name="entryCommentText" id="entry-comment-input" placeholder="{{ dict_input_placeholder }}" autocomplete="off" class="text ui-widget-content ui-corner-all text-piece__comment-window__input" focus-on="!!showDictModal">
-                            <input type="hidden" name="commentedEntryId" id="commentedEntryId" value="0">
-                            <button class="btn btn-xs btn-primary text-piece__comment-window__send-btn">Comment</button>
-                            <button class="btn btn-xs text-piece__comment-window__cancel-btn"
-                                    ng-click="entryCommentsOpener($event, 0, 0)">Cancel</button>
-                        </form>
-                    </div>
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
@@ -228,26 +82,19 @@
                          ng-class="{'text-piece_closed': entry.approved || ($parent.activeEntry !== entry),
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
                                     'text-piece_approved': entry.approved,
-                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0)}">
+                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0),
+                                    'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}">
 
                         <div class="text-piece__original" ng-mouseup="mouseup()">
                             <div ng-if="$parent.activeEntry !== entry">
                                 <div ng-if="!entry.approved">
                                     <span html-content="entry.body"></span>
-                                    <span class="text-piece__comment-button text-piece__comment-button-inactive"
-                                            ng-click="entryCommentsOpener($event, entry.id, entry.body)">
-                                        1
-                                        <i class="fa fa-commenting-o"></i>
-                                    </span>
+                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
                                 <div ng-if="entry.approved">
                                     <span class="text-piece__body">
                                         <span html-content="entry.translation"></span>
-                                        <span class="text-piece__comment-button text-piece__comment-button-inactive"
-                                                ng-click="entryCommentsOpener($event, entry.id, entry.translation)">
-                                            123
-                                            <i class="fa fa-commenting-o"></i>
-                                        </span>
+                                        {% include "translations/partial/text-page-now-editing-icon.html" %}
                                     </span>
                                     <div class="text-piece__icons">
                                         <a class="active"
@@ -263,10 +110,7 @@
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
                                     <span html-content="entry.body"></span>
-                                    <span class="text-piece__comment-button text-piece__comment-button-active"
-                                            ng-click="entryCommentsOpener($event, entry.id, entry.body)">
-                                        <i class="fa fa-commenting-o"></i>
-                                    </span>
+                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
                                 <div ng-if="entry.meta.msgid_plural">
                                     <span class="grey">{% trans 'singular:' %}</span> <span html-content="entry.body"></span> <br>
@@ -352,22 +196,28 @@
                                 </div>
                                 <div class="translation-editor__machine-suggestions">
                                     <div class="machine-suggestions"
-                                         ng-show="entry.tmdbVariants.length">
+                                         ng-show="showText = true; entry.tmdbVariants.length">
                                         <h4 class="machine-suggestions__title">{{ tmtranslations }}</h4>
                                         <ul class="machine-suggestions__list">
                                             <li class="machine-suggestions__item"
-                                                ng-repeat="machine in entry.tmdbVariants"
-                                                ng-click="addMachineSuggestion(entry, machine)">
+                                                ng-repeat="machine in entry.tmdbVariants">
                                                 <div class="machine-suggestion">
                                                     <span class="machine-suggestion__from">{= machine.tmx | limitTo:15 =}</span>
                                                     <span class="machine-suggestion__text"
-                                                          html-content="machine.text"></span>
+                                                          html-content="machine.text"
+                                                          ng-if="showText"
+                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
+                                                    <span class="machine-suggestion__text"
+                                                          html-content="machine.diff"
+                                                          ng-if="!showText"
+                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
                                                     <span class="machine-suggestion__relevance"
                                                           ng-class="{
                                                             'machine-suggestion__relevance_high': machine.percent >= 70,
                                                             'machine-suggestion__relevance_medium': machine.percent> 40 && machine.percent < 70,
                                                             'machine-suggestion__relevance_low': machine.percent <= 40
-                                                          }">{= machine.percent =}%</span>
+                                                          }"
+                                                          ng-click="showText = !showText">{= machine.percent =}%</span>
                                                 </div>
                                             </li>
                                         </ul>
@@ -428,6 +278,7 @@
                             </div>
                         </div>
                     </div>
+                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                 </div>
             </div>
 
@@ -436,22 +287,7 @@
                     <div class="text-overview__table">
                         <div class="text-overview__row text-overview__row_thin">
                             <div class="text-overview__cell">
-                                <div class="text-overview__paginator"
-                                     ng-show="pagesCount > 1">
-                                    <a href=""
-                                       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
-                                <span class="text-overview__paginator-text"
-                                      ng-show="!editPage"
-                                      ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
-                                    <input type="text"
-                                           ng-show="editPage"
-                                           focus-me="focusPaginator"
-                                           ng-model="page"
-                                           ng-keypress="paginatorKeypress($event)"
-                                           ng-blur="paginatorBlur()">
-                                    <a href=""
-                                       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
-                                </div>
+                                {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
                                     <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
                                     <style>

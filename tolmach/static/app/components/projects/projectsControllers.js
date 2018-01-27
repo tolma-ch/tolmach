@@ -29,9 +29,11 @@
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {
-                    'name': $scope.name,
+                    'name': $scope.name.substring(0, 250),
                     'description': $scope.description || " ",
-                    'type': $scope.type
+                    'type': $scope.type,
+                    'source_lang': $scope.source_lang,
+                    'target_lang': $scope.target_lang
                 };
                 $scope.busy = true;
                 $http.post('/ajax/project-create/', data)

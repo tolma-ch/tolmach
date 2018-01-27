@@ -1,0 +1,16 @@
+<div class='text-overview__paginator {% if mobile_pagination == "true" %}text-overview__paginator__mobile{% endif %}'
+     ng-show="pagesCount > 1">
+    <a href=""
+       ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
+<span class="text-overview__paginator-text"
+      ng-show="!editPage"
+      ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>
+    <input type="text"
+           ng-show="editPage"
+           focus-me="focusPaginator"
+           ng-model="page"
+           ng-keypress="paginatorKeypress($event)"
+           ng-blur="paginatorBlur()">
+    <a href=""
+       ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
+</div>

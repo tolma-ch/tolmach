@@ -2,9 +2,9 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 import tolmach.views as main_views
-import dicts.views as dicts_views
 import translations.views as trans_views
 import translations.views_ajax as trans_ajax
+import dicts.views as dict_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -31,13 +31,20 @@ urlpatterns = patterns('',
 
     # translations
     url(r'^projects/(?P<proj_type>\w+)/$', trans_views.projects),
+
+    # dev needs
+    url(r'^project_lang_stats/$', trans_views.project_lang_stats),
+    url(r'^new_project_page/$', trans_views.new_project_page),
+    
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
+    url(r'^project/(?P<proj_id>\d+)/(?P<target_lang>\w+)/$', trans_views.project_by_translation, name='project_by_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
 
     # ajax
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
+    url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),
     url(r'^ajax/project/$', trans_ajax.project_ajax, name='project_ajax'),
     url(r'^ajax/entry/(?:(?P<action>\w+)/)?$', trans_ajax.entry_ajax, name='entry_action_ajax'),
     url(r'^ajax/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),
@@ -52,7 +59,7 @@ urlpatterns = patterns('',
     url(r'^ajax/tmx/$', trans_ajax.tmx_ajax, name='tmx_ajax'),
     url(r'^ajax/ya-translate/$', trans_ajax.yandex_translate_ajax, name='yandex_translate'),
     url(r'^ajax/tmdb-search/$', trans_ajax.tmdb_search, name='tmdb_search'),
-    url(r'^ajax/dict-search/$', dicts_views.dict_search, name='dict_search'),
+    url(r'^ajax/dict-search/$', dict_views.dict_search, name='dict_search'),
     url(r'^ajax/message/(?:(?P<all>\w+)/)?$', trans_ajax.message_ajax, name='message_ajax'),
     url(r'^ajax/user/$', trans_ajax.user_ajax, name='user_ajax'),
 

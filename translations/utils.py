@@ -7,7 +7,7 @@ import os
 import json
 from django.utils.translation import ugettext as _
 from entries.models import Language
-from translations.models import TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import ProjectTranslation, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
 import datetime
 
@@ -385,7 +385,8 @@ def parse_tmx(filename, tmdb_name, project, request):
 
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
-    current_tmdbs = [int(x.id) for x in text_translation.tmdatabases_list.all()] if text_translation.tmdatabases_list.all() else []
+    project_translation = ProjectTranslation.objects.get(project=project, target_lang=target_lang)
+    current_tmdbs = [int(x.id) for x in project_translation.tmdatabases_list.all()] if project_translation.tmdatabases_list.all() else []
 
     try:
         tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write")
@@ -405,11 +406,11 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
                       target_lang=target_lang
                       )
         new_tmdb.save()
-        project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
+        project_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         if not str(new_tmdb.id) in current_tmdbs:
             current_tmdbs.append(str(new_tmdb.id))
-            text_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
+            project_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
 
         tmdbs.append(str(new_tmdb.id))
         tmdb_to_write.meta_data = str(new_tmdb.id)

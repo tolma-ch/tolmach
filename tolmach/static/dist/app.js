@@ -74,8 +74,8 @@
 
     var module = angular.module('dictControllers', []);
 
-    module.controller('DictCtrl', ['$scope', '$http', '$window', 'Dict',
-        function ($scope, $http, $window, Dict) {
+    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict',
+        function ($scope, $http, $window, $sce, Dict) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
             $scope.dictSourceLang = window['translationSourceLang'];
@@ -124,7 +124,9 @@
                         var results = [];
                         angular.forEach(res, function (elem, key){
                             results.push({id: key,
-                                        word: elem['translation'],
+                                        dict: elem['dict'],
+                                        word: elem['word'],
+                                        definition: elem['definition'].replace(/(\n)+/g, '<br />'),
                                         meanings: elem['meanings']
                             });
                         });
@@ -499,6 +501,8 @@
             $scope.project = window['project'];
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
+            $scope.managerId = window['managerId'];
+            $scope.targetLang = window['targetLang'];
             $scope.languages = window['languages'];
             $scope.participants = [];
             $http.get('/ajax/participant', {params: {project: $scope.projectId}})
@@ -506,16 +510,16 @@
                     $scope.participants = response.data;
                 });
             $scope.texts = [];
-            $http.get('/ajax/text', {params: {project: $scope.projectId}})
+            $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.texts = response.data;
                 });
             $scope.glossaries = [];
-            $http.get('/ajax/glossary', {params: {project: $scope.projectId}})
+            $http.get('/ajax/glossary', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.glossaries = response.data;
                 });
-            $http.get('/ajax/tmx', {params: {project: $scope.projectId}})
+            $http.get('/ajax/tmx', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
                 .then(function (response) {
                     $scope.tmxes = response.data;
                 });
@@ -552,6 +556,18 @@
                         $scope.busy = false;
                     });
             };
+            $scope.addProjectTranslation = function () {
+                if (!$scope.isUserManager) {
+                    return;
+                }
+                var modalInstance = $modal.open({
+                    templateUrl: 'addProjectTranslationModal.html',
+                    controller: 'AddProjectTranslationModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {}
+                });
+            };
             $scope.addText = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'addTextModal.html',
@@ -578,15 +594,6 @@
                     resolve: {
                         text: function () {
                             return text;
-                        },
-                        glossaries: function () {
-                            return $scope.glossaries;
-                        },
-                        tmxes: function () {
-                            return $scope.tmxes;
-                        },
-                        languages: function () {
-                            return $scope.languages;
                         }
                     }
                 });
@@ -737,7 +744,7 @@
                 $scope.project.name = $scope.projectName;
                 $http.post('/ajax/project/', {
                         'id': $scope.project.id,
-                        'name': $scope.project.name
+                        'name': $scope.project.name.substring(0, 250)
                     })
                     .success(function (data) {
                     })
@@ -808,6 +815,31 @@
                     });
             };
 
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+    module.controller('AddProjectTranslationModalCtrl', ['$scope', '$modalInstance', '$http',
+        function ($scope, $modalInstance, $http) {
+            $scope.error = '';
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'target_lang': $scope.target_lang
+                };
+                $scope.busy = true;
+                $http.post('/ajax/project-add-translation/', data)
+                    .success(function (data) {
+                        location.href = '/project/' + data['project_id'] + '/' + data['target_lang'] + '/';
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                        //$modalInstance.close();
+                    });
+            };
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
@@ -885,17 +917,12 @@
                     $scope.error = 'Subject is lost';
                     return;
                 }
-                if (!$scope.text.sourceLang) {
-                    $scope.error = 'Langauges is not set?';
-                    return;
-                }
                 $scope.error = '';
                 var data = {
                     project: window['projectId'],
-                    title: $scope.text.title,
-                    subject: $scope.text.subject,
-                    sourceLang: $scope.text.sourceLang,
-                    targetLang: $scope.text.targetLang
+                    title: $scope.text.title.substring(0, 250),
+                    project_target_lang: window['targetLang'],
+                    subject: $scope.text.subject
                 };
                 if ($scope.tab === 0) {
                     if (!$scope.text.files || !$scope.text.files.length) {
@@ -957,9 +984,8 @@
                                     var data = {
                                         project: window['projectId'],
                                         title: $scope.text.title,
+                                        project_target_lang: window['targetLang'],
                                         subject: $scope.text.subject,
-                                        sourceLang: $scope.text.sourceLang,
-                                        targetLang: $scope.text.targetLang,
                                         file_name: serverFileName,
                                         file_type: serverFileType,
                                         custom_parse: ranges
@@ -1008,85 +1034,10 @@
             };
         }
     ]);
-    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text', 'glossaries', 'tmxes', 'languages',
-        function ($scope, $modalInstance, $http, text, glossaries, tmxes, languages) {
+    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text',
+        function ($scope, $modalInstance, $http, text) {
             $scope.text = text;
             $scope.options = {};
-            if ($scope.text.translations.length) {
-                $scope.options.currentTranslation = $scope.text.translations[0];
-            } else {
-                $scope.options.currentTranslation = null;
-            }
-            $scope.options.addNewTranslation = false;
-            $scope.glossaries = glossaries;
-            $scope.tmxes = tmxes;
-            $scope.tab = 0;
-            $scope.addTranslation = function (targetLang) {
-                if (!targetLang) {
-                    return;
-                }
-                $scope.text.translations.push({
-                    targetLangId: targetLang.id,
-                    lang: targetLang.code,
-                    langFull: targetLang.langFull,
-                    langLocal: targetLang.langLocal
-                });
-                $scope.options.NewTranslationTargetLang = null;
-                $scope.options.currentTranslation = $scope.text.translations[$scope.text.translations.length - 1];
-                $scope.options.addNewTranslation = false;
-            };
-            $scope.getLanguages = function () {
-                var result = [],
-                    excludes = [],
-                    i;
-                for (i = 0; i < $scope.text.translations.length; i++) {
-                    var translation = $scope.text.translations[i];
-                    excludes.push(Number(translation.targetLangId));
-                }
-                for (i = 0; i < languages.length; i++) {
-                    var language = languages[i];
-                    if (excludes.indexOf(Number(language.id)) === -1) {
-                        result.push(language);
-                    }
-                }
-                return result;
-            };
-            $scope.toggleGlossary = function (id) {
-                if (typeof id === 'undefined') {
-                    $scope.options.currentTranslation.allGlossaries = !$scope.options.currentTranslation.allGlossaries;
-                    if ($scope.options.currentTranslation.allGlossaries) {
-                        $scope.options.currentTranslation.glossaries = $scope.glossaries.map(function (item) {return item.id;});
-                    } else {
-                        $scope.options.currentTranslation.glossaries = [];
-                    }
-                } else {
-                    var index = $scope.options.currentTranslation.glossaries.indexOf(id);
-                    if (index > -1) {
-                        $scope.options.currentTranslation.glossaries.splice(index, 1);
-                    } else {
-                        $scope.options.currentTranslation.glossaries.push(id);
-                    }
-                    $scope.options.currentTranslation.allGlossaries = $scope.options.currentTranslation.glossaries.length === $scope.glossaries.length;
-                }
-            };
-            $scope.toggleTmx = function (id) {
-                if (typeof id === 'undefined') {
-                    $scope.options.currentTranslation.allTmxes = !$scope.options.currentTranslation.allTmxes;
-                    if ($scope.options.currentTranslation.allTmxes) {
-                        $scope.options.currentTranslation.tmxes = $scope.tmxes.map(function (item) {return item.id;});
-                    } else {
-                        $scope.options.currentTranslation.tmxes = [];
-                    }
-                } else {
-                    var index = $scope.options.currentTranslation.tmxes.indexOf(id);
-                    if (index > -1) {
-                        $scope.options.currentTranslation.tmxes.splice(index, 1);
-                    } else {
-                        $scope.options.currentTranslation.tmxes.push(id);
-                    }
-                    $scope.options.currentTranslation.allTmxes = $scope.options.currentTranslation.tmxes.length === $scope.tmxes.length;
-                }
-            };
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';
@@ -1104,14 +1055,13 @@
                 var data = {
                     project: window['projectId'],
                     id: $scope.text.id,
-                    title: $scope.text.title,
+                    title: $scope.text.title.substring(0, 250),
+                    project_target_lang: window['targetLang'],
                     machine: $scope.text.machine,
                     subject: $scope.text.subject,
                     sourceLang: $scope.text.sourceLang,
                     targetLang: $scope.text.targetLang,
-                    glossaries: $scope.text.glossaries,
                     translations: $scope.text.translations,
-                    tmxes: $scope.text.tmxes
                 };
                 $scope.busy = true;
                 $http.post('/ajax/text/', data)
@@ -1175,6 +1125,8 @@
                 $scope.busy = true;
                 var data = $scope.glossary;
                 data['project'] = window['projectId'];
+                data['name'] = data['name'].substring(0, 250);
+                data['target_lang'] = window['targetLang'];
                 if ($scope.glossary.id || $scope.tab === 1) {
                     delete data.file;
                     $http.post('/ajax/glossary/', data)
@@ -1219,6 +1171,7 @@
                 $scope.busy = true;
                 $scope.error = '';
                 var data = $scope.tmx;
+                data['name'] = data['name'].substring(0, 250);
                 data['project'] = window['projectId'];
 
                 Upload.upload({
@@ -1282,9 +1235,11 @@
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {
-                    'name': $scope.name,
+                    'name': $scope.name.substring(0, 250),
                     'description': $scope.description || " ",
-                    'type': $scope.type
+                    'type': $scope.type,
+                    'source_lang': $scope.source_lang,
+                    'target_lang': $scope.target_lang
                 };
                 $scope.busy = true;
                 $http.post('/ajax/project-create/', data)
@@ -1323,6 +1278,169 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+
+            $scope.keyLength = function (obj) {
+                return Object.keys(obj).length;
+            };
+
+            $scope.ws_active = false;
+            $scope.socket = new ReconnectingWebSocket(window['wsTextConnectHost']
+                + '/ws/text/'
+                + window['textId']
+                + '/'
+                + window['translationTargetLang']
+                + '/');
+
+            $scope.socket.onopen = function open() {
+                console.log('WebSockets connection created.');
+                $scope.ws_active = true;
+                $scope.$apply()
+            };
+            $scope.socket.onclose = function () {
+                console.log("Disconnected from translation socket");
+                $scope.ws_active = false;
+                $scope.$apply()
+            };
+
+            if ($scope.socket.readyState == WebSocket.OPEN) {
+              $scope.socket.onopen();
+            }
+
+            $scope.socket.onmessage = function(message) {
+                //console.log(message.data);
+                // TODO:
+                // 1) [done] Обновлять у всех пользователей прогресс документа
+                // 2) [done] Присылать пользователям новые варианты перевода фрагментов и удалять удалённые
+                // 3) [done] Обновлять у пользователей статус фрагментов "подтверждён/не подтверждён"
+                // 4) [done] Показывать пользователям, какие фрагменты в данный момент переводят
+                var ws_data = JSON.parse(message.data);
+                if ('progress' in ws_data) {
+                    //console.log('updating progressbars');
+                    $scope.translationProgress = ws_data['progress']['translation_progress'];
+                    $scope.translationCounts = ws_data['progress']['translation_counts'];
+                }
+                if ('entry_to_approve' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_approve = ws_data['entry_to_approve'];
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == entry_to_approve.id) {
+                                var local_entry_to_approve = item;
+                                //console.log("entry: " + item);
+                                local_entry_to_approve['translations'].forEach(function (item_translation, x, a) {
+                                    if (item_translation.id == entry_to_approve.translation.id) {
+                                        var local_translation_to_approve = item_translation;
+                                        //console.log("entry translation: " + item_translation);
+                                        item_translation.isApproved = true;
+                                        item.approved = true;
+                                        applyTranslation(item, item_translation);
+                                    }
+                                })
+                            }
+                        });
+                    }
+                }
+                if ('entry_to_disapprove' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_disapprove = ws_data['entry_to_disapprove'];
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == entry_to_disapprove.id) {
+                                var local_entry_to_disapprove = item;
+                                var i,
+                                    someTranslation,
+                                    translation;
+                                for (i = 0; i < local_entry_to_disapprove.translations.length; i++) {
+                                    someTranslation = local_entry_to_disapprove.translations[i];
+                                    if (someTranslation.isApproved) {
+                                        translation = someTranslation;
+                                    }
+                                }
+                                translation.isApproved = false;
+                                local_entry_to_disapprove.approved = false;
+                                local_entry_to_disapprove.translation = '';
+                                updateTranslation(local_entry_to_disapprove);
+                            }
+                        });
+                    }
+                }
+                if ('entry_new_translation' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_new_translation = ws_data['entry_new_translation'];
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == entry_new_translation.id) {
+                                var local_entry_to_translate = item,
+                                    translation_to_update = false;
+
+                                local_entry_to_translate.translations.forEach(function (item_translation, x, a) {
+                                    if (item_translation.id == entry_new_translation.translation.id) {
+                                        translation_to_update = item_translation;
+                                    }
+                                });
+                                if (translation_to_update) {
+                                    // если перевод не новый, а апдейтится уже имеющийся
+                                    translation_to_update.body = entry_new_translation.translation.body;
+                                    translation_to_update.isApproved = entry_new_translation.translation.isApproved;
+                                } else {
+                                    // а если перевод новый, то проверяем, не закинут ли он ещё в общий пул аяксом
+                                    // и добавляем его
+                                    if (!(entry_new_translation.translation in local_entry_to_translate['translations'])) {
+                                        local_entry_to_translate['translations'].push(entry_new_translation.translation);
+                                    }
+                                }
+
+                                if (entry_new_translation.translation.isApproved === true) {
+                                    if (local_entry_to_translate === $scope.activeEntry) {
+                                        $scope.activeEntry = null;
+                                    }
+                                    local_entry_to_translate.approved = true;
+                                    applyTranslation(local_entry_to_translate, entry_new_translation.translation);
+                                } else {
+                                    updateTranslation(local_entry_to_translate);
+                                }
+                            }
+                        })
+                    }
+                }
+                if ('remove_translation' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, x, arr) {
+                            if (item.id == ws_data['remove_translation'].id) {
+                                var i;
+                                for (i = 0; i < item.translations.length; i++) {
+                                    var translation = item.translations[i];
+                                    if (translation.id === ws_data['remove_translation'].translation.id) {
+                                        delete item.translations.splice(i, 1);
+                                        break;
+                                    }
+                                }
+                                updateTranslation(item);
+                            }
+                        })
+                    }
+                }
+                if ('current_edit_start' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_start']) {
+                                item.isBeingEdited[ws_data['user']] = ".";
+                            } else {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
+                    }
+                }
+                if ('current_edit_stop' in ws_data) {
+                    //console.log('current: ' + $scope.user + "; from message: " + ws_data['user']);
+                    if (!($scope.user == ws_data['user'])) {
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == ws_data['current_edit_stop']) {
+                                delete item.isBeingEdited[ws_data['user']];
+                            }
+                        });
+                    }
+                }
+                $scope.$apply();
+            };
+
             var clearTags = function (text) {
                     //return text;
                     var div = document.createElement("div");
@@ -1330,15 +1448,17 @@
                     return div.textContent || div.innerText || "";
                 },
                 updateTranslationProgress = function () {
-                    $http.post('/ajax/get-translation-progress/', {
-                        text: textId,
-                        target_lang: window['translationTargetLang']
-                    }).success(function (data) {
-                        $scope.translationProgress = data['translation_progress'];
-                        $scope.translationCounts = data['translation_counts'];
-                    }).error(function (a) {
-                        //console.error(a);
-                    });
+                    if (!$scope.ws_active) {
+                        $http.post('/ajax/get-translation-progress/', {
+                            text: textId,
+                            target_lang: window['translationTargetLang']
+                        }).success(function (data) {
+                            $scope.translationProgress = data['translation_progress'];
+                            $scope.translationCounts = data['translation_counts'];
+                        }).error(function (a) {
+                            //console.error(a);
+                        });
+                    }
                 },
                 applyTranslation = function (entry, translation) {
                     entry.translation = (clearTranslation(entry, translation));
@@ -1413,7 +1533,11 @@
                             i, entry;
                         for (i = entries.length - 1; i >= 0; i--) {
                             entry = entries[i];
-                            entry.body = entry.body.replace("\n", '<br>');
+                            entry.body = entry.body.replace(/\n/g, '<br>');
+                            entry.translation = entry.translation.replace(/\n/g, '<br>');
+                            entry.translations.forEach(function(trans) {
+                                trans.body = trans.body.replace(/\n/g, "<br>");
+                            });
                             updateTranslation(entry);
                             entriesById[entry['idInText']] = entry;
                         }
@@ -1523,6 +1647,21 @@
                         }, 500);
                     }, 100);
                 },
+                entrySetEditingStatus = function (entry, status) {
+                    if ($scope.ws_active) {
+                        if (status == "start") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_start" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        } else if (status == "stop") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_stop" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        }
+                    }
+                },
                 expandEntry = function (entry) {
                     if (!entry.approved) {
                         $scope.activeEntry = entry;
@@ -1533,6 +1672,7 @@
                                 $('#entry-suggestion-' + entry.id).focus();
                             }, 10);
                         }
+                        entrySetEditingStatus(entry, 'start');
                     }
                     scrollToEntry(entry);
                 };
@@ -1555,6 +1695,7 @@
                     translation.isApproved = true;
                     entry.approved = true;
                     applyTranslation(entry, translation);
+                    entrySetEditingStatus(entry, 'stop');
                     $scope.activeEntry = null;
                     var t;
                     for (var i = entry['translations'].length - 1; i >= 0; i--) {
@@ -1580,6 +1721,7 @@
                         translation.isApproved = false;
                         entry.approved = false;
                         $scope.activeEntry = entry;
+                        entrySetEditingStatus(entry, 'start');
                         entry.translation = '';
                         updateTranslation(entry);
                     })
@@ -1615,7 +1757,7 @@
                 var suggestionId = entry['suggestionId'],
                     data = {
                         id: entry.id,
-                        text: entry.suggestion.replace('<br>', "\n"),
+                        text: entry.suggestion.replace(/<br\s*[\/]?>/gi, "\n"),
                         target_lang: window['translationTargetLang']
                     };
                 if (suggestionId) {
@@ -1631,14 +1773,16 @@
                         for (i = entry['translations'].length - 1; i >= 0; i--) {
                             translation = entry['translations'][i];
                             if (translation.id == suggestionId) {
-                                translation.body = data.body;
+                                translation.body = data.body.replace(/\n/g, "<br>");
                                 translation.isApproved = data.isApproved;
 
                                 break;
                             }
                         }
                     } else {
-                        entry['translations'].push(data);
+                        if (!(data in entry['translations'])){
+                            entry['translations'].push(data);
+                        }
                     }
                     entry.editing = false;
                     entry.suggestion = '';
@@ -1702,6 +1846,7 @@
             };
             $scope.cancelEditing = function (entry) {
                 entry.editing = false;
+                entrySetEditingStatus(entry, 'stop');
                 entry.suggestion = '';
                 entry.suggestionId = false;
             };
@@ -1737,9 +1882,11 @@
             $scope.textareaKeydown = function (event, entry) {
                 var code = (event.charCode) ? event.charCode : ((event.which) ? event.which : event.keyCode);
                 if ($scope.savingOptions.btn === 'enter') {
-                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey) {
+                    if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
                         console.log('just enter');
                         saveHotKey(entry);
+                    } else if (event.shiftKey && (code === 13 || code === 10)) {
+                        console.log('shift-enter to new line');
                     }
                 } else {
                     if (code == 13 && event.metaKey) {
@@ -1748,6 +1895,9 @@
                     } else if (event.ctrlKey && (code === 13 || code === 10)) {
                         console.log('ctrl enter');
                         saveHotKey(entry);
+                    } else if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+                        event.stopPropagation(); // Disabling new-lines with Enter key to prevent a bug when cursor after first
+                        event.preventDefault(); // char on new line moves to the beginning of the line
                     }
                 }
             };
@@ -2399,7 +2549,7 @@
                     modified = false,
                     extendNode,
                     lastBr,
-                    allowBr = false,
+                    allowBr = true,
                     i;
                 angular.forEach(element.childNodes, function (node) {
                     nodes.push(node);
