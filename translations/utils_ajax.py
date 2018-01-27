@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from tolmach.models import UserMeta
-from translations.models import TextTranslation
+from translations.models import ProjectMember
 
 import json
 
@@ -24,14 +24,21 @@ def translation_to_json(translation):
     }
 
 
-def user_to_json(user):
+def user_to_json(user, project=None):
     username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
     user_meta = UserMeta.objects.get(user=user)
     avatar = "%s" % user_meta.avatar if user_meta.avatar else "avatar/default.png"
+    status = 10
+    if project:
+        member = ProjectMember.objects.get(project=project,
+                                           user=user,
+                                           )
+        status = member.status
     return {
         'id': user.id,
         'name': username,
-        'avatar': avatar
+        'avatar': avatar,
+        'status': status
     }
 
 
