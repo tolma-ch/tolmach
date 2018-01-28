@@ -404,13 +404,25 @@
 	color #4C8FBD
 	cursor pointer
 	min-height 40px
+	margin-bottom 8px
 
 	&__ava
 		border-radius 50%
-		border 1px solid #999
 		position absolute
 		top 0
 		left 0
+		&__owner
+			border 1px solid #c6de00
+			color: #c6de00
+		&__editor
+			border 1px solid #01a015
+			color: #01a015
+		&__translator
+			border 1px solid #438db9
+			color: #438db9
+		&__spectator
+			border 1px solid #bbb
+			color: #bbb
 		img
 			width 40px
 			height 40px
@@ -423,14 +435,7 @@
 			background white
 			border-radius 50%
 			border 1px solid #fff
-			&.fa-star
-				color: #c6de00
-			&.fa-pencil-square-o
-				color: #01a015
-			&.fa-pencil
-				color: #a691f9
-			&.fa-eye
-				color: #999999
+			padding 1px 1px 1px 2px
 
 	&__name
 		margin 0 0 4px 50px
