@@ -9,6 +9,7 @@
         managerId = {{ manager_id }};
         targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
+        userMembershipStatus = {{ user_membership_status }};
     </script>
     <style>
         .page-header {
@@ -201,11 +202,15 @@
                                      ng-repeat="participant in participants"
                                      ng-click="activeParticipant = participant"
                                      ng-class="{'project-list-participant_active': activeParticipant === participant}">
-                                    <div class="project-list-participant__ava">
+                                    <div class="project-list-participant__ava"
+                                           ng-class="{'project-list-participant__ava': true,
+                                                      'project-list-participant__ava__owner': participant.status == 10,
+                                                      'project-list-participant__ava__editor': participant.status == 0,
+                                                      'project-list-participant__ava__translator': participant.status == 1,
+                                                      'project-list-participant__ava__spectator': participant.status == 2,}">
                                         <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
                                         <i aria-hidden="true"
                                            ng-class="{'fa': true,
-                                                      'fa-border': true,
                                                       'fa-star': participant.status == 10,
                                                       'fa-pencil-square-o': participant.status == 0,
                                                       'fa-pencil': participant.status == 1,
@@ -216,7 +221,6 @@
                                     </div>
                                     <div class="project-list-participant__btns">
                                         <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
-                                        <!--<a class="project-list-participant__btn" href=""><i class="fa fa-pencil-square-o"></i></a>-->
                                         <a class="project-list-participant__btn tooltip-warning" href=""
                                            tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
@@ -225,6 +229,11 @@
                                            popover-placement="left"
                                            popover-append-to-body="true"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                                        <select name="users" ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)">
+                                            {% for status, text in membership_statuses.items %}
+                                                <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                     <div class="project-list-participant__menu"
                                             ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">

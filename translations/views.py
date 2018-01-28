@@ -206,7 +206,7 @@ def project_by_translation(request, target_lang, proj_id=0):
                                                          target_lang=Language.objects.get(code=target_lang))
     except Project.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
-    if (not pr.is_user_manager(request.user) and not pr.is_user_allowed(request.user)) and not request.user.is_staff:
+    if not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
 
@@ -240,9 +240,22 @@ def project_by_translation(request, target_lang, proj_id=0):
         lang_name = Locale(pr_translation.target_lang.code)
         pr_translation.target_lang_local = lang_name.get_language_name(request.LANGUAGE_CODE)
 
+    try:
+        membership_status = ProjectMember.objects.get(project=pr,
+                                                      user=request.user).status
+    except:
+        if request.user.is_staff:
+            membership_status = ProjectMember.EDITOR
+        else:
+            membership_status = ProjectMember.SPECTATOR
+
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
         'manager_id': pr.manager.id,
+        'membership_statuses': {ProjectMember.EDITOR: "Editor",
+                                ProjectMember.TRANSLATOR: "Translator",
+                                ProjectMember.SPECTATOR: "Spectator"},
+        'user_membership_status': membership_status,
         'target_lang': target_lang,
         'project': pr,
         'projectData': json.dumps({
@@ -298,7 +311,17 @@ def view_translation(request, text_id, target_lang):
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
     translation_counts, translation_progress = translation.get_progress()
 
+    try:
+        membership_status = ProjectMember.objects.get(project=pr,
+                                                      user=request.user).status
+    except:
+        if request.user.is_staff:
+            membership_status = ProjectMember.EDITOR
+        else:
+            membership_status = 999
+
     data = {'username': request.user,
+            'user_membership_status': membership_status,
             'page_title': text.title,
             'breadcrumbs': [
                 [projects_text, projects_url],
