@@ -44,6 +44,33 @@
                 }, function () {
                 });
             };
+            $scope.changeParticipantStatus = function (participant) {
+                console.log(participant);
+                var ids = participant.split(",");
+                var data = {
+                    'project': window['projectId'],
+                    'user': parseInt(ids[0]),
+                    'status': parseInt(ids[1])
+                };
+                $scope.busy = true;
+                $http.post('/ajax/participant/', data)
+                    .success(function () {
+                        for (var i in $scope.participants) {
+                            if (i.id == parseInt(ids[0])) {
+                                i.status = parseInt(ids[1]);
+                            }
+                        }
+                        $scope.busy = false;
+                        $http.get('/ajax/participant', {params: {project: $scope.projectId}})
+                            .then(function (response) {
+                                $scope.participants = response.data;
+                            });
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
             $scope.removeParticipant = function (participant) {
                 var data = {
                     'project': window['projectId'],
