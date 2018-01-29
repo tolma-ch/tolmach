@@ -553,13 +553,11 @@
                                 i.status = parseInt(ids[1]);
                             }
                         }
-
                         $scope.busy = false;
                         $http.get('/ajax/participant', {params: {project: $scope.projectId}})
                             .then(function (response) {
                                 $scope.participants = response.data;
                             });
-                        //$scope.$apply();
                     })
                     .error(function (data) {
                         $scope.error = data;
