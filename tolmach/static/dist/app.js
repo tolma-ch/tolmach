@@ -1663,17 +1663,15 @@
                     }
                 },
                 expandEntry = function (entry) {
-                    if (!entry.approved) {
-                        $scope.activeEntry = entry;
-                        if (!entry.approved
-                        && (!angular.isArray(entry['translations']) || !entry['translations'].length)
-                        && $scope.translationAllowed) {
-                            setTimeout(function () {
-                                $('#entry-suggestion-' + entry.id).focus();
-                            }, 10);
-                        }
-                        entrySetEditingStatus(entry, 'start');
+                    $scope.activeEntry = entry;
+                    if (!entry.approved
+                    && (!angular.isArray(entry['translations']) || !entry['translations'].length)
+                    && $scope.translationAllowed) {
+                        setTimeout(function () {
+                            $('#entry-suggestion-' + entry.id).focus();
+                        }, 10);
                     }
+                    entrySetEditingStatus(entry, 'start');
                     scrollToEntry(entry);
                 };
             $scope.toggleEntry = function (entry, $event) {
