@@ -191,7 +191,7 @@ def participant_ajax(request, project):
         return HttpResponse(json.dumps([user_to_json(project.manager)] + result), content_type="application/json")
 
     if request.method == 'POST':
-        if not project.is_user_manager(request.user):
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = json.loads(request.body)
@@ -212,20 +212,29 @@ def participant_ajax(request, project):
         if not user_in_project:
             new_proj_user = ProjectMember(user=user, project=project)
             new_proj_user.save()
+
+            from django.utils import timezone
+            message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+
+            new_message = Messages(
+                message_type='A',
+                addressee=user,
+                originator=request.user,
+                message=message
+            )
+            new_message.save()
         else:
-            return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
+            if 'status' in post:
+                if post['status'] in [ProjectMember.EDITOR, ProjectMember.TRANSLATOR, ProjectMember.SPECTATOR]:
+                    user_in_project.status = post['status']
+                    user_in_project.save()
+                else:
+                    return HttpResponse(json.dumps(_('Wrong membership status, sorry')), content_type="application/json",
+                                status=400)
+            else:
+                return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
                                 status=400)
 
-        from django.utils import timezone
-        message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
-
-        new_message = Messages(
-            message_type='A',
-            addressee=user,
-            originator=request.user,
-            message=message
-        )
-        new_message.save()
 
         result = user_to_json(user, project)
         return HttpResponse(json.dumps(result), content_type="application/json")

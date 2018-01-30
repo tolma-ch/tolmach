@@ -10,6 +10,7 @@
         targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
         userMembershipStatus = {{ user_membership_status }};
+//        membershipStatuses = {{ membership_statuses | safe }};
     </script>
     <style>
         .page-header {
@@ -229,7 +230,9 @@
                                            popover-placement="left"
                                            popover-append-to-body="true"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
-                                        <select name="users" ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)">
+                                        <select ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)"
+                                                ng-change="changeParticipantStatus(participantNewStatus)"
+                                                ng-model="participantNewStatus">
                                             {% for status, text in membership_statuses.items %}
                                                 <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>
                                             {% endfor %}
