@@ -219,6 +219,9 @@
   &_approved &__original {
     //display: none;
   }
+  &_approved &__editor {
+    display: none;
+  }
   &_approved &__variants {
     display: block;
   }
@@ -237,6 +240,8 @@
 .translation-variant {
   position: relative;
   min-height: 60px;
+  margin: 10px -10px 0;
+  padding: 0 10px;
   &__text {
     margin-right: 30px;
   }
@@ -247,7 +252,7 @@
     width: 25px;
     position: absolute;
     top: 5px;
-    right: 0;
+    right: 10px;
     text-align: right;
     a {
       cursor: pointer;
@@ -269,7 +274,8 @@
     color: #9c9b9b;
   }
   &_approved {
-
+    background: #e1ffe4;
+    box-shadow: inset 3px 2px 4px rgba(0,0,0,.2);
   }
 }
 
