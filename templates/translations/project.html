@@ -232,7 +232,8 @@
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                         <select ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)"
                                                 ng-change="changeParticipantStatus(participantNewStatus)"
-                                                ng-model="participantNewStatus">
+                                                ng-model="participantNewStatus"
+                                                ng-init="participantNewStatus=participant.id + ',' + participant.status">
                                             {% for status, text in membership_statuses.items %}
                                                 <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>
                                             {% endfor %}
