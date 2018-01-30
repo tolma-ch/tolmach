@@ -129,6 +129,16 @@ class Project(models.Model):
         except:
             return False
 
+    def is_user_editor(self, user):
+        if self.is_user_a_member(user):
+            membership_check = ProjectMember.objects.get(project=self, user=user)
+            if membership_check.status == ProjectMember.EDITOR:
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def get_progress(self):
         """
         Get progress percentage of the current project and return Int from 0 to 100
