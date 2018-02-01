@@ -11,6 +11,7 @@
         languages = {{ languagesData | safe }};
         userMembershipStatus = {{ user_membership_status }};
 //        membershipStatuses = {{ membership_statuses | safe }};
+        console.log(userMembershipStatus);
     </script>
     <style>
         .page-header {
@@ -38,7 +39,7 @@
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
             <h1>
-                {% if is_user_manager == 'true' %}
+                {% if is_user_manager == 'true' or user_membership_status == 0 %}
                 <input class="form-contrl" type="text"
                        ng-show="editingName"
                        ng-model="projectName"/>
@@ -65,7 +66,7 @@
                       {% for pr_translation in project.translations %}
                     <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
                       {% endfor %}
-                    <li><a ng-if="isUserManager" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
+                    <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
                   </ul>
                 </div>
 
@@ -85,7 +86,7 @@
                         <div class="project-list-texts">
                             <div class="project-list-text" ng-repeat="text in texts">
                                 <div class="project-list-text__edit-button"
-                                     ng-if="isUserManager">
+                                     ng-if="(isUserManager || (userMembershipStatus == 0))">
                                     <a href=""
                                        ng-click="editText(text)"
                                        tooltip="{% trans 'Edit text' %}"
@@ -136,7 +137,7 @@
                         <a href=""
                            class="btn helped-block btn-sm new-proj-block-btn"
                            ng-click="addText()"
-                           ng-show="isUserManager"
+                           ng-show="(isUserManager || (userMembershipStatus == 0))"
                            tooltip="{% trans 'Add' %}"
                            tooltip-append-to-body="true"
                            help-text='{% trans "Click here to add new document to translate" %}'>{% trans 'Add' %}</a>
@@ -191,7 +192,7 @@
                                 <div class="project-list-participant helped-block"
                                      help-text='{% trans "Click here to add member" %}'
                                      ng-click="addParticipant()"
-                                     ng-show="isUserManager">
+                                     ng-show="(isUserManager || (userMembershipStatus == 0))">
                                     <div class="project-list-participant__add">
                                         <i class="fa fa-plus"></i>
                                     </div>
@@ -225,7 +226,7 @@
                                         <a class="project-list-participant__btn tooltip-warning" href=""
                                            tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
-                                           ng-show="isUserManager && !(participant.id == managerId)"
+                                           ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"
                                            popover-template="'participantRemovePopover.html'"
                                            popover-placement="left"
                                            popover-append-to-body="true"
@@ -254,7 +255,7 @@
                              help-text='{% trans "Here will be TMXes and glossaries" %}'>
                             <div class="widget-main project-sidebar__instruments-block">
                                 <div class="project-list-participant helped-block"
-                                     ng-if="isUserManager"
+                                     ng-if="(isUserManager || (userMembershipStatus == 0))"
                                      help-text='{% trans "Click here to translation memory or glossary" %}'>
                                     <a data-toggle="dropdown"
                                        class="dropdown-toggle"
@@ -290,7 +291,7 @@
                                     </div>
                                     <div class="project-list-glossary__btns">
                                         <a class="project-list-glossary__btn" href=""
-                                           ng-show="isUserManager"
+                                           ng-show="(isUserManager || (userMembershipStatus == 0))"
                                            popover-template="'tmxRemovePopover.html'"
                                            popover-placement="left"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
@@ -303,7 +304,7 @@
                                     </div>
                                     <div class="project-list-glossary__btns">
                                         <a class="project-list-glossary__btn" href=""
-                                           ng-show="isUserManager"
+                                           ng-show="(isUserManager || (userMembershipStatus == 0))"
                                            popover-template="'glossaryRemovePopover.html'"
                                            popover-placement="left"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
@@ -319,7 +320,7 @@
                             <textarea class="form-control" name="" id="" cols="30" rows="10"
                                       ng-model="projectDescription"
                                       ng-show="editingDescription"></textarea>
-                            {% if is_user_manager == 'true' %}
+                            {% if is_user_manager == 'true' or user_membership_status == 0 %}
                             <a class="float-right"
                                       href=""
                                       ng-show="editingDescription"
@@ -349,7 +350,7 @@
             </div>
         </div>
     </div>
-    {% if is_user_manager == 'true' %}
+    {% if is_user_manager == 'true' or user_membership_status == 0 %}
     {% include "translations/partial/add_participant_modal.html" %}
     {% include "translations/partial/participant_remove_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
