@@ -7,6 +7,7 @@
         function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
+            $scope.userMembershipStatus = window['userMembershipStatus'];
 
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;
