@@ -301,7 +301,7 @@ def text_ajax(request, project):
             result.append(text_to_json(text, text_dict[text], request.LANGUAGE_CODE))
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
-        if not project.is_user_manager(request.user):
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = request.POST or json.loads(request.body)
@@ -353,7 +353,7 @@ def text_ajax(request, project):
                                         status=400)
                 else:
                     target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                                   int(request.user.id),
+                                                   int(project.manager.id),
                                                    int(project.id))
                     if not os.path.isdir(target_path):
                         os.makedirs(target_path)
@@ -516,6 +516,8 @@ def glossary_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
+            if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             try:
                 project_translation = ProjectTranslation.objects.get(
                     project = project,
@@ -540,7 +542,7 @@ def glossary_ajax(request, project):
             project = Project.objects.get(id=post['project'])
         except Project.DoesNotExist:
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         if 'name' not in post:
@@ -574,7 +576,7 @@ def glossary_ajax(request, project):
             GlossaryEntry.objects.filter(glossary=glossary).delete()
         else:
             glossary = Glossary(name=glossary_name,
-                                owner=request.user)
+                                owner=project.manager)
             glossary.save()
             try:
                 project_translation = ProjectTranslation.objects.get(
@@ -639,6 +641,8 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
+            if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             target_lang = request.GET['target_lang']
             project_translation = ProjectTranslation.objects.get(project=project, target_lang=Language.objects.get(code=target_lang))
             tmxes = project_translation.tmdatabases_list.all()
@@ -658,7 +662,7 @@ def tmx_ajax(request, project):
             project = Project.objects.get(id=post['project'])
         except Project.DoesNotExist:
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         if 'name' not in post:
