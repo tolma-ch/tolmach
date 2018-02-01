@@ -30,10 +30,8 @@ def project_ajax(request):
                 project = Project.objects.get(id=post['id'])
             except Project.DoesNotExist:
                 return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
-            if not project.is_user_allowed(request.user):
-                return HttpResponse(json.dumps(_('Access denied')), content_type="application/json",
-                                    status=400)
-            if not project.is_user_manager(request.user):
+
+            if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
                 return HttpResponse(json.dumps(_('You have to be a manager of project')),
                                     content_type="application/json",
                                     status=400)
@@ -112,6 +110,10 @@ def add_project_translation(request):
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         if 'target_lang' not in post:
             return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
+
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json", status=400)
+
         target_lang_id = post['target_lang']
         target_lang = Language.objects.get(id=target_lang_id)
 
@@ -182,6 +184,10 @@ def get_users_ajax(request):
 @accept_project
 @login_required
 def participant_ajax(request, project):
+    if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user):
+        return HttpResponse(json.dumps(_('You have to be a member of the project')),
+                                content_type="application/json",
+                                status=400)
     if request.method == 'GET':
         members = ProjectMember.objects.filter(project=project)
         result = []
@@ -245,12 +251,12 @@ def participant_ajax(request, project):
             user = User.objects.get(id=request.GET['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user):
+        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
-        print project, user
+
         try:
             user_in_project = ProjectMember.objects.get(project=project, user=user)
         except:

@@ -8,6 +8,7 @@
             $scope.project = window['project'];
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
+            $scope.userMembershipStatus = window['userMembershipStatus'];
             $scope.managerId = window['managerId'];
             $scope.targetLang = window['targetLang'];
             $scope.languages = window['languages'];
@@ -91,7 +92,7 @@
                     });
             };
             $scope.addProjectTranslation = function () {
-                if (!$scope.isUserManager) {
+                if (!$scope.isUserManager && !($scope.userMembershipStatus == 0)) {
                     return;
                 }
                 var modalInstance = $modal.open({
@@ -117,7 +118,7 @@
                 });
             };
             $scope.editText = function (text) {
-                if (!$scope.isUserManager) {
+                if (!$scope.isUserManager && !($scope.userMembershipStatus == 0)) {
                     return;
                 }
                 var modalInstance = $modal.open({
