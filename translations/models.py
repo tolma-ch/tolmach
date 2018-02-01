@@ -139,6 +139,16 @@ class Project(models.Model):
         else:
             return False
 
+    def is_user_spectator(self, user):
+        if self.is_user_a_member(user):
+            membership_check = ProjectMember.objects.get(project=self, user=user)
+            if membership_check.status == ProjectMember.SPECTATOR:
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def get_progress(self):
         """
         Get progress percentage of the current project and return Int from 0 to 100
@@ -204,7 +214,7 @@ class Text(models.Model):
         if self.project.is_private is False:
             return True
         else:
-            if self.project.manager == user or self.project.is_user_a_member(user) or user.is_staff:
+            if self.project.is_user_manager(user) or self.project.is_user_a_member(user) or user.is_staff:
                 return True
             else:
                 return False
@@ -214,12 +224,14 @@ class Text(models.Model):
         Check whether provided user is allowed to write within the current text and return Boolean
         """
         if self.project.is_private is False:
-            if self.project.is_user_a_member(user) or self.project.manager == user:
+            if (self.project.is_user_a_member(user) or self.project.is_user_manager(user)) \
+                    and not self.project.is_user_spectator(user):
                 return True
             else:
                 return False
         else:
-            if self.project.manager == user or self.project.is_user_a_member(user):
+            if (self.project.is_user_manager(user) or self.project.is_user_a_member(user)) \
+                    and not self.project.is_user_spectator(user):
                 return True
             else:
                 return False

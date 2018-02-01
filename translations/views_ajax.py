@@ -893,10 +893,12 @@ def translate_entry_ajax(request):
                 entry_translation = TextEntry.objects.get(id=post['translation_id'])
             except TextEntry.DoesNotExist:
                 return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+            if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
+                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             entry_translation.body = post['text']
         else:
             set_approved = False
-            if project.members == "":
+            if not project.users:
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
                                                                 translation=entry.translation,
                                                                  is_approved=True).count()
@@ -976,8 +978,10 @@ def remove_entry_ajax(request):
         return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
 
     text = entry.text
+    project = text.project
+    curr_user = request.user
 
-    if not text.is_user_allowed_to_write(request.user):
+    if not project.is_user_manager(curr_user) and not project.is_user_editor(curr_user) and not entry.author == curr_user:
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
 
     if 'translation' not in post:
@@ -1024,7 +1028,7 @@ def approve_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
-    if text.project.is_user_manager(request.user):
+    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user):
         if entry.parent_entry:
             TextEntry.objects.filter(~Q(id=entry_id),
                                      parent_entry=entry.parent_entry,
@@ -1067,7 +1071,7 @@ def disapprove_entry_ajax(request):
         except TextEntry.DoesNotExist:
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
-        if text.project.is_user_manager(request.user):
+        if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user):
             entry.is_approved = False
             entry.save()
             entry_to_disapprove = {
