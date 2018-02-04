@@ -281,7 +281,7 @@
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-check-circle"></i>
                                         </a>
-                                        <a ng-show="userIsManager || userMembershipStatus == 0 || (user == translation.author.id)"
+                                        <a ng-show="(userIsManager || userMembershipStatus == 0 || (user == translation.author.id)) && !(userMembershipStatus == 2)"
                                            ng-click="editTranslation(entry, translation)"
                                            ng-disabled="translation.busy"
                                            tooltip="{% trans 'Edit translation' %}"

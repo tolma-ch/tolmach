@@ -213,7 +213,7 @@ def project_by_translation(request, target_lang, proj_id=0):
     if pr.is_user_manager(request.user):
         projects_text = _('My projects')
         projects_url = '/projects/my/'
-    elif str(request.user.id) in pr.members.split(','):
+    elif pr.is_user_a_member(request.user):
         projects_text = _('Third-party projects')
         projects_url = '/projects/thirdparty/'
     elif not pr.is_private:
@@ -252,9 +252,9 @@ def project_by_translation(request, target_lang, proj_id=0):
     data = {
         'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
         'manager_id': pr.manager.id,
-        'membership_statuses': {ProjectMember.EDITOR: "Editor",
-                                ProjectMember.TRANSLATOR: "Translator",
-                                ProjectMember.SPECTATOR: "Spectator"},
+        'membership_statuses': {ProjectMember.EDITOR: _("Editor"),
+                                ProjectMember.TRANSLATOR: _("Translator"),
+                                ProjectMember.SPECTATOR: _("Spectator")},
         'user_membership_status': membership_status,
         'target_lang': target_lang,
         'project': pr,
@@ -294,7 +294,7 @@ def view_translation(request, text_id, target_lang):
     if pr.is_user_manager(request.user):
         projects_text = _('My projects')
         projects_url = '/projects/my/'
-    elif str(request.user.id) in pr.members.split(','):
+    elif pr.is_user_a_member(request.user):
         projects_text = _('Third-party projects')
         projects_url = '/projects/thirdparty/'
     elif not pr.is_private:

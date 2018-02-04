@@ -184,10 +184,11 @@ def get_users_ajax(request):
 @accept_project
 @login_required
 def participant_ajax(request, project):
-    if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user):
-        return HttpResponse(json.dumps(_('You have to be a member of the project')),
-                                content_type="application/json",
-                                status=400)
+    if project.is_private:
+        if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user):
+            return HttpResponse(json.dumps(_('You have to be a member of the project')),
+                                    content_type="application/json",
+                                    status=400)
     if request.method == 'GET':
         members = ProjectMember.objects.filter(project=project)
         result = []
@@ -365,7 +366,7 @@ def text_ajax(request, project):
                       'format': file_type,
                       'title': title,
                       'text_body': text_body,
-                      'user_id': request.user.id,
+                      'user_id': project.manager.id,
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
@@ -516,8 +517,9 @@ def glossary_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
-                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+            if project.is_private:
+                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                    return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             try:
                 project_translation = ProjectTranslation.objects.get(
                     project = project,
@@ -641,8 +643,9 @@ def tmx_ajax(request, project):
             print result
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
-            if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
-                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+            if project.is_private:
+                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                    return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             target_lang = request.GET['target_lang']
             project_translation = ProjectTranslation.objects.get(project=project, target_lang=Language.objects.get(code=target_lang))
             tmxes = project_translation.tmdatabases_list.all()
