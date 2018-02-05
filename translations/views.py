@@ -35,14 +35,16 @@ def projects(request, proj_type):
     # Getting data about user's projects
     user_projects_list = []
     if proj_type == 'my':
-        page_title = _('My projects')
+        page_title = _('My projects') + " / Tolma.ch"
+        projects_text = _('My projects')
         page_url = '/projects/my/'
         user_projects_list = Project.objects.filter(manager=user).order_by('-last_modified')
         for pr in user_projects_list:
             pr.list_button = 'none'
         active_tab = 'my'
     elif proj_type == 'thirdparty':
-        page_title = _('Third-party projects')
+        page_title = _('Third-party projects') + " / Tolma.ch"
+        projects_text = _('Third-party projects')
         page_url = '/projects/thirdparty/'
         user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships]
@@ -51,7 +53,8 @@ def projects(request, proj_type):
             pr.list_button = 'leave'
         active_tab = 'thirdparty'
     elif proj_type == 'public':
-        page_title = _('Public projects')
+        page_title = _('Public projects') + " / Tolma.ch"
+        projects_text = _('Public projects')
         page_url = '/projects/public/'
         active_tab = 'public'
         if not request.user.is_staff == 1:
@@ -104,7 +107,7 @@ def projects(request, proj_type):
             }),
             'page_title': page_title,
             'active_tab': active_tab,
-            'breadcrumbs': [[page_title, page_url], ],
+            'breadcrumbs': [[projects_text, page_url], ],
             'languages': lang_list,
             'projects': result_proj_list,
             'projects_page_active': True,
@@ -257,6 +260,7 @@ def project_by_translation(request, target_lang, proj_id=0):
                                 ProjectMember.SPECTATOR: _("Spectator")},
         'user_membership_status': membership_status,
         'target_lang': target_lang,
+        'page_title': "%s [%s-%s] / Tolma.ch" % (pr.name[:30], pr.source_lang.code.upper(), target_lang.upper()),
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,
@@ -322,7 +326,6 @@ def view_translation(request, text_id, target_lang):
 
     data = {'username': request.user,
             'user_membership_status': membership_status,
-            'page_title': text.title,
             'breadcrumbs': [
                 [projects_text, projects_url],
                 [text.project.name, '/project/%d/%s/' % (text.project.id, translation.target_lang.code)],
@@ -332,6 +335,7 @@ def view_translation(request, text_id, target_lang):
             'use_machine': int(machine_trans_enabled),
             'source_lang': text.source_lang.code,
             'target_lang': target_lang,
+            'page_title': "%s [%s-%s] / %s / Tolma.ch" % (text.title[:30], text.source_lang.code.upper(), target_lang.upper(), pr.name[:30]),
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
             # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
