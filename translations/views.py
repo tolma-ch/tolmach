@@ -247,7 +247,7 @@ def project_by_translation(request, target_lang, proj_id=0):
         membership_status = ProjectMember.objects.get(project=pr,
                                                       user=request.user).status
     except:
-        if request.user.is_staff:
+        if request.user.is_staff or pr.is_user_manager(request.user):
             membership_status = ProjectMember.EDITOR
         else:
             membership_status = ProjectMember.SPECTATOR
@@ -319,7 +319,7 @@ def view_translation(request, text_id, target_lang):
         membership_status = ProjectMember.objects.get(project=pr,
                                                       user=request.user).status
     except:
-        if request.user.is_staff:
+        if request.user.is_staff or pr.is_user_manager(request.user):
             membership_status = ProjectMember.EDITOR
         else:
             membership_status = 999
