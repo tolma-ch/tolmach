@@ -901,7 +901,7 @@ def translate_entry_ajax(request):
             entry_translation.body = post['text']
         else:
             set_approved = False
-            if not project.users:
+            if not project.users.count():
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
                                                                 translation=entry.translation,
                                                                  is_approved=True).count()
