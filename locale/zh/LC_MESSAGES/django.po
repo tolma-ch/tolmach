@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-03 10:15+0400\n"
+"POT-Creation-Date: 2018-02-10 14:12+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,8 @@ msgid "Projects"
 msgstr "项目"
 
 #: templates/main/base-logged-in.html:7 translations/views.py:38
-#: translations/views.py:214 translations/views.py:295
+#: translations/views.py:39 translations/views.py:217
+#: translations/views.py:299
 msgid "My projects"
 msgstr "我的项目"
 
@@ -58,8 +59,9 @@ msgstr "第三方"
 msgid "Community"
 msgstr "社区"
 
-#: templates/main/base-logged-in.html:10 translations/views.py:54
-#: translations/views.py:220 translations/views.py:301
+#: templates/main/base-logged-in.html:10 translations/views.py:56
+#: translations/views.py:57 translations/views.py:223
+#: translations/views.py:305
 msgid "Public projects"
 msgstr "公共项目"
 
@@ -149,18 +151,22 @@ msgstr "语言设置"
 msgid "Help"
 msgstr "帮助"
 
-#: templates/main/partial/navbar-loggedin.html:20
+#: templates/main/partial/navbar-loggedin.html:21
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Messages"
 msgstr "消息"
 
-#: templates/main/partial/navbar-loggedin.html:65
+#: templates/main/partial/navbar-loggedin.html:66
 msgid "Chat"
 msgstr "聊天区"
 
-#: templates/main/partial/navbar-loggedin.html:81
+#: templates/main/partial/navbar-loggedin.html:94
 msgid "Hi,"
 msgstr "你好,"
+
+#: templates/main/partial/navbar-loggedin.html:111
+msgid "Notifications"
+msgstr ""
 
 #: templates/main/partial/navbar.html:83
 #: templates/translations/project.html:117
@@ -997,11 +1003,11 @@ msgstr "源文本"
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
-#: tolmach/views.py:205
+#: tolmach/views.py:206
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:296
+#: tolmach/views.py:297
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1038,39 +1044,39 @@ msgstr "该原语言暂时未支持"
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
-#: translations/views.py:45 translations/views.py:217
-#: translations/views.py:298
+#: translations/views.py:46 translations/views.py:47 translations/views.py:220
+#: translations/views.py:302
 msgid "Third-party projects"
 msgstr "第三方项目"
 
-#: translations/views.py:186 translations/views.py:188
-#: translations/views.py:203 translations/views.py:208
-#: translations/views.py:210
+#: translations/views.py:189 translations/views.py:191
+#: translations/views.py:206 translations/views.py:211
+#: translations/views.py:213
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: translations/views.py:255
+#: translations/views.py:258
 #, fuzzy
 #| msgid "Edit glossary"
 msgid "Editor"
 msgstr "编辑词库"
 
-#: translations/views.py:256
+#: translations/views.py:259
 #, fuzzy
 #| msgid "Translation"
 msgid "Translator"
 msgstr "翻译"
 
-#: translations/views.py:257
+#: translations/views.py:260
 msgid "Spectator"
 msgstr ""
 
-#: translations/views.py:288 translations/views.py:290
-#: translations/views.py:351
+#: translations/views.py:292 translations/views.py:294
+#: translations/views.py:355
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:357
+#: translations/views.py:361
 msgid "Sorry, no such page here!"
 msgstr ""
 

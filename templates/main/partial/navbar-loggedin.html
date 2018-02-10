@@ -7,60 +7,61 @@
 {% trans 'Language' as language %}
 <ul class="navbar-nav pull-right">
 
-	<li class="navbar-nav__button button_light-blue"
+    <li class="navbar-nav__button button_blue"
         tooltip="{% trans 'Help' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
-        <a class="" href="#" ng-click="beginHelpPresentation()">
-			<i class="fa fa-question" ></i>
+        <a class="" href="#" ng-click="beginHelpPresentation()"
+           style="font-size: 17px;">
+			<i class="fa fa-question-circle" ></i>
 		</a>
     </li>
-	<li class="navbar-nav__button button_dark-green"
-        ng-cloak
-        tooltip="{% trans 'Messages' %}"
-        tooltip-append-to-body="true"
-        tooltip-placement="bottom">
-		<a data-toggle="dropdown" class="dropdown-toggle" href="#">
-			<i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"></i>
-			<span class="badge badge-success" ng-show="messages.length">{= messages.length =}</span>
-		</a>
+	<!--<li class="navbar-nav__button button_dark-green"-->
+        <!--ng-cloak-->
+        <!--tooltip="{% trans 'Messages' %}"-->
+        <!--tooltip-append-to-body="true"-->
+        <!--tooltip-placement="bottom">-->
+		<!--<a data-toggle="dropdown" class="dropdown-toggle" href="#">-->
+			<!--<i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"></i>-->
+			<!--<span class="badge badge-success" ng-show="messages.length">{= messages.length =}</span>-->
+		<!--</a>-->
 
-        <ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">
-            <li class="dropdown-header">
-                <i class="fa-envelope-alt"></i>
-                {= messages.length =} {{ new_messages }}
-            </li>
-            <li ng-repeat="message in messages">
-                <a href="/project/{= message.project_id =}/" ng-click="readMessage(message)">
-                    <div class="user-avatar">
-                        <img ng-src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />
-                    </div>
-                    <span class="msg-body">
-                        <span class="msg-title" ng-if="message.type == 'invite'">
-                            <span class="blue">{= message.originator =}:</span>
-                            {{ invitation }} {= message.project_name =}
-                        </span>
-                        <span class="msg-title" ng-if="message.type == 'uninvite'">
-                            <span class="blue">{= message.originator =}:</span>
-                            {{ uninvitation }} {= message.project_name =}
-                        </span>
+        <!--<ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">-->
+            <!--<li class="dropdown-header">-->
+                <!--<i class="fa-envelope-alt"></i>-->
+                <!--{= messages.length =} {{ new_messages }}-->
+            <!--</li>-->
+            <!--<li ng-repeat="message in messages">-->
+                <!--<a href="/project/{= message.project_id =}/" ng-click="readMessage(message)">-->
+                    <!--<div class="user-avatar">-->
+                        <!--<img ng-src="/media/{= message.sender_ava =}" class="msg-photo" alt="avatar" />-->
+                    <!--</div>-->
+                    <!--<span class="msg-body">-->
+                        <!--<span class="msg-title" ng-if="message.type == 'invite'">-->
+                            <!--<span class="blue">{= message.originator =}:</span>-->
+                            <!--{{ invitation }} {= message.project_name =}-->
+                        <!--</span>-->
+                        <!--<span class="msg-title" ng-if="message.type == 'uninvite'">-->
+                            <!--<span class="blue">{= message.originator =}:</span>-->
+                            <!--{{ uninvitation }} {= message.project_name =}-->
+                        <!--</span>-->
 
-                        <span class="msg-time">
-                            <i class="fa-time"></i>
-                            <span>{= message.time_created|date:"d M Y" =}</span>
-                        </span>
-                    </span>
-                </a>
-            </li>
+                        <!--<span class="msg-time">-->
+                            <!--<i class="fa-time"></i>-->
+                            <!--<span>{= message.time_created|date:"d M Y" =}</span>-->
+                        <!--</span>-->
+                    <!--</span>-->
+                <!--</a>-->
+            <!--</li>-->
 
-            <li>
-                <a href="#" ng-click="showAllMessages()">
-                    {{ messages }}
-                    <i class="fa-arrow-right"></i>
-                </a>
-            </li>
-        </ul>
-	</li>
+            <!--<li>-->
+                <!--<a href="#" ng-click="showAllMessages()">-->
+                    <!--{{ messages }}-->
+                    <!--<i class="fa-arrow-right"></i>-->
+                <!--</a>-->
+            <!--</li>-->
+        <!--</ul>-->
+	<!--</li>-->
     <!--<li class="navbar-nav__button button_gray"-->
         <!--tooltip="{% trans 'Chat' %}"-->
         <!--tooltip-append-to-body="true"-->
@@ -70,21 +71,47 @@
 		<!--</a>-->
     <!--</li>-->
 
-	<li class="navbar-nav__button button_light-blue navbar-nav__user">
+	<li class="navbar-nav__button button_blue navbar-nav__user">
 		<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+            <i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"
+               ng-show="messages.length"
+               style="color: white;
+                    position: absolute;
+                    z-index: 900;
+                    top: 5px;
+                    left: 35px;
+                    background: #68aa45;
+                    padding: 3px;
+                    border-radius: 50%;
+                    font-size: 9px;
+                    border: 1px solid #f5f5f5;"></i>
             {% if user_avatar %}
 			<img class="navbar-nav__user-photo" src="/media/{{ user_avatar }}" alt="Avatar">
             {% else %}
             <img class="navbar-nav__user-photo" src="/media/avatar/default.png" alt="Avatar">
             {% endif %}
 			<span class="navbar-nav__user-info hidden-xs">
-				<small>{% trans "Hi," %}</small>
+				<!--<small>{% trans "Hi," %}</small>-->
 				<span>{{ username }}</span>
 			</span>
 
 			<i class="fa fa-caret-down"></i>
 		</a>
         <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+            <li>
+                <a href="#" ng-click="showAllMessages()">
+                    <span class="badge badge-success" ng-show="messages.length"
+                          style="
+                              font-size: 10px;
+                              padding-top: 3px;
+                              border-radius: 5px;
+                              ">
+                        {= messages.length =}
+                    </span>
+                    {% trans 'Notifications' %}
+                </a>
+            </li>
+
             <!--<li>-->
                 <!--<a href="#">-->
                     <!--<i class="fa-cog"></i>-->
@@ -129,6 +156,10 @@
                         </a>
                     </li>
                 </ul>
+            </li>
+
+            <li class="divider">
+
             </li>
 
             <li>
