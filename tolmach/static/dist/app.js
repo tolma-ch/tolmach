@@ -950,7 +950,8 @@
                     project: window['projectId'],
                     title: $scope.text.title.substring(0, 250),
                     project_target_lang: window['targetLang'],
-                    subject: $scope.text.subject
+                    subject: $scope.text.subject,
+                    split_mode: $scope.splitMode
                 };
                 if ($scope.tab === 0) {
                     if (!$scope.text.files || !$scope.text.files.length) {
@@ -1282,9 +1283,6 @@
             };
 
             $scope.addProjectAdvancedOptions = false;
-            $scope.addProjectAdvancedOptionsOpener = function () {
-                $scope.addProjectAdvancedOptions = !$scope.addProjectAdvancedOptions;
-            };
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };

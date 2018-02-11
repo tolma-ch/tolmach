@@ -327,6 +327,7 @@ def text_ajax(request, project):
             source_lang = project.source_lang
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
+            split_mode = post['split_mode'] if post['split_mode'] in ["default", "line"] else "default"
 
             if 'textBody' in post:
                 file_type = "text/plain"
@@ -370,6 +371,7 @@ def text_ajax(request, project):
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
+                      'split_mode': split_mode,
                       'custom_parse': json.dumps(custom_parse)
                       }
 

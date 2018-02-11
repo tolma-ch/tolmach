@@ -48,9 +48,6 @@
             };
 
             $scope.addProjectAdvancedOptions = false;
-            $scope.addProjectAdvancedOptionsOpener = function () {
-                $scope.addProjectAdvancedOptions = !$scope.addProjectAdvancedOptions;
-            };
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };
