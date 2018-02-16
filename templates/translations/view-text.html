@@ -69,8 +69,6 @@
         window['translation_counts'] = {{ translation_counts }};
         window['wsTextConnectHost'] = '{{ ws_connect_host }}';
         window['userMembershipStatus'] = {{ user_membership_status }};
-        window['currentPage'] = {{ current_page }};
-        window['entryToFocus'] = {{ fragment }};
         window['pagesCount'] = {{ total_pages }};
     </script>
 
@@ -204,7 +202,7 @@
                                        tooltip-append-to-body="true">
                                         <i class="fa fa-fw fa-times"></i>
                                     </a>
-                                    <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/page/' + page + '/fragment/' + entry['idInText'] + '/'"
+                                    <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
                                        ng-href="{= entryUrl =}"
                                        tooltip="{{ fragment_link }}"
                                        tooltip-append-to-body="true">
