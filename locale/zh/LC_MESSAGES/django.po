@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-02-11 11:03+0400\n"
+"POT-Creation-Date: 2018-02-16 13:06+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgstr "项目"
 
 #: templates/main/base-logged-in.html:7 translations/views.py:38
 #: translations/views.py:39 translations/views.py:217
-#: translations/views.py:299
+#: translations/views.py:313
 msgid "My projects"
 msgstr "我的项目"
 
@@ -61,7 +61,7 @@ msgstr "社区"
 
 #: templates/main/base-logged-in.html:10 translations/views.py:56
 #: translations/views.py:57 translations/views.py:223
-#: translations/views.py:305
+#: translations/views.py:319
 msgid "Public projects"
 msgstr "公共项目"
 
@@ -93,17 +93,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:91 templates/main/base.html:197
+#: templates/main/base.html:92 templates/main/base.html:198
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:94 templates/main/base.html:200
+#: templates/main/base.html:95 templates/main/base.html:201
 #: templates/translations/partial/add_text_modal.html:109
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:226
+#: templates/main/base.html:227
 msgid "No results"
 msgstr "没有结果"
 
@@ -147,23 +147,23 @@ msgstr "所有消息"
 msgid "Language"
 msgstr "语言设置"
 
-#: templates/main/partial/navbar-loggedin.html:11
+#: templates/main/partial/navbar-loggedin.html:45
 msgid "Help"
 msgstr "帮助"
 
-#: templates/main/partial/navbar-loggedin.html:21
+#: templates/main/partial/navbar-loggedin.html:56
 msgid "Messages"
 msgstr "消息"
 
-#: templates/main/partial/navbar-loggedin.html:66
+#: templates/main/partial/navbar-loggedin.html:101
 msgid "Chat"
 msgstr "聊天区"
 
-#: templates/main/partial/navbar-loggedin.html:94
+#: templates/main/partial/navbar-loggedin.html:129
 msgid "Hi,"
 msgstr "你好,"
 
-#: templates/main/partial/navbar-loggedin.html:111
+#: templates/main/partial/navbar-loggedin.html:146
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr "通知"
@@ -741,12 +741,12 @@ msgid "TMX name"
 msgstr "TMX名称"
 
 #: templates/translations/partial/dictionary_modal.html:3
-#: templates/translations/view-text.html:19
+#: templates/translations/view-text.html:20
 msgid "enter word"
 msgstr "输入词"
 
 #: templates/translations/partial/dictionary_modal.html:4
-#: templates/translations/view-text.html:20
+#: templates/translations/view-text.html:21
 msgid "Nothing found"
 msgstr "未找到"
 
@@ -837,12 +837,12 @@ msgid "Documents"
 msgstr "文档"
 
 #: templates/translations/project.html:104
-#: templates/translations/view-text.html:381
+#: templates/translations/view-text.html:391
 msgid "Fragments approved:"
 msgstr ""
 
 #: templates/translations/project.html:105
-#: templates/translations/view-text.html:382
+#: templates/translations/view-text.html:392
 msgid "Fragments translated:"
 msgstr ""
 
@@ -951,72 +951,76 @@ msgid "Cancel (Esc)"
 msgstr "取消 (Esc)"
 
 #: templates/translations/view-text.html:16
+msgid "Fragment link"
+msgstr ""
+
+#: templates/translations/view-text.html:17
 msgid "Original"
 msgstr "原始"
 
-#: templates/translations/view-text.html:17
+#: templates/translations/view-text.html:18
 msgid "Translation"
 msgstr "翻译"
 
-#: templates/translations/view-text.html:18
+#: templates/translations/view-text.html:19
 msgid "Add with"
 msgstr "保存用"
 
-#: templates/translations/view-text.html:106
-#: templates/translations/view-text.html:270
+#: templates/translations/view-text.html:110
+#: templates/translations/view-text.html:280
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:119
+#: templates/translations/view-text.html:123
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:120
+#: templates/translations/view-text.html:124
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:280
+#: templates/translations/view-text.html:290
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:287
+#: templates/translations/view-text.html:297
 msgid "Edit translation"
 msgstr "编辑翻译"
 
-#: templates/translations/view-text.html:359
+#: templates/translations/view-text.html:369
 msgid "Dictionary"
 msgstr "词典"
 
-#: templates/translations/view-text.html:399
+#: templates/translations/view-text.html:409
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:400
+#: templates/translations/view-text.html:410
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:401
+#: templates/translations/view-text.html:411
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:402
+#: templates/translations/view-text.html:412
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:403
+#: templates/translations/view-text.html:413
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:404
+#: templates/translations/view-text.html:414
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:405
+#: templates/translations/view-text.html:415
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:406
+#: templates/translations/view-text.html:416
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
@@ -1062,7 +1066,7 @@ msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
 #: translations/views.py:46 translations/views.py:47 translations/views.py:220
-#: translations/views.py:302
+#: translations/views.py:316
 msgid "Third-party projects"
 msgstr "第三方项目"
 
@@ -1084,12 +1088,12 @@ msgstr "翻译"
 msgid "Spectator"
 msgstr "观察者"
 
-#: translations/views.py:292 translations/views.py:294
-#: translations/views.py:355
+#: translations/views.py:295 translations/views.py:297
+#: translations/views.py:372
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:361
+#: translations/views.py:378
 msgid "Sorry, no such page here!"
 msgstr ""
 

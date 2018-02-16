@@ -13,6 +13,7 @@
 {% trans 'Save' as save_translation %}
 {% trans 'Remove' as remove_translation %}
 {% trans 'Cancel (Esc)' as cancel_translation %}
+{% trans 'Fragment link' as fragment_link %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 {% trans 'Add with' as text_options %}
@@ -68,6 +69,9 @@
         window['translation_counts'] = {{ translation_counts }};
         window['wsTextConnectHost'] = '{{ ws_connect_host }}';
         window['userMembershipStatus'] = {{ user_membership_status }};
+        window['currentPage'] = {{ current_page }};
+        window['entryToFocus'] = {{ fragment }};
+        window['pagesCount'] = {{ total_pages }};
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -199,6 +203,12 @@
                                        tooltip="{{ cancel_translation }}"
                                        tooltip-append-to-body="true">
                                         <i class="fa fa-fw fa-times"></i>
+                                    </a>
+                                    <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/page/' + page + '/fragment/' + entry['idInText'] + '/'"
+                                       ng-href="{= entryUrl =}"
+                                       tooltip="{{ fragment_link }}"
+                                       tooltip-append-to-body="true">
+                                        <i class="fa fa-fw fa-link"></i>
                                     </a>
                                 </div>
                                 <div class="translation-editor__machine-suggestions">
