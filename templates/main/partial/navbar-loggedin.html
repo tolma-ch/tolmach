@@ -6,14 +6,49 @@
 {% trans 'See all messages' as messages %}
 {% trans 'Language' as language %}
 <ul class="navbar-nav pull-right">
+    <!--<style>-->
+        <!--.text-overview__paginator a {-->
+            <!--color: #ffffff;-->
+        <!--}-->
+        <!--.text-overview__paginator a:hover {-->
+            <!--background-color: #2A7698;-->
+            <!--color: #1c4458;-->
+        <!--}-->
+        <!--.text-overview__paginator-text:hover {-->
+            <!--background: #1c4458;-->
+        <!--}-->
+    <!--</style>-->
 
+    <!--<li class="navbar-nav__button button_blue">-->
+        <!--<div class='text-overview__paginator'-->
+            <!--ng-show="true"-->
+            <!--style="padding-top: 10px;-->
+                <!--padding-left: 5px;-->
+                <!--padding-right: 5px;-->
+                <!--color: #ffffff;">-->
+            <!--<a href=""-->
+               <!--ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>-->
+        <!--<span class="text-overview__paginator-text"-->
+              <!--ng-show="!editPage"-->
+              <!--ng-click="editPage = true; focusPaginator = true">{= page =} / {= pagesCount =}</span>-->
+            <!--<input type="text"-->
+                   <!--ng-show="editPage"-->
+                   <!--focus-me="focusPaginator"-->
+                   <!--ng-model="page"-->
+                   <!--ng-keypress="paginatorKeypress($event)"-->
+                   <!--ng-blur="paginatorBlur()">-->
+            <!--<a href=""-->
+               <!--ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>-->
+        <!--</div>-->
+    <!--</li>-->
     <li class="navbar-nav__button button_blue"
         tooltip="{% trans 'Help' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
         <a class="" href="#" ng-click="beginHelpPresentation()"
-           style="font-size: 17px;">
-			<i class="fa fa-question-circle" ></i>
+           style="font-size: 22px;
+                padding-top: 14px;">
+			<i class="fa fa-question-circle-o" ></i>
 		</a>
     </li>
 	<!--<li class="navbar-nav__button button_dark-green"-->

@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextTranslation
+from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -285,7 +285,10 @@ def project_by_translation(request, target_lang, proj_id=0):
 
 
 @login_required
-def view_translation(request, text_id, target_lang):
+def view_translation(request, text_id, target_lang, page_number="1", fragment="0"):
+    print "OLOLOLOLO page::", page_number
+    page_number = page_number if page_number else 1
+    fragment = fragment if fragment else 0
     try:
         text = Text.objects.get(id=text_id)
     except Text.DoesNotExist:
@@ -293,6 +296,17 @@ def view_translation(request, text_id, target_lang):
     if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
+
+
+    import math
+    entries_per_page = 100
+    total_pages = int(
+        math.ceil(
+            TextEntry.objects.filter(text=text, parent_entry=None).count()/float(
+                entries_per_page
+            )
+        )
+    )
 
     pr = Project.objects.get(id=text.project.id)
     if pr.is_user_manager(request.user):
@@ -340,7 +354,10 @@ def view_translation(request, text_id, target_lang):
             'translation_counts': translation_counts,
             # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
             'ws_connect_host': settings.WS_HOST,
-            'language_codes': [x.code for x in Language.objects.all()]
+            'language_codes': [x.code for x in Language.objects.all()],
+            'total_pages': total_pages,
+            'current_page': page_number,
+            'fragment': fragment,
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))

@@ -11,7 +11,7 @@
         <meta name="theme-color" content="#3B8DB6" />
         <link href="/static/img/favicon.ico" rel="shortcut icon">
 
-        {% with front_version="1.9.9" %}
+        {% with front_version="1.10" %}
 
         {% if debug == 'false' %}
             <link rel="stylesheet" href="/static/dist/tolmach.min.css?v={{ front_version }}">
@@ -71,6 +71,7 @@
         {% endif %}
 
         <!--inline styles related to this page-->
+        <base href="/">
 	</head>
 
 	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-click="bodyClick()" ng-mouseup="mouseup($event)">
