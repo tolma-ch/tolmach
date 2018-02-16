@@ -114,8 +114,19 @@
                             </div>
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
-                                    <span html-content="entry.body"></span>
-                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    <span style="padding-right: 25px; display: block;">
+                                        <span html-content="entry.body"></span>
+                                        {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                        <div class="text-piece__icons">
+                                            <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
+                                               ng-href="{= entryUrl =}"
+                                               tooltip="{{ fragment_link }}"
+                                               tooltip-append-to-body="true"
+                                               style="font-size: 16px;">
+                                                <i class="fa fa-fw fa-link"></i>
+                                            </a>
+                                        </div>
+                                    </span>
                                 </div>
                                 <div ng-if="entry.meta.msgid_plural">
                                     <span class="grey">{% trans 'singular:' %}</span> <span html-content="entry.body"></span> <br>
@@ -201,12 +212,6 @@
                                        tooltip="{{ cancel_translation }}"
                                        tooltip-append-to-body="true">
                                         <i class="fa fa-fw fa-times"></i>
-                                    </a>
-                                    <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
-                                       ng-href="{= entryUrl =}"
-                                       tooltip="{{ fragment_link }}"
-                                       tooltip-append-to-body="true">
-                                        <i class="fa fa-fw fa-link"></i>
                                     </a>
                                 </div>
                                 <div class="translation-editor__machine-suggestions">
