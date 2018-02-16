@@ -606,8 +606,8 @@ msgstr "点击此按钮创建新项目"
 #: templates/tolmach/profile.html:108 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
-msgstr[0] "已翻译片单"
-msgstr[1] "已翻译片单"
+msgstr[0] "已翻译碎片"
+msgstr[1] "已翻译碎片"
 
 #: templates/tolmach/view_user.html:9
 #: templates/translations/partial/new_project_modal.html:3
@@ -839,12 +839,12 @@ msgstr "文档"
 #: templates/translations/project.html:104
 #: templates/translations/view-text.html:391
 msgid "Fragments approved:"
-msgstr ""
+msgstr "肯定的碎片"
 
 #: templates/translations/project.html:105
 #: templates/translations/view-text.html:392
 msgid "Fragments translated:"
-msgstr ""
+msgstr "翻译的碎片"
 
 #: templates/translations/project.html:123
 msgid "Translated document"
@@ -952,7 +952,7 @@ msgstr "取消 (Esc)"
 
 #: templates/translations/view-text.html:16
 msgid "Fragment link"
-msgstr ""
+msgstr "碎片链接"
 
 #: templates/translations/view-text.html:17
 msgid "Original"
