@@ -285,10 +285,7 @@ def project_by_translation(request, target_lang, proj_id=0):
 
 
 @login_required
-def view_translation(request, text_id, target_lang, page_number="1", fragment="0"):
-    print "OLOLOLOLO page::", page_number
-    page_number = page_number if page_number else 1
-    fragment = fragment if fragment else 0
+def view_translation(request, text_id, target_lang):
     try:
         text = Text.objects.get(id=text_id)
     except Text.DoesNotExist:
@@ -356,8 +353,6 @@ def view_translation(request, text_id, target_lang, page_number="1", fragment="0
             'ws_connect_host': settings.WS_HOST,
             'language_codes': [x.code for x in Language.objects.all()],
             'total_pages': total_pages,
-            'current_page': page_number,
-            'fragment': fragment,
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))

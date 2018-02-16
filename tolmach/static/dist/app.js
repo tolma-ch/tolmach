@@ -25,7 +25,7 @@
         $interpolateProvider.endSymbol('=}');
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-        $locationProvider.html5Mode(true);
+        //$locationProvider.html5Mode(true);
     });
 }());;(function () {
     'use strict';
@@ -1648,7 +1648,7 @@
                             if ($scope.entryToFocus in $scope.entriesById){
                                 $scope.toggleEntry($scope.entriesById[$scope.entryToFocus]);
                             }
-                            $location.path("/text/" + $scope.currentTextId + "/" + $scope.currentTargetLang + "/page/" + $scope.page + "/", false).replace();
+                            $location.search('fragment', null).replace();
                             $scope.entryToFocus = 0;
                         }
                     }).error(function (a) {
@@ -1665,10 +1665,11 @@
             $scope.clearTranslation = clearTranslation;
             $scope.activeEntry = null;
             $scope.textTab = 0;
-            $scope.entryToFocus = window['entryToFocus'];
+            $scope.initialPage = parseInt($location.search().page ? $location.search().page : 1) || 1;
+            $scope.entryToFocus = $location.search().fragment ? $location.search().fragment : 0;
             $scope.countPerPage = 100;
             $scope.pagesCount = window['pagesCount'];
-            $scope.page = (window['currentPage'] > $scope.pagesCount) ? ($scope.pagesCount) : (window['currentPage'] < 1 ? 1 : window['currentPage']);
+            $scope.page = ($scope.initialPage > $scope.pagesCount) ? ($scope.pagesCount) : ($scope.initialPage < 1 ? 1 : $scope.initialPage);
             $scope.paginatorBlur = function () {
                 $scope.editPage = false;
                 $scope.page = parseInt($scope.page) || 1;
@@ -1701,17 +1702,18 @@
                 if ($scope.page > 1) {
                     $scope.page = $scope.page - 1;
                     updateEntries();
-                    $location.path("/text/" + $scope.currentTextId + "/" + $scope.currentTargetLang + "/page/" + $scope.page + "/", false).replace();
+                    $location.search('page', $scope.page).replace();
                 }
             };
             $scope.nextPage = function () {
                 if ($scope.busy) {
                     return;
                 }
+                console.log($scope.page);
                 if ($scope.page < $scope.pagesCount) {
                     $scope.page = $scope.page + 1;
                     updateEntries();
-                    $location.path("/text/" + $scope.currentTextId + "/" + $scope.currentTargetLang + "/page/" + $scope.page + "/", false).replace();
+                    $location.search('page', $scope.page).replace();
                 }
             };
             $scope.addMachineSuggestion = function (entry, machine) {
