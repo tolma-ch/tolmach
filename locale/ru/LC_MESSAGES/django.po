@@ -1016,10 +1016,8 @@ msgid "Cancel (Esc)"
 msgstr "Отмена (Esc)"
 
 #: templates/translations/view-text.html:16
-#, fuzzy
-#| msgid "Fragmentation type:"
 msgid "Fragment link"
-msgstr "Способ фрагментации:"
+msgstr "Ссылка на фрагмент"
 
 #: templates/translations/view-text.html:17
 msgid "Original"
