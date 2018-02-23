@@ -1,5 +1,6 @@
 {% extends "main/base-logged-in.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block innercontent %}
 <style>
@@ -10,6 +11,6 @@
 </style>
 
 <p class="fig">
-    <img src="/static/img/404.jpg" style="max-width: 45%">
+    <img src="{% static 'img/404.jpg' %}" style="max-width: 45%">
 </p>
 {% endblock %}
