@@ -1,5 +1,6 @@
 {% extends "main/base-logged-in.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block innercontent %}
 
@@ -252,7 +253,7 @@
                                                 <div class="machine-suggestion">
                                                     <span class="machine-suggestion__text"
                                                           html-content="machine.text"></span>
-                                                    <span class="machine-suggestion__logo"><img src="/static/img/yandex_logo.svg"></span>
+                                                    <span class="machine-suggestion__logo"><img src="{% static 'img/yandex_logo.svg' %}"></span>
                                                 </div>
                                             </li>
                                         </ul>
@@ -327,7 +328,7 @@
                             <div class="text-overview__cell">
                                 {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
-                                    <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
+                                    <link href="{% static 'assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css' %}" rel="stylesheet">
                                     <style>
                                         .toggle.android {
                                             border-radius: 0px;
@@ -422,5 +423,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="/static/js/jquery-ui-1.10.3.full.min.js"></script>
+<script src="{% static 'js/jquery-ui-1.10.3.full.min.js' %}"></script>
 {% endblock %}

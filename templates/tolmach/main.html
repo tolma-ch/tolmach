@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block content %}
 {% trans 'How it works?' as how_works %}
@@ -24,35 +25,35 @@
         <div class="iconed-features">
             <ul class="iconed-features__list">
                 <li class="iconed-features__item">
-                    <img src="/static/images/main/list-item1.png" alt="Upload your documents"/>
+                    <img src="{% static 'images/main/list-item1.png' %}" alt="Upload your documents"/>
                     <div class="iconed-features__text">
                         <h3 class="iconed-features__item-header">{{ upload_docs }}</h3>
                         <p class="iconed-features__item-text">{{ upload_docs_details }}</p>
                     </div>
                 </li>
                 <li class="iconed-features__item">
-                    <img src="/static/images/main/list-item2.png" alt="Get all the text data"/>
+                    <img src="{% static 'images/main/list-item2.png' %}" alt="Get all the text data"/>
                     <div class="iconed-features__text">
                         <h3 class="iconed-features__item-header">{{ extract_data }}</h3>
                         <p class="iconed-features__item-text">{{ extract_data_details }}</p>
                     </div>
                 </li>
                 <li class="iconed-features__item">
-                    <img src="/static/images/main/list-item3.png" alt="Upload your documents"/>
+                    <img src="{% static 'images/main/list-item3.png' %}" alt="Upload your documents"/>
                     <div class="iconed-features__text">
                         <h3 class="iconed-features__item-header">{{ calling_help }}</h3>
                         <p class="iconed-features__item-text">{{ calling_help_details }}</p>
                     </div>
                 </li>
                 <li class="iconed-features__item">
-                    <img src="/static/images/main/list-item4.png" alt="Upload your documents"/>
+                    <img src="{% static 'images/main/list-item4.png' %}" alt="Upload your documents"/>
                     <div class="iconed-features__text">
                         <h3 class="iconed-features__item-header">{{ translating }}</h3>
                         <p class="iconed-features__item-text">{{ translating_details }}</p>
                     </div>
                 </li>
                 <li class="iconed-features__item">
-                    <img src="/static/images/main/list-item5.png" alt="Upload your documents"/>
+                    <img src="{% static 'images/main/list-item5.png' %}" alt="Upload your documents"/>
                     <div class="iconed-features__text">
                         <h3 class="iconed-features__item-header">{{ finish }}</h3>
                         <p class="iconed-features__item-text">{{ finish_details }}</p>
