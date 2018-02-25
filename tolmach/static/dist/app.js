@@ -2782,6 +2782,8 @@
 
                     // get text representation of clipboard
                     var text = (e.originalEvent || e).clipboardData.getData("text/plain");
+                    text = text.replace(/>/g, "&gt;").replace(/</g, "&lt;");
+
 
                     // insert text manually
                     document.execCommand("insertHTML", false, text);
