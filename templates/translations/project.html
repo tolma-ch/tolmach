@@ -315,7 +315,7 @@
                     </div>
                     <div class="tab-pane" id="3">
                         <div class="widget-main">
-                            <h4>Описание</h4>
+                            <h4>{% trans 'Description' %}</h4>
                             <p ng-show="!editingDescription">{= project.description =}</p>
                             <textarea class="form-control" name="" id="" cols="30" rows="10"
                                       ng-model="projectDescription"
@@ -335,7 +335,7 @@
                                       ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
                             {% endif %}
                             {% if is_user_manager == 'true' %}
-                            <h4>Внимание</h4>
+                            <h4>{% trans 'Attention!' %}</h4>
                             <div class="">
                                 <a popover-template="'projectRemovePopover.html'"
                                    popover-placement="right"

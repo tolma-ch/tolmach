@@ -18,7 +18,7 @@
     module.run(function ($http) {
         $http.defaults.headers.post['X-CSRFToken'] = window.csrfToken;
     });
-    module.config(function ($interpolateProvider, $httpProvider) {
+    module.config(function ($interpolateProvider, $httpProvider, $locationProvider) {
         // replace {{ by {=
         $interpolateProvider.startSymbol('{=');
         // replace }} by =}

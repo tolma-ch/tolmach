@@ -96,6 +96,7 @@ def user_page(request, user_id):
         'first_name': first_name,
         'last_name': last_name,
         'website': usermeta.website,
+        'page_title': "%s %s (%s) / Tolma.ch" % (first_name, last_name, user.username),
         'stat': ordered_stat,
         'empty_list': empty_list,
         'entries_total': total_translated,

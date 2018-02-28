@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load i18n %}
+{% load staticfiles %}
 
 {% trans "Translating together!" as trans_together %}
 {% trans "Login via social networks" as social_networks %}
@@ -14,14 +15,14 @@
         <meta property="og:description" content="«Толмач» - это интергированная среда перевода, сервис, объединяющий в себе все необходимые переводчику инструменты в одном месте — глоссарии, базы памяти перевода, словари, машинные переводы и многое другое.">
         <meta property="og:url" content="https://tolma.ch/">
         <meta property="og:locale" content="ru_RU">
-        <meta property="og:image" content="https://tolma.ch/static/img/opengraph.png">
+        <meta property="og:image" content="{% static 'img/opengraph.png' %}">
         <meta property="og:image:width" content="968">
         <meta property="og:image:height" content="504">
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Tolma.ch - Переводим вместе!">
         <meta name="twitter:description" content="«Толмач» - это интергированная среда перевода, сервис, объединяющий в себе все необходимые переводчику инструменты в одном месте — глоссарии, базы памяти перевода, словари, машинные переводы и многое другое.">
-        <meta name="twitter:image:src" content="https://tolma.ch/static/img/opengraph.png">
+        <meta name="twitter:image:src" content="{% static 'img/opengraph.png' %}">
         <meta name="twitter:url" content="https://tolma.ch/">
         <meta name="twitter:domain" content="tolma.ch">
         <meta name="twitter:site" content="@">
@@ -35,10 +36,10 @@
 
         <title>Tolma.ch</title>
 
-        <link rel="stylesheet" href="/static/assets/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="{% static 'assets/bootstrap/dist/css/bootstrap.css' %}">
 {#        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>#}
-        <link rel="stylesheet" href="/static/assets/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="/static/dist/landing.css">
+        <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'dist/landing.css' %}">
 
         <style type="text/css">
             .blur {
@@ -286,31 +287,31 @@
                 <div class="slider">
                     <div class="slider__img">
                         <div class="slider-img slider-img_1">
-                            <img src="/static/img/landing/profile_orig.png" alt="">
+                            <img src="{% static 'img/landing/profile_orig.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_2">
-                            <img src="/static/img/landing/project_translators.png" alt="">
+                            <img src="{% static 'img/landing/project_translators.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_3">
-                            <img src="/static/img/landing/project_langs.png" alt="">
+                            <img src="{% static 'img/landing/project_langs.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_4">
-                            <img src="/static/img/landing/project_tm_glossaries.png" alt="">
+                            <img src="{% static 'img/landing/project_tm_glossaries.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_5">
-                            <img src="/static/img/landing/translation_page.png" alt="">
+                            <img src="{% static 'img/landing/translation_page.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_6">
-                            <img src="/static/img/landing/translation_page_trans.png" alt="">
+                            <img src="{% static 'img/landing/translation_page_trans.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_7">
-                            <img src="/static/img/landing/translation_tags.png" alt="">
+                            <img src="{% static 'img/landing/translation_tags.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_8">
-                            <img src="/static/img/landing/translation_tags_mt.png" alt="">
+                            <img src="{% static 'img/landing/translation_tags_mt.png' %}" alt="">
                         </div>
                         <div class="slider-img slider-img_9">
-                            <img src="/static/img/landing/translation_tags_dict.png" alt="">
+                            <img src="{% static 'img/landing/translation_tags_dict.png' %}" alt="">
                         </div>
                     </div>
                     <div class="slider__btns">
@@ -443,8 +444,8 @@
             </svg:filter>
         </svg:svg>
 
-        <script src="/static/assets/jquery/dist/jquery.min.js"></script>
-        <script src="/static/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="{% static 'assets/jquery/dist/jquery.min.js' %}"></script>
+        <script src="{% static 'assets/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 
         <script>
             $(function () {

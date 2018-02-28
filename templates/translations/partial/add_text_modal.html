@@ -1,8 +1,12 @@
 {% load i18n %}
+{% trans 'Advanced options' as advanced_options_label %}
+{% trans 'Fragmentation type:' as fragmentation_type %}
+{% trans 'By sentence' as by_sentence %}
+{% trans 'Line by line' as line_by_line %}
 <style>
     .drop-box-icon {
         position: absolute;
-        top: 39%;
+        top: 115px;
         left: 40%;
         opacity: .3;
         font-size: 110px;
@@ -76,6 +80,20 @@
 
             <div class="form-group" ng-show="error">
                 <div class="label label-danger">{= error =}</div>
+            </div>
+            <a class="btn btn-link" ng-click="(addTextAdvancedOptions = !addTextAdvancedOptions) && addTextAdvancedOptions">{{ advanced_options_label }}</a>
+            <div class="new-project__advanced-options"
+                 ng-show="addTextAdvancedOptions">
+                <div class="form-group">
+                    <label>
+                        <span class="lbl">{{ fragmentation_type }} </span>
+                        <select name="split_mode" ng-model="splitMode"
+                                ng-init="splitMode='default'">
+                            <option selected value="default">{{ by_sentence }}</option>
+                            <option value="line">{{ line_by_line }}</option>
+                        </select>
+                    </label>
+                </div>
             </div>
         </form>
     </div>
