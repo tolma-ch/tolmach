@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
-from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextTranslation
+from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -35,14 +35,16 @@ def projects(request, proj_type):
     # Getting data about user's projects
     user_projects_list = []
     if proj_type == 'my':
-        page_title = _('My projects')
+        page_title = _('My projects') + " / Tolma.ch"
+        projects_text = _('My projects')
         page_url = '/projects/my/'
         user_projects_list = Project.objects.filter(manager=user).order_by('-last_modified')
         for pr in user_projects_list:
             pr.list_button = 'none'
         active_tab = 'my'
     elif proj_type == 'thirdparty':
-        page_title = _('Third-party projects')
+        page_title = _('Third-party projects') + " / Tolma.ch"
+        projects_text = _('Third-party projects')
         page_url = '/projects/thirdparty/'
         user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships]
@@ -51,7 +53,8 @@ def projects(request, proj_type):
             pr.list_button = 'leave'
         active_tab = 'thirdparty'
     elif proj_type == 'public':
-        page_title = _('Public projects')
+        page_title = _('Public projects') + " / Tolma.ch"
+        projects_text = _('Public projects')
         page_url = '/projects/public/'
         active_tab = 'public'
         if not request.user.is_staff == 1:
@@ -104,7 +107,7 @@ def projects(request, proj_type):
             }),
             'page_title': page_title,
             'active_tab': active_tab,
-            'breadcrumbs': [[page_title, page_url], ],
+            'breadcrumbs': [[projects_text, page_url], ],
             'languages': lang_list,
             'projects': result_proj_list,
             'projects_page_active': True,
@@ -244,7 +247,7 @@ def project_by_translation(request, target_lang, proj_id=0):
         membership_status = ProjectMember.objects.get(project=pr,
                                                       user=request.user).status
     except:
-        if request.user.is_staff:
+        if request.user.is_staff or pr.is_user_manager(request.user):
             membership_status = ProjectMember.EDITOR
         else:
             membership_status = ProjectMember.SPECTATOR
@@ -257,6 +260,7 @@ def project_by_translation(request, target_lang, proj_id=0):
                                 ProjectMember.SPECTATOR: _("Spectator")},
         'user_membership_status': membership_status,
         'target_lang': target_lang,
+        'page_title': "%s [%s-%s] / Tolma.ch" % (pr.name[:30], pr.source_lang.code.upper(), target_lang.upper()),
         'project': pr,
         'projectData': json.dumps({
             'id': pr.id,
@@ -290,6 +294,17 @@ def view_translation(request, text_id, target_lang):
         messages.add_message(request, messages.ERROR, _('Sorry, no such text here!'))
         return HttpResponseRedirect('/')
 
+
+    import math
+    entries_per_page = 100
+    total_pages = int(
+        math.ceil(
+            TextEntry.objects.filter(text=text, parent_entry=None).count()/float(
+                entries_per_page
+            )
+        )
+    )
+
     pr = Project.objects.get(id=text.project.id)
     if pr.is_user_manager(request.user):
         projects_text = _('My projects')
@@ -315,14 +330,13 @@ def view_translation(request, text_id, target_lang):
         membership_status = ProjectMember.objects.get(project=pr,
                                                       user=request.user).status
     except:
-        if request.user.is_staff:
+        if request.user.is_staff or pr.is_user_manager(request.user):
             membership_status = ProjectMember.EDITOR
         else:
             membership_status = 999
 
     data = {'username': request.user,
             'user_membership_status': membership_status,
-            'page_title': text.title,
             'breadcrumbs': [
                 [projects_text, projects_url],
                 [text.project.name, '/project/%d/%s/' % (text.project.id, translation.target_lang.code)],
@@ -332,11 +346,13 @@ def view_translation(request, text_id, target_lang):
             'use_machine': int(machine_trans_enabled),
             'source_lang': text.source_lang.code,
             'target_lang': target_lang,
+            'page_title': "%s [%s-%s] / %s / Tolma.ch" % (text.title[:30], text.source_lang.code.upper(), target_lang.upper(), pr.name[:30]),
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
             # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
             'ws_connect_host': settings.WS_HOST,
-            'language_codes': [x.code for x in Language.objects.all()]
+            'language_codes': [x.code for x in Language.objects.all()],
+            'total_pages': total_pages,
             }
     template = 'translations/view-text.html'
     return render_to_response(template, data, RequestContext(request))

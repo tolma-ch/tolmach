@@ -1,5 +1,6 @@
 {% extends "main/base-logged-in.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block innercontent %}
 
@@ -13,6 +14,7 @@
 {% trans 'Save' as save_translation %}
 {% trans 'Remove' as remove_translation %}
 {% trans 'Cancel (Esc)' as cancel_translation %}
+{% trans 'Fragment link' as fragment_link %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 {% trans 'Add with' as text_options %}
@@ -51,8 +53,8 @@
         .page-content {
             padding-top: 0;
             padding-bottom: 0;
-            padding-right: 15px;
-            padding-left: 15px;
+            padding-right: 12px;
+            padding-left: 12px;
         }
         .main-content {
             margin-left: 0 !important;
@@ -68,6 +70,7 @@
         window['translation_counts'] = {{ translation_counts }};
         window['wsTextConnectHost'] = '{{ ws_connect_host }}';
         window['userMembershipStatus'] = {{ user_membership_status }};
+        window['pagesCount'] = {{ total_pages }};
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -112,8 +115,19 @@
                             </div>
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
-                                    <span html-content="entry.body"></span>
-                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    <span style="padding-right: 25px; display: block;">
+                                        <span html-content="entry.body"></span>
+                                        {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                        <div class="text-piece__icons">
+                                            <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
+                                               ng-href="{= entryUrl =}"
+                                               tooltip="{{ fragment_link }}"
+                                               tooltip-append-to-body="true"
+                                               style="font-size: 16px;">
+                                                <i class="fa fa-fw fa-link"></i>
+                                            </a>
+                                        </div>
+                                    </span>
                                 </div>
                                 <div ng-if="entry.meta.msgid_plural">
                                     <span class="grey">{% trans 'singular:' %}</span> <span html-content="entry.body"></span> <br>
@@ -316,7 +330,7 @@
                             <div class="text-overview__cell">
                                 {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
-                                    <link href="/static/assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css" rel="stylesheet">
+                                    <link href="{% static 'assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css' %}" rel="stylesheet">
                                     <style>
                                         .toggle.android {
                                             border-radius: 0px;
@@ -411,5 +425,5 @@
 {% endblock %}
 
 {% block script %}
-<script src="/static/js/jquery-ui-1.10.3.full.min.js"></script>
+<script src="{% static 'js/jquery-ui-1.10.3.full.min.js' %}"></script>
 {% endblock %}

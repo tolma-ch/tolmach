@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load staticfiles %}
 
 {% trans "We're in vk.com" as vk_title %}
 {% trans 'Tolma.ch on Google+' as gp_title %}
@@ -55,8 +56,8 @@
                 <div class="col-sm-12 footer-grid">
                     <div class="footer-data__logo">
                         <a href="/">
-                            <!--<img src="/static/images/main/small_footer_parrot.png">-->
-                            <img src="/static/img/footer/footer_logo.svg" height="40">
+                            <!--<img src="{% static 'images/main/small_footer_parrot.png' %}">-->
+                            <img src="{% static 'img/footer/footer_logo.svg' %}" height="40">
                         </a><!-- /.brand -->
                     </div>
                     <div class="footer-data__copyright">
@@ -91,7 +92,7 @@
 		<div class="footer-container" id="footer-container">
 			<div class="footer-logo pull-left">
                 <a href="/">
-                    <img src="/static/img/top-logo.svg">
+                    <img src="{% static 'img/top-logo.svg' %}">
                 </a><!-- /.brand -->
 			</div><!-- /.navbar-header -->
 

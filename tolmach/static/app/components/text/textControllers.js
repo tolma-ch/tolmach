@@ -3,11 +3,13 @@
 
     var module = angular.module('textControllers', []);
 
-    module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$timeout', 'localStorageService',
-        function ($rootScope, $scope, $sce, $http, $timeout, localStorageService) {
+    module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$location', '$timeout', 'localStorageService',
+        function ($rootScope, $scope, $sce, $http, $location, $timeout, localStorageService) {
             $scope.translationProgress = window['translation_progress'];
             $scope.translationCounts = window['translation_counts'];
             $scope.userMembershipStatus = window['userMembershipStatus'];
+            $scope.currentTextId = window['textId'];
+            $scope.currentTargetLang = window['translationTargetLang'];
 
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;
@@ -170,6 +172,71 @@
                 }
                 $scope.$apply();
             };
+            var scrollToEntry = function (entry) {
+                    scrollLeftEntry(entry.idInText);
+                    scrollRightEntry(entry.idInText);
+                },
+                scrollLeftEntry = function (id) {
+                    setTimeout(function () {
+                        var $container = $('#translations-container'),
+                            $elem = $('#entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
+                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
+                        $container.stop().animate({
+                            scrollTop: containerShift
+                        }, 500);
+                    }, 100);
+                },
+                scrollRightEntry = function (id) {
+                    setTimeout(function () {
+                        var $resContainer = $('#result-container'),
+                            $resElem = $('#res-entry-' + id),
+                            // -100 is some space between header panel and the top position of the currently active entry
+                            // it helps keep the context of the previous entry without additional scrolling
+                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
+                        $resContainer.stop().animate({
+                            scrollTop: resShift
+                        }, 500);
+                    }, 100);
+                },
+                entrySetEditingStatus = function (entry, status) {
+                    if ($scope.ws_active) {
+                        if (status == "start") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_start" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        } else if (status == "stop") {
+                            $scope.socket.send(JSON.stringify({"text": {
+                                    "current_edit_stop" : entry.id,
+                                    "user": $scope.user
+                                }}));
+                        }
+                    }
+                },
+                expandEntry = function (entry) {
+                    $scope.activeEntry = entry;
+                    if (!entry.approved
+                    && (!angular.isArray(entry['translations']) || !entry['translations'].length)
+                    && $scope.translationAllowed) {
+                        setTimeout(function () {
+                            $('#entry-suggestion-' + entry.id).focus();
+                        }, 10);
+                    }
+                    entrySetEditingStatus(entry, 'start');
+                    scrollToEntry(entry);
+                };
+            $scope.toggleEntry = function (entry, $event) {
+                if ($scope.activeEntry === entry) {
+                    $scope.activeEntry = null;
+                } else {
+                    expandEntry(entry);
+                }
+                if ($event) {
+                    $event.stopPropagation();
+                }
+            };
 
             var clearTags = function (text) {
                     //return text;
@@ -276,6 +343,16 @@
                         $scope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
                         $scope.busy = false;
+
+                        if ($scope.entryToFocus > 0) {
+                            console.log($scope.entryToFocus in $scope.entriesById);
+                            console.log(window.location.pathname);
+                            if ($scope.entryToFocus in $scope.entriesById){
+                                $scope.toggleEntry($scope.entriesById[$scope.entryToFocus]);
+                            }
+                            $location.search('fragment', null).replace();
+                            $scope.entryToFocus = 0;
+                        }
                     }).error(function (a) {
                         console.log(a);
                     });
@@ -290,9 +367,11 @@
             $scope.clearTranslation = clearTranslation;
             $scope.activeEntry = null;
             $scope.textTab = 0;
-            $scope.page = 1;
+            $scope.initialPage = parseInt($location.search().page ? $location.search().page : 1) || 1;
+            $scope.entryToFocus = $location.search().fragment ? $location.search().fragment : 0;
             $scope.countPerPage = 100;
-            $scope.pagesCount = 1;
+            $scope.pagesCount = window['pagesCount'];
+            $scope.page = ($scope.initialPage > $scope.pagesCount) ? ($scope.pagesCount) : ($scope.initialPage < 1 ? 1 : $scope.initialPage);
             $scope.paginatorBlur = function () {
                 $scope.editPage = false;
                 $scope.page = parseInt($scope.page) || 1;
@@ -325,15 +404,18 @@
                 if ($scope.page > 1) {
                     $scope.page = $scope.page - 1;
                     updateEntries();
+                    $location.search('page', $scope.page).replace();
                 }
             };
             $scope.nextPage = function () {
                 if ($scope.busy) {
                     return;
                 }
+                console.log($scope.page);
                 if ($scope.page < $scope.pagesCount) {
                     $scope.page = $scope.page + 1;
                     updateEntries();
+                    $location.search('page', $scope.page).replace();
                 }
             };
             $scope.addMachineSuggestion = function (entry, machine) {
@@ -348,71 +430,6 @@
                 setTimeout(function () {
                     moveCursorToEnd(input[0]);
                 }, 10);
-            };
-            var scrollToEntry = function (entry) {
-                    scrollLeftEntry(entry.idInText);
-                    scrollRightEntry(entry.idInText);
-                },
-                scrollLeftEntry = function (id) {
-                    setTimeout(function () {
-                        var $container = $('#translations-container'),
-                            $elem = $('#entry-' + id),
-                            // -100 is some space between header panel and the top position of the currently active entry
-                            // it helps keep the context of the previous entry without additional scrolling
-                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
-                        $container.stop().animate({
-                            scrollTop: containerShift
-                        }, 500);
-                    }, 100);
-                },
-                scrollRightEntry = function (id) {
-                    setTimeout(function () {
-                        var $resContainer = $('#result-container'),
-                            $resElem = $('#res-entry-' + id),
-                            // -100 is some space between header panel and the top position of the currently active entry
-                            // it helps keep the context of the previous entry without additional scrolling
-                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
-                        $resContainer.stop().animate({
-                            scrollTop: resShift
-                        }, 500);
-                    }, 100);
-                },
-                entrySetEditingStatus = function (entry, status) {
-                    if ($scope.ws_active) {
-                        if (status == "start") {
-                            $scope.socket.send(JSON.stringify({"text": {
-                                    "current_edit_start" : entry.id,
-                                    "user": $scope.user
-                                }}));
-                        } else if (status == "stop") {
-                            $scope.socket.send(JSON.stringify({"text": {
-                                    "current_edit_stop" : entry.id,
-                                    "user": $scope.user
-                                }}));
-                        }
-                    }
-                },
-                expandEntry = function (entry) {
-                    $scope.activeEntry = entry;
-                    if (!entry.approved
-                    && (!angular.isArray(entry['translations']) || !entry['translations'].length)
-                    && $scope.translationAllowed) {
-                        setTimeout(function () {
-                            $('#entry-suggestion-' + entry.id).focus();
-                        }, 10);
-                    }
-                    entrySetEditingStatus(entry, 'start');
-                    scrollToEntry(entry);
-                };
-            $scope.toggleEntry = function (entry, $event) {
-                if ($scope.activeEntry === entry) {
-                    $scope.activeEntry = null;
-                } else {
-                    expandEntry(entry);
-                }
-                if ($event) {
-                    $event.stopPropagation();
-                }
             };
             $scope.focusEntry = function (id) {
                 var entry = $scope.entriesById[id];

@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <a class="btn btn-link" ng-click="addProjectAdvancedOptionsOpener()">{{ advanced_options_label }}</a>
+            <a class="btn btn-link" ng-click="(addProjectAdvancedOptions = !addProjectAdvancedOptions) && addProjectAdvancedOptions">{{ advanced_options_label }}</a>
             <div class="new-project__advanced-options"
                  ng-show="addProjectAdvancedOptions">
                 <div class="form-group">

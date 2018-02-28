@@ -185,7 +185,7 @@ def get_users_ajax(request):
 @login_required
 def participant_ajax(request, project):
     if project.is_private:
-        if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user):
+        if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user) and not request.user.is_staff:
             return HttpResponse(json.dumps(_('You have to be a member of the project')),
                                     content_type="application/json",
                                     status=400)
@@ -327,6 +327,7 @@ def text_ajax(request, project):
             source_lang = project.source_lang
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
+            split_mode = post['split_mode'] if post['split_mode'] in ["default", "line"] else "default"
 
             if 'textBody' in post:
                 file_type = "text/plain"
@@ -370,6 +371,7 @@ def text_ajax(request, project):
                       'project_id': project.id,
                       'subject_id': subject.id,
                       'source_lang': source_lang.code,
+                      'split_mode': split_mode,
                       'custom_parse': json.dumps(custom_parse)
                       }
 
@@ -518,7 +520,7 @@ def glossary_ajax(request, project):
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
-                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user) and not request.user.is_staff:
                     return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             try:
                 project_translation = ProjectTranslation.objects.get(
@@ -644,7 +646,7 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
-                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user):
+                if not project.is_user_manager(request.user) and not project.is_user_a_member(request.user) and not request.user.is_staff:
                     return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             target_lang = request.GET['target_lang']
             project_translation = ProjectTranslation.objects.get(project=project, target_lang=Language.objects.get(code=target_lang))
@@ -901,7 +903,7 @@ def translate_entry_ajax(request):
             entry_translation.body = post['text']
         else:
             set_approved = False
-            if not project.users:
+            if not project.users.count():
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
                                                                 translation=entry.translation,
                                                                  is_approved=True).count()
@@ -1031,7 +1033,7 @@ def approve_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
-    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user):
+    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
         if entry.parent_entry:
             TextEntry.objects.filter(~Q(id=entry_id),
                                      parent_entry=entry.parent_entry,
@@ -1074,7 +1076,7 @@ def disapprove_entry_ajax(request):
         except TextEntry.DoesNotExist:
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
-        if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user):
+        if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
             entry.is_approved = False
             entry.save()
             entry_to_disapprove = {
