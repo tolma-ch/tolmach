@@ -1,6 +1,8 @@
 Django==1.9.12
 MySQL-python
 Pillow==2.8.2
+daphne==1.3.0
+channels==1.1.8
 python-openid==2.2.5
 social-auth-app-django==1.1.0
 social-auth-core==1.2.0
