@@ -135,137 +135,138 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!---------------------------------
-                                   editor field
-                        ---------------------------------->
-                        <div class="text-piece__editor"
-                             ng-if="($parent.activeEntry === entry && userMembershipStatus < 2)">
-                            <div class="translation-editor"
-                                 ng-class="{'translation-editor_active': entry.editing,
-                                            'disabled-div': entrySuggestSending}"
-                                 ng-disabled="entrySuggestSending">
-                                <div class="translation-editor__tabs"
-                                     ng-if="entry.meta.msgid_plural && entry.editing">
-                                    <div class="switcher2">
-                                        <a href=""
-                                           class="switcher2__button"
-                                           ng-repeat="pluralExample in pluralExamples track by $index"
-                                           ng-class="{'switcher2__button_active': entry.plural == $index}"
-                                           ng-click="switchPlural(entry, $index)">{= pluralExample =}</a>
+                        <div class="text-piece__box">
+                            <!---------------------------------
+                                       editor field
+                            ---------------------------------->
+                            <div class="text-piece__editor"
+                                 ng-if="($parent.activeEntry === entry && userMembershipStatus < 2)"
+                                 ng-show="entry.editing || !entry.approved">
+                                <div class="translation-editor"
+                                     ng-class="{'translation-editor_active': entry.editing,
+                                                'disabled-div': entrySuggestSending}"
+                                     ng-disabled="entrySuggestSending">
+                                    <div class="translation-editor__tabs"
+                                         ng-if="entry.meta.msgid_plural && entry.editing">
+                                        <div class="switcher2">
+                                            <a href=""
+                                               class="switcher2__button"
+                                               ng-repeat="pluralExample in pluralExamples track by $index"
+                                               ng-class="{'switcher2__button_active': entry.plural == $index}"
+                                               ng-click="switchPlural(entry, $index)">{= pluralExample =}</a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="translation-editor__input-wrapper">
-                                    <div contenteditable="true"
-                                         id="entry-suggestion-{= entry.id =}"
-                                         class="translation-editor__input"
-                                         placeholder="{{ your_translation }}"
-                                         data-insert-text=""
-                                         ng-model="entry.suggestion"
-                                         ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
-                                         ng-drop="textareaDrop($event, entry)"
-                                         ng-focus="startEditing(entry)"
-                                         ng-keydown="textareaKeydown($event, entry)"
-                                         text-editor>
+                                    <div class="translation-editor__input-wrapper">
+                                        <div contenteditable="true"
+                                             id="entry-suggestion-{= entry.id =}"
+                                             class="translation-editor__input"
+                                             placeholder="{{ your_translation }}"
+                                             data-insert-text=""
+                                             ng-model="entry.suggestion"
+                                             ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}"
+                                             ng-drop="textareaDrop($event, entry)"
+                                             ng-focus="startEditing(entry)"
+                                             ng-keydown="textareaKeydown($event, entry)"
+                                             text-editor>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="translation-editor__btns">
-                                    <div class="translation-editor__save-btn">
-                                        <div class="translation-editor__options">
-                                            <div class="translation-editor__options-content">
-                                                {{ text_options }}:
-                                                <div>
-                                                    <label>
-                                                        <input type="radio" class="ace"
-                                                               value="ctrl-enter"
-                                                               ng-model="savingOptions.btn"
-                                                               ng-click="changeSavingOptions()">
-                                                        <span class="lbl"> Ctrl-Enter</span>
-                                                    </label>
-                                                </div>
-                                                <div>
-                                                    <label>
-                                                        <input type="radio" class="ace"
-                                                               value="enter"
-                                                               ng-model="savingOptions.btn"
-                                                               ng-click="changeSavingOptions()">
-                                                        <span class="lbl"> Enter</span>
-                                                    </label>
+                                    <div class="translation-editor__btns">
+                                        <div class="translation-editor__save-btn">
+                                            <div class="translation-editor__options">
+                                                <div class="translation-editor__options-content">
+                                                    {{ text_options }}:
+                                                    <div>
+                                                        <label>
+                                                            <input type="radio" class="ace"
+                                                                   value="ctrl-enter"
+                                                                   ng-model="savingOptions.btn"
+                                                                   ng-click="changeSavingOptions()">
+                                                            <span class="lbl"> Ctrl-Enter</span>
+                                                        </label>
+                                                    </div>
+                                                    <div>
+                                                        <label>
+                                                            <input type="radio" class="ace"
+                                                                   value="enter"
+                                                                   ng-model="savingOptions.btn"
+                                                                   ng-click="changeSavingOptions()">
+                                                            <span class="lbl"> Enter</span>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <a href=""
+                                               ng-click="suggestTranslation(entry)"
+                                               tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
+                                               tooltip-append-to-body="true">
+                                                <i class="fa fa-fw fa-floppy-o"></i>
+                                            </a>
                                         </div>
                                         <a href=""
-                                           ng-click="suggestTranslation(entry)"
-                                           tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
+                                           ng-show="entry.suggestionId"
+                                           ng-click="removeTranslation(entry)"
+                                           tooltip="{{ remove_translation }}"
                                            tooltip-append-to-body="true">
-                                            <i class="fa fa-fw fa-floppy-o"></i>
+                                            <i class="fa fa-fw fa-trash-o"></i>
+                                        </a>
+                                        <a href=""
+                                           ng-click="cancelEditing(entry)"
+                                           tooltip="{{ cancel_translation }}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-fw fa-times"></i>
                                         </a>
                                     </div>
-                                    <a href=""
-                                       ng-show="entry.suggestionId"
-                                       ng-click="removeTranslation(entry)"
-                                       tooltip="{{ remove_translation }}"
-                                       tooltip-append-to-body="true">
-                                        <i class="fa fa-fw fa-trash-o"></i>
-                                    </a>
-                                    <a href=""
-                                       ng-click="cancelEditing(entry)"
-                                       tooltip="{{ cancel_translation }}"
-                                       tooltip-append-to-body="true">
-                                        <i class="fa fa-fw fa-times"></i>
-                                    </a>
-                                </div>
-                                <div class="translation-editor__machine-suggestions">
-                                    <div class="machine-suggestions"
-                                         ng-show="showText = true; entry.tmdbVariants.length">
-                                        <h4 class="machine-suggestions__title">{{ tmtranslations }}</h4>
-                                        <ul class="machine-suggestions__list">
-                                            <li class="machine-suggestions__item"
-                                                ng-repeat="machine in entry.tmdbVariants">
-                                                <div class="machine-suggestion">
-                                                    <span class="machine-suggestion__from">{= machine.tmx | limitTo:15 =}</span>
-                                                    <span class="machine-suggestion__text"
-                                                          html-content="machine.text"
-                                                          ng-if="showText"
-                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
-                                                    <span class="machine-suggestion__text"
-                                                          html-content="machine.diff"
-                                                          ng-if="!showText"
-                                                          ng-click="addMachineSuggestion(entry, machine)"></span>
-                                                    <span class="machine-suggestion__relevance"
-                                                          ng-class="{
-                                                            'machine-suggestion__relevance_high': machine.percent >= 70,
-                                                            'machine-suggestion__relevance_medium': machine.percent> 40 && machine.percent < 70,
-                                                            'machine-suggestion__relevance_low': machine.percent <= 40
-                                                          }"
-                                                          ng-click="showText = !showText">{= machine.percent =}%</span>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="machine-suggestions"
-                                         ng-show="entry.yaMachines.length">
-                                        <h4 class="machine-suggestions__title">{{ mtranslations }}</h4>
-                                        <ul class="machine-suggestions__list">
-                                            <li class="machine-suggestions__item"
-                                                ng-repeat="machine in entry.yaMachines"
-                                                ng-click="addMachineSuggestion(entry, machine)">
-                                                <div class="machine-suggestion">
-                                                    <span class="machine-suggestion__text"
-                                                          html-content="machine.text"></span>
-                                                    <span class="machine-suggestion__logo"><img src="{% static 'img/yandex_logo.svg' %}"></span>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                    <div class="translation-editor__machine-suggestions">
+                                        <div class="machine-suggestions"
+                                             ng-show="showText = true; entry.tmdbVariants.length">
+                                            <h4 class="machine-suggestions__title">{{ tmtranslations }}</h4>
+                                            <ul class="machine-suggestions__list">
+                                                <li class="machine-suggestions__item"
+                                                    ng-repeat="machine in entry.tmdbVariants">
+                                                    <div class="machine-suggestion">
+                                                        <span class="machine-suggestion__from">{= machine.tmx | limitTo:15 =}</span>
+                                                        <span class="machine-suggestion__text"
+                                                              html-content="machine.text"
+                                                              ng-if="showText"
+                                                              ng-click="addMachineSuggestion(entry, machine)"></span>
+                                                        <span class="machine-suggestion__text"
+                                                              html-content="machine.diff"
+                                                              ng-if="!showText"
+                                                              ng-click="addMachineSuggestion(entry, machine)"></span>
+                                                        <span class="machine-suggestion__relevance"
+                                                              ng-class="{
+                                                                'machine-suggestion__relevance_high': machine.percent >= 70,
+                                                                'machine-suggestion__relevance_medium': machine.percent> 40 && machine.percent < 70,
+                                                                'machine-suggestion__relevance_low': machine.percent <= 40
+                                                              }"
+                                                              ng-click="showText = !showText">{= machine.percent =}%</span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="machine-suggestions"
+                                             ng-show="entry.yaMachines.length">
+                                            <h4 class="machine-suggestions__title">{{ mtranslations }}</h4>
+                                            <ul class="machine-suggestions__list">
+                                                <li class="machine-suggestions__item"
+                                                    ng-repeat="machine in entry.yaMachines"
+                                                    ng-click="addMachineSuggestion(entry, machine)">
+                                                    <div class="machine-suggestion">
+                                                        <span class="machine-suggestion__text"
+                                                              html-content="machine.text"></span>
+                                                        <span class="machine-suggestion__logo"><img src="/static/img/yandex_logo.svg"></span>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!---------------------------------
-                                translation variants
-                        ---------------------------------->
-                        <div class="text-piece__variants"
+                            <!---------------------------------
+                                    translation variants
+                            ---------------------------------->
+                            <div class="text-piece__variants"
                              ng-if="($parent.activeEntry === entry)">
                             <div class="translation-variant"
                                  ng-repeat="translation in entry.translations"
@@ -315,6 +316,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                     {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}

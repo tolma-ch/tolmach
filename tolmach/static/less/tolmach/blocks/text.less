@@ -120,7 +120,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   font-weight: 300;
-  & > .text-piece {
+  & > .text-piece_closed {
     border-bottom: 1px solid rgba(128, 128, 128, 0.3);
     &:last-child {
       border-bottom: none;
@@ -132,14 +132,30 @@
   position: relative;
   background: white;
   font-size: 16px;
-  padding: 10px;
+  padding: 0;
   transition: background-color 0.3s;
+  overflow: hidden;
   @media (max-width: 767px) {
     font-size: 14px;
   }
 
   &__original {
     position: relative;
+    padding: 10px;
+  }
+  &__box {
+    position: relative;
+    background: #e0e0e0;
+    &:after {
+      pointer-events: none;
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -5px;
+      right: -5px;
+      bottom: 0;
+      box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.5);
+    }
   }
   &__editor {
 
@@ -150,8 +166,8 @@
   &__icons {
     width: 25px;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 10px;
+    right: 10px;
     text-align: right;
     a {
       cursor: pointer;
@@ -221,7 +237,7 @@
     //display: none;
   }
   &_approved &__editor {
-    display: none;
+    //display: none;
   }
   &_approved &__variants {
     display: block;
@@ -241,9 +257,12 @@
 .translation-variant {
   position: relative;
   min-height: 60px;
-  margin: 10px -10px 0;
-  padding: 0 10px;
-  border-bottom: 2px dotted #eaeaea;
+  margin: 0;
+  padding: 5px 20px;
+  border-bottom: 2px dotted #b7b7b7;
+  &:last-child {
+    border-bottom: 0;
+  }
   &__text {
     margin-right: 30px;
   }
@@ -255,7 +274,7 @@
     width: 25px;
     position: absolute;
     top: 5px;
-    right: 10px;
+    right: 20px;
     text-align: right;
     a {
       cursor: pointer;
@@ -277,18 +296,18 @@
     color: #9c9b9b;
   }
   &_approved {
-    background: #e1ffe4;
-    box-shadow: inset 3px 2px 4px rgba(0,0,0,.2);
+    background: #cbf0cf;
   }
 }
 
 .translation-editor {
+  padding: 10px;
   position: relative;
   &__btns {
     display: none;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 10px;
+    right: 10px;
     width: 20px;
     text-align: right;
     font-size: 18px;
@@ -334,7 +353,6 @@
     height: 27px;
     min-height: 27px;
     padding: 3px 8px;
-    margin: 10px 0;
     font-size: 13px;
     border: 1px solid #cacaca;
     .transition(all .3s);
@@ -366,7 +384,6 @@
     display: block;
     box-shadow: inset rgba(0, 0, 0, 0.3) 0 0 5px;
     padding: 2px 10px 2px 10px;
-    margin-bottom: 15px;
     margin-right: 24px;
     background: rgba(0, 0, 0, 0.03);
   }
