@@ -115,17 +115,38 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.eggs.Loader',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'social_django.context_processors.backends',
-    'social_django.context_processors.login_redirect',
-    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.i18n',
-    'tolmach.context_processors.ya_metrika',
-    'tolmach.context_processors.less_debug',
-    'tolmach.context_processors.logo_special',
-)
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#     'django.contrib.auth.context_processors.auth',
+#     'social_django.context_processors.backends',
+#     'social_django.context_processors.login_redirect',
+#     'django.core.context_processors.request',
+#     'django.contrib.messages.context_processors.messages',
+#     'django.core.context_processors.i18n',
+#     'tolmach.context_processors.ya_metrika',
+#     'tolmach.context_processors.less_debug',
+#     'tolmach.context_processors.logo_special',
+# )
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'OPTIONS': {
+            'loaders': ['django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                        'django.template.loaders.eggs.Loader',],
+            'context_processors': ['django.contrib.auth.context_processors.auth',
+                                    'social_django.context_processors.backends',
+                                    'social_django.context_processors.login_redirect',
+                                    'django.core.context_processors.request',
+                                    'django.contrib.messages.context_processors.messages',
+                                    'django.core.context_processors.i18n',
+                                    'tolmach.context_processors.ya_metrika',
+                                    'tolmach.context_processors.less_debug',
+                                    'tolmach.context_processors.logo_special',]
+        }
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',

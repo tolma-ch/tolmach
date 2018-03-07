@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='textentry',
             name='parent_entry',
-            field=models.ForeignKey(default=None, to='translations.TextEntry', null=True),
+            field=models.ForeignKey(default=None, to='translations.TextEntry', null=True, on_delete=models.deletion.CASCADE),
         ),
     ]

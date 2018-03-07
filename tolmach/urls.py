@@ -1,6 +1,7 @@
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.conf.urls.static import static
+import django.contrib.auth.views
 import tolmach.views as main_views
 import translations.views as trans_views
 import translations.views_ajax as trans_ajax
@@ -12,7 +13,7 @@ admin.autodiscover()
 
 PATH = getattr(settings, 'URL_PATH', '')
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
@@ -21,7 +22,7 @@ urlpatterns = patterns('',
 
     # main
     url(r'^$', main_views.index, name='index'),
-    url(r'^%slogout/$' % PATH, 'django.contrib.auth.views.logout', {'next_page': '/'}),
+    url(r'^%slogout/$' % PATH, django.contrib.auth.views.logout, {'next_page': '/'}),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
     url(r'password-reset/$', main_views.reset_password_approve, name="reset_password_approve"),
@@ -66,7 +67,7 @@ urlpatterns = patterns('',
     url('', include('chat.urls')),
 
     # temporarily added urls for developing purpuses
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 try:
     debug_toolbar_enable = settings.DEBUG_TOOLBAR

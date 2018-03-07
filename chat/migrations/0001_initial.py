@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('project', models.ForeignKey(to='translations.Project')),
+                ('project', models.ForeignKey(to='translations.Project', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -27,8 +27,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('text', models.TextField()),
-                ('chat', models.ForeignKey(related_name='messages', to='chat.Chat')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('chat', models.ForeignKey(related_name='messages', to='chat.Chat', on_delete=models.deletion.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -36,8 +36,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('last_presence', models.DateTimeField()),
-                ('chat', models.ForeignKey(to='chat.Chat')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('chat', models.ForeignKey(to='chat.Chat', on_delete=models.deletion.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
     ]

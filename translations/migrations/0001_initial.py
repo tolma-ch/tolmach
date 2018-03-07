@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('source_entry', models.CharField(max_length=256)),
                 ('target_entry', models.CharField(max_length=256)),
-                ('glossary', models.ForeignKey(related_name='glossary_entries', to='translations.Glossary')),
+                ('glossary', models.ForeignKey(related_name='glossary_entries', to='translations.Glossary', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('users_requested', models.TextField(default=b'')),
                 ('time_created', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now_add=True)),
-                ('manager', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('manager', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -51,10 +51,10 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=256)),
                 ('body', models.TextField()),
                 ('word_price', models.IntegerField(default=0)),
-                ('project', models.ForeignKey(to='translations.Project')),
-                ('source_lang', models.ForeignKey(related_name='source_lang', to='entries.Language')),
-                ('subject', models.ForeignKey(to='entries.Subject')),
-                ('target_lang', models.ForeignKey(related_name='target_lang', to='entries.Language')),
+                ('project', models.ForeignKey(to='translations.Project', on_delete=models.deletion.CASCADE)),
+                ('source_lang', models.ForeignKey(related_name='source_lang', to='entries.Language', on_delete=models.deletion.CASCADE)),
+                ('subject', models.ForeignKey(to='entries.Subject', on_delete=models.deletion.CASCADE)),
+                ('target_lang', models.ForeignKey(related_name='target_lang', to='entries.Language', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -68,9 +68,9 @@ class Migration(migrations.Migration):
                 ('is_approved', models.BooleanField(default=False)),
                 ('time_created', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('parent_entry', models.ForeignKey(default=1, to='translations.TextEntry')),
-                ('text', models.ForeignKey(related_name='text_entries', to='translations.Text')),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
+                ('parent_entry', models.ForeignKey(default=1, to='translations.TextEntry', on_delete=models.deletion.CASCADE)),
+                ('text', models.ForeignKey(related_name='text_entries', to='translations.Text', on_delete=models.deletion.CASCADE)),
             ],
         ),
     ]

@@ -19,8 +19,8 @@ class Subject(models.Model):
 
 class Entry(models.Model):
     body = models.TextField(default="")
-    language = models.ForeignKey(Language)
-    subject = models.ForeignKey(Subject)
+    language = models.ForeignKey(Language, on_delete=models.deletion.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.deletion.CASCADE)
 
     def __str__(self):
         return self.text

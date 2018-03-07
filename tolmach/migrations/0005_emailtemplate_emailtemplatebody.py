@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('body', models.TextField(default=b'')),
-                ('lang', models.ForeignKey(related_name='template_body_lang', to='entries.Language')),
-                ('template', models.ForeignKey(to='tolmach.EmailTemplate')),
+                ('lang', models.ForeignKey(related_name='template_body_lang', to='entries.Language', on_delete=models.deletion.CASCADE)),
+                ('template', models.ForeignKey(to='tolmach.EmailTemplate', on_delete=models.deletion.CASCADE)),
             ],
         ),
     ]

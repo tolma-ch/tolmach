@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('meta_type', models.CharField(default=None, max_length=256, null=True)),
                 ('meta_data', models.TextField()),
-                ('translation', models.ForeignKey(related_name='text_translation_meta', to='translations.TextTranslation')),
+                ('translation', models.ForeignKey(related_name='text_translation_meta', to='translations.TextTranslation', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.RunPython(copy_tmdbs_to_write_from_text_meta_to_translation_meta),

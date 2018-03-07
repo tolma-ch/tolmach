@@ -49,9 +49,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fragments_translated', models.IntegerField(default=0)),
-                ('source_lang', models.ForeignKey(related_name='stats_source_lang', to='entries.Language')),
-                ('target_lang', models.ForeignKey(related_name='stats_target_lang', to='entries.Language')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('source_lang', models.ForeignKey(related_name='stats_source_lang', to='entries.Language', on_delete=models.deletion.CASCADE)),
+                ('target_lang', models.ForeignKey(related_name='stats_target_lang', to='entries.Language', on_delete=models.deletion.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.RunPython(migrate_old_stats),

@@ -54,11 +54,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entry',
             name='language',
-            field=models.ForeignKey(to='entries.Language'),
+            field=models.ForeignKey(to='entries.Language', on_delete=models.deletion.CASCADE),
         ),
         migrations.AddField(
             model_name='entry',
             name='subject',
-            field=models.ForeignKey(to='entries.Subject'),
+            field=models.ForeignKey(to='entries.Subject', on_delete=models.deletion.CASCADE),
         ),
     ]

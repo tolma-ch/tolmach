@@ -11,7 +11,7 @@ from entries.models import Subject, Language
 
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
-    owner = models.ForeignKey('auth.User')
+    owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_private = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -19,24 +19,24 @@ class Glossary(models.Model):
 
 
 class GlossaryEntry(models.Model):
-    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries')
+    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries', on_delete=models.deletion.CASCADE)
     source_entry = models.CharField(max_length=256)
     target_entry = models.CharField(max_length=256)
 
 
 class TMDatabase(models.Model):
     name = models.CharField(max_length=256)
-    owner = models.ForeignKey('auth.User')
+    owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_private = models.BooleanField(default=True)
-    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang')
-    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang')
+    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang', on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang', on_delete=models.deletion.CASCADE)
 
     def __unicode__(self):
         return unicode(self.name)
 
 
 class TMDatabaseEntry(models.Model):
-    tmx = models.ForeignKey('translations.TMDatabase', related_name='tmx_entries')
+    tmx = models.ForeignKey('translations.TMDatabase', related_name='tmx_entries', on_delete=models.deletion.CASCADE)
     orig_lang = models.CharField(max_length=3)
     orig_text = models.CharField(max_length=1024)
     target_lang = models.CharField(max_length=3)
@@ -48,8 +48,8 @@ class TMDatabaseEntry(models.Model):
 
 
 class ProjectMember(models.Model):
-    project = models.ForeignKey('translations.Project', related_name='project_members')
-    user = models.ForeignKey('auth.User')
+    project = models.ForeignKey('translations.Project', related_name='project_members', on_delete=models.deletion.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     EDITOR = 0
     TRANSLATOR = 1
     SPECTATOR = 2
@@ -79,8 +79,8 @@ class Project(models.Model):
     """
     name = models.CharField(max_length=256)
     description = models.TextField(default="")
-    source_lang = models.ForeignKey('entries.Language', related_name='project_source_lang')
-    manager = models.ForeignKey('auth.User')
+    source_lang = models.ForeignKey('entries.Language', related_name='project_source_lang', on_delete=models.deletion.CASCADE)
+    manager = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_private = models.BooleanField(default=True)
     members = models.TextField(default="")
     users_invited = models.TextField(default="")
@@ -174,8 +174,8 @@ class Project(models.Model):
 
 
 class ProjectTranslation(models.Model):
-    project = models.ForeignKey('translations.Project', related_name='project_translations')
-    target_lang = models.ForeignKey('entries.Language', related_name='project_translations_target_lang')
+    project = models.ForeignKey('translations.Project', related_name='project_translations', on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language', related_name='project_translations_target_lang', on_delete=models.deletion.CASCADE)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
@@ -185,12 +185,12 @@ class ProjectTranslation(models.Model):
 
 
 class Text(models.Model):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, on_delete=models.deletion.CASCADE)
     title = models.CharField(max_length=256)
     body = models.TextField()
     word_price = models.IntegerField(default=0)
-    subject = models.ForeignKey('entries.Subject')
-    source_lang = models.ForeignKey('entries.Language', related_name='source_lang')
+    subject = models.ForeignKey('entries.Subject', on_delete=models.deletion.CASCADE)
+    source_lang = models.ForeignKey('entries.Language', related_name='source_lang', on_delete=models.deletion.CASCADE)
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)
     time_created = models.DateTimeField(default=timezone.now)
@@ -252,15 +252,15 @@ class Text(models.Model):
 
 
 class TextMeta(models.Model):
-    text = models.ForeignKey('translations.Text', related_name='text_meta')
+    text = models.ForeignKey('translations.Text', related_name='text_meta', on_delete=models.deletion.CASCADE)
     meta_type = models.CharField(max_length=256, default=None, null=True)
     meta_data = models.TextField()
 
 
 class TextTranslation(models.Model):
-    project_translation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation")
-    text = models.ForeignKey('translations.Text', related_name='text_translations')
-    target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang')
+    project_translation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation", on_delete=models.deletion.CASCADE)
+    text = models.ForeignKey('translations.Text', related_name='text_translations', on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang', on_delete=models.deletion.CASCADE)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
@@ -301,18 +301,18 @@ class TextTranslation(models.Model):
 
 
 class TextTranslationMeta(models.Model):
-    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_meta')
+    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_meta', on_delete=models.deletion.CASCADE)
     meta_type = models.CharField(max_length=256, default=None, null=True)
     meta_data = models.TextField()
 
 
 class TextEntry(models.Model):
     body = models.TextField(default="")
-    parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True)
-    text = models.ForeignKey('translations.Text', related_name='text_entries')
+    parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)
+    text = models.ForeignKey('translations.Text', related_name='text_entries', on_delete=models.deletion.CASCADE)
     id_in_text = models.IntegerField(default=0)
-    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True)
-    author = models.ForeignKey('auth.User')
+    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
+    author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
@@ -335,6 +335,6 @@ class TextEntry(models.Model):
 
 
 class TextEntryMeta(models.Model):
-    entry = models.ForeignKey('translations.TextEntry', related_name='metas_entry')
-    text_meta = models.ForeignKey('translations.TextMeta', related_name='entry_meta_parent')
+    entry = models.ForeignKey('translations.TextEntry', related_name='metas_entry', on_delete=models.deletion.CASCADE)
+    text_meta = models.ForeignKey('translations.TextMeta', related_name='entry_meta_parent', on_delete=models.deletion.CASCADE)
     meta_data = models.TextField()

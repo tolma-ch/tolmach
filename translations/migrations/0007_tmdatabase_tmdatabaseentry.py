@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=256)),
-                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
-                ('project', models.ForeignKey(related_name='tmxdatabases', to='translations.Project')),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
+                ('project', models.ForeignKey(related_name='tmxdatabases', to='translations.Project', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('target_created', models.DateTimeField(default=None, null=True, blank=True)),
                 ('target_editor', models.CharField(default=None, max_length=80, null=True, blank=True)),
                 ('target_edited', models.DateTimeField(default=None, null=True, blank=True)),
-                ('tmx', models.ForeignKey(related_name='tmx_entries', to='translations.TMDatabase')),
+                ('tmx', models.ForeignKey(related_name='tmx_entries', to='translations.TMDatabase', on_delete=models.deletion.CASCADE)),
             ],
         ),
     ]
