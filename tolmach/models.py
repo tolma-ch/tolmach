@@ -13,7 +13,7 @@ class UserMeta(models.Model):
     :param TextField invited_to: List of ids of projects user was invited to, comma-separated
     :param TextField requested_to: List of ids of projects user requested access to, comma-separated
     """
-    user = models.OneToOneField('auth.User')
+    user = models.OneToOneField('auth.User', on_delete=models.deletion.CASCADE)
     email = models.EmailField()
     website = models.URLField()
     avatar = models.ImageField(upload_to='avatar/', default=None)
@@ -26,10 +26,10 @@ class UserMeta(models.Model):
 
 
 class PairStats(models.Model):
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     fragments_translated = models.IntegerField(default=0)
-    source_lang = models.ForeignKey('entries.Language', related_name='stats_source_lang')
-    target_lang = models.ForeignKey('entries.Language', related_name='stats_target_lang')
+    source_lang = models.ForeignKey('entries.Language', related_name='stats_source_lang', on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language', related_name='stats_target_lang', on_delete=models.deletion.CASCADE)
 
 
 class Messages(models.Model):
@@ -52,8 +52,8 @@ class Messages(models.Model):
     :param BooleanField was_read: Status of the message
     :param DateTimeField time_created: Date and time when message was sent
     """
-    originator = models.ForeignKey('auth.User', related_name="sender")
-    addressee = models.ForeignKey('auth.User', related_name="target")
+    originator = models.ForeignKey('auth.User', related_name="sender", on_delete=models.deletion.CASCADE)
+    addressee = models.ForeignKey('auth.User', related_name="target", on_delete=models.deletion.CASCADE)
     message = models.TextField(default="")
 
     MESSAGE_TYPES = (
@@ -71,7 +71,7 @@ class EmailTemplate(models.Model):
 
 
 class EmailTemplateBody(models.Model):
-    template = models.ForeignKey('tolmach.EmailTemplate')
+    template = models.ForeignKey('tolmach.EmailTemplate', on_delete=models.deletion.CASCADE)
     title = models.CharField(max_length=256, default=None, null=True)
     body = models.TextField(default="")
-    lang = models.ForeignKey('entries.Language', related_name='template_body_lang')
+    lang = models.ForeignKey('entries.Language', related_name='template_body_lang', on_delete=models.deletion.CASCADE)

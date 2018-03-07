@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='glossary',
             name='project',
-            field=models.ForeignKey(related_name='glossaries', default=2, to='translations.Project'),
+            field=models.ForeignKey(related_name='glossaries', default=2, to='translations.Project', on_delete=models.deletion.CASCADE),
             preserve_default=False,
         ),
     ]

@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('message_type', models.CharField(max_length=1, choices=[(b'A', b'Announcement'), (b'L', b'Letter')])),
                 ('was_read', models.BooleanField(default=False)),
                 ('time_created', models.DateTimeField(auto_now_add=True)),
-                ('addressee', models.ForeignKey(related_name='target', to=settings.AUTH_USER_MODEL)),
-                ('originator', models.ForeignKey(related_name='sender', to=settings.AUTH_USER_MODEL)),
+                ('addressee', models.ForeignKey(related_name='target', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
+                ('originator', models.ForeignKey(related_name='sender', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
                 ('member_of', models.TextField(default=b'')),
                 ('invited_to', models.TextField(default=b'')),
                 ('requested_to', models.TextField(default=b'')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.CASCADE)),
             ],
         ),
     ]

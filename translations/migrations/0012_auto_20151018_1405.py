@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('meta_data', models.TextField()),
-                ('entry', models.ForeignKey(related_name='metas_entry', to='translations.TextEntry')),
+                ('entry', models.ForeignKey(related_name='metas_entry', to='translations.TextEntry', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -25,12 +25,12 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('meta_type', models.CharField(default=None, max_length=64, null=True)),
                 ('meta_data', models.TextField()),
-                ('text', models.ForeignKey(related_name='text_meta', to='translations.Text')),
+                ('text', models.ForeignKey(related_name='text_meta', to='translations.Text', on_delete=models.deletion.CASCADE)),
             ],
         ),
         migrations.AddField(
             model_name='textentrymeta',
             name='text_meta',
-            field=models.ForeignKey(related_name='entry_meta_parent', to='translations.TextMeta'),
+            field=models.ForeignKey(related_name='entry_meta_parent', to='translations.TextMeta', on_delete=models.deletion.CASCADE),
         ),
     ]

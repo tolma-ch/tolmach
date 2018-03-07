@@ -5,8 +5,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -115,7 +114,7 @@ def projects(request, proj_type):
             }
 
     template = 'translations/projects.html'
-    return render_to_response(template, data, RequestContext(request))
+    return render(request, template, data)
 
 
 @login_required
@@ -176,7 +175,7 @@ def new_project_page(request):
         'subjects': Subject.objects.all(),}
     # print json.dumps(data)
     template = 'translations/dev_new_project.html'
-    return render_to_response(template, data, RequestContext(request))
+    return render(request, template, data)
 
 @login_required
 def project(request, proj_id=0):
@@ -281,7 +280,7 @@ def project_by_translation(request, target_lang, proj_id=0):
         ],
     }
     template = 'translations/project.html'
-    return render_to_response(template, data, RequestContext(request))
+    return render(request, template, data)
 
 
 @login_required
@@ -355,7 +354,7 @@ def view_translation(request, text_id, target_lang):
             'total_pages': total_pages,
             }
     template = 'translations/view-text.html'
-    return render_to_response(template, data, RequestContext(request))
+    return render(request, template, data)
 
 
 @login_required

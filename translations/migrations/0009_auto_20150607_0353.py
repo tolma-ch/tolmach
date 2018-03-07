@@ -15,13 +15,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='tmdatabase',
             name='source_lang',
-            field=models.ForeignKey(related_name='tmdb_source_lang', default=1, to='entries.Language'),
+            field=models.ForeignKey(related_name='tmdb_source_lang', default=1, to='entries.Language', on_delete=models.deletion.CASCADE),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='tmdatabase',
             name='target_lang',
-            field=models.ForeignKey(related_name='tmdb_target_lang', default=1, to='entries.Language'),
+            field=models.ForeignKey(related_name='tmdb_target_lang', default=1, to='entries.Language', on_delete=models.deletion.CASCADE),
             preserve_default=False,
         ),
     ]
