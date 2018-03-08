@@ -328,7 +328,8 @@ def text_ajax(request, project):
             source_lang = project.source_lang
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
-            split_mode = post['split_mode'] if post['split_mode'] in ["default", "line"] else "default"
+            split_mode = post.get('split_mode', 'default')
+            split_mode = split_mode if split_mode in ["default", "line"] else "default"
 
             if 'textBody' in post:
                 file_type = "text/plain"

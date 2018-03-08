@@ -112,7 +112,7 @@ def chtec_request(url, values):
         from urllib.parse import urlencode
         from urllib.request import urlopen, Request
 
-    data = urlencode(values).encode('utf-8')
+    data = urlencode(values).encode('ascii')
     req = Request(url, data)
     response = urlopen(req)
 
@@ -407,7 +407,7 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         tmdb_to_write = TextTranslationMeta(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
         tmdb_to_write.save()
 
-    tmdbs = filter(None, tmdb_to_write.meta_data.split(","))
+    tmdbs = list(filter(None, tmdb_to_write.meta_data.split(",")))
 
     if not tmdbs:
         pair = "%s-%s" % (source_lang.code, target_lang.code)
@@ -460,8 +460,12 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
 #     	}
 # 	}
 # })
-        import HTMLParser
-        h = HTMLParser.HTMLParser()
+        try:
+            import HTMLParser
+            h = HTMLParser.HTMLParser()
+        except:
+            import html
+            h = html
         clean_source_text = h.unescape(re.sub("<(/)?tag( i='[0-9]+')?>", '', source_text))
         clean_target_text = h.unescape(re.sub('<hr [lr]="" i="[0-9]+">', '', target_text))
 
