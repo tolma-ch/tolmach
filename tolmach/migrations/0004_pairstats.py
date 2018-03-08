@@ -13,7 +13,6 @@ def migrate_old_stats(apps, schema_editor):
     all_users = User.objects.all()
 
     for usr in all_users:
-        print type(usr)
         translated_entries = TextEntry.objects.filter(parent_entry__isnull=False, author_id=usr.id)
         stat_langpairs = {}
         if translated_entries:

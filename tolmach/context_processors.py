@@ -2,7 +2,6 @@ from django.conf import settings
 
 
 def ya_metrika(request):
-    print settings.PROD
     if settings.PROD:
         return {
             'prod': 'true'
@@ -13,7 +12,6 @@ def ya_metrika(request):
         }
 
 def less_debug(request):
-    print settings.DEBUG
     if settings.DEBUG:
         return {
             'debug': 'true'

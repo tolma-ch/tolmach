@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import json
 from collections import OrderedDict
 from django.utils import translation
@@ -20,7 +21,6 @@ def send_message(originator, addressee, message, type):
 
 def get_user_stat(user):
     user_pairs = PairStats.objects.filter(user=user).order_by('-fragments_translated')
-    print user_pairs
     total_translated = sum([i.fragments_translated for i in user_pairs])
 
     ordered_stat = user_pairs[:6]
@@ -34,7 +34,6 @@ def email_send(message_type, dynamic_data_dict, user_email, template):
     from entries.models import Language
 
     user_locale = translation.get_language()
-    print "OLOLOLOLOLO Locale: ", user_locale
 
     message_template = EmailTemplate.objects.get(type=message_type)
     message_localized_data = EmailTemplateBody.objects.get(lang=Language.objects.get(code=user_locale),
@@ -50,7 +49,6 @@ def email_send(message_type, dynamic_data_dict, user_email, template):
 
     pattern = re.compile('|'.join(dynamic_data_dict.keys()))
     result = pattern.sub(lambda x: dynamic_data_dict[x.group()], result)
-    print type(result)
 
     email = EmailMessage(
             to=[
@@ -65,7 +63,6 @@ def email_send(message_type, dynamic_data_dict, user_email, template):
             from_email='noreply@email.tolma.ch'
         )
     email.template = template
-    print email
     email.send()
 
     return True

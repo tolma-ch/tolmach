@@ -53,7 +53,6 @@ def export_po(text_id, format, target_lang, text_translation):
         po = polib.POFile()
         doc_ext = "po"
         content_type = "text/x-gettext-translation"
-    print json.loads(trans_meta.meta_data)
     po.metadata = json.loads(trans_meta.meta_data)['all_meta']
 
     all_entries = TextEntry.objects.filter(text_id=text_id, parent_entry=None)

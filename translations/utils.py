@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 from __future__ import unicode_literals
 import re
 import os
@@ -129,11 +130,11 @@ def parse_glossary(file_on_disk, filetype):
         # открываем файл
         for line in file_to_show:
             if not line == '':
-                # print filetype
-                print line
+                # print(filetype)
+                print(line)
                 if filetype in ['text/plain', 'application/octet-stream']:
                     # и режем либо по запятым, либо по табам
-                    print line.decode('utf-8').rstrip().split('\t', 1)
+                    print(line.decode('utf-8').rstrip().split('\t', 1))
                     array.append(line.decode('utf-8').rstrip().split('\t', 1))
                 elif filetype == "text/csv":
                     array.append(decode(line).rstrip().split(',', 1))
@@ -208,7 +209,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 while elem.getprevious() is not None:
                     del elem.getparent()[0]
 
-            print lang_pairs
+            print(lang_pairs)
 
             tmdb_names = {}
             # Если языковых пар больше одной, то создаём базы памяти для каждой из них
@@ -221,7 +222,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                     try:
                         source_lang_obj = Language.objects.get(code=source_lang_name)
                     except Language.DoesNotExist:
-                        print 'This source language is not supported yet'
+                        print('This source language is not supported yet')
                         error_code = 400
                         error_message = _('This source language is not supported yet')
                         return {'error': error_code, 'message': error_message}
@@ -232,7 +233,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                     try:
                         target_lang_obj = Language.objects.get(code=target_lang_name)
                     except Language.DoesNotExist:
-                        print 'This target language is not supported yet'
+                        print('This target language is not supported yet')
                         error_code = 400
                         error_message = _('This target language is not supported yet')
                         return {'error': error_code, 'message': error_message}
@@ -259,7 +260,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 try:
                     source_lang_obj = Language.objects.get(code=source_lang_name)
                 except Language.DoesNotExist:
-                    print 'This source language is not supported yet'
+                    print('This source language is not supported yet')
                     error_code = 400
                     error_message = _('This source language is not supported yet')
                     return {'error': error_code, 'message': error_message}
@@ -270,7 +271,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 try:
                     target_lang_obj = Language.objects.get(code=target_lang_name)
                 except Language.DoesNotExist:
-                    print 'This target language is not supported yet'
+                    print('This target language is not supported yet')
                     error_code = 400
                     error_message = _('This target language is not supported yet')
                     return {'error': error_code, 'message': error_message}
@@ -307,13 +308,13 @@ def parse_tmx(filename, tmdb_name, project, request):
                     target_lang = tuv[1].attrib[lang_11].lower()
 
                 lang_pair = "%s-%s" % (source_lang, target_lang)
-                print lang_pair
+                print(lang_pair)
 
                 source_text = tuv[0].find('seg').text
                 target_text = tuv[1].find('seg').text
 
-                # print "Source: Lang - %s, Segment - %s" % (source_lang, source_text)
-                # print "Target: Lang - %s, Segment - %s" % (target_lang, target_text)
+                # print("Source: Lang - %s, Segment - %s" % (source_lang, source_text))
+                # print("Target: Lang - %s, Segment - %s" % (target_lang, target_text))
 
                 try:
                     target_author = tuv[1].attrib["creationid"]
@@ -339,10 +340,10 @@ def parse_tmx(filename, tmdb_name, project, request):
                     target_edited = None
                     target_editor = None
 
-                # print "Target creator: %s" % target_author if target_author else "Target creator:"
-                # print "Tagret created: %s" % target_created if target_created else "Tagret created:"
-                # print "Target editor: %s" % target_editor if target_editor else "Target editor:"
-                # print "Target edited: %s" % target_edited if target_edited else "Target edited:"
+                # print("Target creator: %s" % target_author if target_author else "Target creator:")
+                # print("Tagret created: %s" % target_created if target_created else "Tagret created:")
+                # print("Target editor: %s" % target_editor if target_editor else "Target editor:")
+                # print("Target edited: %s" % target_edited if target_edited else "Target edited:")
 
                 new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
                                                  orig_lang=source_lang.lower(),
@@ -369,7 +370,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 #     body=doc
                 # )
                 #
-                # print "ELASTICSEARCH: ", res['created']
+                # print("ELASTICSEARCH: ", res['created'])
 
                 elastic_id += 1
                 # Нет обращений к потомкам, поэтому вызов clear() безопасен
@@ -390,9 +391,9 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
 
     try:
         tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write")
-        print "TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data
+        print("TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data)
     except:
-        print "ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one..."
+        print("ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one...")
         tmdb_to_write = TextTranslationMeta(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
         tmdb_to_write.save()
 
@@ -488,6 +489,6 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
             res['created'] = "error"
 
 
-        print "ELASTICSEARCH: ", res['created']
+        print("ELASTICSEARCH: ", res['created'])
 
         return True

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from __future__ import print_function
 import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
@@ -138,7 +139,7 @@ def project_lang_stats(request):
     for key, value in data.iteritems():
         if len(data[key]) > 1:
             new_data[key] = value
-    print json.dumps(new_data)
+    print(json.dumps(new_data))
     return HttpResponse(json.dumps(new_data))
 
 
@@ -173,7 +174,7 @@ def new_project_page(request):
                                      'id': lang.id
                                      } for lang in lang_list]),
         'subjects': Subject.objects.all(),}
-    # print json.dumps(data)
+    # print(json.dumps(data))
     template = 'translations/dev_new_project.html'
     return render(request, template, data)
 
