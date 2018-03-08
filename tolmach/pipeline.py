@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from urllib2 import urlopen
 from django.core.files.base import ContentFile
 from social_core.backends.twitter import TwitterOAuth
@@ -11,7 +13,7 @@ from tolmach.models import UserMeta
 def update_user_social_data(strategy, *args, **kwargs):
     """Set the name and avatar for a user only if is new.
     """
-    print 'update_user_social_data ::', strategy
+    print('update_user_social_data ::', strategy)
     if not kwargs['is_new']:
         return
 
@@ -31,16 +33,16 @@ def update_user_social_data(strategy, *args, **kwargs):
 
     image_name = False
     image_url = False
-    print type(backend)
+    print(type(backend))
     if isinstance(backend, VKOAuth2):
-        print "OLOLOSHENKA", kwargs['response']
+        print("OLOLOSHENKA", kwargs['response'])
         if kwargs['response'].get('photo_max'):
             id = kwargs['response']['user_id']
             image_name = 'vk_avatar_%s.jpg' % id
             image_url = kwargs['response'].get('photo_max')
 
     elif isinstance(backend, FacebookOAuth2):
-        print "OLOLOSHENKA", kwargs['response']
+        print("OLOLOSHENKA", kwargs['response'])
         if kwargs['response'].get('id'):
             id = kwargs['response']['id']
             image_name = 'fb_avatar_%s.jpg'
@@ -58,7 +60,7 @@ def update_user_social_data(strategy, *args, **kwargs):
 
     if image_name and image_url:
         image_stream = urlopen(image_url)
-        print "IMAGE_URL: ", image_url
+        print("IMAGE_URL: ", image_url)
         meta, p = UserMeta.objects.get_or_create(user=user)
         meta.avatar.save(
             image_name,

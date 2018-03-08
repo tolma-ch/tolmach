@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from __future__ import print_function
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -25,14 +26,14 @@ def get_local_dict_names(source_lang, target_lang):
 def dict_search_1(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        print post
+        print(post)
         import urllib
         import urllib2
 
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
 
         output = json.loads(subprocess.check_output(['/usr/bin/sdcv', '-nj', word]))
-        print output
+        print(output)
         out_data = []
         for element in output:
             out_data.append({
@@ -45,7 +46,7 @@ def dict_search_1(request):
 def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        print post
+        print(post)
         import urllib
         import urllib2
 
@@ -65,7 +66,7 @@ def dict_search(request):
             }
         )
         url = "https://glosbe.com/gapi/translate?%s" % data
-        print url
+        print(url)
         f = urllib2.urlopen(url)
 
         data = json.loads(f.read())
@@ -74,7 +75,7 @@ def dict_search(request):
                        "word": word,
                        "definition": ""}
 
-        # print json.dumps(data["tuc"])
+        # print(json.dumps(data["tuc"]))
         if data['result'] == 'ok':
             if 'tuc' in data:
                 for entry in data['tuc']:
@@ -107,7 +108,7 @@ def stardict(word, source_lang, target_lang):
         return_data = json.loads(p.stdout.read())
         for elem in return_data:
             elem['definition'] = elem['definition'].strip()
-        print return_data
+        print(return_data)
 
         return return_data
     else:

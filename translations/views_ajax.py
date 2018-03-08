@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from __future__ import print_function
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -516,7 +517,7 @@ def glossary_ajax(request, project):
                     unicode(entry.source_entry),
                     unicode(entry.target_entry),
                 ])
-            print result
+            print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
@@ -642,7 +643,7 @@ def tmx_ajax(request, project):
                     unicode(entry.source_entry),
                     unicode(entry.target_entry),
                 ])
-            print result
+            print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
@@ -1024,7 +1025,6 @@ def approve_entry_ajax(request):
     if not request.method == 'POST':
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
     post = json.loads(request.body)
-    print post
     if 'id' not in post:
         return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
     entry_id = post['id']
@@ -1067,7 +1067,6 @@ def approve_entry_ajax(request):
 def disapprove_entry_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        print post
         if 'id' not in post:
             return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
         entry_id = post['id']
@@ -1104,7 +1103,6 @@ def disapprove_entry_ajax(request):
 def yandex_translate_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        print post
         from yandex_translate import YandexTranslate, YandexTranslateException
         import re
 
@@ -1114,7 +1112,7 @@ def yandex_translate_ajax(request):
         num_in_text = 1
 
         def repl_in_text(matchobj):
-            # print " === " + matchobj.group(0) + " === "
+            # print(" === " + matchobj.group(0) + " === ")
             return " ᐛ%d " % (num_in_text)
 
         match = re.search('<[^<]+?>', string1)
@@ -1131,8 +1129,6 @@ def yandex_translate_ajax(request):
             match_dict[num_in_text] = i[0]
             num_in_text += 1
 
-        print "=== ", string1, " ==="
-
 
         translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
         try:
@@ -1143,8 +1139,6 @@ def yandex_translate_ajax(request):
         str_to_return = translated_body['text'][0]
 
         for key, value in match_dict.items():
-            print str_to_return
-            print key, value
             str_to_return = re.sub(' ?ᐛ%s ?' % key, value, str_to_return)
 
         return HttpResponse(json.dumps(utils.escape_html(str_to_return)), content_type="application/json")
@@ -1155,7 +1149,7 @@ def yandex_translate_ajax(request):
 def tmdb_search(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        print "Test data:", post
+        print("Test data:", post)
 
         if 'entry_id' not in post:
             return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
@@ -1183,7 +1177,7 @@ def tmdb_search(request):
             entry_body_clean = re.sub("</?tag( i='.*?')?>", "", entry.body)
 
             for tmx_id in translation_tmx_list:
-                print "TMDB IS: %s" % tmx_id
+                print("TMDB IS: %s" % tmx_id)
                 try:
                     res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                 'query': {
@@ -1214,7 +1208,7 @@ def tmdb_search(request):
                             body=doc
                         )
 
-                        print "ELASTICSEARCH: ", res['created']
+                        print("ELASTICSEARCH: ", res['created'])
                     res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                 'query': {
                                                                     'match':
@@ -1245,7 +1239,7 @@ def tmdb_search(request):
                               }
                         if not obj in search_results:
                             search_results.append(obj)
-                            print "%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0])
+                            print("%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0]))
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -1255,7 +1249,6 @@ def tmdb_search(request):
 def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        print post
         import urllib
         import urllib2
 
@@ -1272,14 +1265,11 @@ def dict_search(request):
             }
         )
         url = "https://glosbe.com/gapi/translate?%s" % data
-        print url
         f = urllib2.urlopen(url)
 
         data = json.loads(f.read())
 
         out_data = []
-
-        # print json.dumps(data["tuc"])
 
         if data['result'] == 'ok':
             element = {
