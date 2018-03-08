@@ -26,8 +26,11 @@ def index(request):
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
-        recent_project_ids = Text.objects.values_list('project_id').filter(id__in=recent_text_ids).distinct()
-        recent_projects = [x for x in Project.objects.filter(id__in=recent_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
+        recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
+        recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
+        recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
+        all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
+        recent_projects = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
         for proj in recent_projects:
             proj.progress = proj.get_progress()
 
