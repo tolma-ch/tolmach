@@ -2,7 +2,10 @@
 
 from __future__ import print_function
 
-from urllib2 import urlopen
+try:
+    from urllib.request import urlopen
+except:
+    from urllib2 import urlopen
 from django.core.files.base import ContentFile
 from social_core.backends.twitter import TwitterOAuth
 from social_core.backends.vk import VKOAuth2

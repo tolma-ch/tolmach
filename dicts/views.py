@@ -26,14 +26,12 @@ def get_local_dict_names(source_lang, target_lang):
 def dict_search_1(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        print(post)
-        import urllib
-        import urllib2
+        # print(post)
 
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
 
         output = json.loads(subprocess.check_output(['/usr/bin/sdcv', '-nj', word]))
-        print(output)
+        # print(output)
         out_data = []
         for element in output:
             out_data.append({
@@ -46,9 +44,14 @@ def dict_search_1(request):
 def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        print(post)
-        import urllib
-        import urllib2
+        # print(post)
+
+        try:
+            from urllib2 import urlopen
+            from urllib import urlencode
+        except:
+            from urllib.parse import urlencode
+            from urllib.request import urlopen
 
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
@@ -56,7 +59,7 @@ def dict_search(request):
 
         return_data = stardict(word, source_lang, target_lang)
 
-        data = urllib.urlencode(
+        data = urlencode(
             {
                 'from': source_lang,
                 'dest': target_lang,
@@ -66,8 +69,8 @@ def dict_search(request):
             }
         )
         url = "https://glosbe.com/gapi/translate?%s" % data
-        print(url)
-        f = urllib2.urlopen(url)
+        # print(url)
+        f = urlopen(url)
 
         data = json.loads(f.read())
 
@@ -108,7 +111,7 @@ def stardict(word, source_lang, target_lang):
         return_data = json.loads(p.stdout.read())
         for elem in return_data:
             elem['definition'] = elem['definition'].strip()
-        print(return_data)
+        # print(return_data)
 
         return return_data
     else:

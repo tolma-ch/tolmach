@@ -1249,13 +1249,17 @@ def tmdb_search(request):
 def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        import urllib
-        import urllib2
+        try:
+            from urllib2 import urlopen
+            from urllib import urlencode
+        except:
+            from urllib.parse import urlencode
+            from urllib.request import urlopen
 
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
         target_lang = post['params']['dest']
-        data = urllib.urlencode(
+        data = urlencode(
             {
                 'from': source_lang,
                 'dest': target_lang,
@@ -1265,7 +1269,7 @@ def dict_search(request):
             }
         )
         url = "https://glosbe.com/gapi/translate?%s" % data
-        f = urllib2.urlopen(url)
+        f = urlopen(url)
 
         data = json.loads(f.read())
 
