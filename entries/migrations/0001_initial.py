@@ -68,6 +68,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=128)),
             ],
         ),
+        migrations.RunPython(add_base_subjects),
         migrations.AddField(
             model_name='entry',
             name='language',
