@@ -170,7 +170,7 @@ class Project(models.Model):
             else:
                 project_progress = 0
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
-        return project_progress
+        return int(project_progress)
 
 
 class ProjectTranslation(models.Model):
