@@ -22,6 +22,23 @@ def add_base_languages(apps, schema_editor):
         new_lang.save()
 
 
+def add_base_subjects(apps, schema_editor):
+    Subject = apps.get_model('entries', 'Subject')
+    subjlist = {1: 'General',
+                2: 'Science',
+                3: 'Law',
+                4: 'Medicine',
+                5: 'Information technology',
+                6: 'Business',
+                7: 'Journalism',
+                8: 'Politics',}
+    for key, value in subjlist.items():
+        new_subj = Subject(name=value,
+                            id=key,
+                            )
+        new_subj.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
