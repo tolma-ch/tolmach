@@ -513,10 +513,16 @@ def glossary_ajax(request, project):
             }
             entries = GlossaryEntry.objects.filter(glossary=glossary.id).all()
             for entry in entries:
-                result['rows'].append([
-                    unicode(entry.source_entry),
-                    unicode(entry.target_entry),
-                ])
+                try:
+                    result['rows'].append([
+                        unicode(entry.source_entry),
+                        unicode(entry.target_entry),
+                    ])
+                except:
+                    result['rows'].append([
+                        entry.source_entry,
+                        entry.target_entry,
+                    ])
             print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
@@ -639,10 +645,16 @@ def tmx_ajax(request, project):
             }
             entries = TMDatabaseEntry.objects.filter(tmx=tmx.id).all()
             for entry in entries:
-                result['rows'].append([
-                    unicode(entry.source_entry),
-                    unicode(entry.target_entry),
-                ])
+                try:
+                    result['rows'].append([
+                        unicode(entry.source_entry),
+                        unicode(entry.target_entry),
+                    ])
+                except:
+                    result['rows'].append([
+                        entry.source_entry,
+                        entry.target_entry,
+                    ])
             print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
