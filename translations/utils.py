@@ -112,7 +112,7 @@ def chtec_request(url, values):
         from urllib.parse import urlencode
         from urllib.request import urlopen, Request
 
-    data = urlencode(values)
+    data = urlencode(values).encode('utf-8')
     req = Request(url, data)
     response = urlopen(req)
 
