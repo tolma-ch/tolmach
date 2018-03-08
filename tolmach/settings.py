@@ -10,7 +10,15 @@ TEMPLATE_DEBUG = DEBUG
 # Bystrofix to make uwsgi daemonize work properly
 # http://itekblog.com/ascii-codec-cant-encode-characters-in-position/
 import sys
-reload(sys)
+try:
+    reload(sys)  # Python 2.7
+except NameError:
+    try:
+        from importlib import reload  # Python 3.4+
+        reload(sys)
+    except ImportError:
+        from imp import reload  # Python 3.0 - 3.3
+        reload(sys)
 sys.setdefaultencoding('utf-8')
 
 ADMINS = (
