@@ -393,7 +393,7 @@ def export_translation(request, text_id, target_lang, extra=None):
     doc_ext = the_page['file_ext']
     file_name = the_page['file_name']
 
-    file_body = open(EXPORTS_DIR + file_name, 'r').read()
+    file_body = open(EXPORTS_DIR + file_name, 'rb').read()
     response = HttpResponse(file_body, content_type=content_type)
 
     os.remove(EXPORTS_DIR + file_name)
