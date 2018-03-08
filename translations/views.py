@@ -136,7 +136,7 @@ def project_lang_stats(request):
                     data[proj.id].append(lang_pair)
 
     new_data = {}
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if len(data[key]) > 1:
             new_data[key] = value
     print(json.dumps(new_data))

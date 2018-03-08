@@ -15,7 +15,7 @@ def add_base_languages_639_3(apps, schema_editor):
                     'fr': 'fra',
                     'de': 'deu',
                     'it': 'ita'}
-        for key, value in langlist.iteritems():
+        for key, value in langlist.items():
             new_code_lang = Language.objects.get(code=key)
             new_code_lang.code_639_3 = value
             new_code_lang.save()
