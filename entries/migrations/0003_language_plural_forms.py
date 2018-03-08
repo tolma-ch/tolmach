@@ -14,7 +14,7 @@ def add_plural_forms(apps, schema_editor):
                     'fr': 'nplurals=2; plural=(n > 1);',
                     'de': 'nplurals=2; plural=(n != 1);',
                     'it': 'nplurals=2; plural=(n != 1);'}
-        for key, value in langlist.iteritems():
+        for key, value in langlist.items():
             new_code_lang = Language.objects.get(code=key)
             new_code_lang.plural_forms = value
             new_code_lang.save()

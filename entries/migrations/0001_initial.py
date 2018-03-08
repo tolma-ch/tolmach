@@ -15,7 +15,7 @@ def add_base_languages(apps, schema_editor):
                 'fr': 'French',
                 'de': 'German',
                 'it': 'Italian'}
-    for key, value in langlist.iteritems():
+    for key, value in langlist.items():
         new_lang = Language(name=value,
                             code=key,
                             )
