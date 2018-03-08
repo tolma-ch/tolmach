@@ -93,7 +93,7 @@ def upload_file(file_object, max_size):
     file_path = '%s/%s' % (file_dir, file_name)
     if file_object.size > max_size:
         error = _('File is too big')
-    with open(file_path, 'w+') as fd:
+    with open(file_path, 'wb+') as fd:
         for chunk in file_object.chunks():
             fd.write(chunk)
 
