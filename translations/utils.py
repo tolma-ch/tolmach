@@ -105,12 +105,16 @@ def upload_file(file_object, max_size):
     return file_name, file_path, file_type, error
 
 def chtec_request(url, values):
-    import urllib
-    import urllib2
+    try:
+        from urllib2 import urlopen, Request
+        from urllib import urlencode
+    except:
+        from urllib.parse import urlencode
+        from urllib.request import urlopen, Request
 
-    data = urllib.urlencode(values)
-    req = urllib2.Request(url, data)
-    response = urllib2.urlopen(req)
+    data = urlencode(values)
+    req = Request(url, data)
+    response = urlopen(req)
 
     return response.read()
 
