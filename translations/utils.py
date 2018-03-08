@@ -138,10 +138,16 @@ def parse_glossary(file_on_disk, filetype):
                 print(line)
                 if filetype in ['text/plain', 'application/octet-stream']:
                     # и режем либо по запятым, либо по табам
-                    print(line.decode('utf-8').rstrip().split('\t', 1))
-                    array.append(line.decode('utf-8').rstrip().split('\t', 1))
+                    # print(line.decode('utf-8').rstrip().split('\t', 1))
+                    try:
+                        array.append(line.decode('utf-8').rstrip().split('\t', 1))
+                    except:
+                        array.append(line.rstrip().split('\t', 1))
                 elif filetype == "text/csv":
-                    array.append(decode(line).rstrip().split(',', 1))
+                    try:
+                        array.append(decode(line).rstrip().split(',', 1))
+                    except:
+                        array.append(line.rstrip().split(',', 1))
 
     os.remove(file_on_disk)
 
