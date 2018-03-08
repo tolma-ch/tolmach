@@ -1136,7 +1136,8 @@
     module.controller('AddGlossaryModalCtrl', ['$scope', '$modalInstance', '$http', 'glossary', 'Upload',
         function ($scope, $modalInstance, $http, glossary, Upload) {
             $scope.glossary = glossary || {
-                    rows: [['', '']]
+                    rows: [['', '']],
+                    //name: $scope.$parent.generateName()
                 };
             $scope.changeRow = function (i) {
                 if (i === $scope.glossary.rows.length - 1) {
@@ -1151,6 +1152,10 @@
             };
             $scope.ok = function () {
                 $scope.error = '';
+                if (!$scope.glossary.name) {
+                    $scope.error = 'Where is the title?';
+                    return;
+                }
                 $scope.busy = true;
                 var data = $scope.glossary;
                 data['project'] = window['projectId'];
