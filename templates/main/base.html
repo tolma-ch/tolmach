@@ -12,7 +12,7 @@
         <meta name="theme-color" content="#3B8DB6" />
         <link href="{% static 'img/favicon.ico' %}" rel="shortcut icon">
 
-        {% with front_version="1.10.4" %}
+        {% with front_version="1.10.5" %}
 
         {% if debug == 'false' %}
             <link rel="stylesheet" href="{% static 'dist/tolmach.min.css' %}?v={{ front_version }}">
@@ -234,6 +234,7 @@
 
 		<!--basic scripts-->
 		<script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+		<script src="{% static 'js/name-generator.js' %}"></script>
 
 		<script type="text/javascript">
 			if("ontouchend" in document) document.write("<script src='{% static 'js/jquery.mobile.custom.min.js'>"+"<"+"/script>");

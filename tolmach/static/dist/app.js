@@ -1137,7 +1137,7 @@
         function ($scope, $modalInstance, $http, glossary, Upload) {
             $scope.glossary = glossary || {
                     rows: [['', '']],
-                    //name: $scope.$parent.generateName()
+                    name: generateRandomName()
                 };
             $scope.changeRow = function (i) {
                 if (i === $scope.glossary.rows.length - 1) {
@@ -1199,7 +1199,8 @@
     module.controller('AddTmxModalCtrl', ['$scope', '$modalInstance', '$http', 'tmx', 'Upload',
         function ($scope, $modalInstance, $http, tmx, Upload) {
             $scope.tmx = tmx || {
-                    rows: [['', '']]
+                    rows: [['', '']],
+                    name: generateRandomName()
                 };
             $scope.ok = function () {
                 $scope.busy = true;
@@ -1264,6 +1265,7 @@
 
     module.controller('NewProjectModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
+            $scope.name = generateRandomName();
             $scope.error = '';
             $scope.type = 'private';
             $scope.ok = function () {
