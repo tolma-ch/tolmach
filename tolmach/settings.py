@@ -5,7 +5,6 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # Bystrofix to make uwsgi daemonize work properly
 # http://itekblog.com/ascii-codec-cant-encode-characters-in-position/
@@ -116,25 +115,6 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 's_dy&p!*l8-(c4*pbxrfwsf&n5*o55=j_2g166w&p=i#r66j8u'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-    'django.template.loaders.eggs.Loader',
-)
-
-# TEMPLATE_CONTEXT_PROCESSORS = (
-#     'django.contrib.auth.context_processors.auth',
-#     'social_django.context_processors.backends',
-#     'social_django.context_processors.login_redirect',
-#     'django.core.context_processors.request',
-#     'django.contrib.messages.context_processors.messages',
-#     'django.core.context_processors.i18n',
-#     'tolmach.context_processors.ya_metrika',
-#     'tolmach.context_processors.less_debug',
-#     'tolmach.context_processors.logo_special',
-# )
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -151,7 +131,8 @@ TEMPLATES = [
                                     'django.core.context_processors.i18n',
                                     'tolmach.context_processors.ya_metrika',
                                     'tolmach.context_processors.less_debug',
-                                    'tolmach.context_processors.logo_special',]
+                                    'tolmach.context_processors.logo_special',],
+            'debug': DEBUG,
         }
     },
 ]
@@ -172,13 +153,6 @@ ROOT_URLCONF = 'tolmach.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'tolmach.wsgi.application'
-
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASE_DIR, 'templates'),
-)
 
 INSTALLED_APPS = (
     #'south',

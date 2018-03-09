@@ -24,6 +24,7 @@
 
     module.controller('NewProjectModalCtrl', ['$scope', '$modalInstance', '$http',
         function ($scope, $modalInstance, $http) {
+            $scope.name = generateRandomName();
             $scope.error = '';
             $scope.type = 'private';
             $scope.ok = function () {
