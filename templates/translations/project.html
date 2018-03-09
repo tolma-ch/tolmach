@@ -284,6 +284,31 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <style>
+                                    .project-list-glossary-header {
+                                        font-weight: 500;
+                                        color: #999999;
+                                        margin-bottom: 5px;
+                                        margin-top: 20px;
+                                        text-transform: uppercase;
+                                    }
+                                    .project-list-glossary__empty {
+                                        margin-left: 32%;
+                                        margin-top: 20px;
+                                    }
+                                    .project-list-glossary__empty__icon {
+                                        color: #d4d4d4;
+                                        font-size: 30px;
+                                        margin-left: 30px;
+                                    }
+                                    .project-list-glossary__empty__text {
+                                        color: #d4d4d4;
+                                        display: block;
+                                    }
+                                </style>
+                                <div class="project-list-glossary-header">
+                                    {% trans 'TM Databases' %}
+                                </div>
                                 <div class="project-list-glossary" ng-repeat="tmx in tmxes">
                                     <div class="project-list-glossary__name">
                                         <i class="fa fa-th-list"></i>
@@ -296,6 +321,13 @@
                                            popover-placement="left"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                     </div>
+                                </div>
+                                <div class="project-list-glossary__empty" ng-if="!(tmxes.length > 0)">
+                                    <i class="fa fa-th-list project-list-glossary__empty__icon" aria-hidden="true"></i>
+                                    <span class="project-list-glossary__empty__text">Пока ничего нет</span>
+                                </div>
+                                <div class="project-list-glossary-header">
+                                    {% trans 'Glossaries' %}
                                 </div>
                                 <div class="project-list-glossary" ng-repeat="glossary in glossaries">
                                     <div class="project-list-glossary__name" ng-click="editGlossary(glossary)">
@@ -310,12 +342,18 @@
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                     </div>
                                 </div>
+                                <div class="project-list-glossary__empty" ng-if="!(glossaries.length > 0)">
+                                    <i class="fa fa-book project-list-glossary__empty__icon" aria-hidden="true"></i>
+                                    <span class="project-list-glossary__empty__text">Пока ничего нет</span>
+                                </div>
                             </div><!-- /widget-main -->
                         </div><!-- /widget-body -->
                     </div>
                     <div class="tab-pane" id="3">
                         <div class="widget-main">
-                            <h4>{% trans 'Description' %}</h4>
+                            <div class="project-list-glossary-header">
+                                {% trans 'Description' %}
+                            </div>
                             <p ng-show="!editingDescription">{= project.description =}</p>
                             <textarea class="form-control" name="" id="" cols="30" rows="10"
                                       ng-model="projectDescription"
@@ -335,7 +373,9 @@
                                       ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
                             {% endif %}
                             {% if is_user_manager == 'true' %}
-                            <h4>{% trans 'Attention!' %}</h4>
+                            <div class="project-list-glossary-header">
+                                {% trans 'Attention!' %}
+                            </div>
                             <div class="">
                                 <a popover-template="'projectRemovePopover.html'"
                                    popover-placement="right"
