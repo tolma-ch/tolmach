@@ -1347,12 +1347,13 @@ def message_ajax(request, all):
 def user_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        if isinstance(post, unicode):
+        if isinstance(post, str):
             import random
             import string
-            filename = ''.join(random.choice(string.letters + string.digits) for _ in range(30))
+            import base64
+            filename = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(30))
             fh = open("%s/avatar/%s" % (settings.MEDIA_ROOT, filename), "wb")
-            fh.write(post.split(',')[1].decode('base64'))
+            fh.write(base64.b64decode(post.split(',')[1]))
             fh.close()
             meta = UserMeta.objects.get(user=request.user)
             meta.avatar = "avatar/%s" % filename
