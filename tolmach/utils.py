@@ -4,9 +4,18 @@ from __future__ import print_function
 import json
 from collections import OrderedDict
 from django.utils import translation
-# from uwsgi_tasks import task, TaskExecutor
-from django_uwsgi.decorators import spool
 
+try:
+    from django_uwsgi.decorators import spool
+except:
+    # workaround for cli calls of manage.py
+    from functools import wraps
+
+    def spool(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            return None
+        return wrapped
 
 from tolmach.models import Messages
 from tolmach.models import PairStats
