@@ -4,6 +4,9 @@ from __future__ import print_function
 import json
 from collections import OrderedDict
 from django.utils import translation
+# from uwsgi_tasks import task, TaskExecutor
+from django_uwsgi.decorators import spool
+
 
 from tolmach.models import Messages
 from tolmach.models import PairStats
@@ -28,19 +31,23 @@ def get_user_stat(user):
     return ordered_stat, total_translated
 
 
-def email_send(message_type, dynamic_data_dict, user_email, template):
+@spool
+def email_send(arguments):
+# def email_send(message_type, dynamic_data_dict, user_email, template):
     from django.core.mail import EmailMessage
     from tolmach.models import EmailTemplate, EmailTemplateBody
     from entries.models import Language
 
     user_locale = translation.get_language()
 
-    message_template = EmailTemplate.objects.get(type=message_type)
+    message_template = EmailTemplate.objects.get(type=arguments['message_type'])
     message_localized_data = EmailTemplateBody.objects.get(lang=Language.objects.get(code=user_locale),
                                                            template=message_template,
                                                            )
     message_localized_data_dict = json.loads(message_localized_data.body)
     message_template_body = message_template.body
+
+    dynamic_data_dict = json.loads(arguments['dynamic_data_dict'])
 
     import re
 
@@ -53,7 +60,7 @@ def email_send(message_type, dynamic_data_dict, user_email, template):
     email = EmailMessage(
             to=[
                 {
-                    "address": user_email,
+                    "address": arguments['user_email'],
                     "substitution_data": {
                         "subject": message_localized_data.title,
                         "email_body": result
@@ -62,7 +69,7 @@ def email_send(message_type, dynamic_data_dict, user_email, template):
             ],
             from_email='noreply@email.tolma.ch'
         )
-    email.template = template
+    email.template = arguments['template']
     email.send()
 
     return True
