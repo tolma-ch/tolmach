@@ -156,7 +156,11 @@ def register(request):
         response_status = 400
     else:
         dynamic_data_dict = {"{{username}}": username}
-        utils.email_send('register', dynamic_data_dict, email, 'multilang-welcome')
+        utils.email_send(message_type='register',
+                         dynamic_data_dict=json.dumps(dynamic_data_dict),
+                         user_email=email,
+                         template='multilang-welcome')
+        # utils.email_send('register', dynamic_data_dict, email, 'multilang-welcome')
 
     return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
 
@@ -241,7 +245,11 @@ def reset_password_approve(request):
 
     dynamic_data_dict = {"{{username}}": username,
                          "{{reset_token}}": reset_token}
-    utils.email_send('password-reset-url', dynamic_data_dict, user.email, 'multilang-welcome')
+    # utils.email_send('password-reset-url', dynamic_data_dict, user.email, 'multilang-welcome')
+    utils.email_send(message_type='password-reset-url',
+                     dynamic_data_dict=json.dumps(dynamic_data_dict),
+                     user_email=user.email,
+                     template='multilang-welcome')
 
     answer = json.dumps(some_data_to_dump)
     response_status = 200

@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'channels',
     'social_auth_widget',
     'social_django',
+    'django_uwsgi',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
