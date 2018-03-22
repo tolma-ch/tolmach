@@ -155,12 +155,12 @@ def register(request):
     if status != "0":
         response_status = 400
     else:
+        from tolmach import tasks
         dynamic_data_dict = {"{{username}}": username}
-        utils.email_send(message_type='register',
+        tasks.email_send(message_type='register',
                          dynamic_data_dict=json.dumps(dynamic_data_dict),
                          user_email=email,
                          template='multilang-welcome')
-        # utils.email_send('register', dynamic_data_dict, email, 'multilang-welcome')
 
     return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
 
@@ -205,6 +205,8 @@ def login_user(request):
 def reset_password_approve(request):
     if request.method == "GET":
         raise Http404()
+
+    from tolmach import tasks
     
     status = 0
     message = _("Password was reseted. Further instructions were sent to your email.")
@@ -245,8 +247,7 @@ def reset_password_approve(request):
 
     dynamic_data_dict = {"{{username}}": username,
                          "{{reset_token}}": reset_token}
-    # utils.email_send('password-reset-url', dynamic_data_dict, user.email, 'multilang-welcome')
-    utils.email_send(message_type='password-reset-url',
+    tasks.email_send(message_type='password-reset-url',
                      dynamic_data_dict=json.dumps(dynamic_data_dict),
                      user_email=user.email,
                      template='multilang-welcome')
