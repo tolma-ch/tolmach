@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-09 18:28+0300\n"
+"POT-Creation-Date: 2018-03-22 17:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,6 +38,52 @@ msgstr ""
 
 #: chat/views.py:48
 msgid "Text is empty"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:5
+msgid "Welcome to Tolma.ch!"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:7
+#, fuzzy
+#| msgid "Translation variants"
+msgid "Start Translating in Minutes"
+msgstr "Translation variants"
+
+#: templates/email/emailtemplatesbodies.json:8
+#: templates/email/emailtemplatesbodies.json:17
+#: templates/email/emailtemplatesbodies.json:26
+msgid "Hello, <b>{{username}}</b>!"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:9
+msgid ""
+"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+"excited to have you on-board."
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:14
+msgid "Password reset in Tolma.ch"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:16
+msgid "Password reset"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:18
+msgid "You have asked for a new password. Here it is - {{newpass}}"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:23
+#: templates/email/emailtemplatesbodies.json:25
+msgid "Password reset approval"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:27
+msgid ""
+"You have asked for a new password. Here is the URL to reset the password:"
+"<br><br> https://tolma.ch/password-reset/{{reset_token}}/ <br><br>If you "
+"have not asked for new password, just ignore this messsage."
 msgstr ""
 
 #: templates/main/base-logged-in.html:5
@@ -1023,11 +1069,11 @@ msgstr ""
 msgid "All the text with translated fragments"
 msgstr ""
 
-#: tolmach/views.py:206
+#: tolmach/views.py:212
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:297
+#: tolmach/views.py:306
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 

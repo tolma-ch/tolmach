@@ -7,23 +7,24 @@ from django_uwsgi.decorators import spool
 
 @spool
 def email_send(arguments):
+    from django.template import loader
     from django.core.mail import EmailMessage
-    from tolmach.models import EmailTemplate, EmailTemplateBody
-    from entries.models import Language
+
+    # https://stackoverflow.com/questions/36983549/translate-json-file-with-django
+
+    emailtemplates_template = loader.get_template('email/emailtemplates.json')
+    emailtemplatesbodies_template = loader.get_template('email/emailtemplatesbodies.json')
+    c = {}
+    emailtemplates = json.loads(emailtemplates_template.render(c))
+    emailtemplatesbodies = json.loads(emailtemplatesbodies_template.render(c))
 
     message_type = arguments['message_type']
     dynamic_data_dict = json.loads(arguments['dynamic_data_dict'])
     user_email = arguments['user_email']
     template = arguments['template']
 
-    user_locale = translation.get_language()
-
-    message_template = EmailTemplate.objects.get(type=message_type)
-    message_localized_data = EmailTemplateBody.objects.get(lang=Language.objects.get(code=user_locale),
-                                                           template=message_template,
-                                                           )
-    message_localized_data_dict = json.loads(message_localized_data.body)
-    message_template_body = message_template.body
+    message_localized_data_dict = emailtemplatesbodies[message_type]['body']
+    message_template_body = emailtemplates[message_type]['body']
 
     import re
 
@@ -38,7 +39,7 @@ def email_send(arguments):
                 {
                     "address": user_email,
                     "substitution_data": {
-                        "subject": message_localized_data.title,
+                        "subject": emailtemplatesbodies[message_type]['title'],
                         "email_body": result
                     }
                 }
