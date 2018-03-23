@@ -156,7 +156,7 @@ def register(request):
         response_status = 400
     else:
         from tolmach import tasks
-        dynamic_data_dict = {"{{username}}": username}
+        dynamic_data_dict = {"<username>": username}
         tasks.email_send(message_type='register',
                          dynamic_data_dict=json.dumps(dynamic_data_dict),
                          user_email=email,
@@ -245,8 +245,8 @@ def reset_password_approve(request):
 
 
 
-    dynamic_data_dict = {"{{username}}": username,
-                         "{{reset_token}}": reset_token}
+    dynamic_data_dict = {"<username>": username,
+                         "<reset_token>": reset_token}
     tasks.email_send(message_type='password-reset-url',
                      dynamic_data_dict=json.dumps(dynamic_data_dict),
                      user_email=user.email,
@@ -294,10 +294,6 @@ def accept_password(request):
     meta.password_reset_token = ""
     meta.save()
 
-    dynamic_data_dict = {"{{username}}": user.username,
-                         "{{newpass}}": new_pass}
-
-    # utils.email_send('password-reset', dynamic_data_dict, user.email, 'multilang-welcome')
     user = authenticate(username=user.username, password=new_pass)
     login(request, user)
 

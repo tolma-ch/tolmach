@@ -4,27 +4,18 @@
       "template": "register",
       "title": "{% trans 'Welcome to Tolma.ch!' %}",
       "body": {
-          "{% verbatim %}{{header}}{% endverbatim %}":        "{% trans 'Start Translating in Minutes' %}",
-          "{% verbatim %}{{hello_message}}{% endverbatim %}": "{% trans 'Hello, <b>{{username}}</b>!' %}",
-          "{% verbatim %}{{main_message}}{% endverbatim %}":  "{% trans 'Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re excited to have you on-board.' %}"
-      }
-  },
-  "password-reset": {
-      "template": "password-reset",
-      "title": "{% trans 'Password reset in Tolma.ch' %}",
-      "body": {
-          "{% verbatim %}{{header}}{% endverbatim %}":        "{% trans 'Password reset' %}",
-          "{% verbatim %}{{hello_message}}{% endverbatim %}": "{% trans 'Hello, <b>{{username}}</b>!' %}",
-          "{% verbatim %}{{main_message}}{% endverbatim %}":  "{% trans 'You have asked for a new password. Here it is - {{newpass}}' %}"
+          "<header>":        "{% trans 'Start Translating in Minutes' %}",
+          "<hello_message>": "{% trans 'Hello, <b><username></b>!' %}",
+          "<main_message>":  "{% trans 'Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re excited to have you on-board.' %}"
       }
   },
   "password-reset-url": {
       "template": "password-reset-url",
       "title": "{% trans 'Password reset approval' %}",
       "body": {
-          "{% verbatim %}{{header}}{% endverbatim %}":        "{% trans 'Password reset approval' %}",
-          "{% verbatim %}{{hello_message}}{% endverbatim %}": "{% trans 'Hello, <b>{{username}}</b>!' %}",
-          "{% verbatim %}{{main_message}}{% endverbatim %}":  "{% trans 'You have asked for a new password. Here is the URL to reset the password:<br><br> https://tolma.ch/password-reset/{{reset_token}}/ <br><br>If you have not asked for new password, just ignore this messsage.' %}"
+          "<header>":        "{% trans 'Password reset approval' %}",
+          "<hello_message>": "{% trans 'Hello, <b><username></b>!' %}",
+          "<main_message>":  "{% trans 'You have asked for a new password. Here is the URL to reset the password:<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have not asked for new password, just ignore this messsage.' %}"
         }
   }
 }
