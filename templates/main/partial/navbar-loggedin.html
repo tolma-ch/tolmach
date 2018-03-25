@@ -42,6 +42,17 @@
         <!--</div>-->
     <!--</li>-->
     <li class="navbar-nav__button button_blue"
+        tooltip="{% trans 'Fullscreen' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
+        <a class="" href="#" ng-click="toggleFullscreen()"
+           style="font-size: 18px;
+                padding-top: 14px;">
+			<i class="fa"
+                ng-class="isFullscreenActive ? 'fa-compress' : 'fa-expand'"></i>
+		</a>
+    </li>
+    <li class="navbar-nav__button button_blue"
         tooltip="{% trans 'Help' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
