@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-23 11:31+0300\n"
+"POT-Creation-Date: 2018-03-25 14:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -180,22 +180,26 @@ msgid "Language"
 msgstr "语言设置"
 
 #: templates/main/partial/navbar-loggedin.html:45
+msgid "Fullscreen"
+msgstr "满屏"
+
+#: templates/main/partial/navbar-loggedin.html:56
 msgid "Help"
 msgstr "帮助"
 
-#: templates/main/partial/navbar-loggedin.html:56
+#: templates/main/partial/navbar-loggedin.html:67
 msgid "Messages"
 msgstr "消息"
 
-#: templates/main/partial/navbar-loggedin.html:101
+#: templates/main/partial/navbar-loggedin.html:112
 msgid "Chat"
 msgstr "聊天区"
 
-#: templates/main/partial/navbar-loggedin.html:129
+#: templates/main/partial/navbar-loggedin.html:140
 msgid "Hi,"
 msgstr "你好,"
 
-#: templates/main/partial/navbar-loggedin.html:146
+#: templates/main/partial/navbar-loggedin.html:157
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr "通知"
