@@ -2976,9 +2976,7 @@
                 if (screenfull.enabled) {
                     if (!screenfull.isFullscreen) {
                         screenfull.request();
-                        console.log('Am I fullscreen?', screenfull.isFullscreen ? 'Yes' : 'No');
                         $scope.isFullscreenActive = true;
-                        console.log("checking scope:", $scope.isFullscreenActive);
                     } else {
                         screenfull.exit();
                         $scope.isFullscreenActive = false;
