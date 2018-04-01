@@ -5,6 +5,7 @@
 {% trans 'Statistics' as statistics_header %}
 {% trans 'Total' as total_label %}
 {% trans 'Projects' as projects_label %}
+{% trans 'Organizations' as orgs_label %}
 {% trans 'Start new' as start_new_label %}
 {% trans 'Overview' as overview_label %}
 {% trans 'Recent projects' as recent_proj_label %}
@@ -36,6 +37,12 @@
                 <li class="{% if active_tab in 'my,thirdparty,public'|slice:',' %}active{% endif %}">
                     <a href="/projects/my/">
                         {{ projects_label }}
+                    </a>
+                </li>
+
+                <li class="{% if active_tab == 'organizations' %}active{% endif %}">
+                    <a href="/orgs/">
+                        {{ orgs_label }}
                     </a>
                 </li>
             </ul>

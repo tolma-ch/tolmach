@@ -80,12 +80,13 @@ def get_plural_examples(p):
 
 
 def upload_file(file_object, max_size):
-    import os, random, string
+    import os
+    from tolmach.utils import random_string
 
     error = ""
 
     # Делаем загружаемому файлу случайное имя, чтобы не пересекаться
-    rand_string = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(15))
+    rand_string = random_string(15)
     file_name = rand_string + "." + file_object.name.split(".")[-1]
     file_dir = '/%s' % settings.GLOBAL_DOCUMENTS_TMP_DIR
     if not os.path.isdir(file_dir):

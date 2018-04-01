@@ -21,3 +21,9 @@ def get_user_stat(user):
     ordered_stat = user_pairs[:6]
 
     return ordered_stat, total_translated
+
+
+def random_string(len=30):
+    import random, string
+
+    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(len))
