@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-25 14:00+0300\n"
+"POT-Creation-Date: 2018-04-01 18:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,8 +14,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: chat/views.py:17 chat/views.py:34
+#, fuzzy
+#| msgid "Project type is not set"
 msgid "Project not set"
-msgstr ""
+msgstr "项目类型未设置"
 
 #: chat/views.py:21 chat/views.py:38 translations/decorators.py:40
 #: translations/views_ajax.py:33 translations/views_ajax.py:49
@@ -29,8 +31,10 @@ msgid "Access denied"
 msgstr "禁止访问 (403)"
 
 #: chat/views.py:28 chat/views.py:45
+#, fuzzy
+#| msgid "Text not found"
 msgid "Chat not found"
-msgstr ""
+msgstr "未找到"
 
 #: chat/views.py:48
 msgid "Text is empty"
@@ -59,8 +63,10 @@ msgstr "我们很高兴您同意我们的会社！"
 
 #: templates/email/emailtemplatesbodies.json:14
 #: templates/email/emailtemplatesbodies.json:16
+#, fuzzy
+#| msgid "Password"
 msgid "Password reset approval"
-msgstr ""
+msgstr "密码"
 
 #: templates/email/emailtemplatesbodies.json:18
 msgid ""
@@ -575,6 +581,15 @@ msgid ""
 "formatting."
 msgstr ""
 
+#: templates/tolmach/organizations.html:5
+msgid "There're no organizations here at the moment."
+msgstr ""
+
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/translations/projects.html:109
+msgid "Click this button to create new project"
+msgstr "点击此按钮创建新项目"
+
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Edit Profile"
@@ -620,27 +635,29 @@ msgstr "统计"
 msgid "Total"
 msgstr "总计"
 
-#: templates/tolmach/profile.html:8 templates/tolmach/view_user.html:8
+#: templates/tolmach/profile.html:8 tolmach/views.py:143 tolmach/views.py:145
+#, fuzzy
+#| msgid "Translation"
+msgid "Organizations"
+msgstr "翻译"
+
+#: templates/tolmach/profile.html:9 templates/tolmach/view_user.html:8
 msgid "Start new"
 msgstr "创建项目"
 
-#: templates/tolmach/profile.html:9
+#: templates/tolmach/profile.html:10
 msgid "Overview"
 msgstr "概述"
 
-#: templates/tolmach/profile.html:10
+#: templates/tolmach/profile.html:11
 msgid "Recent projects"
 msgstr "最近项目"
 
-#: templates/tolmach/profile.html:11 templates/translations/projects.html:8
+#: templates/tolmach/profile.html:12 templates/translations/projects.html:8
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/profile.html:92 templates/translations/projects.html:109
-msgid "Click this button to create new project"
-msgstr "点击此按钮创建新项目"
-
-#: templates/tolmach/profile.html:108 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译碎片"
@@ -1065,11 +1082,11 @@ msgstr "源文本"
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
-#: tolmach/views.py:212
+#: tolmach/views.py:251
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:302
+#: tolmach/views.py:341
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1091,18 +1108,20 @@ msgstr "不允许"
 
 #: translations/decorators.py:35 translations/views_ajax.py:552
 #: translations/views_ajax.py:679
+#, fuzzy
+#| msgid "Project type is not set"
 msgid "Project id is not set"
-msgstr ""
+msgstr "项目类型未设置"
 
-#: translations/utils.py:95
+#: translations/utils.py:96
 msgid "File is too big"
 msgstr "文件太大"
 
-#: translations/utils.py:237 translations/utils.py:275
+#: translations/utils.py:238 translations/utils.py:276
 msgid "This source language is not supported yet"
 msgstr "该原语言暂时未支持"
 
-#: translations/utils.py:248 translations/utils.py:286
+#: translations/utils.py:249 translations/utils.py:287
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
@@ -1143,16 +1162,22 @@ msgstr ""
 #: translations/views_ajax.py:307 translations/views_ajax.py:406
 #: translations/views_ajax.py:558 translations/views_ajax.py:685
 #: translations/views_ajax.py:1074 translations/views_ajax.py:1109
+#, fuzzy
+#| msgid "User is not a member of project"
 msgid "You have to be a manager of project"
-msgstr ""
+msgstr "该用户不是项目成员"
 
 #: translations/views_ajax.py:67
+#, fuzzy
+#| msgid "Project type is not set"
 msgid "Project name cannot be empty"
-msgstr ""
+msgstr "项目类型未设置"
 
 #: translations/views_ajax.py:72
+#, fuzzy
+#| msgid "Project type is not set"
 msgid "Project description cannot be empty"
-msgstr ""
+msgstr "项目类型未设置"
 
 #: translations/views_ajax.py:77
 msgid "Project type is not set"
@@ -1166,8 +1191,10 @@ msgstr "该原语言暂时未支持"
 
 #: translations/views_ajax.py:83 translations/views_ajax.py:113
 #: translations/views_ajax.py:746
+#, fuzzy
+#| msgid "This source language is not supported yet"
 msgid "Target language is not set"
-msgstr ""
+msgstr "该原语言暂时未支持"
 
 #: translations/views_ajax.py:104
 #, fuzzy
@@ -1176,8 +1203,10 @@ msgid "Project is not set"
 msgstr "项目类型未设置"
 
 #: translations/views_ajax.py:124
+#, fuzzy
+#| msgid "Add project translation"
 msgid "There is already such project translation"
-msgstr ""
+msgstr "添上项目翻译"
 
 #: translations/views_ajax.py:190
 #, fuzzy
@@ -1202,8 +1231,10 @@ msgid "Wrong membership status, sorry"
 msgstr ""
 
 #: translations/views_ajax.py:243
+#, fuzzy
+#| msgid "User is not a member of project"
 msgid "User is already a member of project"
-msgstr ""
+msgstr "该用户不是项目成员"
 
 #: translations/views_ajax.py:267
 msgid "User is not a member of project"
@@ -1215,8 +1246,10 @@ msgid "Wrong file type"
 msgstr "无支持文件类型"
 
 #: translations/views_ajax.py:400
+#, fuzzy
+#| msgid "text id is not set"
 msgid "Text id is not set"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: translations/views_ajax.py:509 translations/views_ajax.py:587
 #: translations/views_ajax.py:624
@@ -1254,20 +1287,26 @@ msgid "TMX name is not set"
 msgstr "TMX名称未设置"
 
 #: translations/views_ajax.py:692
+#, fuzzy
+#| msgid "TMX name is not set"
 msgid "TMX file is not passed"
-msgstr ""
+msgstr "TMX名称未设置"
 
 #: translations/views_ajax.py:718
+#, fuzzy
+#| msgid "TMX name is not set"
 msgid "TMX id is not set"
-msgstr ""
+msgstr "TMX名称未设置"
 
 #: translations/views_ajax.py:722
 msgid "TMX not found"
 msgstr "TMX未找到"
 
 #: translations/views_ajax.py:724
+#, fuzzy
+#| msgid "It's not your glossary"
 msgid "It's not your TMX"
-msgstr ""
+msgstr "该词汇库不属于你"
 
 #: translations/views_ajax.py:885 translations/views_ajax.py:1042
 #: translations/views_ajax.py:1084 translations/views_ajax.py:1168
@@ -1293,12 +1332,16 @@ msgid "Entry translation text is not set"
 msgstr ""
 
 #: translations/views_ajax.py:992
+#, fuzzy
+#| msgid "text id is not set"
 msgid "entry is not set"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: translations/views_ajax.py:1007
+#, fuzzy
+#| msgid "text id is not set"
 msgid "translation is not set"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: translations/views_ajax.py:1150
 msgid "Something went wrong"
@@ -1307,11 +1350,6 @@ msgstr ""
 #: translations/views_ajax.py:1204
 msgid "TMDB unavaliable at the moment"
 msgstr ""
-
-#, fuzzy
-#~| msgid "Password"
-#~ msgid "Password reset"
-#~ msgstr "密码"
 
 #~ msgid "New"
 #~ msgstr "新建"

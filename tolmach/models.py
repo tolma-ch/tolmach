@@ -75,3 +75,25 @@ class EmailTemplateBody(models.Model):
     title = models.CharField(max_length=256, default=None, null=True)
     body = models.TextField(default="")
     lang = models.ForeignKey('entries.Language', related_name='template_body_lang', on_delete=models.deletion.CASCADE)
+
+
+class OrganizationMember(models.Model):
+    organization = models.ForeignKey('tolmach.Organization', related_name='organization_members', on_delete=models.deletion.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
+    is_admin = models.BooleanField(default=False)
+
+
+class Organization(models.Model):
+    from tolmach.utils import random_string
+    name = models.CharField(max_length=256, default=None, null=True)
+    owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
+    members = models.ManyToManyField('auth.User', through=OrganizationMember, related_name='organization_members')
+    api_key = models.CharField(max_length=256, default=random_string)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
+
+    def is_user_owner(self, user):
+        return self.owner == user
+
+    def is_user_admin(self, user):
+        pass

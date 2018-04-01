@@ -31,6 +31,9 @@ urlpatterns = [
     url(r'password-accept/$', main_views.accept_password, name="accept_password"),
     url(r'^login/', main_views.login_user, name="login_user"),
 
+    # organizations
+    url(r'^orgs/$', main_views.organizations),
+
     # translations
     url(r'^projects/(?P<proj_type>\w+)/$', trans_views.projects),
 

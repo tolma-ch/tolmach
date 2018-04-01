@@ -7,6 +7,7 @@ import math
 from channels import Group
 
 from entries.models import Subject, Language
+from tolmach.models import Organization
 
 
 class Glossary(models.Model):
@@ -15,7 +16,7 @@ class Glossary(models.Model):
     is_private = models.BooleanField(default=True)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
 
 class GlossaryEntry(models.Model):
@@ -32,7 +33,7 @@ class TMDatabase(models.Model):
     target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang', on_delete=models.deletion.CASCADE)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
 
 class TMDatabaseEntry(models.Model):
@@ -90,6 +91,11 @@ class Project(models.Model):
     last_modified = models.DateTimeField(default=timezone.now)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
+    organization = models.ForeignKey('tolmach.Organization',
+                                     blank=True,
+                                     null=True,
+                                     related_name='project_organization',
+                                     on_delete=models.deletion.SET_NULL)
 
     def __unicode__(self):
         return self.name

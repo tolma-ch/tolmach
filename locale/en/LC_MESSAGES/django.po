@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-25 14:00+0300\n"
+"POT-Creation-Date: 2018-04-01 18:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -570,6 +570,15 @@ msgid ""
 "formatting."
 msgstr ""
 
+#: templates/tolmach/organizations.html:5
+msgid "There're no organizations here at the moment."
+msgstr ""
+
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/translations/projects.html:109
+msgid "Click this button to create new project"
+msgstr ""
+
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Edit Profile"
@@ -615,27 +624,27 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: templates/tolmach/profile.html:8 templates/tolmach/view_user.html:8
+#: templates/tolmach/profile.html:8 tolmach/views.py:143 tolmach/views.py:145
+msgid "Organizations"
+msgstr ""
+
+#: templates/tolmach/profile.html:9 templates/tolmach/view_user.html:8
 msgid "Start new"
 msgstr ""
 
-#: templates/tolmach/profile.html:9
+#: templates/tolmach/profile.html:10
 msgid "Overview"
 msgstr ""
 
-#: templates/tolmach/profile.html:10
+#: templates/tolmach/profile.html:11
 msgid "Recent projects"
 msgstr ""
 
-#: templates/tolmach/profile.html:11 templates/translations/projects.html:8
+#: templates/tolmach/profile.html:12 templates/translations/projects.html:8
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/profile.html:92 templates/translations/projects.html:109
-msgid "Click this button to create new project"
-msgstr ""
-
-#: templates/tolmach/profile.html:108 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
@@ -1060,11 +1069,11 @@ msgstr ""
 msgid "All the text with translated fragments"
 msgstr ""
 
-#: tolmach/views.py:212
+#: tolmach/views.py:251
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:302
+#: tolmach/views.py:341
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1089,15 +1098,15 @@ msgstr ""
 msgid "Project id is not set"
 msgstr ""
 
-#: translations/utils.py:95
+#: translations/utils.py:96
 msgid "File is too big"
 msgstr ""
 
-#: translations/utils.py:237 translations/utils.py:275
+#: translations/utils.py:238 translations/utils.py:276
 msgid "This source language is not supported yet"
 msgstr ""
 
-#: translations/utils.py:248 translations/utils.py:286
+#: translations/utils.py:249 translations/utils.py:287
 msgid "This target language is not supported yet"
 msgstr ""
 
@@ -1169,8 +1178,10 @@ msgid "Project is not set"
 msgstr ""
 
 #: translations/views_ajax.py:124
+#, fuzzy
+#| msgid "Export translation"
 msgid "There is already such project translation"
-msgstr ""
+msgstr "Users translations"
 
 #: translations/views_ajax.py:190
 msgid "You have to be a member of the project"
@@ -1215,8 +1226,10 @@ msgid "Glossary not found"
 msgstr ""
 
 #: translations/views_ajax.py:539 translations/views_ajax.py:599
+#, fuzzy
+#| msgid "Export translation"
 msgid "Project translation not found"
-msgstr ""
+msgstr "Users translations"
 
 #: translations/views_ajax.py:561
 msgid "Glossary name is not set"
@@ -1274,8 +1287,10 @@ msgid "Language not found"
 msgstr ""
 
 #: translations/views_ajax.py:905
+#, fuzzy
+#| msgid "Translation variants"
 msgid "Translation not found"
-msgstr ""
+msgstr "Translation variants"
 
 #: translations/views_ajax.py:930
 msgid "Entry translation text is not set"
@@ -1286,8 +1301,10 @@ msgid "entry is not set"
 msgstr ""
 
 #: translations/views_ajax.py:1007
+#, fuzzy
+#| msgid "Translation variants"
 msgid "translation is not set"
-msgstr ""
+msgstr "Translation variants"
 
 #: translations/views_ajax.py:1150
 msgid "Something went wrong"

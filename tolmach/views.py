@@ -4,14 +4,15 @@ import json
 from django.contrib.auth import logout
 from django.utils.translation import ugettext as _
 from django.http.response import HttpResponseRedirect, HttpResponse, Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from translations.models import Project, Text, TextTranslation, TextEntry
 from entries.models import Language, Subject
 
-from tolmach.models import UserMeta, PairStats
+from tolmach.models import UserMeta, PairStats, Organization
 from tolmach import utils
 
 
@@ -107,6 +108,44 @@ def user_page(request, user_id):
         ],
     }
     template = 'tolmach/view_user.html'
+
+    return render(request, template, data)
+
+
+def organizations(request):
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+    usermeta, p = UserMeta.objects.get_or_create(user=request.user)
+
+    user_orgs_list = Organization.objects.filter(Q(owner=request.user) | Q(members=request.user)).order_by('-last_modified')
+
+    paginator = Paginator(user_orgs_list, 10)
+    page = request.GET.get('page')
+    try:
+        result_orgs_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result_orgs_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result_orgs_list = paginator.page(paginator.num_pages)
+
+    data = {
+        'active_tab': 'organizations',
+        'usermeta': usermeta,
+        'userData': json.dumps({
+            'firstName': first_name,
+            'lastName': last_name,
+            'username': request.user.username,
+            'website': usermeta.website,
+        }),
+        'organizations': result_orgs_list,
+        'page_title': "%s / Tolma.ch" % _("Organizations"),
+        'breadcrumbs': [
+            [_("Organizations"), ''],
+        ],
+    }
+    template = 'tolmach/organizations.html'
 
     return render(request, template, data)
 

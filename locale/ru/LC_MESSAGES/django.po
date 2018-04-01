@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-25 14:00+0300\n"
+"POT-Creation-Date: 2018-04-01 18:23+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -643,6 +643,15 @@ msgstr ""
 "Пост-переводная редактура документов и экспорт готовых переводов с "
 "сохранением оригинального форматирования."
 
+#: templates/tolmach/organizations.html:5
+msgid "There're no organizations here at the moment."
+msgstr "Тут пока нет ни одной организации"
+
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/translations/projects.html:109
+msgid "Click this button to create new project"
+msgstr "Нажмите, чтобы создать новый проект"
+
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Edit Profile"
@@ -688,27 +697,27 @@ msgstr "Статистика"
 msgid "Total"
 msgstr "Всего"
 
-#: templates/tolmach/profile.html:8 templates/tolmach/view_user.html:8
+#: templates/tolmach/profile.html:8 tolmach/views.py:143 tolmach/views.py:145
+msgid "Organizations"
+msgstr "Организации"
+
+#: templates/tolmach/profile.html:9 templates/tolmach/view_user.html:8
 msgid "Start new"
 msgstr "Начать новый"
 
-#: templates/tolmach/profile.html:9
+#: templates/tolmach/profile.html:10
 msgid "Overview"
 msgstr "Обзор"
 
-#: templates/tolmach/profile.html:10
+#: templates/tolmach/profile.html:11
 msgid "Recent projects"
 msgstr "Недавние проекты"
 
-#: templates/tolmach/profile.html:11 templates/translations/projects.html:8
+#: templates/tolmach/profile.html:12 templates/translations/projects.html:8
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/profile.html:92 templates/translations/projects.html:109
-msgid "Click this button to create new project"
-msgstr "Нажмите, чтобы создать новый проект"
-
-#: templates/tolmach/profile.html:108 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "фрагмент переведён"
@@ -1134,12 +1143,12 @@ msgstr "Исходный текст"
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
-#: tolmach/views.py:212
+#: tolmach/views.py:251
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:302
+#: tolmach/views.py:341
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
@@ -1164,15 +1173,15 @@ msgstr "Нет доступа"
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
-#: translations/utils.py:95
+#: translations/utils.py:96
 msgid "File is too big"
 msgstr "Файл слишком большой"
 
-#: translations/utils.py:237 translations/utils.py:275
+#: translations/utils.py:238 translations/utils.py:276
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:248 translations/utils.py:286
+#: translations/utils.py:249 translations/utils.py:287
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
