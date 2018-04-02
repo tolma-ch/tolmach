@@ -3,6 +3,7 @@
 import json
 from django.contrib.auth import logout
 from django.utils.translation import ugettext as _
+from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponse, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
@@ -77,6 +78,7 @@ def index(request):
     return render(request, template, data)
 
 
+@login_required
 def user_page(request, user_id):
     user = get_object_or_404(User, id=user_id)
     first_name = user.first_name
@@ -112,6 +114,7 @@ def user_page(request, user_id):
     return render(request, template, data)
 
 
+@login_required
 def organizations(request):
     first_name = request.user.first_name
     last_name = request.user.last_name
@@ -146,6 +149,60 @@ def organizations(request):
         ],
     }
     template = 'tolmach/organizations.html'
+
+    return render(request, template, data)
+
+
+@login_required
+def organization_page(request, org_id=0):
+    try:
+        org = Organization.objects.get(id=org_id)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+
+    if not org.is_user_member(request.user):
+        return HttpResponseRedirect('/')
+
+    projects = Project.objects.filter(organization=org).order_by('-last_modified')
+    for proj in projects:
+        proj.progress = proj.get_progress()
+
+    recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
+    recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
+    recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
+    recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
+    all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
+    recent_projects = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
+    for proj in recent_projects:
+        proj.progress = proj.get_progress()
+
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+
+    data = {
+        'active_tab': 'organizations',
+        'userData': json.dumps({
+            'firstName': org.name,
+            'lastName': "",
+            'username': "",
+            'website': "test.org",
+        }),
+        'profileType': 'organization',
+        'languages': lang_list,
+        'projects': projects,
+        'page_title': "%s / %s / Tolma.ch" % (org.name[:30], _("Organizations")),
+        'breadcrumbs': [
+            [_("Organizations"), '/orgs/'],
+            [org.name, '']
+        ],
+    }
+    template = 'tolmach/organization.html'
 
     return render(request, template, data)
 

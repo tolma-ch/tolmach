@@ -96,4 +96,13 @@ class Organization(models.Model):
         return self.owner == user
 
     def is_user_admin(self, user):
-        pass
+        if OrganizationMember.objects.filter(organization=self, user=user).exists():
+            if OrganizationMember.objects.filter(organization=self, user=user)[0].is_admin:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def is_user_member(self, user):
+        return OrganizationMember.objects.filter(organization=self, user=user).exists() or self.is_user_owner(user)

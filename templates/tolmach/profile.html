@@ -30,18 +30,21 @@
             <ul class="nav nav-tabs">
                 <li class="{% if active_tab == 'main' %}active{% endif %}">
                     <a href="/">
+                        <i class="fa fa-compass" aria-hidden="true"></i>
                         {{ overview_label }}
                     </a>
                 </li>
 
                 <li class="{% if active_tab in 'my,thirdparty,public'|slice:',' %}active{% endif %}">
                     <a href="/projects/my/">
+                        <i class="fa fa-tasks" aria-hidden="true"></i>
                         {{ projects_label }}
                     </a>
                 </li>
 
                 <li class="{% if active_tab == 'organizations' %}active{% endif %}">
                     <a href="/orgs/">
+                        <i class="fa fa-sitemap" aria-hidden="true"></i>
                         {{ orgs_label }}
                     </a>
                 </li>

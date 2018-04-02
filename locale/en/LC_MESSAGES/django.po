@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-01 18:23+0300\n"
+"POT-Creation-Date: 2018-04-02 19:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -574,7 +574,7 @@ msgstr ""
 msgid "There're no organizations here at the moment."
 msgstr ""
 
-#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:102
 #: templates/translations/projects.html:109
 msgid "Click this button to create new project"
 msgstr ""
@@ -612,6 +612,67 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
+#: templates/tolmach/partial/new_organization_modal.html:3
+msgid "Create organization"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:4
+msgid "Organization name"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:5
+#: templates/translations/partial/add_text_modal.html:2
+#: templates/translations/partial/new_project_modal.html:5
+msgid "Advanced options"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:6
+#: templates/tolmach/view_user.html:11
+#: templates/translations/partial/new_project_modal.html:6
+msgid "Short project name"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:7
+#: templates/tolmach/view_user.html:12
+#: templates/translations/partial/new_project_modal.html:7
+msgid "Short project description"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:8
+#: templates/translations/partial/new_project_modal.html:8
+msgid "public"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:9
+#: templates/translations/partial/new_project_modal.html:9
+msgid "All users can see your project"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:10
+#: templates/translations/partial/new_project_modal.html:10
+msgid "private"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:11
+#: templates/translations/partial/new_project_modal.html:11
+msgid "Only invited users can see your project"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:12
+msgid "Create"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:51
+#: templates/translations/partial/new_project_modal.html:51
+msgid "Source language"
+msgstr ""
+
+#: templates/tolmach/partial/new_organization_modal.html:60
+#: templates/translations/partial/add_project_translation_modal.html:15
+#: templates/translations/partial/new_project_modal.html:60
+msgid "Target language"
+msgstr ""
+
 #: templates/tolmach/partial/profile-sidebar.html:35
 msgid "Click this button to edit your name and change profile picture"
 msgstr ""
@@ -644,7 +705,7 @@ msgstr ""
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:118 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
@@ -658,16 +719,6 @@ msgstr ""
 #: templates/tolmach/view_user.html:10
 #: templates/translations/partial/new_project_modal.html:4
 msgid "Project name"
-msgstr ""
-
-#: templates/tolmach/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:6
-msgid "Short project name"
-msgstr ""
-
-#: templates/tolmach/view_user.html:12
-#: templates/translations/partial/new_project_modal.html:7
-msgid "Short project description"
 msgstr ""
 
 #: templates/tolmach/view_user.html:13 templates/translations/projects.html:7
@@ -725,16 +776,6 @@ msgstr ""
 #| msgid "Export translation"
 msgid "Add project translation"
 msgstr "Users translations"
-
-#: templates/translations/partial/add_project_translation_modal.html:15
-#: templates/translations/partial/new_project_modal.html:60
-msgid "Target language"
-msgstr ""
-
-#: templates/translations/partial/add_text_modal.html:2
-#: templates/translations/partial/new_project_modal.html:5
-msgid "Advanced options"
-msgstr ""
 
 #: templates/translations/partial/add_text_modal.html:3
 msgid "Fragmentation type:"
@@ -828,26 +869,6 @@ msgstr ""
 #: templates/translations/partial/text_remove_popover.html:10
 #: templates/translations/partial/tmx_remove_popover.html:10
 msgid "No"
-msgstr ""
-
-#: templates/translations/partial/new_project_modal.html:8
-msgid "public"
-msgstr ""
-
-#: templates/translations/partial/new_project_modal.html:9
-msgid "All users can see your project"
-msgstr ""
-
-#: templates/translations/partial/new_project_modal.html:10
-msgid "private"
-msgstr ""
-
-#: templates/translations/partial/new_project_modal.html:11
-msgid "Only invited users can see your project"
-msgstr ""
-
-#: templates/translations/partial/new_project_modal.html:51
-msgid "Source language"
 msgstr ""
 
 #: templates/translations/partial/select_text_ranges_modal.html:7
@@ -1077,6 +1098,29 @@ msgstr ""
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
+#: tolmach/views_ajax.py:19 tolmach/views_ajax.py:44 tolmach/views_ajax.py:48
+#, fuzzy
+#| msgid "Translation variants"
+msgid "Organization not found"
+msgstr "Translation variants"
+
+#: tolmach/views_ajax.py:22
+msgid "You have to be an owner of organization"
+msgstr ""
+
+#: tolmach/views_ajax.py:34 translations/views_ajax.py:67
+msgid "Project name cannot be empty"
+msgstr ""
+
+#: tolmach/views_ajax.py:50 translations/views_ajax.py:36
+#: translations/views_ajax.py:55 translations/views_ajax.py:116
+#: translations/views_ajax.py:203 translations/views_ajax.py:307
+#: translations/views_ajax.py:406 translations/views_ajax.py:558
+#: translations/views_ajax.py:685 translations/views_ajax.py:1074
+#: translations/views_ajax.py:1109
+msgid "You have to be a manager of project"
+msgstr ""
+
 #: translations/decorators.py:16
 msgid "text id is not set"
 msgstr ""
@@ -1142,18 +1186,6 @@ msgstr ""
 
 #: translations/views.py:373
 msgid "Sorry, no such page here!"
-msgstr ""
-
-#: translations/views_ajax.py:36 translations/views_ajax.py:55
-#: translations/views_ajax.py:116 translations/views_ajax.py:203
-#: translations/views_ajax.py:307 translations/views_ajax.py:406
-#: translations/views_ajax.py:558 translations/views_ajax.py:685
-#: translations/views_ajax.py:1074 translations/views_ajax.py:1109
-msgid "You have to be a manager of project"
-msgstr ""
-
-#: translations/views_ajax.py:67
-msgid "Project name cannot be empty"
 msgstr ""
 
 #: translations/views_ajax.py:72
