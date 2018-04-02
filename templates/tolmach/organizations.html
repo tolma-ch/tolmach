@@ -3,7 +3,7 @@
 
 {% block tab-content %}
 {% trans "There're no organizations here at the moment." as empty_organizations_label %}
-           <div id="projects" class="tab-pane active" style="margin-top: 35px;">
+           <div id="projects" class="tab-pane active" style="margin-top: 35px;" ng-controller="organizationsCtrl">
                 <div class="user-statistics__recent-progress">
                     <div class="user-statistics__recent-progress-table">
                         <table cellpadding="0" cellspacing="0" class="user-statistics-table">
@@ -89,12 +89,11 @@
                         </div>
                         {% endif %}
                         <a href="" class="btn helped-block btn-sm new-proj-block-btn"
-                               ng-click="startNewProject()"
-                               help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>
+                               ng-click="createNewOrg()"
+                               help-text="{% trans 'Click this button to create new organization' %}">{% trans 'Create new' %}</a>
                     </div>
                 </div>
+           {% include "tolmach/partial/new_organization_modal.html" %}
             </div>
-
-    {% include "translations/partial/new_project_modal.html" %}
 
 {% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-01 18:23+0300\n"
+"POT-Creation-Date: 2018-04-02 19:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -647,7 +647,7 @@ msgstr ""
 msgid "There're no organizations here at the moment."
 msgstr "Тут пока нет ни одной организации"
 
-#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:102
 #: templates/translations/projects.html:109
 msgid "Click this button to create new project"
 msgstr "Нажмите, чтобы создать новый проект"
@@ -685,6 +685,73 @@ msgstr "Адрес сайта"
 msgid "Save"
 msgstr "Сохранить"
 
+#: templates/tolmach/partial/new_organization_modal.html:3
+#, fuzzy
+#| msgid "Organizations"
+msgid "Create organization"
+msgstr "Организации"
+
+#: templates/tolmach/partial/new_organization_modal.html:4
+#, fuzzy
+#| msgid "Organizations"
+msgid "Organization name"
+msgstr "Организации"
+
+#: templates/tolmach/partial/new_organization_modal.html:5
+#: templates/translations/partial/add_text_modal.html:2
+#: templates/translations/partial/new_project_modal.html:5
+msgid "Advanced options"
+msgstr "Дополнительные параметры"
+
+#: templates/tolmach/partial/new_organization_modal.html:6
+#: templates/tolmach/view_user.html:11
+#: templates/translations/partial/new_project_modal.html:6
+msgid "Short project name"
+msgstr "Краткое название проекта"
+
+#: templates/tolmach/partial/new_organization_modal.html:7
+#: templates/tolmach/view_user.html:12
+#: templates/translations/partial/new_project_modal.html:7
+msgid "Short project description"
+msgstr "Краткое описание проекта"
+
+#: templates/tolmach/partial/new_organization_modal.html:8
+#: templates/translations/partial/new_project_modal.html:8
+msgid "public"
+msgstr "публичный"
+
+#: templates/tolmach/partial/new_organization_modal.html:9
+#: templates/translations/partial/new_project_modal.html:9
+msgid "All users can see your project"
+msgstr "Все пользователи смогут видеть ваш проект"
+
+#: templates/tolmach/partial/new_organization_modal.html:10
+#: templates/translations/partial/new_project_modal.html:10
+msgid "private"
+msgstr "приватный"
+
+#: templates/tolmach/partial/new_organization_modal.html:11
+#: templates/translations/partial/new_project_modal.html:11
+msgid "Only invited users can see your project"
+msgstr "Только приглашённые пользователи смогут видеть ваш проект"
+
+#: templates/tolmach/partial/new_organization_modal.html:12
+#, fuzzy
+#| msgid "Create new"
+msgid "Create"
+msgstr "Начать новый"
+
+#: templates/tolmach/partial/new_organization_modal.html:51
+#: templates/translations/partial/new_project_modal.html:51
+msgid "Source language"
+msgstr "Язык оригинала:"
+
+#: templates/tolmach/partial/new_organization_modal.html:60
+#: templates/translations/partial/add_project_translation_modal.html:15
+#: templates/translations/partial/new_project_modal.html:60
+msgid "Target language"
+msgstr "Язык перевода:"
+
 #: templates/tolmach/partial/profile-sidebar.html:35
 msgid "Click this button to edit your name and change profile picture"
 msgstr "Нажмите эту кнопку, чтобы сменить имя или фото"
@@ -717,7 +784,7 @@ msgstr "Недавние проекты"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:118 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "фрагмент переведён"
@@ -733,16 +800,6 @@ msgstr "Добавить проект"
 #: templates/translations/partial/new_project_modal.html:4
 msgid "Project name"
 msgstr "Название проекта"
-
-#: templates/tolmach/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:6
-msgid "Short project name"
-msgstr "Краткое название проекта"
-
-#: templates/tolmach/view_user.html:12
-#: templates/translations/partial/new_project_modal.html:7
-msgid "Short project description"
-msgstr "Краткое описание проекта"
 
 #: templates/tolmach/view_user.html:13 templates/translations/projects.html:7
 msgid "Public"
@@ -797,16 +854,6 @@ msgstr "Введите имя или ник"
 #: templates/translations/partial/add_project_translation_modal.html:7
 msgid "Add project translation"
 msgstr "Добавить перевод проекта"
-
-#: templates/translations/partial/add_project_translation_modal.html:15
-#: templates/translations/partial/new_project_modal.html:60
-msgid "Target language"
-msgstr "Язык перевода:"
-
-#: templates/translations/partial/add_text_modal.html:2
-#: templates/translations/partial/new_project_modal.html:5
-msgid "Advanced options"
-msgstr "Дополнительные параметры"
 
 #: templates/translations/partial/add_text_modal.html:3
 msgid "Fragmentation type:"
@@ -903,26 +950,6 @@ msgstr "Да"
 #: templates/translations/partial/tmx_remove_popover.html:10
 msgid "No"
 msgstr "Нет"
-
-#: templates/translations/partial/new_project_modal.html:8
-msgid "public"
-msgstr "публичный"
-
-#: templates/translations/partial/new_project_modal.html:9
-msgid "All users can see your project"
-msgstr "Все пользователи смогут видеть ваш проект"
-
-#: templates/translations/partial/new_project_modal.html:10
-msgid "private"
-msgstr "приватный"
-
-#: templates/translations/partial/new_project_modal.html:11
-msgid "Only invited users can see your project"
-msgstr "Только приглашённые пользователи смогут видеть ваш проект"
-
-#: templates/translations/partial/new_project_modal.html:51
-msgid "Source language"
-msgstr "Язык оригинала:"
 
 #: templates/translations/partial/select_text_ranges_modal.html:7
 msgid "Select cells for translating"
@@ -1152,6 +1179,31 @@ msgstr ""
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
+#: tolmach/views_ajax.py:19 tolmach/views_ajax.py:44 tolmach/views_ajax.py:48
+#, fuzzy
+#| msgid "Translation not found"
+msgid "Organization not found"
+msgstr "Перевод не найден"
+
+#: tolmach/views_ajax.py:22
+#, fuzzy
+#| msgid "You have to be a manager of project"
+msgid "You have to be an owner of organization"
+msgstr "Вы должны быть менеджером проекта"
+
+#: tolmach/views_ajax.py:34 translations/views_ajax.py:67
+msgid "Project name cannot be empty"
+msgstr "Название проекта не может быть пустым"
+
+#: tolmach/views_ajax.py:50 translations/views_ajax.py:36
+#: translations/views_ajax.py:55 translations/views_ajax.py:116
+#: translations/views_ajax.py:203 translations/views_ajax.py:307
+#: translations/views_ajax.py:406 translations/views_ajax.py:558
+#: translations/views_ajax.py:685 translations/views_ajax.py:1074
+#: translations/views_ajax.py:1109
+msgid "You have to be a manager of project"
+msgstr "Вы должны быть менеджером проекта"
+
 #: translations/decorators.py:16
 msgid "text id is not set"
 msgstr "Номер текста не указан"
@@ -1216,18 +1268,6 @@ msgstr "Простите, указанный текст не найден"
 #: translations/views.py:373
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
-
-#: translations/views_ajax.py:36 translations/views_ajax.py:55
-#: translations/views_ajax.py:116 translations/views_ajax.py:203
-#: translations/views_ajax.py:307 translations/views_ajax.py:406
-#: translations/views_ajax.py:558 translations/views_ajax.py:685
-#: translations/views_ajax.py:1074 translations/views_ajax.py:1109
-msgid "You have to be a manager of project"
-msgstr "Вы должны быть менеджером проекта"
-
-#: translations/views_ajax.py:67
-msgid "Project name cannot be empty"
-msgstr "Название проекта не может быть пустым"
 
 #: translations/views_ajax.py:72
 msgid "Project description cannot be empty"
@@ -1450,9 +1490,6 @@ msgstr "Сервер Баз Памяти в данный момент не до�
 
 #~ msgid "Start with"
 #~ msgstr "Войти с помощью"
-
-#~ msgid "Create new"
-#~ msgstr "Начать новый"
 
 #~ msgid "Sorry, no such text here"
 #~ msgstr "Простите, указанный текст не найден"

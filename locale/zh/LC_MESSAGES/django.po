@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-01 18:23+0300\n"
+"POT-Creation-Date: 2018-04-02 19:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -585,7 +585,7 @@ msgstr ""
 msgid "There're no organizations here at the moment."
 msgstr ""
 
-#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:99
+#: templates/tolmach/organizations.html:93 templates/tolmach/profile.html:102
 #: templates/translations/projects.html:109
 msgid "Click this button to create new project"
 msgstr "点击此按钮创建新项目"
@@ -623,6 +623,77 @@ msgstr "网站"
 msgid "Save"
 msgstr "保存"
 
+#: templates/tolmach/partial/new_organization_modal.html:3
+#, fuzzy
+#| msgid "Translation"
+msgid "Create organization"
+msgstr "翻译"
+
+#: templates/tolmach/partial/new_organization_modal.html:4
+#, fuzzy
+#| msgid "Translation"
+msgid "Organization name"
+msgstr "翻译"
+
+#: templates/tolmach/partial/new_organization_modal.html:5
+#: templates/translations/partial/add_text_modal.html:2
+#: templates/translations/partial/new_project_modal.html:5
+msgid "Advanced options"
+msgstr "高级选项"
+
+#: templates/tolmach/partial/new_organization_modal.html:6
+#: templates/tolmach/view_user.html:11
+#: templates/translations/partial/new_project_modal.html:6
+msgid "Short project name"
+msgstr "项目短名"
+
+#: templates/tolmach/partial/new_organization_modal.html:7
+#: templates/tolmach/view_user.html:12
+#: templates/translations/partial/new_project_modal.html:7
+msgid "Short project description"
+msgstr "项目短说明"
+
+#: templates/tolmach/partial/new_organization_modal.html:8
+#: templates/translations/partial/new_project_modal.html:8
+msgid "public"
+msgstr "公开"
+
+#: templates/tolmach/partial/new_organization_modal.html:9
+#: templates/translations/partial/new_project_modal.html:9
+#, fuzzy
+#| msgid "This user is a manager of project"
+msgid "All users can see your project"
+msgstr "该用户是项目管理员 这个用户有管理员的项目"
+
+#: templates/tolmach/partial/new_organization_modal.html:10
+#: templates/translations/partial/new_project_modal.html:10
+msgid "private"
+msgstr "私人"
+
+#: templates/tolmach/partial/new_organization_modal.html:11
+#: templates/translations/partial/new_project_modal.html:11
+#, fuzzy
+#| msgid "invited you to the project"
+msgid "Only invited users can see your project"
+msgstr "邀请你加入项目"
+
+#: templates/tolmach/partial/new_organization_modal.html:12
+#, fuzzy
+#| msgid "Create new"
+msgid "Create"
+msgstr "新建"
+
+#: templates/tolmach/partial/new_organization_modal.html:51
+#: templates/translations/partial/new_project_modal.html:51
+msgid "Source language"
+msgstr "原语言"
+
+#: templates/tolmach/partial/new_organization_modal.html:60
+#: templates/translations/partial/add_project_translation_modal.html:15
+#: templates/translations/partial/new_project_modal.html:60
+msgid "Target language"
+msgstr "目标语言"
+
 #: templates/tolmach/partial/profile-sidebar.html:35
 msgid "Click this button to edit your name and change profile picture"
 msgstr ""
@@ -657,7 +728,7 @@ msgstr "最近项目"
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/profile.html:115 templates/tolmach/view_user.html:105
+#: templates/tolmach/profile.html:118 templates/tolmach/view_user.html:105
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译碎片"
@@ -672,16 +743,6 @@ msgstr "添加项目"
 #: templates/translations/partial/new_project_modal.html:4
 msgid "Project name"
 msgstr "项目名称"
-
-#: templates/tolmach/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:6
-msgid "Short project name"
-msgstr "项目短名"
-
-#: templates/tolmach/view_user.html:12
-#: templates/translations/partial/new_project_modal.html:7
-msgid "Short project description"
-msgstr "项目短说明"
 
 #: templates/tolmach/view_user.html:13 templates/translations/projects.html:7
 msgid "Public"
@@ -736,16 +797,6 @@ msgstr "进入注册或名称"
 #: templates/translations/partial/add_project_translation_modal.html:7
 msgid "Add project translation"
 msgstr "添上项目翻译"
-
-#: templates/translations/partial/add_project_translation_modal.html:15
-#: templates/translations/partial/new_project_modal.html:60
-msgid "Target language"
-msgstr "目标语言"
-
-#: templates/translations/partial/add_text_modal.html:2
-#: templates/translations/partial/new_project_modal.html:5
-msgid "Advanced options"
-msgstr "高级选项"
 
 #: templates/translations/partial/add_text_modal.html:3
 msgid "Fragmentation type:"
@@ -840,30 +891,6 @@ msgstr "是"
 #: templates/translations/partial/tmx_remove_popover.html:10
 msgid "No"
 msgstr "否"
-
-#: templates/translations/partial/new_project_modal.html:8
-msgid "public"
-msgstr "公开"
-
-#: templates/translations/partial/new_project_modal.html:9
-#, fuzzy
-#| msgid "This user is a manager of project"
-msgid "All users can see your project"
-msgstr "该用户是项目管理员 这个用户有管理员的项目"
-
-#: templates/translations/partial/new_project_modal.html:10
-msgid "private"
-msgstr "私人"
-
-#: templates/translations/partial/new_project_modal.html:11
-#, fuzzy
-#| msgid "invited you to the project"
-msgid "Only invited users can see your project"
-msgstr "邀请你加入项目"
-
-#: templates/translations/partial/new_project_modal.html:51
-msgid "Source language"
-msgstr "原语言"
 
 #: templates/translations/partial/select_text_ranges_modal.html:7
 #, fuzzy
@@ -1090,6 +1117,35 @@ msgstr ""
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
+#: tolmach/views_ajax.py:19 tolmach/views_ajax.py:44 tolmach/views_ajax.py:48
+#, fuzzy
+#| msgid "Translation not found"
+msgid "Organization not found"
+msgstr "未找到翻译"
+
+#: tolmach/views_ajax.py:22
+#, fuzzy
+#| msgid "User is not a member of project"
+msgid "You have to be an owner of organization"
+msgstr "该用户不是项目成员"
+
+#: tolmach/views_ajax.py:34 translations/views_ajax.py:67
+#, fuzzy
+#| msgid "Project type is not set"
+msgid "Project name cannot be empty"
+msgstr "项目类型未设置"
+
+#: tolmach/views_ajax.py:50 translations/views_ajax.py:36
+#: translations/views_ajax.py:55 translations/views_ajax.py:116
+#: translations/views_ajax.py:203 translations/views_ajax.py:307
+#: translations/views_ajax.py:406 translations/views_ajax.py:558
+#: translations/views_ajax.py:685 translations/views_ajax.py:1074
+#: translations/views_ajax.py:1109
+#, fuzzy
+#| msgid "User is not a member of project"
+msgid "You have to be a manager of project"
+msgstr "该用户不是项目成员"
+
 #: translations/decorators.py:16
 msgid "text id is not set"
 msgstr "文案ID未设置"
@@ -1156,22 +1212,6 @@ msgstr ""
 #: translations/views.py:373
 msgid "Sorry, no such page here!"
 msgstr ""
-
-#: translations/views_ajax.py:36 translations/views_ajax.py:55
-#: translations/views_ajax.py:116 translations/views_ajax.py:203
-#: translations/views_ajax.py:307 translations/views_ajax.py:406
-#: translations/views_ajax.py:558 translations/views_ajax.py:685
-#: translations/views_ajax.py:1074 translations/views_ajax.py:1109
-#, fuzzy
-#| msgid "User is not a member of project"
-msgid "You have to be a manager of project"
-msgstr "该用户不是项目成员"
-
-#: translations/views_ajax.py:67
-#, fuzzy
-#| msgid "Project type is not set"
-msgid "Project name cannot be empty"
-msgstr "项目类型未设置"
 
 #: translations/views_ajax.py:72
 #, fuzzy
@@ -1413,9 +1453,6 @@ msgstr ""
 
 #~ msgid "Start with"
 #~ msgstr "开始与"
-
-#~ msgid "Create new"
-#~ msgstr "新建"
 
 #~ msgid "Add (Ctrl + Enter)"
 #~ msgstr "添加 (Ctrl + Enter)"

@@ -11,7 +11,7 @@
 	</div>
 
 	<div class="user-sidebar__info">
-		<div class="user-sidebar__username">{= userData.firstName =} {= userData.lastName =}</div>
+		<div class="user-sidebar__username">{% if profileType == "organization" %}<i class="fa fa-sitemap" aria-hidden="true"></i>{% endif %} {= userData.firstName =} {= userData.lastName =}</div>
 		<div class="user-sidebar__nickname">{= userData.username =}</div>
 		<!--<div class="user-sidebar__location">-->
 			<!--<i class="fa fa-map-marker"></i>-->

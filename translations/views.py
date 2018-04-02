@@ -207,7 +207,7 @@ def project_by_translation(request, target_lang, proj_id=0):
     try:
         project_translation = ProjectTranslation.objects.get(project=pr,
                                                          target_lang=Language.objects.get(code=target_lang))
-    except Project.DoesNotExist:
+    except ProjectTranslation.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
     if not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))

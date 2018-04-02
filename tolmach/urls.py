@@ -3,6 +3,7 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 import django.contrib.auth.views
 import tolmach.views as main_views
+import tolmach.views_ajax as main_ajax
 import translations.views as trans_views
 import translations.views_ajax as trans_ajax
 import dicts.views as dict_views
@@ -33,6 +34,7 @@ urlpatterns = [
 
     # organizations
     url(r'^orgs/$', main_views.organizations),
+    url(r'^orgs/(?P<org_id>\d+)/$', main_views.organization_page),
 
     # translations
     url(r'^projects/(?P<proj_type>\w+)/$', trans_views.projects),
@@ -48,6 +50,7 @@ urlpatterns = [
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
 
     # ajax
+    url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
     url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),
     url(r'^ajax/project/$', trans_ajax.project_ajax, name='project_ajax'),
