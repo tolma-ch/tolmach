@@ -27,7 +27,7 @@ def organization_ajax(request):
             if 'description' in post:
                 org.description = post['description']
             org.save()
-            return HttpResponse(json.dumps(org.id), content_type="application/json")
+            return HttpResponse(json.dumps(org.slug), content_type="application/json")
         else:
             # creating new organization
             if 'name' not in post or not post['name']:
@@ -38,7 +38,7 @@ def organization_ajax(request):
             org = Organization(name=name,
                               owner=request.user)
             org.save()
-            return HttpResponse(json.dumps(org.id), content_type="application/json")
+            return HttpResponse(json.dumps(org.slug), content_type="application/json")
     if request.method == 'DELETE':
         if 'id' not in request.GET:
             return HttpResponse(json.dumps(_('Organization not found')), content_type="application/json", status=400)

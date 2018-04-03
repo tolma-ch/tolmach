@@ -33,8 +33,8 @@ urlpatterns = [
     url(r'^login/', main_views.login_user, name="login_user"),
 
     # organizations
+    url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page),
     url(r'^orgs/$', main_views.organizations),
-    url(r'^orgs/(?P<org_id>\d+)/$', main_views.organization_page),
 
     # translations
     url(r'^projects/(?P<proj_type>\w+)/$', trans_views.projects),

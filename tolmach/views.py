@@ -154,9 +154,10 @@ def organizations(request):
 
 
 @login_required
-def organization_page(request, org_id=0):
+def organization_page(request, slug=""):
+    print(slug)
     try:
-        org = Organization.objects.get(id=org_id)
+        org = Organization.objects.get(slug=slug)
     except Project.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
 
@@ -192,6 +193,7 @@ def organization_page(request, org_id=0):
             'lastName': "",
             'username': "",
             'website': "test.org",
+            'orgId': org.id,
         }),
         'profileType': 'organization',
         'languages': lang_list,

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from autoslug import AutoSlugField
 
 
 class UserMeta(models.Model):
@@ -85,12 +86,14 @@ class OrganizationMember(models.Model):
 
 class Organization(models.Model):
     from tolmach.utils import random_string
-    name = models.CharField(max_length=256, default=None, null=True)
+    name = models.CharField(max_length=50, default=None, null=True)
     owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     members = models.ManyToManyField('auth.User', through=OrganizationMember, related_name='organization_members')
     api_key = models.CharField(max_length=256, default=random_string)
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
+    slug = AutoSlugField(populate_from='name',
+                         unique=True)
 
     def is_user_owner(self, user):
         return self.owner == user
