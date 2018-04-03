@@ -1,6 +1,6 @@
 # Django settings for tolmach project.
 
-import os
+import os, slugify
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -254,6 +254,8 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = 'auth.User'
+
+AUTOSLUG_SLUGIFY_FUNCTION = slugify.slugify
 
 YANDEX_TRANSLATE_KEY = "trnsl.1.1.20150506T163916Z.b5e779fa488bccef.d7f2375e783e4caa10bca8a317cff1bdb1621a01"
 

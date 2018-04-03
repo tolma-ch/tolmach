@@ -16,7 +16,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="user-statistics-table__title">
-                                        <a href="/orgs/{{ org.id }}">
+                                        <a href="/orgs/{{ org.slug }}/">
                                             {% if not org.owner.username == user.username %}
                                                 <span class="user-statistics-table__project-manager">{{ org.owner }}/</span>{% endif %}<span class="user-statistics-table__project-title">{{ org.name }}</span>
                                         </a>
