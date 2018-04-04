@@ -14,7 +14,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta, Messages, PairStats
+from tolmach.models import UserMeta, Messages, PairStats, Organization
 from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json, os, shutil
@@ -88,6 +88,16 @@ def create_project_ajax(request):
                               source_lang=Language.objects.get(id=source_lang_id),
                               is_private=access == 'private',
                               manager=request.user)
+            if int(post['org_id']) > 0:
+                try:
+                    project_org = Organization.objects.get(id=int(post['org_id']))
+                    if project_org.is_user_owner(request.user) or project_org.is_user_admin(request.user):
+                        project.organization = project_org
+                        project.manager = project_org.owner
+                    else:
+                        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+                except:
+                    pass
             project.save()
             project_translation = ProjectTranslation(project=project,
                                                      target_lang=Language.objects.get(id=target_lang_id))

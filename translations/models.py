@@ -97,7 +97,7 @@ class Project(models.Model):
                                      related_name='project_organization',
                                      on_delete=models.deletion.SET_NULL)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
@@ -185,8 +185,8 @@ class ProjectTranslation(models.Model):
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
-    def __unicode__(self):
-        return unicode("%s - %s" % (self.project, self.target_lang))
+    def __str__(self):
+        return "%s - %s" % (self.project, self.target_lang)
 
 
 
@@ -203,8 +203,8 @@ class Text(models.Model):
     last_modified = models.DateTimeField(default=timezone.now)
     options = models.TextField(default="{}")
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return self.title
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
@@ -270,8 +270,8 @@ class TextTranslation(models.Model):
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
-    def __unicode__(self):
-        return unicode("%s - %s" % (self.text, self.target_lang))
+    def __str__(self):
+        return "%s - %s" % (self.text, self.target_lang)
 
     def get_progress(self):
         """
@@ -325,8 +325,8 @@ class TextEntry(models.Model):
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
 
-    def __unicode__(self):
-        return unicode(self.body)
+    def __str__(self):
+        return self.body
 
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []

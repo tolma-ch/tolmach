@@ -34,7 +34,8 @@
                     'description': $scope.description || " ",
                     'type': $scope.type,
                     'source_lang': $scope.source_lang,
-                    'target_lang': $scope.target_lang
+                    'target_lang': $scope.target_lang,
+                    'org_id': window.userData['orgId'] || 0
                 };
                 $scope.busy = true;
                 $http.post('/ajax/project-create/', data)

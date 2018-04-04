@@ -83,6 +83,9 @@ class OrganizationMember(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_admin = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "[%s] %s" % (self.organization.name, self.user.username)
+
 
 class Organization(models.Model):
     from tolmach.utils import random_string
@@ -94,6 +97,9 @@ class Organization(models.Model):
     last_modified = models.DateTimeField(default=timezone.now)
     slug = AutoSlugField(populate_from='name',
                          unique=True)
+
+    def __str__(self):
+        return self.name
 
     def is_user_owner(self, user):
         return self.owner == user
