@@ -38,7 +38,7 @@ def projects(request, proj_type):
         page_title = _('My projects') + " / Tolma.ch"
         projects_text = _('My projects')
         page_url = '/projects/my/'
-        user_projects_list = Project.objects.filter(manager=user).order_by('-last_modified')
+        user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
         for pr in user_projects_list:
             pr.list_button = 'none'
         active_tab = 'my'
@@ -46,7 +46,7 @@ def projects(request, proj_type):
         page_title = _('Third-party projects') + " / Tolma.ch"
         projects_text = _('Third-party projects')
         page_url = '/projects/thirdparty/'
-        user_memberships = ProjectMember.objects.filter(user=user)
+        user_memberships = ProjectMember.objects.filter(user=user).prefetch_related('organization')
         user_projects_list = [x.project for x in user_memberships]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
         for pr in user_projects_list:
@@ -58,9 +58,9 @@ def projects(request, proj_type):
         page_url = '/projects/public/'
         active_tab = 'public'
         if not request.user.is_staff == 1:
-            user_projects_list = Project.objects.filter(is_private=False).order_by('-last_modified')
+            user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
         else:
-            user_projects_list = Project.objects.filter().order_by('-last_modified')
+            user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
         for pr in user_projects_list:
             if pr.is_user_manager(request.user):
                 pr.list_button = 'none'
@@ -70,6 +70,8 @@ def projects(request, proj_type):
                 pr.list_button = 'enter'
     else:
         raise Http404("Poll does not exist")
+
+    # print(user_projects_list)
 
     paginator = Paginator(user_projects_list, 10)
 
@@ -82,6 +84,8 @@ def projects(request, proj_type):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_proj_list = paginator.page(paginator.num_pages)
+
+
 
     lang_list = []
     # Получаем список названий языков для текущей локали

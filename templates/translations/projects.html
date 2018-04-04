@@ -26,15 +26,16 @@
                             <tbody>
                                 {% for project in projects %}
                                 <tr class="user-statistics-table__row">
-                                    <td>
-                                        {% if project.is_private %}
-                                        <i class="fa fa-lock"></i>
-                                        {% endif %}
-                                    </td>
                                     <td class="user-statistics-table__title">
-                                        <a href="/project/{{ project.id }}">
-                                            {% if not project.manager.username == user.username %}
-                                                <span class="user-statistics-table__project-manager">{{ project.manager }}/</span>{% endif %}<span class="user-statistics-table__project-title">{{ project.name }}</span>
+                                        <a href="/project/{{ project.id }}/">
+                                            {% if project.organization %}
+                                                <span class="user-statistics-table__project-manager"><i class="fa fa-sitemap"></i> {{ project.organization|truncatechars:20 }} /</span>
+                                            {% else %}
+                                                {% if not project.manager.username == user.username %}
+                                                    <span class="user-statistics-table__project-manager"> {{ project.manager|truncatechars:20 }} /</span>
+                                                {% endif %}
+                                            {% endif %}
+                                            <span class="user-statistics-table__project-title">{{ project.name }}</span>
                                         </a>
                                     </td>
                                     <td class="user-statistics-table__progress">
@@ -42,6 +43,11 @@
                                             <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
                                             <span class="progress-bar__value">{{ project.progress }}%</span>
                                         </div>
+                                    </td>
+                                    <td>
+                                        {% if project.is_private %}
+                                        <i class="fa fa-lock"></i>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% empty %}
