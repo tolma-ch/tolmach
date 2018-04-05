@@ -3,10 +3,14 @@
 
     var module = angular.module('dictControllers', []);
 
-    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict',
-        function ($scope, $http, $window, $sce, Dict) {
+    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict', '$rootScope',
+        function ($scope, $http, $window, $sce, Dict, $rootScope) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
+            $rootScope.setDictWord = function (word) {
+                $scope.word = word;
+                $scope.searchWord();
+            };
             $scope.dictSourceLang = window['translationSourceLang'];
             $scope.dictTargetLang = window['translationTargetLang'];
             $scope.style = {};

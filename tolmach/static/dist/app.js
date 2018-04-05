@@ -75,10 +75,14 @@
 
     var module = angular.module('dictControllers', []);
 
-    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict',
-        function ($scope, $http, $window, $sce, Dict) {
+    module.controller('DictCtrl', ['$scope', '$http', '$window', '$sce', 'Dict', '$rootScope',
+        function ($scope, $http, $window, $sce, Dict, $rootScope) {
             var lastMeaningNum = 0;
             var showDictModal = 0;
+            $rootScope.setDictWord = function (word) {
+                $scope.word = word;
+                $scope.searchWord();
+            };
             $scope.dictSourceLang = window['translationSourceLang'];
             $scope.dictTargetLang = window['translationTargetLang'];
             $scope.style = {};
@@ -2365,46 +2369,48 @@
                     if (!phrase) {
                         return;
                     }
-                    var prevPhrase = $scope.translatedPhrase;
-                    $scope.translatedPhrase = phrase;
-                    if (phrase === prevPhrase) {
-                        $scope.$parent.showTranslatePopup = false;
-                        $scope.translatedPhrase = false;
-                        return;
-                    }
-                    $http.jsonp('https://glosbe.com/gapi/translate', {
-                        params: {
-                            from: $scope.langPair3[0],
-                            dest: $scope.langPair3[1],
-                            phrase: phrase,
-                            callback: 'JSON_CALLBACK',
-                            format: 'json'
-                        }
-                    }).success(function (res) {
-                        var results = [];
-                        if (angular.isArray(res['tuc'])) {
-                            angular.forEach(res['tuc'], function (elem) {
-                                if (elem['phrase'] && elem['phrase']['text']) {
-                                    results.push(elem['phrase']['text']);
-                                }
-                            });
-                        }
-                        $scope.$parent.translationResults = results;
-                        $scope.$parent.translatePopupStyle = {
-                            display: 'block',
-                            left: coords['x'] + 'px',
-                            top: coords['y'] + 'px'
-                        };
-                        $scope.$parent.showTranslatePopup = true;
-                        if ($scope.$parent.showTranslatePopup) {
-                            $timeout(function () {
-                                var elem = $('#translation-popup'),
-                                    elemWidth = elem.width(),
-                                    left = coords['x'] + (width - elemWidth) / 2;
-                                $scope.$parent.translatePopupStyle.left = left + 'px';
-                            },1);
-                        }
-                    })
+                    $rootScope.setDictWord(phrase);
+                    $scope.dictOpener();
+                    // var prevPhrase = $scope.translatedPhrase;
+                    // $scope.translatedPhrase = phrase;
+                    // if (phrase === prevPhrase) {
+                    //     $scope.$parent.showTranslatePopup = false;
+                    //     $scope.translatedPhrase = false;
+                    //     return;
+                    // }
+                    // $http.jsonp('https://glosbe.com/gapi/translate', {
+                    //     params: {
+                    //         from: $scope.langPair3[0],
+                    //         dest: $scope.langPair3[1],
+                    //         phrase: phrase,
+                    //         callback: 'JSON_CALLBACK',
+                    //         format: 'json'
+                    //     }
+                    // }).success(function (res) {
+                    //     var results = [];
+                    //     if (angular.isArray(res['tuc'])) {
+                    //         angular.forEach(res['tuc'], function (elem) {
+                    //             if (elem['phrase'] && elem['phrase']['text']) {
+                    //                 results.push(elem['phrase']['text']);
+                    //             }
+                    //         });
+                    //     }
+                    //     $scope.$parent.translationResults = results;
+                    //     $scope.$parent.translatePopupStyle = {
+                    //         display: 'block',
+                    //         left: coords['x'] + 'px',
+                    //         top: coords['y'] + 'px'
+                    //     };
+                    //     $scope.$parent.showTranslatePopup = true;
+                    //     if ($scope.$parent.showTranslatePopup) {
+                    //         $timeout(function () {
+                    //             var elem = $('#translation-popup'),
+                    //                 elemWidth = elem.width(),
+                    //                 left = coords['x'] + (width - elemWidth) / 2;
+                    //             $scope.$parent.translatePopupStyle.left = left + 'px';
+                    //         },1);
+                    //     }
+                    // })
                 };
             $scope.$parent.copyToClipboard = function (text) {
                 if ($scope.activeEntry && $scope.activeEntry.editing) {
