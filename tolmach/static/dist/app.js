@@ -2343,7 +2343,7 @@
                         var sel = window.getSelection(),
                             range = sel.rangeCount ? sel.getRangeAt(0) : false,
                             rect = range ? range.getClientRects()[0] : false;
-                        if (target.contains(sel.baseNode)) {
+                        if (!target || target.contains(sel.baseNode)) {
                             if (rect) {
                                 y = rect.bottom;
                                 x = rect.left;
@@ -2370,7 +2370,7 @@
                         return;
                     }
                     $rootScope.setDictWord(phrase);
-                    $scope.dictOpener();
+                    $scope.showDictModal = true;
                     // var prevPhrase = $scope.translatedPhrase;
                     // $scope.translatedPhrase = phrase;
                     // if (phrase === prevPhrase) {
