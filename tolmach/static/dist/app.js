@@ -2330,7 +2330,7 @@
             $scope.$parent.showTranslatePopup = false;
             $scope.$parent.translatedPhrase = '';
             $scope.$parent.translationResults = [];
-            var getSelectionText = function () {
+            var getSelectionText = function (target) {
                     var text = "",
                         x = 0,
                         y = 0,
@@ -2339,12 +2339,14 @@
                         var sel = window.getSelection(),
                             range = sel.rangeCount ? sel.getRangeAt(0) : false,
                             rect = range ? range.getClientRects()[0] : false;
-                        if (rect) {
-                            y = rect.bottom;
-                            x = rect.left;
-                            width = rect.right - rect.left;
+                        if (target.contains(sel.baseNode)) {
+                            if (rect) {
+                                y = rect.bottom;
+                                x = rect.left;
+                                width = rect.right - rect.left;
+                            }
+                            text = sel.toString();
                         }
-                        text = sel.toString();
                     } else if (document.selection && document.selection.type != "Control") {
                         var range = sel.createRange();
                         range.collapse(true);
@@ -2355,8 +2357,8 @@
                     }
                     return [text, x, y, width];
                 },
-                translate = function () {
-                    var selection = getSelectionText(),
+                translate = function (target) {
+                    var selection = getSelectionText(target),
                         phrase = selection[0].trim().toLowerCase(),
                         coords = {'x': selection[1], 'y': selection[2]},
                         width = selection[3];
@@ -2416,8 +2418,8 @@
                 $scope.$parent.showTranslatePopup = false;
                 $scope.translatedPhrase = false;
             });
-            $scope.mouseup = function () {
-                translate();
+            $scope.mouseup = function ($event) {
+                translate($event.target);
             };
             //$scope.$on('GlobalMouseup', function (e, event) {
             //    translate();

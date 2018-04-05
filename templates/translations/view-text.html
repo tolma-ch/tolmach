@@ -91,7 +91,7 @@
                         <!---------------------------------
                                    original text
                         ---------------------------------->
-                        <div class="text-piece__original" ng-mouseup="mouseup()">
+                        <div class="text-piece__original" ng-mouseup="mouseup($event)">
                             <div ng-if="$parent.activeEntry !== entry">
                                 <div ng-if="!entry.approved">
                                     <span html-content="entry.body"></span>
