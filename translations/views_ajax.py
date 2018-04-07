@@ -146,12 +146,13 @@ def add_project_translation(request):
                 if all_text_translations:
                     gettext_meta = TextTranslationMeta.objects.filter(translation=all_text_translations[0], meta_type='gettext_metadata')
                     if gettext_meta:
-                        translation_meta = json.loads(gettext_meta)
+                        meta_type = 'gettext_metadata'
+                        translation_meta = json.loads(gettext_meta[0].meta_data)
                         target_lang = target_lang
                         plural_examples = utils.get_plural_examples(target_lang.plural_forms)
-                        translation_meta["meta_data"]["all_meta"]["Plural-Forms"] = target_lang.plural_forms
-                        translation_meta["meta_data"]["all_meta"]["Language"] = target_lang.code
-                        translation_meta["meta_data"]["plural_examples"] = plural_examples
+                        translation_meta["all_meta"]["Plural-Forms"] = target_lang.plural_forms
+                        translation_meta["all_meta"]["Language"] = target_lang.code
+                        translation_meta["plural_examples"] = plural_examples
 
                 # проверяем, нет ли ещё такого перевода у текста
                 check_translation = TextTranslation.objects.filter(target_lang=target_lang, text=project_text)
@@ -163,8 +164,8 @@ def add_project_translation(request):
 
                     if translation_meta:
                         trans_meta = TextTranslationMeta(translation=new_translation,
-                                                         meta_type=translation_meta["meta_type"],
-                                                         meta_data=json.dumps(translation_meta["meta_data"]),
+                                                         meta_type=meta_type,
+                                                         meta_data=json.dumps(translation_meta),
                                                          )
                         trans_meta.save()
 

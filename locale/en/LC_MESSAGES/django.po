@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-07 10:17+0300\n"
+"POT-Creation-Date: 2018-04-07 20:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,8 +77,8 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: templates/main/base-logged-in.html:6 templates/tolmach/profile.html:7
-#: templates/tolmach/view_user.html:7
+#: templates/main/base-logged-in.html:6 templates/tolmach/organization.html:7
+#: templates/tolmach/profile.html:7 templates/tolmach/view_user.html:7
 msgid "Projects"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 msgid "Blog"
 msgstr ""
 
-#: templates/main/base-logged-in.html:15
+#: templates/main/base-logged-in.html:15 templates/tolmach/organization.html:9
 msgid "Settings"
 msgstr ""
 
@@ -580,7 +580,11 @@ msgstr ""
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/organization.html:104 templates/tolmach/profile.html:108
+#: templates/tolmach/organization.html:8
+msgid "Members"
+msgstr ""
+
+#: templates/tolmach/organization.html:129 templates/tolmach/profile.html:108
 #: templates/translations/projects.html:115
 msgid "Click this button to create new project"
 msgstr ""
@@ -589,7 +593,7 @@ msgstr ""
 msgid "There're no organizations here at the moment."
 msgstr ""
 
-#: templates/tolmach/organizations.html:28
+#: templates/tolmach/organizations.html:31
 #, python-format
 msgid ""
 "\n"
@@ -600,11 +604,11 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: templates/tolmach/organizations.html:97
+#: templates/tolmach/organizations.html:101
 msgid "Click this button to create new organization"
 msgstr ""
 
-#: templates/tolmach/organizations.html:97
+#: templates/tolmach/organizations.html:101
 msgid "Create new"
 msgstr ""
 

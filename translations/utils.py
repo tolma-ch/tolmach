@@ -69,7 +69,7 @@ def get_plural_examples(p):
 
     num_dict = {}
 
-    for n in xrange(0, 1000):
+    for n in range(0, 1000):
         result = int(eval(rule))
         if not result in num_dict:
             num_dict[result] = [n]
