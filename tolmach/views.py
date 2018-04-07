@@ -13,7 +13,7 @@ from django.db.models import Sum, Q
 from translations.models import Project, Text, TextTranslation, TextEntry
 from entries.models import Language, Subject
 
-from tolmach.models import UserMeta, PairStats, Organization
+from tolmach.models import UserMeta, PairStats, Organization, OrganizationMember
 from tolmach import utils
 
 
@@ -121,6 +121,15 @@ def organizations(request):
     usermeta, p = UserMeta.objects.get_or_create(user=request.user)
 
     user_orgs_list = Organization.objects.filter(Q(owner=request.user) | Q(members=request.user)).order_by('-last_modified')
+
+    for org in user_orgs_list:
+        org.members_count = OrganizationMember.objects.filter(organization=org).count() + 1 # +1 is for project owner
+        if org.is_user_owner(request.user):
+            org.user_status = _("owner")
+        elif org.is_user_admin(request.user):
+            org.user_status = _("admin")
+        else:
+            org.user_status = _("member")
 
     paginator = Paginator(user_orgs_list, 10)
     page = request.GET.get('page')

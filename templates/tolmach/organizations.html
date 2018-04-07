@@ -3,29 +3,37 @@
 
 {% block tab-content %}
 {% trans "There're no organizations here at the moment." as empty_organizations_label %}
-           <div id="projects" class="tab-pane active" style="margin-top: 35px;" ng-controller="organizationsCtrl">
-                <div class="user-statistics__recent-progress">
-                    <div class="user-statistics__recent-progress-table">
-                        <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+           <div id="projects" class="tab-pane active" ng-controller="organizationsCtrl">
+                <div class="organizations__recent-progress">
+                    <div class="organizations__recent-progress-table">
+                        <table cellpadding="0" cellspacing="0" class="organizations-table">
                             <tbody>
                                 {% for org in organizations %}
-                                <tr class="user-statistics-table__row">
+                                <tr class="organizations-table__row">
                                     <td>
                                         {% if org.is_private %}
                                         <i class="fa fa-lock"></i>
                                         {% endif %}
                                     </td>
-                                    <td class="user-statistics-table__title">
+                                    <td class="organizations-table__title">
                                         <a href="/orgs/{{ org.slug }}/">
                                             {% if not org.owner.username == user.username %}
-                                                <span class="user-statistics-table__project-manager">{{ org.owner }}/</span>{% endif %}<span class="user-statistics-table__project-title">{{ org.name }}</span>
+                                                <span class="organizations-table__project-manager">{{ org.owner }}/</span>{% endif %}<span class="organizations-table__project-title">{{ org.name }}</span>
                                         </a>
                                     </td>
-                                    <td class="user-statistics-table__progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-bar__gauge" style="width:{{ org.progress }}%;background:#02c14f"></div>
-                                            <span class="progress-bar__value">{{ org.progress }}%</span>
-                                        </div>
+                                    <td class="organizations-table__member-status">
+                                        <span class="label label-light arrowed-in-right">
+                                            {{ org.user_status }}
+                                        </span>
+                                    </td>
+                                    <td class="organizations-table__members">
+                                        <a href="/orgs/{{ org.slug }}/members/">
+{% blocktrans count number=org.members_count %}
+{{ number }} member
+{% plural %}
+{{ number }} members
+{% endblocktrans %}
+                                        </a>
                                     </td>
                                 </tr>
                                 {% empty %}
