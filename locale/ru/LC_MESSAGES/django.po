@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-07 10:17+0300\n"
+"POT-Creation-Date: 2018-04-07 20:03+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -83,8 +83,8 @@ msgstr ""
 msgid "Dashboard"
 msgstr "Табло"
 
-#: templates/main/base-logged-in.html:6 templates/tolmach/profile.html:7
-#: templates/tolmach/view_user.html:7
+#: templates/main/base-logged-in.html:6 templates/tolmach/organization.html:7
+#: templates/tolmach/profile.html:7 templates/tolmach/view_user.html:7
 msgid "Projects"
 msgstr "Проекты"
 
@@ -123,7 +123,7 @@ msgstr "Поддержка"
 msgid "Blog"
 msgstr "Журнал"
 
-#: templates/main/base-logged-in.html:15
+#: templates/main/base-logged-in.html:15 templates/tolmach/organization.html:9
 msgid "Settings"
 msgstr "Настройки"
 
@@ -653,7 +653,13 @@ msgstr "Начать новый"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/organization.html:104 templates/tolmach/profile.html:108
+#: templates/tolmach/organization.html:8
+#, fuzzy
+#| msgid "member"
+msgid "Members"
+msgstr "участник"
+
+#: templates/tolmach/organization.html:129 templates/tolmach/profile.html:108
 #: templates/translations/projects.html:115
 msgid "Click this button to create new project"
 msgstr "Нажмите, чтобы создать новый проект"
@@ -662,7 +668,7 @@ msgstr "Нажмите, чтобы создать новый проект"
 msgid "There're no organizations here at the moment."
 msgstr "Тут пока нет ни одной организации"
 
-#: templates/tolmach/organizations.html:28
+#: templates/tolmach/organizations.html:31
 #, python-format
 msgid ""
 "\n"
@@ -670,15 +676,21 @@ msgid ""
 msgid_plural ""
 "\n"
 "%(number)s members\n"
-msgstr[0] "\n%(number)s участник\n"
-msgstr[1] "\n%(number)s участника\n"
-msgstr[2] "\n%(number)s участников\n"
+msgstr[0] ""
+"\n"
+"%(number)s участник\n"
+msgstr[1] ""
+"\n"
+"%(number)s участника\n"
+msgstr[2] ""
+"\n"
+"%(number)s участников\n"
 
-#: templates/tolmach/organizations.html:97
+#: templates/tolmach/organizations.html:101
 msgid "Click this button to create new organization"
 msgstr "Нажмите, чтобы создать новую организацию"
 
-#: templates/tolmach/organizations.html:97
+#: templates/tolmach/organizations.html:101
 msgid "Create new"
 msgstr "Создать новую"
 
