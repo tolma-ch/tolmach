@@ -230,6 +230,10 @@ def project_by_translation(request, target_lang, proj_id=0):
         projects_text = "%s" % pr.manager.username
         projects_url = '/user/%d/' % pr.manager.id
 
+    if pr.organization:
+        projects_text = pr.organization
+        projects_url = '/orgs/%s/' % pr.organization.slug
+
     lang_list = []
     # Получаем список названий языков для текущей локали
     from babel import Locale
