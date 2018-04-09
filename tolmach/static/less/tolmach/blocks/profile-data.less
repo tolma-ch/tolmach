@@ -214,6 +214,13 @@
       }
     }
   }
+  .organization-header {
+    margin: 0 !important;
+    &__img {
+      max-height: 50px !important;
+      max-width: 50px !important;
+    }
+  }
 }
 
 @media (min-width: 756px) and (max-width: 1014px) {
@@ -319,18 +326,30 @@
 }
 
 .organization-header {
-	margin:0 0 12px;
-	padding-bottom: 0;
-    padding-top: 7px;
+  margin:0 0 12px;
+  padding-bottom: 0;
+  padding-top: 7px;
 
-	h1 {
-	  padding:0;
-	  margin:10px 8px;
+  &__title {
+    display: inline-block;
+
+    h1 {
+      padding: 0;
+      margin: 10px 8px;
       font-size: 24px;
       font-weight: lighter;
       color: #2679B5;
       font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	}
+    }
+  }
+
+  &__photo {
+    display: inline-block;
+  }
+  &__img {
+    max-height: 100px;
+    max-width: 100px;
+  }
 }
 
 .organizations {

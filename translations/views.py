@@ -46,7 +46,7 @@ def projects(request, proj_type):
         page_title = _('Third-party projects') + " / Tolma.ch"
         projects_text = _('Third-party projects')
         page_url = '/projects/thirdparty/'
-        user_memberships = ProjectMember.objects.filter(user=user).prefetch_related('organization')
+        user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
         for pr in user_projects_list:
@@ -111,7 +111,9 @@ def projects(request, proj_type):
             }),
             'page_title': page_title,
             'active_tab': active_tab,
-            'breadcrumbs': [[projects_text, page_url], ],
+            'breadcrumbs': [
+                {'title': projects_text, 'url': page_url, 'type': ''},
+            ],
             'languages': lang_list,
             'projects': result_proj_list,
             'projects_page_active': True,
@@ -230,9 +232,11 @@ def project_by_translation(request, target_lang, proj_id=0):
         projects_text = "%s" % pr.manager.username
         projects_url = '/user/%d/' % pr.manager.id
 
+    projects_type = ''
     if pr.organization:
         projects_text = pr.organization
         projects_url = '/orgs/%s/' % pr.organization.slug
+        projects_type = 'org'
 
     lang_list = []
     # Получаем список названий языков для текущей локали
@@ -284,8 +288,10 @@ def project_by_translation(request, target_lang, proj_id=0):
                                      } for lang in lang_list]),
         'subjects': Subject.objects.all(),
         'breadcrumbs': [
-                       [projects_text, projects_url],
-                       [pr.name, ''],
+            {'title': projects_text, 'url': projects_url, 'type': projects_type},
+            {'title': pr.name, 'url': '', 'type': ''},
+                       # [projects_text, projects_url, projects_type],
+                       # [pr.name, ''],
         ],
     }
     template = 'translations/project.html'
@@ -327,6 +333,12 @@ def view_translation(request, text_id, target_lang):
         projects_text = "%s" % pr.manager.username
         projects_url = '/user/%d/' % pr.manager.id
 
+    projects_type = ''
+    if pr.organization:
+        projects_text = pr.organization
+        projects_url = '/orgs/%s/' % pr.organization.slug
+        projects_type = 'org'
+
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
@@ -346,9 +358,9 @@ def view_translation(request, text_id, target_lang):
     data = {'username': request.user,
             'user_membership_status': membership_status,
             'breadcrumbs': [
-                [projects_text, projects_url],
-                [text.project.name, '/project/%d/%s/' % (text.project.id, translation.target_lang.code)],
-                [text.title, ''],
+                {'title': projects_text, 'url': projects_url, 'type': projects_type},
+                {'title': text.project.name, 'url': '/project/%d/%s/' % (text.project.id, translation.target_lang.code), 'type': ''},
+                {'title': text.title, 'url': '', 'type': ''},
             ],
             'text': text,
             'use_machine': int(machine_trans_enabled),
