@@ -138,6 +138,8 @@
 .breadcrumbs2
 	margin 0
 	padding: 18px 0 0;
+	@media (max-width: 600px)
+		display none
 	&__item
 		color white
 		display: inline-block
@@ -151,6 +153,19 @@
 			width 6px
 			margin: -2px 8px;
 			background url('/static/img/arr-breadcrumbs.png') no-repeat
+		&__text
+			display inline-block
+			white-space nowrap
+			overflow hidden
+			text-overflow ellipsis
+			-o-text-overflow ellipsis
+			@media (min-width: 1200px)
+				max-width 250px
+			@media (min-width: 992px) and (max-width: 1199px)
+				max-width 200px
+			@media (max-width: 991px)
+				max-width 100px
+
 	&__btn
 		display: inline-block;
 		margin: 0 10px;

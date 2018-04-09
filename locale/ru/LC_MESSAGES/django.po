@@ -654,10 +654,8 @@ msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
 #: templates/tolmach/organization.html:8
-#, fuzzy
-#| msgid "member"
 msgid "Members"
-msgstr "участник"
+msgstr "Участники"
 
 #: templates/tolmach/organization.html:129 templates/tolmach/profile.html:108
 #: templates/translations/projects.html:115

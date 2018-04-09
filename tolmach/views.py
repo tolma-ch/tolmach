@@ -106,7 +106,7 @@ def user_page(request, user_id):
         'empty_list': empty_list,
         'entries_total': total_translated,
         'breadcrumbs': [
-                       [user.username, ''],
+            {'title': user.username, 'url': '', 'type': ''},
         ],
     }
     template = 'tolmach/view_user.html'
@@ -154,7 +154,7 @@ def organizations(request):
         'organizations': result_orgs_list,
         'page_title': "%s / Tolma.ch" % _("Organizations"),
         'breadcrumbs': [
-            [_("Organizations"), ''],
+            {'title': _("Organizations"), 'url': '', 'type': ''},
         ],
     }
     template = 'tolmach/organizations.html'
@@ -196,21 +196,19 @@ def organization_page(request, slug=""):
         lang_list.append(localized_lang)
 
     data = {
-        'active_tab': 'organizations',
+        'active_tab': 'main',
         'userData': json.dumps({
             'firstName': org.name,
-            'lastName': "",
-            'username': "",
-            'website': "test.org",
             'orgId': org.id,
         }),
+        'organization': org,
         'profileType': 'organization',
         'languages': lang_list,
         'projects': projects,
         'page_title': "%s / %s / Tolma.ch" % (org.name[:30], _("Organizations")),
         'breadcrumbs': [
-            [_("Organizations"), '/orgs/'],
-            [org.name, '']
+            {'title': _("Organizations"), 'url': '/orgs/', 'type': ''},
+            {'title': org.name, 'url': '', 'type': ''},
         ],
     }
     template = 'tolmach/organization.html'

@@ -16,62 +16,15 @@
 				{% if user.is_authenticated %}
 	                {% load tolmach_tags %}
 	                {% login_navbar %}
-                    <ul class="breadcrumbs2 hidden-xs">
+                    <ul class="breadcrumbs2">
                         {% for link in breadcrumbs %}
                         <li class="breadcrumbs2__item {% if forloop.counter == 1 %}hidden-md hidden-sm hidden-xs{% endif %}">
-                            <!--Large screens only (>1200px) -->
-                            <span class="hidden-xs hidden-sm hidden-md" style="display: inline-block;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-                                        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-                                        max-width: 250px;">
-                            {% if link.1 %}
-                                <a href="{{ link.1 }}" title="{{ link.0 }}">{{ link.0 }}</a>
-                            {% else %}
-                                {{ link.0 }}
-                            {% endif %}
-                            </span>
-
-                            <!--Medium screens only (992px - 1199px) -->
-                            <span class="hidden-xs hidden-sm hidden-lg" style="display: inline-block;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-                                        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-                                        max-width: 200px;">
-                            {% if link.1 %}
-                                <a href="{{ link.1 }}" title="{{ link.0 }}">{{ link.0 }}</a>
-                            {% else %}
-                                {{ link.0 }}
-                            {% endif %}
-                            </span>
-
-                            <!--Small screens only (768px - 991px) -->
-                            <span class="hidden-xs hidden-md hidden-lg" style="display: inline-block;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-                                        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-                                        max-width: 100px;">
-                            {% if link.1 %}
-                                <a href="{{ link.1 }}" title="{{ link.0 }}">{{ link.0 }}</a>
-                            {% else %}
-                                {{ link.0 }}
-                            {% endif %}
-                            </span>
-                            <!--Extra small screens only (<767px) -->
-                            <span class="hidden-sm hidden-md hidden-lg" style="display: inline-block;
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-                                        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-                                        max-width: 100px;">
-                            {% if link.1 %}
-                                <a href="{{ link.1 }}" title="{{ link.0 }}">{{ link.0 }}</a>
-                            {% else %}
-                                {{ link.0 }}
-                            {% endif %}
+                            <span class="breadcrumbs2__item__text">
+                                {% if link.url|length > 1 %}
+                                    {% if link.type == 'org' %}<i class="fa fa-sitemap"></i>{% endif %} <a href="{{ link.url }}" title="{{ link.title }}">{{ link.title }}</a>
+                                {% else %}
+                                    {{ link.title }}
+                                {% endif %}
                             </span>
                         </li>
                         {% endfor %}
