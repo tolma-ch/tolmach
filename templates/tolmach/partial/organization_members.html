@@ -1,0 +1,84 @@
+{% extends "tolmach/organization.html" %}
+{% load i18n %}
+
+{% block tab-content %}
+                <div id="projects" class="tab-pane active">
+                    <div class="user-statistics__recent-progress">
+                        <div class="user-statistics__recent-progress-table">
+                            <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                                <tbody>
+                                    {% for member in members %}
+                                    <tr class="user-statistics-table__row">
+                                        <td class="user-statistics-table__title">
+                                            <a href="/user/{{ member.user.id }}/">
+                                                <span class="user-statistics-table__project-title">{{ member.user.username }}</span>
+                                            </a>
+                                        </td>
+                                        <td class="user-statistics-table__progress">
+                                            {% if member.is_admin %}
+                                            {% trans "admin" %}
+                                            {% else %}
+                                                {{ member.status }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if members.paginator.num_pages > 1 %}
+                            <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
+                            <ul class="pagination projects-paginator">
+                                {% if members.has_previous %}
+                                <li>
+                                    <a href="?page={{members.previous_page_number}}">
+                                        <i class="fa fa-angle-double-left"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="disabled">
+                                    <a href="">
+                                        <i class="fa fa-angle-double-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% for i in members.paginator.page_range %}
+                                    {% if members.number == i %}
+                                        <li class="active">
+                                            <a href="?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                    {% elif i > members.number|add:'-4' and i < members.number|add:'4' %}
+                                        <li>
+                                            <a href="?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if members.has_next %}
+                                <li>
+                                    <a href="?page={{ members.next_page_number }}">
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="disabled">
+                                    <a href="">
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                            </div>
+                            {% endif %}
+                            {% if is_admin %}
+                            <a href="" class="btn helped-block btn-sm new-proj-block-btn"
+                                   ng-click="addOrgParticipant()"
+                                   help-text="{% trans 'Click this button to invite users to your organization' %}">{% trans "Invite" %}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+    {% include "tolmach/partial/add_org_participant_modal.html" %}
+    {% include "translations/partial/user_typeahead_template.html" %}
+{% endblock %}
