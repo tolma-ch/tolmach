@@ -33,21 +33,22 @@
                     </a>
                 </li>
 
-                <li class="{% if active_tab in 'my,thirdparty,public'|slice:',' %}active{% endif %}">
+                <li class="{% if active_tab == 'members' %}active{% endif %}">
                     <a href="/orgs/{{ organization.slug }}/members/">
                         <i class="fa fa-users" aria-hidden="true"></i>
                         {{ members_tab_label }}
                     </a>
                 </li>
 
-                <li class="{% if active_tab == 'organizations' %}active{% endif %}">
+                <li class="{% if active_tab == 'settings' %}active{% endif %}">
                     <a href="/orgs/{{ organization.slug }}/settings/">
                         <i class="fa fa-cogs" aria-hidden="true"></i>
                         {{ settings_tab_label }}
                     </a>
                 </li>
             </ul>
-            <div class="tab-content">
+            <div class="tab-content" ng-controller="organizationsCtrl">
+            {% block tab-content %}
                <div id="projects" class="tab-pane active">
                     <div class="user-statistics__recent-progress">
                         <div class="user-statistics__recent-progress-table">
@@ -133,12 +134,15 @@
                             </ul>
                             </div>
                             {% endif %}
+                            {% if is_admin %}
                             <a href="" class="btn helped-block btn-sm new-proj-block-btn"
                                    ng-click="startNewProject()"
                                    help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+            {% endblock %}
             </div>
         </div>
     </section>

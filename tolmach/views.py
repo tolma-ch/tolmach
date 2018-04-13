@@ -21,9 +21,7 @@ def index(request):
     if request.user.is_authenticated():
         first_name = request.user.first_name
         last_name = request.user.last_name
-        projects = Project.objects.filter(manager=request.user.id).order_by('-last_modified')
-        for proj in projects:
-            proj.progress = proj.get_progress()
+
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = utils.get_user_stat(request.user)
 
@@ -51,7 +49,6 @@ def index(request):
             empty_list = range(3-len(ordered_stat))
 
         data = {
-            'projects': projects,
             'recent_projects': recent_projects,
             'username': request.user.username,
             'usermeta': usermeta,
@@ -120,7 +117,7 @@ def organizations(request):
     last_name = request.user.last_name
     usermeta, p = UserMeta.objects.get_or_create(user=request.user)
 
-    user_orgs_list = Organization.objects.filter(Q(owner=request.user) | Q(members=request.user)).order_by('-last_modified')
+    user_orgs_list = Organization.objects.filter(Q(owner=request.user) | Q(members=request.user)).distinct().order_by('-last_modified')
 
     for org in user_orgs_list:
         org.members_count = OrganizationMember.objects.filter(organization=org).count() + 1 # +1 is for project owner
@@ -186,6 +183,18 @@ def organization_page(request, slug=""):
     for proj in recent_projects:
         proj.progress = proj.get_progress()
 
+    paginator = Paginator(recent_projects, 10)
+
+    page = request.GET.get('page')
+    try:
+        result_proj_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result_proj_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result_proj_list = paginator.page(paginator.num_pages)
+
     lang_list = []
     # Получаем список названий языков для текущей локали
     from babel import Locale
@@ -197,6 +206,7 @@ def organization_page(request, slug=""):
 
     data = {
         'active_tab': 'main',
+        'is_admin': org.is_user_admin(request.user) or org.is_user_owner(request.user),
         'userData': json.dumps({
             'firstName': org.name,
             'orgId': org.id,
@@ -212,6 +222,41 @@ def organization_page(request, slug=""):
         ],
     }
     template = 'tolmach/organization.html'
+
+    return render(request, template, data)
+
+
+@login_required
+def organization_members_page(request, slug=""):
+    print(slug)
+    try:
+        org = Organization.objects.get(slug=slug)
+    except Project.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+
+    if not org.is_user_member(request.user):
+        return HttpResponseRedirect('/')
+
+    org_members = OrganizationMember.objects.filter(organization=org).prefetch_related('user')
+
+
+    data = {
+        'active_tab': 'members',
+        'is_admin': org.is_user_admin(request.user) or org.is_user_owner(request.user),
+        'userData': json.dumps({
+            'firstName': org.name,
+            'orgId': org.id,
+        }),
+        'organization': org,
+        'members': org_members,
+        'profileType': 'organization',
+        'page_title': "%s / %s / %s / Tolma.ch" % (_("Members"), org.name[:30], _("Organizations")),
+        'breadcrumbs': [
+            {'title': _("Organizations"), 'url': '/orgs/', 'type': ''},
+            {'title': org.name, 'url': '', 'type': ''},
+        ],
+    }
+    template = 'tolmach/partial/organization_members.html'
 
     return render(request, template, data)
 

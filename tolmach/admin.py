@@ -26,7 +26,7 @@ class OrganizationMemberInLine(admin.StackedInline):
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'owner',)
-    # inlines = [OrganizationMemberInLine]
+    inlines = [OrganizationMemberInLine]
 
 admin.site.register(PairStats, PairStatsAdmin)
 admin.site.register(EmailTemplate, EmailTemplateAdmin)
