@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 from autoslug import AutoSlugField
 
@@ -115,3 +115,22 @@ class Organization(models.Model):
 
     def is_user_member(self, user):
         return OrganizationMember.objects.filter(organization=self, user=user).exists() or self.is_user_owner(user)
+
+    @transaction.atomic
+    def invite_user(self, user):
+        from translations.models import Project
+        new_org_user = OrganizationMember(user=user, org=self)
+        new_org_user.save()
+
+        org_projects = Project.objects.filter(organization=self)
+        for pr in org_projects:
+            pr.invite_user(user)
+
+    @transaction.atomic
+    def remove_user(self, user):
+        from translations.models import Project
+        OrganizationMember(user=user, org=self).delete()
+
+        org_projects = Project.objects.filter(organization=self)
+        for pr in org_projects:
+            pr.remove_user(user)

@@ -19,6 +19,22 @@
                 });
             };
 
+            $scope.addOrgParticipant = function () {
+                var modalInstance = $modal.open({
+                    templateUrl: 'addOrgParticipantModal.html',
+                    controller: 'AddOrgParticipantModalCtrl',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {}
+                });
+
+                modalInstance.result.then(function (participant) {
+                    // $scope.participants.push(participant);
+                    $window.location.reload();
+                }, function () {
+                });
+            };
+
         }
     ]);
 
@@ -44,6 +60,38 @@
             };
 
             $scope.createOrgAdvancedOptions = false;
+            $scope.cancel = function () {
+                $modalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+
+    module.controller('AddOrgParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
+        function ($scope, $modalInstance, $http) {
+            $scope.getUsers = function (query) {
+                return $http.get('/ajax/get-users', {params: {q: query}})
+                    .then(function (response) {
+                        return response.data;
+                    });
+            };
+            $scope.ok = function () {
+                $scope.error = '';
+                var data = {
+                    'project': window['projectId'],
+                    'user': $scope.user.id
+                };
+                $scope.busy = true;
+                $http.post('/ajax/participant/', data)
+                    .success(function (participant) {
+                        $modalInstance.close(participant);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');
             };

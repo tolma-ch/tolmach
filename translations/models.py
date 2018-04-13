@@ -7,7 +7,7 @@ import math
 from channels import Group
 
 from entries.models import Subject, Language
-from tolmach.models import Organization
+# from tolmach.models import Organization
 
 
 class Glossary(models.Model):
@@ -177,6 +177,12 @@ class Project(models.Model):
                 project_progress = 0
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
         return int(project_progress)
+
+    def invite_user(self, user):
+        new_proj_user, created = ProjectMember.objects.get_or_create(user=user, project=self)
+
+    def remove_user(self, user):
+        ProjectMember.objects.filter(user=user, project=self).delete()
 
 
 class ProjectTranslation(models.Model):

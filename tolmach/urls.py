@@ -34,6 +34,7 @@ urlpatterns = [
 
     # organizations
     url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page),
+    url(r'^orgs/(?P<slug>[\w-]+)/members/$', main_views.organization_members_page),
     url(r'^orgs/$', main_views.organizations),
 
     # translations
@@ -51,6 +52,7 @@ urlpatterns = [
 
     # ajax
     url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
+    url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
     url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),
     url(r'^ajax/project/$', trans_ajax.project_ajax, name='project_ajax'),
