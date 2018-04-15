@@ -7,70 +7,43 @@
                         <div class="user-statistics__recent-progress-table">
                             <table cellpadding="0" cellspacing="0" class="user-statistics-table">
                                 <tbody>
-                                    {% for member in members %}
-                                    <tr class="user-statistics-table__row">
+                                    <tr class="user-statistics-table__row"
+                                    ng-repeat="member in members">
                                         <td class="user-statistics-table__title">
-                                            <a href="/user/{{ member.user.id }}/">
-                                                <span class="user-statistics-table__project-title">{{ member.user.username }}</span>
+                                            <a href="/user/{=:: member.id =}/">
+                                                <span class="user-statistics-table__project-title">{=:: member.name =}</span>
                                             </a>
                                         </td>
                                         <td class="user-statistics-table__progress">
-                                            {% if member.is_admin %}
-                                            {% trans "admin" %}
+                                            {% if is_admin %}
+                                            <span ng-if="(member.status != 'owner')">
+                                                <input type="checkbox"
+                                                   ng-model="member.status"
+                                                   name="status-{::= member.id =}"
+                                                   ng-change="changeAdminStatus(member)">
+                                                <label for="status-{::= member.id =}">{% trans "admin" %}</label>
+                                            </span>
                                             {% else %}
-                                                {{ member.status }}
+                                                <span ng-if="(member.status != 'owner') && (member.status == true)">
+                                                    {% trans "admin" %}
+                                                </span>
                                             {% endif %}
                                         </td>
                                         <td>
+                                            {% if is_admin %}
+                                            <a class="tooltip-warning" href=""
+                                               tooltip="{% trans 'Remove participant' %}"
+                                               tooltip-append-to-body="true"
+                                               ng-if="(member.status != 'owner')"
+                                               popover-template="'removeOrgParticipantPopover.html'"
+                                               popover-placement="left"
+                                               popover-append-to-body="true"
+                                               class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                                            {% endif %}
                                         </td>
                                     </tr>
-                                    {% endfor %}
                                 </tbody>
                             </table>
-                            {% if members.paginator.num_pages > 1 %}
-                            <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
-                            <ul class="pagination projects-paginator">
-                                {% if members.has_previous %}
-                                <li>
-                                    <a href="?page={{members.previous_page_number}}">
-                                        <i class="fa fa-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                {% else %}
-                                <li class="disabled">
-                                    <a href="">
-                                        <i class="fa fa-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                {% endif %}
-                                {% for i in members.paginator.page_range %}
-                                    {% if members.number == i %}
-                                        <li class="active">
-                                            <a href="?page={{ i }}">{{ i }}</a>
-                                        </li>
-                                    {% elif i > members.number|add:'-4' and i < members.number|add:'4' %}
-                                        <li>
-                                            <a href="?page={{ i }}">{{ i }}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if members.has_next %}
-                                <li>
-                                    <a href="?page={{ members.next_page_number }}">
-                                        <i class="fa fa-angle-double-right"></i>
-                                    </a>
-                                </li>
-                                {% else %}
-                                <li class="disabled">
-                                    <a href="">
-                                        <i class="fa fa-angle-double-right"></i>
-                                    </a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                            </div>
-                            {% endif %}
                             {% if is_admin %}
                             <a href="" class="btn helped-block btn-sm new-proj-block-btn"
                                    ng-click="addOrgParticipant()"
@@ -80,5 +53,6 @@
                     </div>
                 </div>
     {% include "tolmach/partial/add_org_participant_modal.html" %}
+    {% include "tolmach/partial/remove_org_participant_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
 {% endblock %}

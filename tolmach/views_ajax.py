@@ -3,7 +3,9 @@ from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 
-from tolmach.models import Organization
+from tolmach.models import Organization, OrganizationMember
+from tolmach.decorators import accept_organization
+from tolmach.utils import org_user_to_json
 
 import json
 
@@ -48,7 +50,7 @@ def organization_ajax(request):
         except Organization.DoesNotExist:
             return HttpResponse(json.dumps(_('Organization not found')), content_type="application/json", status=400)
         if not org.is_user_owner(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
+            return HttpResponse(json.dumps(_('You have to be an owner of organization')), content_type="application/json",
                                 status=400)
 
         org.delete()
@@ -56,54 +58,56 @@ def organization_ajax(request):
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 @login_required
-def organization_members_ajax(request):
+@accept_organization
+def organization_members_ajax(request, org):
+    if request.method == 'GET':
+        members = OrganizationMember.objects.filter(organization=org)
+        result = []
+        for memb in members:
+            result.append(org_user_to_json(memb.user, org))
+        result.sort(key=lambda x: x['status'], reverse=True)
+        return HttpResponse(json.dumps([org_user_to_json(org.owner)] + result), content_type="application/json")
     if request.method == 'POST':
-        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
-            return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
-                                status=400)
         post = json.loads(request.body)
+
+        if not org.is_user_owner(request.user) and not org.is_user_admin(request.user):
+            return HttpResponse(json.dumps(_('You have to be an owner of organization')),
+                                content_type="application/json",
+                                status=400)
         if 'user' not in post:
             return HttpResponse(json.dumps(_('User id is not set')), content_type="application/json", status=400)
         try:
             user = User.objects.get(id=post['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if user == project.manager:
-            return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
+        if user == org.owner:
+            return HttpResponse(json.dumps(_('This user is an owner of organization')), content_type="application/json",
                                 status=400)
 
-        try:
-            user_in_project = ProjectMember.objects.get(project=project, user=user)
-        except:
-            user_in_project = None
-        if not user_in_project:
-            new_proj_user = ProjectMember(user=user, project=project)
-            new_proj_user.save()
+        if not org.is_user_member(user):
+            org.invite_user(user)
 
-            from django.utils import timezone
-            message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
-
-            new_message = Messages(
-                message_type='A',
-                addressee=user,
-                originator=request.user,
-                message=message
-            )
-            new_message.save()
+            # from django.utils import timezone
+            # message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+            #
+            # new_message = Messages(
+            #     message_type='A',
+            #     addressee=user,
+            #     originator=request.user,
+            #     message=message
+            # )
+            # new_message.save()
         else:
-            if 'status' in post:
-                if post['status'] in [ProjectMember.EDITOR, ProjectMember.TRANSLATOR, ProjectMember.SPECTATOR]:
-                    user_in_project.status = post['status']
-                    user_in_project.save()
-                else:
-                    return HttpResponse(json.dumps(_('Wrong membership status, sorry')), content_type="application/json",
-                                status=400)
+            if 'is_admin' in post:
+                member = OrganizationMember.objects.get(organization=org, user=user)
+                member.is_admin = post['is_admin']
+                member.save()
             else:
                 return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
                                 status=400)
 
 
-        result = user_to_json(user, project)
+        result = org_user_to_json(user, org)
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'user' not in request.GET:
@@ -112,33 +116,24 @@ def organization_members_ajax(request):
             user = User.objects.get(id=request.GET['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+        if not org.is_user_owner(request.user) and not org.is_user_admin(request.user):
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
-        if user == project.manager:
-            return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
+        if user == org.owner:
+            return HttpResponse(json.dumps(_('This user is an owner of organization')), content_type="application/json",
                                 status=400)
 
-        try:
-            user_in_project = ProjectMember.objects.get(project=project, user=user)
-        except:
-            user_in_project = None
-        if not user_in_project:
-            return HttpResponse(json.dumps(_('User is not a member of project')),
-                                content_type="application/json",
-                                status=400)
-        else:
-            user_in_project.delete()
-
-        from django.utils import timezone
-        message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
-
-        new_message = Messages(
-            message_type='A',
-            addressee=user,
-            originator=request.user,
-            message=message
-        )
-        new_message.save()
+        org.remove_user(user)
+        #
+        # from django.utils import timezone
+        # message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+        #
+        # new_message = Messages(
+        #     message_type='A',
+        #     addressee=user,
+        #     originator=request.user,
+        #     message=message
+        # )
+        # new_message.save()
 
         result = {
             'id': user.id

@@ -9,6 +9,7 @@
 {% trans "Settings" as settings_tab_label %}
     <script>
     window.userData = {{ userData | safe }};
+    window.activeTab = "{{ active_tab }}";
     </script>
 <div class="profile-container" ng-controller="projectsCtrl">
     <section class="organization-content">
