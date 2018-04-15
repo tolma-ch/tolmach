@@ -41,12 +41,12 @@
                     </a>
                 </li>
 
-                <li class="{% if active_tab == 'settings' %}active{% endif %}">
-                    <a href="/orgs/{{ organization.slug }}/settings/">
-                        <i class="fa fa-cogs" aria-hidden="true"></i>
-                        {{ settings_tab_label }}
-                    </a>
-                </li>
+{#                <li class="{% if active_tab == 'settings' %}active{% endif %}">#}
+{#                    <a href="/orgs/{{ organization.slug }}/settings/">#}
+{#                        <i class="fa fa-cogs" aria-hidden="true"></i>#}
+{#                        {{ settings_tab_label }}#}
+{#                    </a>#}
+{#                </li>#}
             </ul>
             <div class="tab-content" ng-controller="organizationsCtrl">
             {% block tab-content %}
@@ -59,8 +59,7 @@
                                     <tr class="user-statistics-table__row">
                                         <td class="user-statistics-table__title">
                                             <a href="/project/{{ project.id }}">
-                                                {% if not project.manager.username == user.username %}
-                                                    <span class="user-statistics-table__project-manager">{{ project.manager }}/</span>{% endif %}<span class="user-statistics-table__project-title">{{ project.name }}</span>
+                                                <span class="user-statistics-table__project-title">{{ project.name }}</span>
                                             </a>
                                         </td>
                                         <td class="user-statistics-table__progress">

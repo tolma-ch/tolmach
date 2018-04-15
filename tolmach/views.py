@@ -87,6 +87,9 @@ def user_page(request, user_id):
     usermeta = UserMeta.objects.get(user=user)
     ordered_stat, total_translated = utils.get_user_stat(user)
 
+    for proj in projects:
+        proj.progress = proj.get_progress()
+
     # Костыль для выведения пустых столбиков статистики
     empty_list = []
     if len(ordered_stat) < 3:
