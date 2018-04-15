@@ -77,7 +77,7 @@ def organization_members_ajax(request, org):
         if 'user' not in post:
             return HttpResponse(json.dumps(_('User id is not set')), content_type="application/json", status=400)
         try:
-            user = User.objects.get(id=post['user'])
+            user = User.objects.get(id=int(post['user']))
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
         if user == org.owner:
@@ -100,7 +100,7 @@ def organization_members_ajax(request, org):
         else:
             if 'is_admin' in post:
                 member = OrganizationMember.objects.get(organization=org, user=user)
-                member.is_admin = post['is_admin']
+                member.is_admin = bool(post['is_admin'])
                 member.save()
             else:
                 return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",

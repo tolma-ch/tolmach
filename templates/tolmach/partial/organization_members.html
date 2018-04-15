@@ -15,6 +15,7 @@
                                             </a>
                                         </td>
                                         <td class="user-statistics-table__progress">
+                                            <span ng-if="(member.status === 'owner')">{% trans "owner" %}</span>
                                             {% if is_admin %}
                                             <span ng-if="(member.status != 'owner')">
                                                 <input type="checkbox"
@@ -29,7 +30,7 @@
                                                 </span>
                                             {% endif %}
                                         </td>
-                                        <td>
+                                        <td class="user-statistics-table__remove-btn">
                                             {% if is_admin %}
                                             <a class="tooltip-warning" href=""
                                                tooltip="{% trans 'Remove participant' %}"
