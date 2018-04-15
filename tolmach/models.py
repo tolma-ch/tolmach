@@ -119,7 +119,7 @@ class Organization(models.Model):
     @transaction.atomic
     def invite_user(self, user):
         from translations.models import Project
-        new_org_user = OrganizationMember(user=user, org=self)
+        new_org_user = OrganizationMember(user=user, organization=self)
         new_org_user.save()
 
         org_projects = Project.objects.filter(organization=self)
@@ -129,7 +129,7 @@ class Organization(models.Model):
     @transaction.atomic
     def remove_user(self, user):
         from translations.models import Project
-        OrganizationMember(user=user, org=self).delete()
+        OrganizationMember.objects.filter(user=user, organization=self).delete()
 
         org_projects = Project.objects.filter(organization=self)
         for pr in org_projects:

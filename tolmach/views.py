@@ -164,7 +164,7 @@ def organization_page(request, slug=""):
     print(slug)
     try:
         org = Organization.objects.get(slug=slug)
-    except Project.DoesNotExist:
+    except Organization.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
 
     if not org.is_user_member(request.user):
@@ -231,13 +231,13 @@ def organization_members_page(request, slug=""):
     print(slug)
     try:
         org = Organization.objects.get(slug=slug)
-    except Project.DoesNotExist:
+    except Organization.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
 
     if not org.is_user_member(request.user):
         return HttpResponseRedirect('/')
 
-    org_members = OrganizationMember.objects.filter(organization=org).prefetch_related('user')
+    # org_members = OrganizationMember.objects.filter(organization=org).prefetch_related('user')
 
 
     data = {
@@ -248,7 +248,7 @@ def organization_members_page(request, slug=""):
             'orgId': org.id,
         }),
         'organization': org,
-        'members': org_members,
+        # 'members': org_members,
         'profileType': 'organization',
         'page_title': "%s / %s / %s / Tolma.ch" % (_("Members"), org.name[:30], _("Organizations")),
         'breadcrumbs': [
