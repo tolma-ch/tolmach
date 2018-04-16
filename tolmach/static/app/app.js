@@ -6,6 +6,7 @@
     var module = angular.module('tolmachApp', [
         'ui.select',
         'ui.toggle',
+        'ngClickCopy',
         'mainModule',
         'profileModule',
         'projectModule',
