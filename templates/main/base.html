@@ -12,7 +12,7 @@
         <meta name="theme-color" content="#3B8DB6" />
         <link href="{% static 'img/favicon.ico' %}" rel="shortcut icon">
 
-        {% with front_version="1.10.7" %}
+        {% with front_version="1.10.8" %}
 
         {% if debug == 'false' %}
             <link rel="stylesheet" href="{% static 'dist/tolmach.min.css' %}?v={{ front_version }}">
@@ -42,6 +42,10 @@
                 position: fixed !important;
             }
         </style>
+        <script type="text/javascript">
+            window['getHost'] = "{{request.get_host }}";
+            window['isHttps'] = {{request.is_secure|lower }};
+        </script>
 
         {% if prod == 'true' %}
         <!-- Yandex.Metrika counter -->
@@ -266,6 +270,7 @@
         <script src="{% static 'assets/angular-local-storage/dist/angular-local-storage.min.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'assets/handsontable/dist/handsontable.full.min.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.js' %}?v={{ front_version }}"></script>
+        <script src="{% static 'assets/ng-click-copy/ng-click-copy.js' %}?v={{ front_version }}"></script>
         <script>
             var csrfToken = '{{ csrf_token }}';
         </script>

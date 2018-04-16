@@ -11,6 +11,9 @@
             $scope.currentTextId = window['textId'];
             $scope.currentTargetLang = window['translationTargetLang'];
 
+            $scope.getHost = window['getHost'];
+            $scope.isHttps = window['isHttps'];
+
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;
             };

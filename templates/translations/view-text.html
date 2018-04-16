@@ -14,7 +14,7 @@
 {% trans 'Save' as save_translation %}
 {% trans 'Remove' as remove_translation %}
 {% trans 'Cancel (Esc)' as cancel_translation %}
-{% trans 'Fragment link' as fragment_link %}
+{% trans 'Copied!' as fragment_link %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 {% trans 'Add with' as text_options %}
@@ -119,10 +119,12 @@
                                         <span html-content="entry.body"></span>
                                         {% include "translations/partial/text-page-now-editing-icon.html" %}
                                         <div class="text-piece__icons">
-                                            <a ng-init="entryUrl = '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
-                                               ng-href="{= entryUrl =}"
+                                            <a ng-init="entryUrl = isHttps ? 'https' : 'http' + '://' + getHost + '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
+{#                                               ng-href="{= entryUrl =}"#}
+                                               ng-click-copy="{= entryUrl =}"
                                                tooltip="{{ fragment_link }}"
                                                tooltip-append-to-body="true"
+                                               tooltip-trigger="'click':'mouseleave'"
                                                style="font-size: 16px;">
                                                 <i class="fa fa-fw fa-link"></i>
                                             </a>
