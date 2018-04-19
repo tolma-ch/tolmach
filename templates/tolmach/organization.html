@@ -40,13 +40,14 @@
                         {{ members_tab_label }}
                     </a>
                 </li>
-
-{#                <li class="{% if active_tab == 'settings' %}active{% endif %}">#}
-{#                    <a href="/orgs/{{ organization.slug }}/settings/">#}
-{#                        <i class="fa fa-cogs" aria-hidden="true"></i>#}
-{#                        {{ settings_tab_label }}#}
-{#                    </a>#}
-{#                </li>#}
+                {% if is_owner %}
+                <li class="{% if active_tab == 'settings' %}active{% endif %}">
+                    <a href="/orgs/{{ organization.slug }}/settings/">
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                        {{ settings_tab_label }}
+                    </a>
+                </li>
+                {% endif %}
             </ul>
             <div class="tab-content" ng-controller="organizationsCtrl">
             {% block tab-content %}

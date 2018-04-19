@@ -210,6 +210,7 @@ def organization_page(request, slug=""):
     data = {
         'active_tab': 'main',
         'is_admin': org.is_user_admin(request.user) or org.is_user_owner(request.user),
+        'is_owner': org.is_user_owner(request.user),
         'userData': json.dumps({
             'firstName': org.name,
             'orgId': org.id,
@@ -246,6 +247,7 @@ def organization_members_page(request, slug=""):
     data = {
         'active_tab': 'members',
         'is_admin': org.is_user_admin(request.user) or org.is_user_owner(request.user),
+        'is_owner': org.is_user_owner(request.user),
         'userData': json.dumps({
             'firstName': org.name,
             'orgId': org.id,
@@ -260,6 +262,38 @@ def organization_members_page(request, slug=""):
         ],
     }
     template = 'tolmach/partial/organization_members.html'
+
+    return render(request, template, data)
+
+
+@login_required
+def organization_settings_page(request, slug=""):
+    try:
+        org = Organization.objects.get(slug=slug)
+    except Organization.DoesNotExist:
+        raise Http404(_('Sorry, no such project here!'))
+
+    if not org.is_user_owner(request.user):
+        return HttpResponseRedirect('/')
+
+    data = {
+        'active_tab': 'settings',
+        'is_admin': org.is_user_admin(request.user) or org.is_user_owner(request.user),
+        'is_owner': org.is_user_owner(request.user),
+        'userData': json.dumps({
+            'firstName': org.name,
+            'orgId': org.id,
+        }),
+        'organization': org,
+        # 'members': org_members,
+        'profileType': 'organization',
+        'page_title': "%s / %s / %s / Tolma.ch" % (_("Members"), org.name[:30], _("Organizations")),
+        'breadcrumbs': [
+            {'title': _("Organizations"), 'url': '/orgs/', 'type': ''},
+            {'title': org.name, 'url': '', 'type': ''},
+        ],
+    }
+    template = 'tolmach/partial/organization_settings.html'
 
     return render(request, template, data)
 
