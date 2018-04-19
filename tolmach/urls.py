@@ -35,6 +35,7 @@ urlpatterns = [
     # organizations
     url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page),
     url(r'^orgs/(?P<slug>[\w-]+)/members/$', main_views.organization_members_page),
+    url(r'^orgs/(?P<slug>[\w-]+)/settings/$', main_views.organization_settings_page),
     url(r'^orgs/$', main_views.organizations),
 
     # translations

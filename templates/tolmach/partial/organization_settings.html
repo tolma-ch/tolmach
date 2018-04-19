@@ -1,0 +1,15 @@
+{% extends "tolmach/organization.html" %}
+{% load i18n %}
+
+{% block tab-content %}
+    <div class="form-group">
+        <label for="api-key-readonly" style="display: block;">{% trans "API-key:" %}</label>
+        <input type="text" class="col-xs-10 col-sm-5" id="api-key-readonly" value="{{ organization.api_key }}" readonly="true">
+        <a href="" style="font-size: 18px;
+    line-height: 29px;
+    padding: 0 5px;"><i class="fa fa-question-circle-o"></i></a>
+    </div>
+    {% include "tolmach/partial/add_org_participant_modal.html" %}
+    {% include "tolmach/partial/remove_org_participant_popover.html" %}
+    {% include "translations/partial/user_typeahead_template.html" %}
+{% endblock %}
