@@ -165,6 +165,15 @@
   margin-top: 15px !important;
 }
 
+.progress-bar-mobile {
+  height: 3px !important;
+  display: none;
+
+  .progress-bar__value {
+    display: none;
+  }
+}
+
 @media (max-width: 1242px) {
   .user-statistics-table {
     &__progress {
@@ -185,6 +194,24 @@
 }
 
 @media (max-width: 768px) {
+    .user-statistics-table {
+    &__progress {
+      padding: 8px 0;
+      width: 200px;
+    }
+  }
+}
+
+@media (max-width: 660px) {
+    .user-statistics-table {
+    &__progress {
+      padding: 8px 0;
+      width: 150px;
+    }
+  }
+}
+
+@media (max-width: 560px) {
   .user-statistics {
     &-table {
       &__progress {
@@ -195,6 +222,7 @@
           width: 100%;
           height: auto;
           background: transparent;
+          display: none;
 
           &__gauge {
             visibility: hidden;
@@ -224,6 +252,9 @@
       max-height: 50px !important;
       max-width: 50px !important;
     }
+  }
+  .progress-bar-mobile {
+    display: block !important;
   }
 }
 
