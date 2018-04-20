@@ -60,49 +60,7 @@
                             <span class="stripy-heading__after"></span>
                         </div>
                         <div class="user-statistics__recent-progress-table">
-                            <table cellpadding="0" cellspacing="0" class="user-statistics-table">
-                                <tbody>
-                                    {% for project in recent_projects %}
-                                    <tr class="user-statistics-table__row">
-                                        <td class="user-statistics-table__title">
-                                            <a href="/project/{{ project.id }}/">
-                                                {% if project.organization %}
-                                                    <span class="user-statistics-table__project-manager"><i class="fa fa-sitemap"></i> {{ project.organization|truncatechars:20 }} /</span>
-                                                {% else %}
-                                                    {% if not project.manager.username == user.username %}
-                                                        <span class="user-statistics-table__project-manager"> {{ project.manager|truncatechars:20 }} /</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                                <span class="user-statistics-table__project-title">{{ project.name }}</span>
-                                            </a>
-                                        </td>
-                                        <td class="user-statistics-table__progress">
-                                            <div class="progress-bar">
-                                                <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
-                                                <span class="progress-bar__value">{{ project.progress }}%</span>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {% if project.is_private %}
-                                            <i class="fa fa-lock"></i>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% empty %}
-                                    <div class="projects-background">
-                                        <span class="projects-background__icon">
-                                            <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">
-                                                <i class="fa fa-file-text-o projects-background__icon__front" aria-hidden="true"></i>
-                                            </i>
-                                        </span>
-                                        <span class="projects-background__text">
-                                            {{ empty_projects_label }}
-                                        </span>
-                                    </div>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-
+                            {% include "tolmach/partial/projects_list_table.html" %}
                             <a href="" class="btn helped-block btn-sm new-proj-block-btn"
                                ng-click="startNewProject()"
                                help-text="{% trans 'Click this button to create new project' %}">{{ start_new_label }}</a>

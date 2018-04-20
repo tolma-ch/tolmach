@@ -49,7 +49,7 @@ def index(request):
             empty_list = range(3-len(ordered_stat))
 
         data = {
-            'recent_projects': recent_projects,
+            'projects': recent_projects,
             'username': request.user.username,
             'usermeta': usermeta,
             'first_name': first_name,

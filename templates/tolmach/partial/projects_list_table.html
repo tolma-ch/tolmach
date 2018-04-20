@@ -1,0 +1,92 @@
+                        <table cellpadding="0" cellspacing="0" class="user-statistics-table">
+                            <tbody>
+                                {% for project in projects %}
+                                <tr class="user-statistics-table__row">
+                                    <td class="user-statistics-table__title">
+                                        <a href="/project/{{ project.id }}/">
+                                            {% if project.organization and not organization.id == project.organization.id %}
+                                                <span class="user-statistics-table__project-manager"><i class="fa fa-sitemap"></i> {{ project.organization|truncatechars:20 }} /</span>
+                                            {% else %}
+                                                {% if not project.manager.username == user.username %}
+                                                    <span class="user-statistics-table__project-manager"> {{ project.manager|truncatechars:20 }} /</span>
+                                                {% endif %}
+                                            {% endif %}
+                                            <span class="user-statistics-table__project-title">{{ project.name }}</span>
+                                            <div class="progress-bar progress-bar-mobile">
+                                                <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                                <span class="progress-bar__value">{{ project.progress }}%</span>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td class="user-statistics-table__progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                            <span class="progress-bar__value">{{ project.progress }}%</span>
+                                        </div>
+                                    </td>
+                                    <td class="user-statistics-table__remove-btn">
+                                        {% if project.is_private %}
+                                        <i class="fa fa-lock"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <div class="projects-background">
+                                    <div class="projects-background__tabs">
+                                        <span class="projects-background__icon">
+                                            <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">
+                                                <i class="fa fa-file-text-o projects-background__icon__front" aria-hidden="true"></i>
+                                            </i>
+                                        </span>
+                                        <span class="projects-background__text">
+                                            {{ empty_projects_label }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if projects.paginator.num_pages > 1 %}
+                        <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
+                        <ul class="pagination projects-paginator">
+                            {% if projects.has_previous %}
+                            <li>
+                                <a href="?page={{projects.previous_page_number}}">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% for i in projects.paginator.page_range %}
+                                {% if projects.number == i %}
+                                    <li class="active">
+                                        <a href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% elif i > projects.number|add:'-4' and i < projects.number|add:'4' %}
+                                    <li>
+                                        <a href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if projects.has_next %}
+                            <li>
+                                <a href="?page={{ projects.next_page_number }}">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="disabled">
+                                <a href="">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        </div>
+                        {% endif %}
