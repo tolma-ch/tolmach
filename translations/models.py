@@ -9,10 +9,13 @@ from channels import Group
 from entries.models import Subject, Language
 # from tolmach.models import Organization
 
-def random_invite_code(length=15):
+def random_string(length=30):
     import random, string
 
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+
+def random_invite_code():
+    return random_string(15)
 
 
 class Glossary(models.Model):

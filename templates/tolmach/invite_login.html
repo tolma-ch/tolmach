@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'dist/landing.css' %}">
     <script src="{% static 'assets/jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'assets/bootstrap/dist/js/bootstrap.min.j3s' %}"></script>
+    <script src="{% static 'assets/bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <title>Login</title>
 </head>
 <body>
@@ -250,7 +250,11 @@
                             csrfmiddlewaretoken: csrfmiddlewaretoken
                         }
                     }).done(function (data) {
-                        location.href = "/";
+                        if (data.redirect.length > 1) {
+                            location.href = data.redirect;
+                        } else {
+                            location.href = "/";
+                        }
                     }).fail(function (data) {
                         if (data['responseJSON'] && data['responseJSON']['message']) {
                             showError(data['responseJSON']['message']);

@@ -199,6 +199,8 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 URL_PATH = ''
 
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/social-login/"
+
 SOCIAL_AUTH_PROVIDERS = [
     {'id': p[0], 'name': p[1], 'icon': p[2]}
     for p in (

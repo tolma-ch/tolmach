@@ -6,7 +6,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -16,7 +16,6 @@ from tolmach.models import UserMeta
 from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
-from tolmach.utils import invite_user
 
 from tolmach import settings
 
@@ -262,26 +261,6 @@ def project_by_translation(request, target_lang, proj_id=0):
     }
     template = 'translations/project.html'
     return render(request, template, data)
-
-
-def project_invite(request, invite_id):
-    # TODO: ratelimit this call
-    if request.user.is_authenticated():
-        proj_id = invite_user(request.user, invite_id, "project")
-
-        return redirect(project, proj_id=proj_id)
-    else:
-        # if not user is authorised, we need to save invitation code to his cookies
-        data = {
-            'extra_login_data': {
-                'project_invite_code': invite_id
-            }
-        }
-        response = render(request, 'tolmach/invite_login.html', data)
-        response.set_cookie('project_invite_code', invite_id)
-
-        # then, return him auth/register window
-        return response
 
 
 @login_required
