@@ -43,9 +43,9 @@ urlpatterns = [
 
     # dev needs
     url(r'^project_lang_stats/$', trans_views.project_lang_stats),
-    url(r'^new_project_page/$', trans_views.new_project_page),
     
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
+    url(r'^project/i/(?P<invite_id>\w+)/$', trans_views.project_invite, name='project_invitation'),
     url(r'^project/(?P<proj_id>\d+)/(?P<target_lang>\w+)/$', trans_views.project_by_translation, name='project_by_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),

@@ -2,6 +2,10 @@ from django.db import models, transaction
 from django.utils import timezone
 from autoslug import AutoSlugField
 
+def random_invite_code(length=15):
+    import random, string
+
+    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
 
 class UserMeta(models.Model):
     """
@@ -95,8 +99,10 @@ class Organization(models.Model):
     api_key = models.CharField(max_length=256, default=random_string)
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
+    invite_link_code = models.CharField(default = random_invite_code, null = True, unique=True, max_length=15)
     slug = AutoSlugField(populate_from='name',
-                         unique=True)
+                         unique=True,
+                         default = None, null = True)
 
     def __str__(self):
         return self.name

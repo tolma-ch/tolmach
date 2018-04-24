@@ -6,7 +6,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -16,6 +16,7 @@ from tolmach.models import UserMeta
 from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
+from tolmach.utils import invite_user
 
 from tolmach import settings
 
@@ -150,41 +151,6 @@ def project_lang_stats(request):
 
 
 @login_required
-def new_project_page(request):
-    pr = Project.objects.get(id=7)
-    lang_list = []
-    # Получаем список названий языков для текущей локали
-    from babel import Locale
-    for lang in Language.objects.all():
-        lang_name = Locale(lang.code)
-        localized_lang = lang
-        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
-        lang_list.append(localized_lang)
-    project_translation = ProjectTranslation.objects.get(project=pr)
-    pr.translation = project_translation
-
-    data ={
-        'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
-        'manager_id': pr.manager.id,
-        'project': pr,
-        'projectData': json.dumps({
-            'id': pr.id,
-            'name': pr.name,
-            'description': pr.description,
-        }),
-        'languages': lang_list,
-        'languagesData': json.dumps([{
-                                     'code': lang.code,
-                                     'langFull': lang.name,
-                                     'langLocal': lang.localized_name,
-                                     'id': lang.id
-                                     } for lang in lang_list]),
-        'subjects': Subject.objects.all(),}
-    # print(json.dumps(data))
-    template = 'translations/dev_new_project.html'
-    return render(request, template, data)
-
-@login_required
 def project(request, proj_id=0):
     projects_text = ''
     projects_url = ''
@@ -296,6 +262,26 @@ def project_by_translation(request, target_lang, proj_id=0):
     }
     template = 'translations/project.html'
     return render(request, template, data)
+
+
+def project_invite(request, invite_id):
+    # TODO: ratelimit this call
+    if request.user.is_authenticated():
+        proj_id = invite_user(request.user, invite_id, "project")
+
+        return redirect(project, proj_id=proj_id)
+    else:
+        # if not user is authorised, we need to save invitation code to his cookies
+        data = {
+            'extra_login_data': {
+                'project_invite_code': invite_id
+            }
+        }
+        response = render(request, 'tolmach/invite_login.html', data)
+        response.set_cookie('project_invite_code', invite_id)
+
+        # then, return him auth/register window
+        return response
 
 
 @login_required
