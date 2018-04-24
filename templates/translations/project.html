@@ -56,21 +56,31 @@
                 <span ng-show="!editingName">
                     {= project.name =}
                 </span>
-                <i class="flag flag-{{ project.source_lang }}"></i>
-                <i class="fa fa-chevron-right"></i>
-                <div class="dropdown project-select-translation">
-                  <button class="btn dropdown-toggle project-select-translation__button" type="button" data-toggle="dropdown">
-                      <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang_local }}
-                  <span class="caret"></span></button>
-                  <ul class="dropdown-menu project-select-translation__menu">
-                      {% for pr_translation in project.translations %}
-                    <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
-                      {% endfor %}
-                    <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
-                  </ul>
+                <div class="project-language-pair">
+                    <i class="flag flag-{{ project.source_lang }}"></i>
+                    <i class="fa fa-chevron-right"></i>
+                    <div class="dropdown project-select-translation">
+                      <button class="btn dropdown-toggle project-select-translation__button" type="button" data-toggle="dropdown">
+                          <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang_local }}
+                      <span class="caret"></span></button>
+                      <ul class="dropdown-menu project-select-translation__menu">
+                          {% for pr_translation in project.translations %}
+                        <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
+                          {% endfor %}
+                        <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation' %}</a></li>
+                      </ul>
+                    </div>
                 </div>
 
             </h1>
+{#                    <a href=""#}
+{#                       style="float: right; top: -37px;"#}
+{#                       class="btn btn-success helped-block btn-sm"#}
+{#                       ng-click="addText()"#}
+{#                       ng-show="(isUserManager || (userMembershipStatus == 0))"#}
+{#                       tooltip="{% trans 'Add' %}"#}
+{#                       tooltip-append-to-body="true"#}
+{#                       help-text='{% trans "Click here to add new document to translate" %}'><i class="fa fa-users" aria-hidden="true"></i> {% trans 'Members' %}</a>#}
         </div>
 
 
@@ -95,6 +105,10 @@
                                 <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/">
                                     <div class="project-list-text__title">
                                         {=:: text.title =}
+                                    </div>
+                                    <div class="progress-bar progress-bar-mobile">
+                                        <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>
+                                        <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
                                     </div>
                                 </a>
                                 <div class="project-list-text__cell">

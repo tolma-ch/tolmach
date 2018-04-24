@@ -9,6 +9,11 @@ from channels import Group
 from entries.models import Subject, Language
 # from tolmach.models import Organization
 
+def random_invite_code(length=15):
+    import random, string
+
+    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+
 
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
@@ -96,6 +101,7 @@ class Project(models.Model):
                                      null=True,
                                      related_name='project_organization',
                                      on_delete=models.deletion.SET_NULL)
+    invite_link_code = models.CharField(default = random_invite_code, null = True, unique=True, max_length=15)
 
     def __str__(self):
         return self.name

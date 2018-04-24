@@ -14,7 +14,7 @@ from translations.models import Project, Text, TextTranslation, TextEntry
 from entries.models import Language, Subject
 
 from tolmach.models import UserMeta, PairStats, Organization, OrganizationMember
-from tolmach import utils
+from tolmach import utils as tolmach_utils
 
 
 def index(request):
@@ -23,7 +23,7 @@ def index(request):
         last_name = request.user.last_name
 
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
-        ordered_stat, total_translated = utils.get_user_stat(request.user)
+        ordered_stat, total_translated = tolmach_utils.get_user_stat(request.user)
 
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
         recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
@@ -85,7 +85,7 @@ def user_page(request, user_id):
     else:
         projects = Project.objects.filter(manager=user, is_private=False).order_by('-last_modified')
     usermeta = UserMeta.objects.get(user=user)
-    ordered_stat, total_translated = utils.get_user_stat(user)
+    ordered_stat, total_translated = tolmach_utils.get_user_stat(user)
 
     for proj in projects:
         proj.progress = proj.get_progress()
@@ -322,10 +322,16 @@ def register(request):
 
     status = "0"
     message = ""
+    project_invite_code = request.COOKIES.get('project_invite_code', False)
+    org_invite_code = request.COOKIES.get('org_invite_code', False)
 
     try:
         new_user = User.objects.create_user(username, email, password)
         user = authenticate(username=username, password=password)
+
+        if project_invite_code:
+            tolmach_utils.invite_user(user, project_invite_code, "project")
+
         login(request, user)
         # return HttpResponseRedirect("/")
         # Redirect to a success page.
@@ -357,10 +363,20 @@ def login_user(request):
         raise Http404()
 
     from django.contrib.auth import authenticate, login
+    from django.urls import reverse
 
     username = request.POST.get('username', False)
     password = request.POST.get('password', False)
+
+    redirect = ""
+    project_invite_code = request.COOKIES.get('project_invite_code', False)
+    org_invite_code = request.COOKIES.get('org_invite_code', False)
+
     user = authenticate(username=username, password=password)
+
+    if project_invite_code:
+        proj_id = tolmach_utils.invite_user(user, project_invite_code, "project")
+        redirect = reverse('project', kwargs={'proj_id': proj_id})
     message = ''
     if user is not None:
         if user.is_active:
@@ -376,9 +392,11 @@ def login_user(request):
         message = 'Wrong username or password'
         # Return an 'invalid login' error message.
 
+    print(redirect)
     some_data_to_dump = {
         'status': status,
         'message': message,
+        'redirect': redirect,
     }
 
     answer = json.dumps(some_data_to_dump)
@@ -386,7 +404,11 @@ def login_user(request):
     response_status = 200
     if status != "0":
         response_status = 400
-    return HttpResponse(answer, content_type="application/json", status=response_status)
+    response = HttpResponse(answer, content_type="application/json", status=response_status)
+    response.delete_cookie('project_invite_code')
+    response.delete_cookie('org_invite_code')
+
+    return response
 
 
 def reset_password_approve(request):

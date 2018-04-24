@@ -3,6 +3,9 @@
 from tolmach.models import Messages
 from tolmach.models import PairStats, UserMeta
 from tolmach.models import OrganizationMember
+from translations.models import Project
+
+from django.shortcuts import get_object_or_404
 
 
 def send_message(originator, addressee, message, type):
@@ -42,7 +45,28 @@ def org_user_to_json(user, org=None):
     }
 
 
-def random_string(len=30):
+def random_string(length=30):
     import random, string
 
-    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(len))
+    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+
+def invite_user(user, invite_code, invite_type="project"):
+    if invite_type == "project":
+        proj = get_object_or_404(Project, invite_link_code=invite_code)
+
+        # check, if the user is not a member or manager of the project
+        if not proj.is_user_a_member(user) or not proj.is_user_manager(user):
+            # invite user to the project
+            proj.invite_user(user)
+
+        redirect_id = proj.id
+    # elif invite_type == "organization":
+    #     org = get_object_or_404(Organization, invite_link_code=invite_code)
+    #
+    #     # check, if the user is not a member or manager of the project
+    #     if not org.is_user_member(user) or not org.is_user_owner(user):
+    #         # invite user to the project
+    #         org.invite_user(user)
+    #
+    #     redirect_id = org.id
+    return redirect_id

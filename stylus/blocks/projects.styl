@@ -542,6 +542,21 @@
 			.flag
 				background-color #e8e8e8;
 
+@media (max-width: 560px)
+	.project-list-text
+		&__progress
+			.progress-bar
+				display none
+		&__title
+			padding 8px 0 0 0 !important
+		&__cell
+			width 10% !important
+		&__edit-button
+			width 10% !important
+			max-width 25px !important
+	.project-language-pair
+		margin 10px 0 0 0
+		display block !important
 
 .project-list-glossary
 	display block
@@ -618,6 +633,9 @@
 	&.drag-over
 		background: #eeeeee;
 		border-color: rgb(67, 142, 185);
+
+.project-language-pair
+	display inline-block
 
 .project-select-translation
 	display inline-block
