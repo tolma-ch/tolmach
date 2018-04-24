@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-15 17:23+0300\n"
+"POT-Creation-Date: 2018-04-24 09:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,41 +39,6 @@ msgstr "未找到"
 
 #: chat/views.py:48
 msgid "Text is empty"
-msgstr ""
-
-#: templates/email/emailtemplatesbodies.json:5
-msgid "Welcome to Tolma.ch!"
-msgstr "欢迎光临Tolma.ch！"
-
-#: templates/email/emailtemplatesbodies.json:7
-msgid "Start Translating in Minutes"
-msgstr "开始翻译吧！"
-
-#: templates/email/emailtemplatesbodies.json:8
-#: templates/email/emailtemplatesbodies.json:17
-#, fuzzy
-#| msgid "Hello, <b>{{username}}</b>!"
-msgid "Hello, <b><username></b>!"
-msgstr "你好, <b><username></b>!"
-
-#: templates/email/emailtemplatesbodies.json:9
-msgid ""
-"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-"excited to have you on-board."
-msgstr "我们很高兴您同意我们的会社！"
-
-#: templates/email/emailtemplatesbodies.json:14
-#: templates/email/emailtemplatesbodies.json:16
-#, fuzzy
-#| msgid "Password"
-msgid "Password reset approval"
-msgstr "密码"
-
-#: templates/email/emailtemplatesbodies.json:18
-msgid ""
-"You have asked for a new password. Here is the URL to reset the password:"
-"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
-"not asked for new password, just ignore this messsage."
 msgstr ""
 
 #: templates/main/base-logged-in.html:5
@@ -132,17 +97,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:92 templates/main/base.html:198
+#: templates/main/base.html:99 templates/main/base.html:205
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:95 templates/main/base.html:201
+#: templates/main/base.html:102 templates/main/base.html:208
 #: templates/translations/partial/add_text_modal.html:109
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:227
+#: templates/main/base.html:234
 msgid "No results"
 msgstr "没有结果"
 
@@ -588,12 +553,13 @@ msgstr "创建项目"
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:256
+#: templates/tolmach/organization.html:8 tolmach/views.py:258
+#: tolmach/views.py:290
 msgid "Members"
 msgstr ""
 
-#: templates/tolmach/organization.html:140 templates/tolmach/profile.html:108
-#: templates/translations/projects.html:115
+#: templates/tolmach/organization.html:61 templates/tolmach/profile.html:66
+#: templates/translations/projects.html:28
 msgid "Click this button to create new project"
 msgstr "点击此按钮创建新项目"
 
@@ -692,10 +658,10 @@ msgid "Advanced options"
 msgstr "高级选项"
 
 #: templates/tolmach/partial/new_organization_modal.html:6
-#: templates/tolmach/view_user.html:11
-#: templates/translations/partial/new_project_modal.html:6
-msgid "Short project name"
-msgstr "项目短名"
+#, fuzzy
+#| msgid "Translation"
+msgid "Short organization name"
+msgstr "翻译"
 
 #: templates/tolmach/partial/new_organization_modal.html:7
 #: templates/tolmach/view_user.html:12
@@ -753,6 +719,10 @@ msgstr ""
 msgid "Click this button to invite users to your organization"
 msgstr "点击此按钮创建新项目"
 
+#: templates/tolmach/partial/organization_settings.html:6
+msgid "API-key:"
+msgstr ""
+
 #: templates/tolmach/partial/profile-sidebar.html:35
 msgid "Click this button to edit your name and change profile picture"
 msgstr ""
@@ -793,8 +763,8 @@ msgid "Total"
 msgstr "总计"
 
 #: templates/tolmach/profile.html:8 tolmach/views.py:155 tolmach/views.py:157
-#: tolmach/views.py:221 tolmach/views.py:223 tolmach/views.py:256
-#: tolmach/views.py:258
+#: tolmach/views.py:222 tolmach/views.py:224 tolmach/views.py:258
+#: tolmach/views.py:260 tolmach/views.py:290 tolmach/views.py:292
 #, fuzzy
 #| msgid "Translation"
 msgid "Organizations"
@@ -808,7 +778,7 @@ msgstr "概述"
 msgid "Recent projects"
 msgstr "最近项目"
 
-#: templates/tolmach/profile.html:124 templates/tolmach/view_user.html:115
+#: templates/tolmach/profile.html:82 templates/tolmach/view_user.html:115
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译碎片"
@@ -823,6 +793,11 @@ msgstr "添加项目"
 #: templates/translations/partial/new_project_modal.html:4
 msgid "Project name"
 msgstr "项目名称"
+
+#: templates/tolmach/view_user.html:11
+#: templates/translations/partial/new_project_modal.html:6
+msgid "Short project name"
+msgstr "项目短名"
 
 #: templates/tolmach/view_user.html:13 templates/translations/projects.html:7
 msgid "Public"
@@ -971,7 +946,9 @@ msgid "Someone is working on this fragment right now..."
 msgstr ""
 
 #: templates/translations/project.html:69
-msgid "Add new translation"
+#, fuzzy
+#| msgid "Add new translation"
+msgid "Add new translation language"
 msgstr "添加新翻译题"
 
 #: templates/translations/project.html:82
@@ -979,12 +956,12 @@ msgid "Documents"
 msgstr "文档"
 
 #: templates/translations/project.html:104
-#: templates/translations/view-text.html:397
+#: templates/translations/view-text.html:399
 msgid "Fragments approved:"
 msgstr "肯定的碎片"
 
 #: templates/translations/project.html:105
-#: templates/translations/view-text.html:398
+#: templates/translations/view-text.html:400
 msgid "Fragments translated:"
 msgstr "翻译的碎片"
 
@@ -1093,8 +1070,8 @@ msgid "Cancel (Esc)"
 msgstr "取消 (Esc)"
 
 #: templates/translations/view-text.html:17
-msgid "Fragment link"
-msgstr "碎片链接"
+msgid "Copied!"
+msgstr ""
 
 #: templates/translations/view-text.html:18
 msgid "Original"
@@ -1109,60 +1086,60 @@ msgid "Add with"
 msgstr "保存用"
 
 #: templates/translations/view-text.html:109
-#: templates/translations/view-text.html:285
+#: templates/translations/view-text.html:287
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:133
+#: templates/translations/view-text.html:135
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:134
+#: templates/translations/view-text.html:136
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:295
+#: templates/translations/view-text.html:297
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:302
+#: templates/translations/view-text.html:304
 msgid "Edit translation"
 msgstr "编辑翻译"
 
-#: templates/translations/view-text.html:375
+#: templates/translations/view-text.html:377
 msgid "Dictionary"
 msgstr "词典"
 
-#: templates/translations/view-text.html:415
+#: templates/translations/view-text.html:417
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:416
+#: templates/translations/view-text.html:418
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:417
+#: templates/translations/view-text.html:419
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:418
+#: templates/translations/view-text.html:420
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:419
+#: templates/translations/view-text.html:421
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:420
+#: templates/translations/view-text.html:422
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:421
+#: templates/translations/view-text.html:423
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:422
+#: templates/translations/view-text.html:424
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
@@ -1183,17 +1160,18 @@ msgstr "未找到翻译"
 msgid "member"
 msgstr ""
 
-#: tolmach/views.py:171 tolmach/views.py:238 translations/views.py:195
-#: translations/views.py:197 translations/views.py:212
-#: translations/views.py:217 translations/views.py:219
+#: tolmach/views.py:171 tolmach/views.py:239 tolmach/views.py:274
+#: translations/views.py:195 translations/views.py:197
+#: translations/views.py:212 translations/views.py:217
+#: translations/views.py:219
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: tolmach/views.py:365
+#: tolmach/views.py:399
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:455
+#: tolmach/views.py:489
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
@@ -1466,6 +1444,30 @@ msgstr ""
 #: translations/views_ajax.py:1221
 msgid "TMDB unavaliable at the moment"
 msgstr ""
+
+#~ msgid "Welcome to Tolma.ch!"
+#~ msgstr "欢迎光临Tolma.ch！"
+
+#~ msgid "Start Translating in Minutes"
+#~ msgstr "开始翻译吧！"
+
+#, fuzzy
+#~| msgid "Hello, <b>{{username}}</b>!"
+#~ msgid "Hello, <b><username></b>!"
+#~ msgstr "你好, <b><username></b>!"
+
+#~ msgid ""
+#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+#~ "excited to have you on-board."
+#~ msgstr "我们很高兴您同意我们的会社！"
+
+#, fuzzy
+#~| msgid "Password"
+#~ msgid "Password reset approval"
+#~ msgstr "密码"
+
+#~ msgid "Fragment link"
+#~ msgstr "碎片链接"
 
 #~ msgid "Messages"
 #~ msgstr "消息"

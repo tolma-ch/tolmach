@@ -1,9 +1,9 @@
 {% load i18n %}
 
-{% trans 'Create organization' as add_project_header %}
-{% trans 'Organization name' as project_name_label %}
+{% trans 'Create organization' as add_org_header %}
+{% trans 'Organization name' as org_name_label %}
 {% trans 'Advanced options' as advanced_options_label %}
-{% trans 'Short project name' as short_name_label %}
+{% trans 'Short organization name' as short_org_name_label %}
 {% trans 'Short project description' as short_description_name %}
 {% trans 'public' as public_checkbox %}
 {% trans 'All users can see your project' as public_checkbox_description %}
@@ -30,16 +30,16 @@
         <button type="button"
                 class="bootbox-close-button close"
                 ng-click="cancel()">×</button>
-        <h3 class="modal-title">{{ add_project_header }}</h3>
+        <h3 class="modal-title">{{ add_org_header }}</h3>
     </div>
     <div class="modal-body">
         <form>
             <div class="form-group">
-                <label class="control-label no-padding-right" for="form-field-1"> {{ project_name_label }}: </label>
+                <label class="control-label no-padding-right" for="form-field-1"> {{ org_name_label }}: </label>
                 <div class="">
                     <input type="text"
                            id="form-field-1"
-                           placeholder="{{ short_name_label }}"
+                           placeholder="{{ short_org_name_label }}"
                            class="form-control"
                            ng-model="name"
                            autofocus>

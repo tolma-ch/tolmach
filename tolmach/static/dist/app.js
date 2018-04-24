@@ -973,7 +973,7 @@
                 $http.delete('/ajax/project/', {params: {id: project.id}})
                     .success(function () {
                         $scope.busy = false;
-                        location.href = '/projects/';
+                        location.href = '/projects/my/';
                     })
                     .error(function (data) {
                         $scope.error = data;
