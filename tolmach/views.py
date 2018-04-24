@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponse, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.contrib.auth.models import User
 from django.db.models import Sum, Q
 
@@ -298,6 +298,46 @@ def organization_settings_page(request, slug=""):
     return render(request, template, data)
 
 
+def invite_urls(request, invite_type, invite_id):
+    from tolmach.utils import invite_user
+    # TODO: ratelimit this call
+    if request.user.is_authenticated():
+        redirect_path = invite_user(request.user, invite_id, invite_type)
+
+        response = redirect(redirect_path)
+        return response
+    else:
+        # if not user is authorised, we need to save invitation code to his cookies
+        data = {
+            "extra_login_data": {}
+        }
+        if invite_type == "project":
+            data['extra_login_data']['project_invite_code'] = invite_id
+        elif invite_type == "org":
+            data['extra_login_data']['org_invite_code'] = invite_id
+
+        response = render(request, 'tolmach/invite_login.html', data)
+        if invite_type == "project":
+            response.set_cookie('project_invite_code', invite_id)
+        elif invite_type == "org":
+            response.set_cookie('org_invite_code', invite_id)
+
+        # then, return him auth/register window
+        return response
+
+def post_social_auth(request):
+    if request.COOKIES.get('project_invite_code', False):
+        response = redirect(reverse('invitation_url', kwargs={'invite_type': 'project', 'invite_id': request.COOKIES.get('project_invite_code', False)}))
+        response.delete_cookie('project_invite_code')
+    elif request.COOKIES.get('org_invite_code', False):
+        response = redirect(reverse('invitation_url', kwargs={'invite_type': 'org', 'invite_id': request.COOKIES.get('org_invite_code', False)}))
+        response.delete_cookie('org_invite_code')
+    else:
+        response = redirect('/')
+
+    return response
+
+
 def handler404(request):
     response = render(request, 'main/404.html', {})
     response.status_code = 404
@@ -322,6 +362,7 @@ def register(request):
 
     status = "0"
     message = ""
+    redirect = ""
     project_invite_code = request.COOKIES.get('project_invite_code', False)
     org_invite_code = request.COOKIES.get('org_invite_code', False)
 
@@ -330,7 +371,9 @@ def register(request):
         user = authenticate(username=username, password=password)
 
         if project_invite_code:
-            tolmach_utils.invite_user(user, project_invite_code, "project")
+            redirect = tolmach_utils.invite_user(user, project_invite_code, "project")
+        if org_invite_code:
+            redirect = tolmach_utils.invite_user(user, org_invite_code, "organization")
 
         login(request, user)
         # return HttpResponseRedirect("/")
@@ -342,6 +385,7 @@ def register(request):
     answer = {
         'status': status,
         'message': message,
+        'redirect': redirect,
     }
 
     response_status = 200
@@ -355,7 +399,11 @@ def register(request):
                          user_email=email,
                          template='multilang-welcome')
 
-    return HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
+    response = HttpResponse(json.dumps(answer), content_type='application/json', status=response_status)
+    response.delete_cookie('project_invite_code')
+    response.delete_cookie('org_invite_code')
+
+    return response
 
 
 def login_user(request):
@@ -363,7 +411,6 @@ def login_user(request):
         raise Http404()
 
     from django.contrib.auth import authenticate, login
-    from django.urls import reverse
 
     username = request.POST.get('username', False)
     password = request.POST.get('password', False)
@@ -375,8 +422,10 @@ def login_user(request):
     user = authenticate(username=username, password=password)
 
     if project_invite_code:
-        proj_id = tolmach_utils.invite_user(user, project_invite_code, "project")
-        redirect = reverse('project', kwargs={'proj_id': proj_id})
+        redirect = tolmach_utils.invite_user(user, project_invite_code, "project")
+    if org_invite_code:
+        redirect = tolmach_utils.invite_user(user, org_invite_code, "organization")
+
     message = ''
     if user is not None:
         if user.is_active:
@@ -392,7 +441,6 @@ def login_user(request):
         message = 'Wrong username or password'
         # Return an 'invalid login' error message.
 
-    print(redirect)
     some_data_to_dump = {
         'status': status,
         'message': message,

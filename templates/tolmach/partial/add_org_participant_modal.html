@@ -7,6 +7,20 @@
         <h3 class="modal-title">{% trans "Invite organization participant" %}</h3>
     </div>
     <div class="modal-body">
+        <div class="participant-invite-link" style="margin-bottom: 20px;">
+            <span>
+                {% trans "Invite users from all over the world via link:" %}
+            </span>
+            <div class="input-group">
+                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/">
+                <span class="input-group-addon">
+                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+        <span>
+            {% trans "or find one among the users of Tolma.ch:" %}
+        </span>
         <form>
             <div class="form-group">
                 <input type="text"

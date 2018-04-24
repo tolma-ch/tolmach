@@ -2,7 +2,7 @@
 
 from tolmach.models import Messages
 from tolmach.models import PairStats, UserMeta
-from tolmach.models import OrganizationMember
+from tolmach.models import OrganizationMember, Organization
 from translations.models import Project
 
 from django.shortcuts import get_object_or_404
@@ -51,6 +51,8 @@ def random_string(length=30):
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
 
 def invite_user(user, invite_code, invite_type="project"):
+    from django.urls import reverse
+    redirect = ""
     if invite_type == "project":
         proj = get_object_or_404(Project, invite_link_code=invite_code)
 
@@ -59,14 +61,15 @@ def invite_user(user, invite_code, invite_type="project"):
             # invite user to the project
             proj.invite_user(user)
 
-        redirect_id = proj.id
-    # elif invite_type == "organization":
-    #     org = get_object_or_404(Organization, invite_link_code=invite_code)
-    #
-    #     # check, if the user is not a member or manager of the project
-    #     if not org.is_user_member(user) or not org.is_user_owner(user):
-    #         # invite user to the project
-    #         org.invite_user(user)
-    #
-    #     redirect_id = org.id
-    return redirect_id
+        redirect = reverse('project', kwargs={'proj_id': proj.id})
+
+    elif invite_type == "org":
+        org = get_object_or_404(Organization, invite_link_code=invite_code)
+
+        # check, if the user is not a member or manager of the project
+        if not org.is_user_member(user) or not org.is_user_owner(user):
+            # invite user to the project
+            org.invite_user(user)
+
+            redirect = reverse('organization', kwargs={'slug': org.slug})
+    return redirect

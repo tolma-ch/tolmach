@@ -31,11 +31,13 @@ urlpatterns = [
     url(r'password-reset/(?P<token>\w+)/$', main_views.reset_password_form, name="reset_password_form"),
     url(r'password-accept/$', main_views.accept_password, name="accept_password"),
     url(r'^login/', main_views.login_user, name="login_user"),
+    url(r'^social-login/', main_views.post_social_auth),
+    url(r'^(?P<invite_type>\w+)/i/(?P<invite_id>\w+)/$', main_views.invite_urls, name='invitation_url'),
 
     # organizations
-    url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page),
-    url(r'^orgs/(?P<slug>[\w-]+)/members/$', main_views.organization_members_page),
-    url(r'^orgs/(?P<slug>[\w-]+)/settings/$', main_views.organization_settings_page),
+    url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page, name='organization'),
+    url(r'^orgs/(?P<slug>[\w-]+)/members/$', main_views.organization_members_page, name='organization_members'),
+    url(r'^orgs/(?P<slug>[\w-]+)/settings/$', main_views.organization_settings_page, name='organization_settings'),
     url(r'^orgs/$', main_views.organizations),
 
     # translations
@@ -45,7 +47,6 @@ urlpatterns = [
     url(r'^project_lang_stats/$', trans_views.project_lang_stats),
     
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
-    url(r'^project/i/(?P<invite_id>\w+)/$', trans_views.project_invite, name='project_invitation'),
     url(r'^project/(?P<proj_id>\d+)/(?P<target_lang>\w+)/$', trans_views.project_by_translation, name='project_by_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),

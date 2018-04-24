@@ -2,10 +2,13 @@ from django.db import models, transaction
 from django.utils import timezone
 from autoslug import AutoSlugField
 
-def random_invite_code(length=15):
+def random_string(length=30):
     import random, string
 
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+
+def random_invite_code():
+    return random_string(15)
 
 class UserMeta(models.Model):
     """
@@ -92,7 +95,6 @@ class OrganizationMember(models.Model):
 
 
 class Organization(models.Model):
-    from tolmach.utils import random_string
     name = models.CharField(max_length=50, default=None, null=True)
     owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     members = models.ManyToManyField('auth.User', through=OrganizationMember, related_name='organization_members')
