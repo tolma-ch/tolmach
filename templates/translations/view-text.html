@@ -93,9 +93,16 @@
                         ---------------------------------->
                         <div class="text-piece__original" ng-mouseup="mouseup($event)">
                             <div ng-if="$parent.activeEntry !== entry">
-                                <div ng-if="!entry.approved">
+                                <div ng-if="!entry.approved && (entry.translations.length == 0)">
                                     <span html-content="entry.body"></span>
                                     {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                </div>
+                                <div ng-if="!entry.approved && (entry.translations.length > 0)">
+                                    <span html-content="entry.translations[entry.translations.length-1].body"></span>
+                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    <div class="translation-variant__author">
+                                        <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
+                                    </div>
                                 </div>
                                 <div ng-if="entry.approved">
                                     <span class="text-piece__body">

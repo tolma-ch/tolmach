@@ -108,6 +108,7 @@
                               ">
                         {= messages.length =}
                     </span>
+                    <i class="fa fa-bell-o" aria-hidden="true" ng-show="!messages.length"></i>
                     {% trans 'Notifications' %}
                 </a>
             </li>
@@ -129,7 +130,10 @@
             <!--<li class="divider"></li>-->
 
             <li class="dropdown-hover dropleft">
-                <a href="#" tabindex="-1">{{ language }}</a>
+                <a href="#" tabindex="-1">
+                    <i class="fa fa-globe" aria-hidden="true"></i>
+                    {{ language }}
+                </a>
 
                 <ul class="dropdown-menu pull-left">
                     <li>
@@ -164,7 +168,7 @@
 
             <li>
                 <a href="/logout">
-                    <i class="fa-off"></i>
+                    <i class="fa fa-sign-out" aria-hidden="true"></i>
                     {{ logout }}
                 </a>
             </li>
