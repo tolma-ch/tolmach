@@ -44,7 +44,8 @@ def logo_special(request):
         }
 
 def base_domain(request):
-    print("https" if request.is_secure() else "http" + "://" + request.get_host())
+    method = "https" if request.is_secure() else "http"
+    domain = request.get_host()
     return {
-        "base_domain": "https" if request.is_secure() else "http" + "://" + request.get_host()
+        "base_domain": method + "://" + domain
     }
