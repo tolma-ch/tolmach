@@ -57,7 +57,7 @@ def invite_user(user, invite_code, invite_type="project"):
         proj = get_object_or_404(Project, invite_link_code=invite_code)
 
         # check, if the user is not a member or manager of the project
-        if not proj.is_user_a_member(user) or not proj.is_user_manager(user):
+        if not proj.is_user_a_member(user) and not proj.is_user_manager(user):
             # invite user to the project
             proj.invite_user(user)
 
@@ -67,7 +67,7 @@ def invite_user(user, invite_code, invite_type="project"):
         org = get_object_or_404(Organization, invite_link_code=invite_code)
 
         # check, if the user is not a member or manager of the project
-        if not org.is_user_member(user) or not org.is_user_owner(user):
+        if not org.is_user_member(user) and not org.is_user_owner(user):
             # invite user to the project
             org.invite_user(user)
 
