@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^login/', main_views.login_user, name="login_user"),
     url(r'^social-login/', main_views.post_social_auth),
     url(r'^(?P<invite_type>\w+)/i/(?P<invite_id>\w+)/$', main_views.invite_urls, name='invitation_url'),
+    url(r'^(?P<invite_type>\w+)/i/(?P<invite_id>\w+).jpg$', main_views.invite_urls_og_image, name='invitation_url_image'),
 
     # organizations
     url(r'^orgs/(?P<slug>[\w-]+)/$', main_views.organization_page, name='organization'),

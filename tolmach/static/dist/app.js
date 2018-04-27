@@ -1484,6 +1484,8 @@
 
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
+            $scope.baseHost = $scope.isHttps ? 'https' : 'http' + '://' + $scope.getHost;
+            console.log($scope.baseHost);
 
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;

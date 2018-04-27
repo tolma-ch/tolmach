@@ -131,6 +131,7 @@ TEMPLATES = [
                                     'django.core.context_processors.i18n',
                                     'tolmach.context_processors.ya_metrika',
                                     'tolmach.context_processors.less_debug',
+                                    'tolmach.context_processors.base_domain',
                                     'tolmach.context_processors.logo_special',],
             'debug': DEBUG,
         }
