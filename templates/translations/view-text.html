@@ -126,7 +126,7 @@
                                         <span html-content="entry.body"></span>
                                         {% include "translations/partial/text-page-now-editing-icon.html" %}
                                         <div class="text-piece__icons">
-                                            <a ng-init="entryUrl = isHttps ? 'https' : 'http' + '://' + getHost + '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
+                                            <a ng-init="entryUrl = baseHost + '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
 {#                                               ng-href="{= entryUrl =}"#}
                                                ng-click-copy="{= entryUrl =}"
                                                tooltip="{{ fragment_link }}"

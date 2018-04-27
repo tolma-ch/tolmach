@@ -45,6 +45,7 @@
         <script type="text/javascript">
             window['getHost'] = "{{request.get_host }}";
             window['isHttps'] = {{request.is_secure|lower }};
+            window['baseDomain'] = "{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}";
         </script>
 
         {% if prod == 'true' %}

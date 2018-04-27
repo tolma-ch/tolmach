@@ -71,5 +71,5 @@ def invite_user(user, invite_code, invite_type="project"):
             # invite user to the project
             org.invite_user(user)
 
-            redirect = reverse('organization', kwargs={'slug': org.slug})
+        redirect = reverse('organization', kwargs={'slug': org.slug})
     return redirect

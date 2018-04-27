@@ -12,8 +12,16 @@
                 {% trans "Invite users from all over the world via link:" %}
             </span>
             <div class="input-group">
+{#                <span class="input-group-addon"#}
+{#                      tooltip="{% trans 'Re-create' %}"#}
+{#                      tooltip-append-to-body="true">#}
+{#                    <i class="fa fa-recycle" aria-hidden="true"></i>#}
+{#                </span>#}
                 <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/">
-                <span class="input-group-addon">
+                <span class="input-group-addon"
+                      ng-click-copy="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/"
+                      tooltip="{% trans 'Copy' %}"
+                      tooltip-append-to-body="true">
                     <i class="fa fa-clipboard" aria-hidden="true"></i>
                 </span>
             </div>

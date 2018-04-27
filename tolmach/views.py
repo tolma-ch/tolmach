@@ -301,6 +301,12 @@ def organization_settings_page(request, slug=""):
 def invite_urls(request, invite_type, invite_id):
     from tolmach.utils import invite_user
     # TODO: ratelimit this call
+    if invite_type == "project":
+        proj = get_object_or_404(Project, invite_link_code=invite_id)
+
+    elif invite_type == "org":
+        org = get_object_or_404(Organization, invite_link_code=invite_id)
+
     if request.user.is_authenticated():
         redirect_path = invite_user(request.user, invite_id, invite_type)
 
@@ -309,21 +315,81 @@ def invite_urls(request, invite_type, invite_id):
     else:
         # if not user is authorised, we need to save invitation code to his cookies
         data = {
-            "extra_login_data": {}
+            "og_img_url": reverse("invitation_url_image", kwargs={"invite_type": invite_type, "invite_id": invite_id}),
         }
-        if invite_type == "project":
-            data['extra_login_data']['project_invite_code'] = invite_id
-        elif invite_type == "org":
-            data['extra_login_data']['org_invite_code'] = invite_id
 
         response = render(request, 'tolmach/invite_login.html', data)
         if invite_type == "project":
-            response.set_cookie('project_invite_code', invite_id)
+            response.set_cookie('project_invite_code', invite_id, max_age=300)
         elif invite_type == "org":
-            response.set_cookie('org_invite_code', invite_id)
+            response.set_cookie('org_invite_code', invite_id, max_age=300)
 
         # then, return him auth/register window
         return response
+
+def invite_urls_og_image(request, invite_type, invite_id):
+    if invite_type == "project":
+        proj = get_object_or_404(Project, invite_link_code=invite_id)
+        lang_code = proj.source_lang.code
+        title = proj.name
+        author = proj.manager.username
+
+    elif invite_type == "org":
+        org = get_object_or_404(Organization, invite_link_code=invite_id)
+        lang_code = "org"
+        title = org.name
+        author = org.owner.username
+    else:
+        raise Http404("Invite does not exist")
+
+    from textwrap import fill, shorten
+
+    from PIL import Image
+    from PIL import ImageFont
+    from PIL import ImageDraw
+
+    img = Image.open("tolmach/static/img/og_invite_templates/og_invite_%s.jpg" % lang_code)
+
+    FONT_PATH = "tolmach/static/fonts/ultimate.ttf"
+
+    draw = ImageDraw.Draw(img, 'RGBA')
+    project_name_font = ImageFont.truetype(FONT_PATH, 36)
+    x, y = (356, 254)
+    max_line_length = 19
+    max_lines = 3
+    text = fill(
+        shorten(
+            title,
+            width=max_lines * max_line_length,
+            placeholder="..."
+        ),
+        max_line_length
+    ).upper()
+    # w, h = font.getsize(text)
+    w, h = draw.multiline_textsize(text, project_name_font)
+    outline = 30
+
+    # drawing project name
+    draw.rectangle((x, y, x + w + outline, y + h + outline), fill=(0, 0, 0, 138))
+    draw.text((x + outline / 2, y + outline / 2), text, fill='white', font=project_name_font)
+
+    project_owner_font = ImageFont.truetype(FONT_PATH, 24)
+    project_owner_text = shorten("@" + author, width=15).upper()
+
+    owner_x = x
+    owner_y = y + h + outline + 14
+    owner_w, owner_h = draw.multiline_textsize(project_owner_text, project_owner_font)
+    # drawing owner name
+    draw.rectangle((owner_x, owner_y, owner_x + owner_w + outline, owner_y + owner_h + outline),
+                   fill=(0, 0, 0, 138))
+    draw.text((owner_x + outline / 2, owner_y + outline / 2), project_owner_text, fill='white',
+              font=project_owner_font)
+
+
+    response = HttpResponse(content_type="image/jpeg")
+    img.save(response, "JPEG", quality=95)
+
+    return response
 
 def post_social_auth(request):
     if request.COOKIES.get('project_invite_code', False):
@@ -362,7 +428,7 @@ def register(request):
 
     status = "0"
     message = ""
-    redirect = ""
+    redirect_path = ""
     project_invite_code = request.COOKIES.get('project_invite_code', False)
     org_invite_code = request.COOKIES.get('org_invite_code', False)
 
@@ -371,9 +437,9 @@ def register(request):
         user = authenticate(username=username, password=password)
 
         if project_invite_code:
-            redirect = tolmach_utils.invite_user(user, project_invite_code, "project")
+            redirect_path = tolmach_utils.invite_user(user, project_invite_code, "project")
         if org_invite_code:
-            redirect = tolmach_utils.invite_user(user, org_invite_code, "organization")
+            redirect_path = tolmach_utils.invite_user(user, org_invite_code, "organization")
 
         login(request, user)
         # return HttpResponseRedirect("/")
@@ -385,7 +451,7 @@ def register(request):
     answer = {
         'status': status,
         'message': message,
-        'redirect': redirect,
+        'redirect': redirect_path,
     }
 
     response_status = 200
@@ -415,16 +481,16 @@ def login_user(request):
     username = request.POST.get('username', False)
     password = request.POST.get('password', False)
 
-    redirect = ""
+    redirect_path = ""
     project_invite_code = request.COOKIES.get('project_invite_code', False)
     org_invite_code = request.COOKIES.get('org_invite_code', False)
 
     user = authenticate(username=username, password=password)
 
     if project_invite_code:
-        redirect = tolmach_utils.invite_user(user, project_invite_code, "project")
+        redirect_path = tolmach_utils.invite_user(user, project_invite_code, "project")
     if org_invite_code:
-        redirect = tolmach_utils.invite_user(user, org_invite_code, "organization")
+        redirect_path = tolmach_utils.invite_user(user, org_invite_code, "org")
 
     message = ''
     if user is not None:
@@ -444,7 +510,7 @@ def login_user(request):
     some_data_to_dump = {
         'status': status,
         'message': message,
-        'redirect': redirect,
+        'redirect': redirect_path,
     }
 
     answer = json.dumps(some_data_to_dump)

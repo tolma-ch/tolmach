@@ -53,7 +53,9 @@
                         </div>
                     </div>
                 </div>
+    {% if is_owner %}
     {% include "tolmach/partial/add_org_participant_modal.html" %}
     {% include "tolmach/partial/remove_org_participant_popover.html" %}
     {% include "translations/partial/user_typeahead_template.html" %}
+    {% endif %}
 {% endblock %}

@@ -68,8 +68,9 @@
         </div>
     </section>
 </div>
-
+{% if is_owner %}
 {% include "translations/partial/new_project_modal.html" %}
 {% include "tolmach/partial/edit_profile_modal.html" %}
+{% endif %}
 
 {% endblock %}
