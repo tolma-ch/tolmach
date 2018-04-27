@@ -17,7 +17,7 @@
 {#                      tooltip-append-to-body="true">#}
 {#                    <i class="fa fa-recycle" aria-hidden="true"></i>#}
 {#                </span>#}
-                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/">
+                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/org/i/{{ organization.invite_link_code }}/">
                 <span class="input-group-addon"
                       ng-click-copy="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/"
                       tooltip="{% trans 'Copy' %}"
