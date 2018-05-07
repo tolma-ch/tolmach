@@ -11,8 +11,8 @@
 	</div>
 
 	<div class="user-sidebar__info">
-		<div class="user-sidebar__username">{% if profileType == "organization" %}<i class="fa fa-sitemap" aria-hidden="true"></i>{% endif %} {= userData.firstName =} {= userData.lastName =}</div>
-		<div class="user-sidebar__nickname">{= userData.username =}</div>
+		<div class="user-sidebar__username">{% if profileType == "organization" %}<i class="fa fa-sitemap" aria-hidden="true"></i>{% endif %} {{ userData_clean.firstName }} {{ userData_clean.lastName }}</div>
+		<div class="user-sidebar__nickname">{{ userData_clean.username }}</div>
 		<!--<div class="user-sidebar__location">-->
 			<!--<i class="fa fa-map-marker"></i>-->
 			<!--Irkutsk, Russia-->
@@ -29,7 +29,7 @@
 	<div class="user-sidebar__profile">
 		<div class="user-sidebar__profile-line" ng-if="userData.website">
 			<span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
-			<a class="user-sidebar__profile-line-data" href="" target="__blank">{= userData.website =}</a>
+			<a class="user-sidebar__profile-line-data" href="" target="__blank">{{ userData_clean.website }}</a>
 		</div>
 		<div class="user-sidebar__profile-line">
             <a class="user-sidebar__profile-line-title helped-block" href="" target="__blank" help-text="{% trans "Click this button to edit your name and change profile picture" %}"

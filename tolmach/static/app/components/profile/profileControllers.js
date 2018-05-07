@@ -58,6 +58,7 @@
                         } else {
                             $modalInstance.close(data);
                         }
+                        location.reload();
                     })
                     .error(function(data) {
                         $scope.error = data;
