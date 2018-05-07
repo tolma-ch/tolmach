@@ -145,15 +145,18 @@ def organizations(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_orgs_list = paginator.page(paginator.num_pages)
 
-    data = {
-        'active_tab': 'organizations',
-        'usermeta': usermeta,
-        'userData': json.dumps({
+    user_data = {
             'firstName': first_name,
             'lastName': last_name,
             'username': request.user.username,
             'website': usermeta.website,
-        }),
+        }
+
+    data = {
+        'active_tab': 'organizations',
+        'usermeta': usermeta,
+        'userData': json.dumps(user_data),
+        'userData_clean': user_data,
         'organizations': result_orgs_list,
         'page_title': "%s / Tolma.ch" % _("Organizations"),
         'breadcrumbs': [
