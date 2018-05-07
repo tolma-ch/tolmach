@@ -99,16 +99,19 @@ def projects(request, proj_type):
     for proj in result_proj_list:
         proj.progress = proj.get_progress()
 
-    data = {'username': request.user.username,
-            'usermeta': meta,
-            'first_name': first_name,
-            'last_name': last_name,
-            'userData': json.dumps({
+    user_data = {
                 'firstName': first_name,
                 'lastName': last_name,
                 'username': request.user.username,
                 'website': meta.website,
-            }),
+            }
+
+    data = {'username': request.user.username,
+            'usermeta': meta,
+            'first_name': first_name,
+            'last_name': last_name,
+            'userData': json.dumps(user_data),
+            'userData_clean': user_data,
             'page_title': page_title,
             'active_tab': active_tab,
             'breadcrumbs': [
