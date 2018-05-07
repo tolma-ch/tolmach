@@ -636,6 +636,7 @@
                         } else {
                             $modalInstance.close(data);
                         }
+                        location.reload();
                     })
                     .error(function(data) {
                         $scope.error = data;
@@ -1485,7 +1486,6 @@
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
             $scope.baseHost = $scope.isHttps ? 'https' : 'http' + '://' + $scope.getHost;
-            console.log($scope.baseHost);
 
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;

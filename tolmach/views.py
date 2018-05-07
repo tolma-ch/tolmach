@@ -48,18 +48,21 @@ def index(request):
         if len(ordered_stat) < 3:
             empty_list = range(3-len(ordered_stat))
 
+        user_data = {
+                'firstName': first_name,
+                'lastName': last_name,
+                'username': request.user.username,
+                'website': usermeta.website,
+            }
+
         data = {
             'projects': recent_projects,
             'username': request.user.username,
             'usermeta': usermeta,
             'first_name': first_name,
             'last_name': last_name,
-            'userData': json.dumps({
-                'firstName': first_name,
-                'lastName': last_name,
-                'username': request.user.username,
-                'website': usermeta.website,
-            }),
+            'userData': json.dumps(user_data),
+            'userData_clean': user_data,
             'languages': lang_list,
             'active_tab': 'main',
             'stat': ordered_stat,
