@@ -101,7 +101,7 @@ def stardict(word, source_lang, target_lang):
 
     return_data = []
 
-    if os.path.exists(datadir):
+    if os.path.exists(datadir) and not word.strip() == "":
         cmd = ["/usr/bin/sdcv", "-jn", "-2", datadir, word]
 
         p = subprocess.Popen(cmd,
