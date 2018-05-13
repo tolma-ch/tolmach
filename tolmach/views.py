@@ -497,7 +497,6 @@ def login_user(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            
             if project_invite_code:
                 redirect_path = tolmach_utils.invite_user(user, project_invite_code, "project")
             if org_invite_code:
