@@ -13,7 +13,7 @@
 
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
-            $scope.baseHost = $scope.isHttps ? 'https' : 'http' + '://' + $scope.getHost;
+            $scope.baseHost = ($scope.isHttps ? 'https' : 'http') + '://' + $scope.getHost;
 
             $scope.keyLength = function (obj) {
                 return Object.keys(obj).length;
