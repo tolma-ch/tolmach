@@ -108,7 +108,11 @@ def stardict(word, source_lang, target_lang):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT)
 
-        return_data = json.loads(p.stdout.read())
+        try:
+            return_data = json.loads(p.stdout.read())
+        except json.decoder.JSONDecodeError:
+            return []
+
         for elem in return_data:
             elem['definition'] = elem['definition'].strip()
         # print(return_data)
