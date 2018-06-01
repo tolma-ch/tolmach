@@ -457,62 +457,50 @@ def update_text(request, text):
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
-# def translation_ajax(request, text, target_lang, local_call=False, method=None):
-#     method = method if method else request.method
-#
-#     if method == "POST":
-#         text_translation = TextTranslation(text=text,
-#                                            target_lang=target_lang,
-#                                            )
-#         text_translation.save()
-#
-#         # Заводим специализированную TextTranslationMeta для форматов, где это бывает нужно
-#         if text.document_format in ["application/x-gettext-translation", "text/x-gettext-translation", "text/x-gettext-translation-template"]:
-#             gettext_meta = {
-#                 'all_meta': {
-#                     'Project-Id-Version': '1.0',
-#                     'Report-Msgid-Bugs-To': 'you@example.com',
-#                     'POT-Creation-Date': '2007-10-18 14:00+0100',
-#                     'PO-Revision-Date': '2007-10-18 14:00+0100',
-#                     'Last-Translator': 'you <you@example.com>',
-#                     'Language-Team': 'English <yourteam@example.com>',
-#                     'Language': target_lang.code,
-#                     'MIME-Version': '1.0',
-#                     'Content-Type': 'text/plain; charset=utf-8',
-#                     'Content-Transfer-Encoding': '8bit',
-#                     'Plural-Forms': target_lang.plural_forms,
-#                 },
-#                 'plural_examples': utils.get_plural_examples(target_lang.plural_forms),
-#             }
-#
-#             text_translation_meta = TextTranslationMeta(translation=text_translation,
-#                                                         meta_type="gettext_metadata",
-#                                                         meta_data=json.dumps(gettext_meta),
-#                                                         )
-#             text_translation_meta.save()
-#
-#         if local_call:
-#             return text_translation
-#         else:
-#             return HttpResponse(json.dumps(True), content_type="application/json")
-#     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
-
+@accept_text
 @login_required
-def get_translation_progress(request):
+def get_translation_progress(request, text):
     post = request.POST or json.loads(request.body)
     try:
-        text = Text.objects.get(id=post['text'])
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['target_lang']))
-    except Text.DoesNotExist:
+    except TextTranslation.DoesNotExist:
         return HttpResponse(json.dumps(False), content_type="application/json", status=404)
-    if not text.is_user_allowed_to_read(request.user) and not request.user.is_staff:
-        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
-    translation_counts, translation_progress = translation.get_progress()
 
-    return HttpResponse(json.dumps({'translation_counts': translation_counts,
-                                   'translation_progress': translation_progress}
-                                  ), content_type="application/json")
+    if "short" in post:
+        translation_counts, translation_progress = translation.get_progress()
+
+        return HttpResponse(json.dumps({'translation_counts': translation_counts,
+                                       'translation_progress': translation_progress}
+                                      ), content_type="application/json")
+    else:
+        translated_entries = TextEntry.objects.filter(translation=translation)
+
+        # TODO: убрать из подсчётов знаки тегов
+        translated_chars = sum([len(x.body) for x in translated_entries])
+        translated_chars_without_spaces = sum([len(x.body.replace(" ", "")) for x in translated_entries])
+
+        activity_by_user = {}
+
+        for entry in translated_entries:
+            if entry.author in activity_by_user:
+                activity_by_user[entry.author] += 1
+            else:
+                activity_by_user[entry.author] = 1
+
+        users_translated = []
+        for key, value in activity_by_user.items():
+            user_dict = user_to_json(key, project=text.project)
+            user_dict["fragments_translated"] = value
+            users_translated.append(user_dict)
+
+        users_translated = sorted(users_translated, key=lambda k: k['fragments_translated'], reverse=True)
+
+        return HttpResponse(json.dumps({'translated_chars': translated_chars,
+                                        'translated_chars_without_spaces': translated_chars_without_spaces,
+                                        'users_translated': users_translated,
+                                        'max_translated_fragments': users_translated[0]["fragments_translated"],}
+                                       ), content_type="application/json")
 
 
 @accept_project

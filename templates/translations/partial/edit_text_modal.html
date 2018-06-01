@@ -39,6 +39,104 @@
                 <div class="label label-danger">{= error =}</div>
             </div>
         </form>
+        <style>
+            .document-stats__header {
+                font-size: 20px;
+            }
+            .document-stats__numbers {
+                font-size: 20px;
+                padding-top: 10px;
+            }
+
+            .document-stats__numbers__table {
+                {#border-radius: 5px;#}
+                box-shadow: 0px 0px 50px #bdbdbd;
+            }
+            .document-stats__numbers__cell {
+                padding: 0 15px;
+            }
+            .numbers-cell-second {
+                background-color: #DEDEDE;
+            }
+            .numbers-cell-third {
+                background-color: #C1BEBE;
+            }
+
+
+            .project-list-participant__translated {
+                display: inline-block;
+                font-size: 25px;
+                float: right;
+            }
+        </style>
+        <a class="btn btn-link" ng-click="(showDocumentStats = !showDocumentStats) && showDocumentStats">{% trans "Document statistics" %}</a>
+        <div class="document-stats"
+             ng-show="showDocumentStats">
+            <div class="document-stats__header">{% trans "Fragments" %}:</div>
+            <div class="document-stats__numbers">
+                <table class="document-stats__numbers__table">
+                    <tr>
+                        <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.translation.counts[0] =}</td>
+                        <td class="document-stats__numbers__cell numbers-cell-second">{=:: text.translation.counts[1] =}</td>
+                        <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.translation.counts[2] =}</td>
+                    </tr>
+                </table>
+            </div>
+            <p>({% trans "total" %}/{% trans "translated" %}/{% trans "approved" %})</p>
+            <div class="document-stats__numbers">
+            </div>
+            <div class="document-stats__header">{% trans "Characters in original" %}:</div>
+            <div class="document-stats__numbers">
+                <table class="document-stats__numbers__table">
+                    <tr>
+                        <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.original_chars =}</td>
+                        <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.original_chars_without_spaces =}</td>
+                    </tr>
+                </table>
+            </div>
+            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>
+            <div class="document-stats__header">{% trans "Characters in translation" %}:</div>
+            <div class="document-stats__numbers">
+                <table class="document-stats__numbers__table">
+                    <tr>
+                        <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.translation.translated_chars =}</td>
+                        <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.translation.translated_chars_without_spaces =}</td>
+                    </tr>
+                </table>
+            </div>
+            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>
+            <div class="document-stats__header">{% trans "Contribution by members" %}:</div>
+            <div class="project-list-participant"
+                 ng-repeat="participant in text.translation.users_translated"
+                 ng-class="{'project-list-participant_active': activeParticipant === participant}">
+                <div class="project-list-participant__ava"
+                       ng-class="{'project-list-participant__ava': true,
+                                  'project-list-participant__ava__owner': participant.status == 10,
+                                  'project-list-participant__ava__editor': participant.status == 0,
+                                  'project-list-participant__ava__translator': participant.status == 1,
+                                  'project-list-participant__ava__spectator': participant.status == 2,}">
+                    <img src="/media/{=:: participant.avatar =}" alt="{=:: participant.name =}">
+                    <i aria-hidden="true"
+                       ng-class="{'fa': true,
+                                  'fa-star': participant.status == 10,
+                                  'fa-pencil-square-o': participant.status == 0,
+                                  'fa-pencil': participant.status == 1,
+                                  'fa-eye': participant.status == 2,}"></i>
+                </div>
+                <div class="project-list-participant__name" style="display: inline-block;">
+                    {=:: participant.name =}
+                </div>
+                <div class="project-list-participant__translated">
+                    {=:: participant.fragments_translated =}
+                </div>
+{#                <div class="progress-bar progress-bar-mobile">#}
+{#                    <div class="progress-bar__gauge"#}
+{#                         ng-init="percentWidth = parseInt(participant['fragments_translated'])/(parseInt(text.translation.max_translated_fragments)/100)"#}
+{#                         style="width:{= percentWidth =}%;background:#02c14f"></div>#}
+{#                    <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>#}
+{#                </div>#}
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-warning pull-left"

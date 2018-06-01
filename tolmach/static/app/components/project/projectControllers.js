@@ -13,6 +13,7 @@
             $scope.targetLang = window['targetLang'];
             $scope.languages = window['languages'];
             $scope.participants = [];
+            $scope.showDocumentStats = false;
             $http.get('/ajax/participant', {params: {project: $scope.projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;
@@ -132,7 +133,19 @@
                         }
                     }
                 });
-
+                modalInstance.rendered.then(function(){
+                    $http.post('/ajax/get-translation-progress/', {
+                            text: text.id,
+                            target_lang: window['targetLang']
+                        }).success(function (data) {
+                            text.translation.translated_chars = data['translated_chars'];
+                            text.translation.translated_chars_without_spaces = data['translated_chars_without_spaces'];
+                            text.translation.users_translated = data['users_translated'];
+                            text.translation.max_translated_fragments = data['max_translated_fragments'];
+                        }).error(function (a) {
+                            //console.error(a);
+                        });
+                });
                 modalInstance.result.then(function (res) {
                     if (res === 'removed') {
                         var i = $scope.texts.indexOf(text);

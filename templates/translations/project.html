@@ -93,10 +93,6 @@
                         <span class="stripy-heading__after"></span>
                     </div>
                     <div class="">
-{#                        .#}
-{#                        .#}
-{#                        .#}
-{#                        .#}
                         <table cellpadding="0" cellspacing="0" class="user-statistics-table">
                             <tbody>
                                 <tr class="user-statistics-table__row" ng-repeat="text in texts">
@@ -150,65 +146,6 @@
                                 </tr>
                             </tbody>
                         </table>
-{#                        .#}
-{#                        .#}
-{#                        .#}
-{#                        .#}
-{#                        <div class="project-list-texts">#}
-{#                            <div class="project-list-text" ng-repeat="text in texts">#}
-{#                                <div class="project-list-text__title">#}
-{#                                    <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/">#}
-{#                                            {=:: text.title =}#}
-{#                                        <div class="progress-bar progress-bar-mobile">#}
-{#                                            <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>#}
-{#                                            <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>#}
-{#                                        </div>#}
-{#                                    </a>#}
-{#                                </div>#}
-{#                                <div class="project-list-text__cell">#}
-{#                                    <div class="project-list-text__translation" style="position: relative;">#}
-{#                                        <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/" class="project-list-text__item">#}
-{#                                            <span class="project-list-text__progress"#}
-{#                                                  tooltip="{% trans 'Fragments approved:' %} {=:: text.translation.counts[2] =}#}
-{#                                                  {% trans 'Fragments translated:' %} {=:: text.translation.counts[1] =}"#}
-{#                                                  tooltip-append-to-body="true">#}
-{#                                                <div class="progress-bar">#}
-{#                                                    <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>#}
-{#                                                    <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>#}
-{#                                                    <span class="progress-bar__value">{=:: text.translation.progress[1] =}%</span>#}
-{#                                                </div>#}
-{#                                            </span>#}
-{#                                        </a>#}
-{#                                        <a class="project-list-text__btn dropdown"#}
-{#                                           href="#"#}
-{#                                           data-toggle="dropdown"#}
-{#                                           tooltip="{% trans 'Export translation' %}"#}
-{#                                           tooltip-append-to-body="true"><i class="fa fa-angle-down"></i></a>#}
-{#                                        <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">#}
-{#                                            <li>#}
-{#                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/">#}
-{#                                                    <i class="fa-off"></i>#}
-{#                                                    {% trans 'Translated document' %}#}
-{#                                                </a>#}
-{#                                            </li>#}
-{#                                            <li>#}
-{#                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/pairs/">#}
-{#                                                    <i class="fa-off"></i>#}
-{#                                                    {% trans 'Bilingual DOCX' %}#}
-{#                                                </a>#}
-{#                                            </li>#}
-{#                                            <li class="divider"></li>#}
-{#                                            <li>#}
-{#                                                <a href=""#}
-{#                                                   ng-if="(isUserManager || (userMembershipStatus == 0))"#}
-{#                                                   ng-click="editText(text)"#}
-{#                                                   tooltip-append-to-body="true"><i class="fa fa-pencil"></i>&nbsp{% trans 'Edit text' %}</a>#}
-{#                                            </li>#}
-{#                                        </ul>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
                         <a href=""
                            class="btn helped-block btn-sm new-proj-block-btn"
                            ng-click="addText()"
