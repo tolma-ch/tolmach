@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from tolmach.models import UserMeta
-from translations.models import ProjectMember
+from translations.models import ProjectMember, TextEntry
 
 import json
 
@@ -30,10 +30,16 @@ def user_to_json(user, project=None):
     avatar = "%s" % user_meta.avatar if user_meta.avatar else "avatar/default.png"
     status = 10
     if project:
-        member = ProjectMember.objects.get(project=project,
-                                           user=user,
-                                           )
-        status = member.status
+        try:
+            member = ProjectMember.objects.get(project=project,
+                                               user=user,
+                                               )
+            status = member.status
+        except:
+            if project.is_user_manager(user):
+                status = 10
+            else:
+                status = ProjectMember.SPECTATOR
     return {
         'id': user.id,
         'name': username,
@@ -69,4 +75,7 @@ def text_to_json(text, text_translation, locale):
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translation': translation,
+        # # TODO: убрать из подсчётов знаки тегов
+        'original_chars': len(text.body),
+        'original_chars_without_spaces': len(text.body.replace(" ", "")),
     }

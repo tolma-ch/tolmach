@@ -252,7 +252,8 @@
                     if (!$scope.ws_active) {
                         $http.post('/ajax/get-translation-progress/', {
                             text: textId,
-                            target_lang: window['translationTargetLang']
+                            target_lang: window['translationTargetLang'],
+                            short: true
                         }).success(function (data) {
                             $scope.translationProgress = data['translation_progress'];
                             $scope.translationCounts = data['translation_counts'];
