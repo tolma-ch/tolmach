@@ -65,7 +65,7 @@
 
             .project-list-participant__translated {
                 display: inline-block;
-                font-size: 25px;
+                font-size: 22px;
                 float: right;
             }
         </style>
@@ -127,7 +127,9 @@
                     {=:: participant.name =}
                 </div>
                 <div class="project-list-participant__translated">
-                    {=:: participant.fragments_translated =}
+                    {=:: participant.fragments_translated.fragments =} /
+                    {=:: participant.fragments_translated.chars_with_spaces =} /
+                    {=:: participant.fragments_translated.chars_without_spaces =}
                 </div>
 {#                <div class="progress-bar progress-bar-mobile">#}
 {#                    <div class="progress-bar__gauge"#}
