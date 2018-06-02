@@ -484,9 +484,14 @@ def get_translation_progress(request, text):
 
         for entry in translated_entries:
             if entry.author in activity_by_user:
-                activity_by_user[entry.author] += 1
+                activity_by_user[entry.author]['fragments'] += 1
+                activity_by_user[entry.author]['chars_with_spaces'] += len(entry.body)
+                activity_by_user[entry.author]['chars_without_spaces'] += len(entry.body.replace(" ", ""))
             else:
-                activity_by_user[entry.author] = 1
+                activity_by_user[entry.author] = {}
+                activity_by_user[entry.author]['fragments'] = 1
+                activity_by_user[entry.author]['chars_with_spaces'] = len(entry.body)
+                activity_by_user[entry.author]['chars_without_spaces'] = len(entry.body.replace(" ", ""))
 
         users_translated = []
         for key, value in activity_by_user.items():
@@ -494,7 +499,7 @@ def get_translation_progress(request, text):
             user_dict["fragments_translated"] = value
             users_translated.append(user_dict)
 
-        users_translated = sorted(users_translated, key=lambda k: k['fragments_translated'], reverse=True)
+        users_translated = sorted(users_translated, key=lambda k: k['fragments_translated']['fragments'], reverse=True)
 
         return HttpResponse(json.dumps({'translated_chars': translated_chars,
                                         'translated_chars_without_spaces': translated_chars_without_spaces,
