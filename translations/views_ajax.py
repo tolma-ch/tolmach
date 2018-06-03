@@ -499,12 +499,16 @@ def get_translation_progress(request, text):
             user_dict["fragments_translated"] = value
             users_translated.append(user_dict)
 
-        users_translated = sorted(users_translated, key=lambda k: k['fragments_translated']['fragments'], reverse=True)
+        if users_translated:
+            users_translated = sorted(users_translated, key=lambda k: k['fragments_translated']['fragments'], reverse=True)
+            max_translated_fragments = users_translated[0]["fragments_translated"]
+        else:
+            max_translated_fragments = 0
 
         return HttpResponse(json.dumps({'translated_chars': translated_chars,
                                         'translated_chars_without_spaces': translated_chars_without_spaces,
                                         'users_translated': users_translated,
-                                        'max_translated_fragments': users_translated[0]["fragments_translated"],}
+                                        'max_translated_fragments': max_translated_fragments,}
                                        ), content_type="application/json")
 
 
