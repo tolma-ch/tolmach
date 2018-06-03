@@ -105,7 +105,7 @@
                 </table>
             </div>
             <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>
-            <div class="document-stats__header">{% trans "Contribution by members" %}:</div>
+            <div class="document-stats__header" ng-if="text.translation.users_translated.length > 0">{% trans "Contribution by members" %}:</div>
             <div class="project-list-participant"
                  ng-repeat="participant in text.translation.users_translated"
                  ng-class="{'project-list-participant_active': activeParticipant === participant}">
