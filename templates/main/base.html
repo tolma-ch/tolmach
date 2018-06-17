@@ -275,7 +275,11 @@
         <script src="{% static 'js/ace-extra.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'js/reconnecting-websocket.min.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'assets/angular/angular.min.js' %}?v={{ front_version }}"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.5/angular-locale_{{ LANGUAGE_CODE }}.min.js"></script>
+        {% with 'js/angular-locale_'|add:LANGUAGE_CODE|add:'.min.js' as angular_i18n %}
+        <script src="{% static angular_i18n %}"></script>
+        {% endwith %}
+        {#<script src="{% static 'js/ace.js' %}?v={{ front_version }}"></script>#}
+        {#<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.5.5/angular-locale_{{ LANGUAGE_CODE }}.min.js"></script>#}
         <script src="{% static 'assets/angular-bootstrap/ui-bootstrap-tpls.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'assets/angular-elastic/elastic.js' %}?v={{ front_version }}"></script>
         <script src="{% static 'assets/angular-ui-select/dist/select.min.js' %}?v={{ front_version }}"></script>
