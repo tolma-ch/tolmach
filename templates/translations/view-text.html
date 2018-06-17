@@ -100,6 +100,7 @@
                                 <div ng-if="!entry.approved && (entry.translations.length > 0)">
                                     <span html-content="entry.translations[entry.translations.length-1].body"></span>
                                     {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    <br>
                                     <div class="translation-variant__author">
                                         <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
                                     </div>
