@@ -830,6 +830,7 @@ def entry_ajax(request, action, text):
                 if entry_translation.parent_entry == entry:
                     translation_array = translation_to_json(entry_translation)
                     translation_array['isVoted'] = entry_translation.is_voted(request.user)
+                    translation_array['lastModified'] = entry_translation.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000")
                     entry_translations.append(translation_array)
                     if entry_translation.is_approved:
                         approved_text = entry_translation.body

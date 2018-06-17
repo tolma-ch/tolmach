@@ -286,6 +286,9 @@
                                 <div class="translation-variant__author">
                                     <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                                 </div>
+                                <div class="translation-variant__date">
+                                    {= translation.lastModified | date:'short' =}
+                                </div>
                                 <div class="translation-variant__icons">
                                     <div ng-if="entry.approved">
                                         <a class="active"
