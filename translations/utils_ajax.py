@@ -20,7 +20,8 @@ def translation_to_json(translation):
             'name': translation.author.username
         },
         'isApproved': translation.is_approved,
-        'vote': translation.vote
+        'vote': translation.vote,
+        'lastModified': translation.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000")
     }
 
 
