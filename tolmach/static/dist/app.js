@@ -1805,7 +1805,7 @@
                     $http.get('/ajax/entry/', {
                         params: {
                             text: textId,
-                            page: $scope.page,
+                            page: $rootScope.page,
                             target_lang: window['translationTargetLang']
                         }
                     }).success(function (data) {
@@ -1830,7 +1830,7 @@
                         }
                         $scope.entries = entries;
                         $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
-                        $scope.pagesCount = data['total_pages'];
+                        $rootScope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
                         $scope.busy = false;
 
@@ -1860,18 +1860,29 @@
             $scope.initialPage = parseInt($location.search().page ? $location.search().page : 1) || 1;
             $scope.entryToFocus = $location.search().fragment ? $location.search().fragment : 0;
             $scope.countPerPage = 100;
-            $scope.pagesCount = window['pagesCount'];
-            $scope.page = ($scope.initialPage > $scope.pagesCount) ? ($scope.pagesCount) : ($scope.initialPage < 1 ? 1 : $scope.initialPage);
-            $scope.paginatorBlur = function () {
-                $scope.editPage = false;
-                $scope.page = parseInt($scope.page) || 1;
-                $scope.page = $scope.page > $scope.pagesCount ? $scope.pagesCount : ($scope.page < 1 ? 1 : $scope.page);
+            $rootScope.pagesCount = window['pagesCount'];
+            $rootScope.page = ($scope.initialPage > $rootScope.pagesCount) ? ($rootScope.pagesCount) : ($scope.initialPage < 1 ? 1 : $scope.initialPage);
+            $rootScope.paginatorBlur = function () {
+                $rootScope.page = parseInt($rootScope.page) || 1;
+                $rootScope.page = $rootScope.page > $rootScope.pagesCount ? $rootScope.pagesCount : ($rootScope.page < 1 ? 1 : $rootScope.page);
                 updateEntries();
             };
-            $scope.paginatorKeypress = function (event) {
+            $rootScope.setPage = function (newPage) {
+                $rootScope.editPage = false;
+                $rootScope.page = newPage;
+                updateEntries();
+            };
+            $scope.$on('GlobalClick', function (e, event) {
+                if ($(event.target).parents('.text-overview__paginator').length === 0) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    $rootScope.editPage = false;
+                }
+            });
+            $rootScope.paginatorKeypress = function (event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (code === 13 || code === 10) {
-                    $scope.paginatorBlur();
+                    $rootScope.paginatorBlur();
                 }
             };
             $scope.userIsManager = false;
@@ -1887,25 +1898,25 @@
                 sel.removeAllRanges();
                 sel.addRange(range);
             };
-            $scope.prevPage = function () {
+            $rootScope.prevPage = function () {
                 if ($scope.busy) {
                     return;
                 }
-                if ($scope.page > 1) {
-                    $scope.page = $scope.page - 1;
+                if ($rootScope.page > 1) {
+                    $rootScope.page = $rootScope.page - 1;
                     updateEntries();
-                    $location.search('page', $scope.page).replace();
+                    $location.search('page', $rootScope.page).replace();
                 }
             };
-            $scope.nextPage = function () {
+            $rootScope.nextPage = function () {
                 if ($scope.busy) {
                     return;
                 }
-                console.log($scope.page);
-                if ($scope.page < $scope.pagesCount) {
-                    $scope.page = $scope.page + 1;
+                console.log($rootScope.page);
+                if ($rootScope.page < $rootScope.pagesCount) {
+                    $rootScope.page = $rootScope.page + 1;
                     updateEntries();
-                    $location.search('page', $scope.page).replace();
+                    $location.search('page', $rootScope.page).replace();
                 }
             };
             $scope.addMachineSuggestion = function (entry, machine) {
@@ -3041,6 +3052,18 @@
             return $sce.trustAsHtml(text);
         };
     }]);
+
+    module.filter('range', function() {
+        return function(input, total) {
+            total = parseInt(total);
+
+            for (var i=0; i<total; i++) {
+                input.push(i);
+            }
+
+            return input;
+        };
+    });
 }());;(function () {
     'use strict';
 
@@ -3057,9 +3080,10 @@
 
     var module = angular.module('mainControllers', []);
 
-    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window',
-        function ($scope, $http, $timeout, $modal, $window) {
+    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window', '$rootScope',
+        function ($scope, $http, $timeout, $modal, $window, $rootScope) {
 
+            $rootScope.editPage = false;
             var updateMessages = function () {
                 $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
