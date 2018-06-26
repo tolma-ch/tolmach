@@ -389,8 +389,6 @@
             };
             $scope.$on('GlobalClick', function (e, event) {
                 if ($(event.target).parents('.text-overview__paginator').length === 0) {
-                    event.stopPropagation();
-                    event.preventDefault();
                     $rootScope.editPage = false;
                 }
             });
