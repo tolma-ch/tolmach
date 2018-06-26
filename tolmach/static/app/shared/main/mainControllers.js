@@ -3,9 +3,10 @@
 
     var module = angular.module('mainControllers', []);
 
-    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window',
-        function ($scope, $http, $timeout, $modal, $window) {
+    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window', '$rootScope',
+        function ($scope, $http, $timeout, $modal, $window, $rootScope) {
 
+            $rootScope.editPage = false;
             var updateMessages = function () {
                 $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
