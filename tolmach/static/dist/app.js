@@ -1871,6 +1871,7 @@
                 $rootScope.editPage = false;
                 $rootScope.page = newPage;
                 updateEntries();
+                $location.search('page', $rootScope.page).replace();
             };
             $scope.$on('GlobalClick', function (e, event) {
                 if ($(event.target).parents('.text-overview__paginator').length === 0) {

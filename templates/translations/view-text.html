@@ -78,7 +78,6 @@
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
                      ng-show="!busy">
-                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
@@ -332,7 +331,6 @@
                         </div>
                         </div>
                     </div>
-                    {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='true' %}
                 </div>
             </div>
 
@@ -341,7 +339,6 @@
                     <div class="text-overview__table">
                         <div class="text-overview__row text-overview__row_thin">
                             <div class="text-overview__cell">
-                                {% include "translations/partial/text_page_pagination_block.html" with mobile_pagination='false' %}
                                 <div class="text-overview__switcher">
                                     <link href="{% static 'assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css' %}" rel="stylesheet">
                                     <style>
