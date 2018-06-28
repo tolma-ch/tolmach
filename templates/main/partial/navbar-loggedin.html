@@ -135,7 +135,7 @@
             <div class="text-overview__dropmenu"
                  ng-show="$parent.editPage">
                 <div class="text-overview__dropitem"
-                     ng-repeat="n in [] | range:15"
+                     ng-repeat="n in [] | range:pagesCount"
                      ng-click="setPage(n + 1)">
                     {= n + 1 =}
                 </div>
