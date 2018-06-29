@@ -118,6 +118,7 @@
     <li class="navbar-nav__button button_blue">
         <div class='text-overview__paginator'
             ng-show="pagesCount > 1"
+            ng-cloak
             style="padding-top: 15px;
                 padding-left: 5px;
                 padding-right: 5px;
@@ -187,6 +188,7 @@
         <a data-toggle="dropdown" href="#" class="dropdown-toggle">
             <i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"
                ng-show="messages.length"
+               ng-cloak
                style="color: white;
                     position: absolute;
                     z-index: 900;
