@@ -8,7 +8,11 @@
 			<div class="navbar-container" id="navbar-container" style="margin: 0 auto; max-width: 1400px">
 				<div class="navbar-header pull-left">
                     <a href="/">
-                        <img src="{% static 'img/top-logo' %}{{ logo_special }}.svg">
+                        <img src="{% static 'img/top-logo' %}{{ logo_special }}.svg"
+                             class="hidden-xs">
+                        <img src="{% static 'img/android-chrome-512x512.png' %}"
+                             class="hidden-sm hidden-md hidden-lg hidden-xl"
+                             style="height: 45px;margin: 3px 0 3px;">
                     </a><!-- /.brand -->
 				</div><!-- /.navbar-header -->
 

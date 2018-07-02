@@ -9,13 +9,18 @@
     <style>
         .text-overview__paginator a {
             color: #ffffff;
+            margin-top: -6px;
         }
         .text-overview__paginator a:hover {
-            background-color: #2A7698;
-            color: #1c4458;
+            background-color: #367798;
+            color: #5DBE3E;
         }
         .text-overview__paginator-text:hover {
-            background: #1c4458;
+            background: #367798;
+            color: #5DBE3E;
+        }
+        .text-overview__paginator-text i {
+            font-size: 19px;
         }
         .text-overview__dropmenu {
             position: absolute;
@@ -98,37 +103,40 @@
         }
     </style>
 
-    <div class="search-btn"
-         ng-class="{'search-btn_open': showSearch}">
-        <input class="search-btn__input" type="text"
-               ng-model="searchText"
-               focus-me="focusSearchInput"
-               ng-blur="!searchText && (showSearch = false)">
-        <i class="fa fa-search"
-           ng-click="showSearch = true; focusSearchInput = true"></i>
-        <i class="fa fa-times"
-           ng-click="searchText = ''; showSearch = false;"></i>
-    </div>
+{#    <div class="search-btn"#}
+{#         ng-class="{'search-btn_open': showSearch}">#}
+{#        <input class="search-btn__input" type="text"#}
+{#               ng-model="searchText"#}
+{#               focus-me="focusSearchInput"#}
+{#               ng-blur="!searchText && (showSearch = false)">#}
+{#        <i class="fa fa-search"#}
+{#           ng-click="showSearch = true; focusSearchInput = true"></i>#}
+{#        <i class="fa fa-times"#}
+{#           ng-click="searchText = ''; showSearch = false;"></i>#}
+{#    </div>#}
 
     <li class="navbar-nav__button button_blue">
         <div class='text-overview__paginator'
             ng-show="pagesCount > 1"
-            style="padding-top: 10px;
+            ng-cloak
+            style="padding-top: 15px;
                 padding-left: 5px;
                 padding-right: 5px;
                 color: #ffffff;">
             <a href=""
+               class="hidden-sm hidden-xs"
                ng-click="prevPage()"><i class="fa fa-chevron-left"></i></a>
 
             <span class="text-overview__paginator-text"
                   ng-click="$parent.editPage = true; focusPaginator = true">
-                {= page =} / {= pagesCount =}
+                <i class="fa fa-file-text-o"></i>
+                {= page =} {#/ {= pagesCount =}#}
             </span>
 
             <div class="text-overview__dropmenu"
                  ng-show="$parent.editPage">
                 <div class="text-overview__dropitem"
-                     ng-repeat="n in [] | range:15"
+                     ng-repeat="n in [] | range:pagesCount"
                      ng-click="setPage(n + 1)">
                     {= n + 1 =}
                 </div>
@@ -142,10 +150,11 @@
                    <!--ng-blur="paginatorBlur()">-->
 
             <a href=""
+               class="hidden-sm hidden-xs"
                ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
         </div>
     </li>
-    <li class="navbar-nav__button button_blue"
+    <li class="navbar-nav__button button_blue hidden-md hidden-lg hidden-xl"
         tooltip="{% trans 'Fullscreen' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
@@ -175,10 +184,11 @@
 		<!--</a>-->
     <!--</li>-->
 
-	<li class="navbar-nav__button button_blue navbar-nav__user">
-		<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+    <li class="navbar-nav__button button_blue navbar-nav__user">
+        <a data-toggle="dropdown" href="#" class="dropdown-toggle">
             <i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"
                ng-show="messages.length"
+               ng-cloak
                style="color: white;
                     position: absolute;
                     z-index: 900;
@@ -190,17 +200,17 @@
                     font-size: 9px;
                     border: 1px solid #f5f5f5;"></i>
             {% if user_avatar %}
-			<img class="navbar-nav__user-photo" src="/media/{{ user_avatar }}" alt="Avatar">
+            <img class="navbar-nav__user-photo" src="/media/{{ user_avatar }}" alt="Avatar">
             {% else %}
             <img class="navbar-nav__user-photo" src="/media/avatar/default.png" alt="Avatar">
             {% endif %}
-			<span class="navbar-nav__user-info hidden-xs">
-				<!--<small>{% trans "Hi," %}</small>-->
-				<span>{{ username }}</span>
-			</span>
+            <span class="navbar-nav__user-info hidden-xs">
+                <!--<small>{% trans "Hi," %}</small>-->
+{#                <span>{{ username }}</span>#}
+            </span>
 
-			<i class="fa fa-caret-down"></i>
-		</a>
+            <i class="fa fa-caret-down"></i>
+        </a>
         <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
             <li>
                 <a href="#" ng-click="showAllMessages()">
