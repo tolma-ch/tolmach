@@ -22,3 +22,4 @@ sparkpost
 django-debug-toolbar
 python-memcached
 chardet
+raven

@@ -1,6 +1,7 @@
 # Django settings for tolmach project.
 
 import os, slugify
+import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -156,6 +157,7 @@ ROOT_URLCONF = 'tolmach.urls'
 WSGI_APPLICATION = 'tolmach.wsgi.application'
 
 INSTALLED_APPS = (
+    'raven.contrib.django.raven_compat',
     #'south',
     'tolmach',
     'translations',
@@ -226,6 +228,13 @@ SOCIAL_AUTH_PIPELINE = (
 
     'tolmach.pipeline.update_user_social_data',
 )
+
+RAVEN_CONFIG = {
+    'dsn': 'https://5e736acff88c46deb0cf4a93b69027b1:dd983a5e2b3540d195d2b1091a23398f@sentry.io/1235890',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
+}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
