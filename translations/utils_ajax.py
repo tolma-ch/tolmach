@@ -69,7 +69,7 @@ def text_to_json(text, text_translation, locale):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
-    clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
+    clean_text = re.sub(r"<(/)?span.*?>", "", text.body).replace("\n", "")
 
     return {
         'id': text.id,
