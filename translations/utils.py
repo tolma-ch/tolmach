@@ -14,6 +14,7 @@ import datetime
 
 
 FORMATS = {
+    "txt": "text/plain",
     # Docs
     "doc": "application/msword",
     "odt": "application/vnd.oasis.opendocument.text",
