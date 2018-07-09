@@ -51,6 +51,7 @@ def user_to_json(user, project=None):
 
 def text_to_json(text, text_translation, locale):
     from babel import Locale
+    import re
 
     lang_name = Locale(text_translation.target_lang.code)
     translation_counts, translation_progress = text_translation.get_progress()
@@ -68,6 +69,8 @@ def text_to_json(text, text_translation, locale):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
+    clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
+
     return {
         'id': text.id,
         'title': text.title,
@@ -76,7 +79,6 @@ def text_to_json(text, text_translation, locale):
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translation': translation,
-        # # TODO: убрать из подсчётов знаки тегов
-        'original_chars': len(text.body),
-        'original_chars_without_spaces': len(text.body.replace(" ", "")),
+        'original_chars': len(clean_text),
+        'original_chars_without_spaces': len(clean_text.replace(" ", "").replace("\n", "")),
     }

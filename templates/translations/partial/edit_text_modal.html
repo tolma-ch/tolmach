@@ -40,27 +40,37 @@
             </div>
         </form>
         <style>
-            .document-stats__header {
-                font-size: 20px;
-            }
-            .document-stats__numbers {
-                font-size: 20px;
-                padding-top: 10px;
-            }
+            {#.document-stats__header {#}
+            {#    font-size: 16px;#}
+            {#    display: inline-block;#}
+            {#    line-height: 58px;#}
+            {#}#}
+            {#.document-stats__numbers {#}
+            {#    font-size: 20px;#}
+            {#    margin-top: 10px;#}
+            {#    display: inline-block;#}
+            {#    float: right;#}
+            {#}#}
 
-            .document-stats__numbers__table {
+            {#.document-stats__numbers__table {#}
                 {#border-radius: 5px;#}
-                box-shadow: 0px 0px 50px #bdbdbd;
-            }
-            .document-stats__numbers__cell {
-                padding: 0 15px;
-            }
-            .numbers-cell-second {
-                background-color: #DEDEDE;
-            }
-            .numbers-cell-third {
-                background-color: #C1BEBE;
-            }
+                {#box-shadow: 0px 0px 50px #bdbdbd;#}
+            {#}#}
+            {#.document-stats__title__cell {#}
+            {#    font-size: 12px;#}
+            {#    padding: 0 10px;#}
+            {#    color: #777777;#}
+            {#}#}
+            {#.document-stats__numbers__cell {#}
+            {#    padding: 0 15px;#}
+            {#    text-align: center;#}
+            {#}#}
+            {#.numbers-cell-second {#}
+            {#    background-color: #DEDEDE;#}
+            {#}#}
+            {#.numbers-cell-third {#}
+            {#    background-color: #C1BEBE;#}
+            {#}#}
 
 
             .project-list-participant__translated {
@@ -76,35 +86,52 @@
             <div class="document-stats__numbers">
                 <table class="document-stats__numbers__table">
                     <tr>
+                        <td class="document-stats__title__cell">{% trans "total" %}</td>
+                        <td class="document-stats__title__cell">{% trans "translated" %}</td>
+                        <td class="document-stats__title__cell">{% trans "approved" %}</td>
+                    </tr>
+                    <tr>
                         <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.translation.counts[0] =}</td>
                         <td class="document-stats__numbers__cell numbers-cell-second">{=:: text.translation.counts[1] =}</td>
                         <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.translation.counts[2] =}</td>
                     </tr>
                 </table>
             </div>
-            <p>({% trans "total" %}/{% trans "translated" %}/{% trans "approved" %})</p>
-            <div class="document-stats__numbers">
-            </div>
+{#            <p>({% trans "total" %}/{% trans "translated" %}/{% trans "approved" %})</p>#}
+{#            <div class="document-stats__numbers">#}
+{#            </div>#}
+            <br>
             <div class="document-stats__header">{% trans "Characters in original" %}:</div>
             <div class="document-stats__numbers">
                 <table class="document-stats__numbers__table">
+                    <tr>
+                        <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                        <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                    </tr>
                     <tr>
                         <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.original_chars =}</td>
                         <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.original_chars_without_spaces =}</td>
                     </tr>
                 </table>
             </div>
-            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>
+{#            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>#}
+            <br>
             <div class="document-stats__header">{% trans "Characters in translation" %}:</div>
             <div class="document-stats__numbers">
                 <table class="document-stats__numbers__table">
+                    <tr>
+                        <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                        <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                    </tr>
+                    <tr>
                     <tr>
                         <td class="document-stats__numbers__cell numbers-cell-first">{=:: text.translation.translated_chars =}</td>
                         <td class="document-stats__numbers__cell numbers-cell-third">{=:: text.translation.translated_chars_without_spaces =}</td>
                     </tr>
                 </table>
             </div>
-            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>
+{#            <p>({% trans "with spaces" %} / {% trans "without spaces" %})</p>#}
+            <br>
             <div class="document-stats__header" ng-if="text.translation.users_translated.length > 0">{% trans "Contribution by members" %}:</div>
             <div class="project-list-participant"
                  ng-repeat="participant in text.translation.users_translated"
