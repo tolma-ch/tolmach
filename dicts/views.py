@@ -61,9 +61,9 @@ def dict_search(request):
 
         data = urlencode(
             {
-                'from': source_lang,
-                'dest': target_lang,
-                'phrase': word,
+                'from': source_lang[:5],
+                'dest': target_lang[:5],
+                'phrase': word[:50],
                 'format': 'json',
                 'pretty': 'true'
             }
