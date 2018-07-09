@@ -929,7 +929,8 @@ def translate_entry_ajax(request):
                 return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
             if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
                 return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
-            entry_translation.body = post['text']
+            # strip is for elimination garbage newlines from wild browsers
+            entry_translation.body = post['text'].strip()
         else:
             set_approved = False
             if not project.users.count():
@@ -945,7 +946,8 @@ def translate_entry_ajax(request):
                 return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
 
             import re
-            entry_target_text = re.sub('&nbsp;', ' ', entry_target_text)
+            # strip is for elimination garbage newlines from wild browsers
+            entry_target_text = re.sub('&nbsp;', ' ', entry_target_text).strip()
 
             if settings.PROD:
                 utils.add_pair_to_tmx(request, text, project,
