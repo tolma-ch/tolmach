@@ -470,6 +470,11 @@
 			top 11px
 			left 13px
 			font-size 20px
+	&__translated
+		display inline-block
+		font-size 22px
+		float right
+		margin-top -18px
 
 	&:hover &__menu
 		display block
@@ -721,8 +726,17 @@
 			font-size 12px
 			padding 0 10px
 			color #777777
+	.invisiblerow
+		visibility hidden
 
 @media (max-width: 560px)
+	.project-list-participant
+		&__translated
+			margin-top 0px
+			display block
+			float none
+			table
+				margin 0 auto
 	.document-stats
 		&__header
 			display block
@@ -734,3 +748,5 @@
 			table
 				margin 0 auto
 				margin-top -20px
+		.invisiblerow
+			visibility visible
