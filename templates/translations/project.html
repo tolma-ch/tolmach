@@ -3,6 +3,7 @@
 
 {% block innercontent %}
     <script>
+        pageType="project";
         project={{ projectData | safe }};
         projectId={{ project.id }};
         isUserManager = {{ is_user_manager }};
@@ -385,6 +386,13 @@
                                       ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
                             {% endif %}
                             {% if is_user_manager == 'true' %}
+                            <div class="">
+                                <a href="/project/{{ project.id }}/stats/"
+                                   class="btn btn-sm btn-info">
+                                    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                    {% trans "Project statistics" %}
+                                </a>
+                            </div>
                             <div class="project-list-glossary-header">
                                 {% trans 'Attention!' %}
                             </div>
@@ -392,7 +400,10 @@
                                 <a popover-template="'projectRemovePopover.html'"
                                    popover-placement="right"
                                    style="z-index: 999;"
-                                   class="btn btn-xs btn-danger">{% trans "Remove Project" %}</a>
+                                   class="btn btn-sm btn-danger">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                    {% trans "Remove Project" %}
+                                </a>
                             </div>
                             {% endif %}
                         </div>

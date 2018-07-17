@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
+from translations.decorators import define_project_breadcrumbs
 from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
 from entries.models import Language, Subject
 import translations.utils as utils
@@ -126,30 +127,113 @@ def projects(request, proj_type):
     template = 'translations/projects.html'
     return render(request, template, data)
 
-
 @login_required
-def project_lang_stats(request):
-    data = {}
-    all_projects = Project.objects.all()
-    for proj in all_projects:
-        proj_texts = Text.objects.filter(project=proj)
-        for text in proj_texts:
-            text_translations = TextTranslation.objects.filter(text=text)
-            for trans in text_translations:
-                lang_pair = "%s-%s" % (text.source_lang.code, trans.target_lang.code)
-                if proj.id in data:
-                    if not lang_pair in data[proj.id]:
-                        data[proj.id].append(lang_pair)
-                else:
-                    data[proj.id] = []
-                    data[proj.id].append(lang_pair)
+@define_project_breadcrumbs
+def project_stats(request, pr, projects_text, projects_url, projects_type):
+    import re
 
-    new_data = {}
-    for key, value in data.items():
-        if len(data[key]) > 1:
-            new_data[key] = value
-    print(json.dumps(new_data))
-    return HttpResponse(json.dumps(new_data))
+    if not pr.is_user_allowed(request.user):
+        messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
+        return HttpResponseRedirect('/')
+
+    lang_list = []
+    # Получаем список названий языков для текущей локали
+    from babel import Locale
+    for lang in Language.objects.all():
+        lang_name = Locale(lang.code)
+        localized_lang = lang
+        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        lang_list.append(localized_lang)
+
+    # pr.current_translation = project_translation
+    # pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
+
+    # pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
+
+    all_pr_translations = ProjectTranslation.objects.filter(project=pr)
+    # print("OSDFADSFAS")
+    pr_translation_progress = {'fragments_total': 0,
+                               'fragments_translated': 0,
+                               'fragments_approved': 0,
+                               'original_chars': 0,
+                               'original_chars_without_spaces': 0,
+                               'translated_chars': 0,
+                               'translated_chars_without_spaces': 0,
+                               'users_translated': [], }
+    all_pr_texts = Text.objects.filter(project=pr)
+    for text in all_pr_texts:
+        clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
+        pr_translation_progress['original_chars'] += len(clean_text)
+        pr_translation_progress['original_chars_without_spaces'] += len(clean_text.replace(" ", "").replace("\n", ""))
+
+    for pr_translation in all_pr_translations:
+        text_transes = TextTranslation.objects.filter(project_translation=pr_translation)
+        for tr_trans in text_transes:
+            translated_chars, translated_chars_without_spaces, users_translated = tr_trans.get_progress("full")
+            translation_counts, translation_progress = tr_trans.get_progress()
+            pr_translation_progress['fragments_total'] += translation_counts[0]
+            pr_translation_progress['fragments_translated'] += translation_counts[1]
+            pr_translation_progress['fragments_approved'] += translation_counts[2]
+            pr_translation_progress['translated_chars'] += translated_chars
+            pr_translation_progress['translated_chars_without_spaces'] += translated_chars_without_spaces
+            for user in users_translated:
+                # print(list(item["id"] for item in pr_translation_progress['users_translated']))
+                # print(user)
+                if next((item for item in pr_translation_progress['users_translated'] if item["id"] == user["id"]), None):
+                    for i in pr_translation_progress['users_translated']:
+                        if i["id"] == user["id"]:
+                            i["fragments_translated"]["fragments"] += user["fragments_translated"]["fragments"]
+                            i["fragments_translated"]["chars_with_spaces"] += user["fragments_translated"]["chars_with_spaces"]
+                            i["fragments_translated"]["chars_without_spaces"] += user["fragments_translated"]["chars_without_spaces"]
+                            continue
+                else:
+                    pr_translation_progress['users_translated'].append(user)
+
+        # print("OLOLO_FINAL", pr_translation_progress)
+
+    try:
+        membership_status = ProjectMember.objects.get(project=pr,
+                                                      user=request.user).status
+    except:
+        if request.user.is_staff or pr.is_user_manager(request.user):
+            membership_status = ProjectMember.EDITOR
+        else:
+            membership_status = ProjectMember.SPECTATOR
+
+    data = {
+        'is_user_manager': 'true' if pr.is_user_manager(request.user) else 'false',
+        'manager_id': pr.manager.id,
+        'membership_statuses': {ProjectMember.EDITOR: _("Editor"),
+                                ProjectMember.TRANSLATOR: _("Translator"),
+                                ProjectMember.SPECTATOR: _("Spectator")},
+        'user_membership_status': membership_status,
+        # 'target_lang': target_lang,
+        'page_title': "%s %s / Tolma.ch" % (pr.name[:30], _("Statistics")),
+        'project': pr,
+        'projectData': json.dumps({
+            'id': pr.id,
+            'name': pr.name,
+            'description': pr.description,
+        }),
+        'project_stats': pr_translation_progress,
+        'languages': lang_list,
+        'languagesData': json.dumps([{
+                                     'code': lang.code,
+                                     'langFull': lang.name,
+                                     'langLocal': lang.localized_name,
+                                     'id': lang.id
+                                     } for lang in lang_list]),
+        'subjects': Subject.objects.all(),
+        'breadcrumbs': [
+            {'title': projects_text, 'url': projects_url, 'type': projects_type},
+            {'title': pr.name, 'url': '/project/%d/' % pr.id, 'type': ''},
+            {'title': _("Statistics"), 'url': '', 'type': ''},
+                       # [projects_text, projects_url, projects_type],
+                       # [pr.name, ''],
+        ],
+    }
+    template = 'translations/project_stats.html'
+    return render(request, template, data)
 
 
 @login_required
@@ -170,14 +254,8 @@ def project(request, proj_id=0):
 
 
 @login_required
-def project_by_translation(request, target_lang, proj_id=0):
-    projects_text = ''
-    projects_url = ''
-
-    try:
-        pr = Project.objects.get(id=proj_id)
-    except Project.DoesNotExist:
-        raise Http404(_('Sorry, no such project here!'))
+@define_project_breadcrumbs
+def project_by_translation(request, pr, projects_text, projects_url, projects_type, target_lang):
     try:
         project_translation = ProjectTranslation.objects.get(project=pr,
                                                          target_lang=Language.objects.get(code=target_lang))
@@ -186,25 +264,6 @@ def project_by_translation(request, target_lang, proj_id=0):
     if not pr.is_user_allowed(request.user):
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
-
-    if pr.is_user_manager(request.user):
-        projects_text = _('My projects')
-        projects_url = '/projects/my/'
-    elif pr.is_user_a_member(request.user):
-        projects_text = _('Third-party projects')
-        projects_url = '/projects/thirdparty/'
-    elif not pr.is_private:
-        projects_text = _('Public projects')
-        projects_url = '/projects/public/'
-    else:
-        projects_text = "%s" % pr.manager.username
-        projects_url = '/user/%d/' % pr.manager.id
-
-    projects_type = ''
-    if pr.organization:
-        projects_text = pr.organization
-        projects_url = '/orgs/%s/' % pr.organization.slug
-        projects_type = 'org'
 
     lang_list = []
     # Получаем список названий языков для текущей локали

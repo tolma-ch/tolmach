@@ -461,7 +461,6 @@ def update_text(request, text):
 @accept_text
 @login_required
 def get_translation_progress(request, text):
-    import re
     post = request.POST or json.loads(request.body)
     try:
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['target_lang']))
@@ -475,40 +474,11 @@ def get_translation_progress(request, text):
                                        'translation_progress': translation_progress}
                                       ), content_type="application/json")
     else:
-        translated_entries = TextEntry.objects.filter(translation=translation)
-
-        translated_chars = sum([len(re.sub(r"<hr [rl].*?>", "", x.body)) for x in translated_entries])
-        translated_chars_without_spaces = sum([len(re.sub(r"<hr [rl].*?>", "", x.body).replace(" ", "")) for x in translated_entries])
-
-        activity_by_user = {}
-
-        for entry in translated_entries:
-            if entry.author in activity_by_user:
-                activity_by_user[entry.author]['fragments'] += 1
-                activity_by_user[entry.author]['chars_with_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body))
-                activity_by_user[entry.author]['chars_without_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-            else:
-                activity_by_user[entry.author] = {}
-                activity_by_user[entry.author]['fragments'] = 1
-                activity_by_user[entry.author]['chars_with_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body))
-                activity_by_user[entry.author]['chars_without_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-
-        users_translated = []
-        for key, value in activity_by_user.items():
-            user_dict = user_to_json(key, project=text.project)
-            user_dict["fragments_translated"] = value
-            users_translated.append(user_dict)
-
-        if users_translated:
-            users_translated = sorted(users_translated, key=lambda k: k['fragments_translated']['fragments'], reverse=True)
-            max_translated_fragments = users_translated[0]["fragments_translated"]
-        else:
-            max_translated_fragments = 0
+        translated_chars, translated_chars_without_spaces, users_translated = translation.get_progress("full")
 
         return HttpResponse(json.dumps({'translated_chars': translated_chars,
                                         'translated_chars_without_spaces': translated_chars_without_spaces,
-                                        'users_translated': users_translated,
-                                        'max_translated_fragments': max_translated_fragments,}
+                                        'users_translated': users_translated,}
                                        ), content_type="application/json")
 
 

@@ -292,29 +292,62 @@ class TextTranslation(models.Model):
     def __str__(self):
         return "%s - %s" % (self.text, self.target_lang)
 
-    def get_progress(self):
+    def get_progress(self, detalization="short"):
         """
         Get progress percentage of the current text and return Int from 0 to 100
 
         entries_approved/(entries_total/100.0)
         """
-        # all_stats = cache.get("%d_translation_progress" % self.id)
-        all_stats = []
+        if detalization == "short":
+            # all_stats = cache.get("%d_translation_progress" % self.id)
+            all_stats = []
 
-        if all_stats:
-            entries_total = all_stats[0]
-            entries_translated = all_stats[1]
-            entries_approved = all_stats[2]
-        else:
-            entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-            entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
-            entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
-            cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
+            if all_stats:
+                entries_total = all_stats[0]
+                entries_translated = all_stats[1]
+                entries_approved = all_stats[2]
+            else:
+                entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
+                entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
+                entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
+                cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
 
-        if not entries_total == 0:
-            return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
-        else:
-            return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
+            if not entries_total == 0:
+                return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
+            else:
+                return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
+        elif detalization == "full":
+            from translations.utils_ajax import user_to_json
+            import re
+
+            translated_entries = TextEntry.objects.filter(translation=self)
+
+            translated_chars = sum([len(re.sub(r"<hr [rl].*?>", "", x.body)) for x in translated_entries])
+            translated_chars_without_spaces = sum(
+                [len(re.sub(r"<hr [rl].*?>", "", x.body).replace(" ", "")) for x in translated_entries])
+
+            activity_by_user = {}
+
+            for entry in translated_entries:
+                if entry.author in activity_by_user:
+                    activity_by_user[entry.author]['fragments'] += 1
+                    activity_by_user[entry.author]['chars_with_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                    activity_by_user[entry.author]['chars_without_spaces'] += len(
+                        re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+                else:
+                    activity_by_user[entry.author] = {}
+                    activity_by_user[entry.author]['fragments'] = 1
+                    activity_by_user[entry.author]['chars_with_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                    activity_by_user[entry.author]['chars_without_spaces'] = len(
+                        re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+
+            users_translated = []
+            for key, value in activity_by_user.items():
+                user_dict = user_to_json(key, project=self.text.project)
+                user_dict["fragments_translated"] = value
+                users_translated.append(user_dict)
+
+            return translated_chars, translated_chars_without_spaces, users_translated
 
     @property
     def websocket_group(self):
