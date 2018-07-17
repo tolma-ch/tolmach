@@ -1,0 +1,150 @@
+{% extends "main/base-logged-in.html" %}
+{% load i18n %}
+
+{% block innercontent %}
+    <script>
+        pageType="stats";
+        project={{ projectData | safe }};
+        projectId={{ project.id }};
+        isUserManager = {{ is_user_manager }};
+        managerId = {{ manager_id }};
+        targetLang = '{{ target_lang }}';
+        languages = {{ languagesData | safe }};
+        userMembershipStatus = {{ user_membership_status }};
+//        membershipStatuses = {{ membership_statuses | safe }};
+        console.log(userMembershipStatus);
+    </script>
+    <style>
+        .page-header {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .project-page {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+    <div ng-controller="projectCtrl" ng-cloak class="project-page">
+        <div class="page-header">
+            <h1>
+                {% if is_user_manager == 'true' or user_membership_status == 0 %}
+                <input class="form-contrl" type="text"
+                       ng-show="editingName"
+                       ng-model="projectName"/>
+                <small ng-if="!editingName"><a class="float-right"
+                          href=""
+                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
+                <small ng-if="editingName"><a class="float-right"
+                          href=""
+                          ng-click="saveName()"><i class="fa fa-check"></i></a></small>
+                <small ng-if="editingName"><a class="float-right"
+                          href=""
+                          ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
+                {% endif %}
+                <span ng-show="!editingName">
+                    {= project.name =}
+                </span>
+            </h1>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <div class="document-stats">
+                    <div class="document-stats__header">{% trans "Fragments" %}:</div>
+                    <div class="document-stats__numbers">
+                        <table class="document-stats__numbers__table">
+                            <tr>
+                                <td class="document-stats__title__cell">{% trans "total" %}</td>
+                                <td class="document-stats__title__cell">{% trans "translated" %}</td>
+                                <td class="document-stats__title__cell">{% trans "approved" %}</td>
+                            </tr>
+                            <tr>
+                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.fragments_total }}</td>
+                                <td class="document-stats__numbers__cell numbers-cell-second">{{ project_stats.fragments_translated }}</td>
+                                <td class="document-stats__numbers__cell numbers-cell-third">{{ project_stats.fragments_approved }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div class="document-stats__header">{% trans "Characters in original" %}:</div>
+                    <div class="document-stats__numbers">
+                        <table class="document-stats__numbers__table">
+                            <tr>
+                                <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                                <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                            </tr>
+                            <tr>
+                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.original_chars }}</td>
+                                <td class="document-stats__numbers__cell numbers-cell-third">{{ project_stats.original_chars_without_spaces }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    <div class="document-stats__header">{% trans "Characters in translation" %}:</div>
+                    <div class="document-stats__numbers">
+                        <table class="document-stats__numbers__table">
+                            <tr>
+                                <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                                <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                            </tr>
+                            <tr>
+                            <tr>
+                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.translated_chars }}</td>
+                                <td class="document-stats__numbers__cell numbers-cell-third">{{ project_stats.translated_chars_without_spaces }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                    {% if project_stats.users_translated %}
+                    <div class="document-stats__header">{% trans "Contribution by members" %}:</div>
+                    {% endif %}
+                    {% for participant in project_stats.users_translated %}
+                    <div class="project-list-participant">
+                        <div class="project-list-participant__item" style="display: inline-block;">
+                            <div class="project-list-participant__ava"
+                                   ng-class="{'project-list-participant__ava': true,
+                                              'project-list-participant__ava__owner': participant.status == 10,
+                                              'project-list-participant__ava__editor': participant.status == 0,
+                                              'project-list-participant__ava__translator': participant.status == 1,
+                                              'project-list-participant__ava__spectator': participant.status == 2,}">
+                                <img src="/media/{{ participant.avatar }}" alt="{{ participant.name }}">
+                                <i aria-hidden="true"
+                                   ng-class="{'fa': true,
+                                              'fa-star': participant.status == 10,
+                                              'fa-pencil-square-o': participant.status == 0,
+                                              'fa-pencil': participant.status == 1,
+                                              'fa-eye': participant.status == 2,}"></i>
+                            </div>
+                            <div class="project-list-participant__name " style="display: inline-block;">
+                                {{ participant.name }}
+                            </div>
+                        </div>
+                        <div class="project-list-participant__translated">
+                            <table class="document-stats__numbers__table">
+                                {% if forloop.first %}
+                                <tr>
+                                {% else %}
+                                <tr class="invisiblerow">
+                                {% endif %}
+                                    <td class="document-stats__title__cell">{% trans "Fragments" %}</td>
+                                    <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                                    <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                                </tr>
+                                <tr>
+                                    <td class="document-stats__numbers__cell numbers-cell-first">{{ participant.fragments_translated.fragments }}</td>
+                                    <td class="document-stats__numbers__cell numbers-cell-first">{{ participant.fragments_translated.chars_with_spaces }}</td>
+                                    <td class="document-stats__numbers__cell numbers-cell-third">{{ participant.fragments_translated.chars_without_spaces }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+    </div>
+{% endblock %}

@@ -14,24 +14,26 @@
             $scope.languages = window['languages'];
             $scope.participants = [];
             $scope.showDocumentStats = false;
-            $http.get('/ajax/participant', {params: {project: $scope.projectId}})
-                .then(function (response) {
-                    $scope.participants = response.data;
-                });
-            $scope.texts = [];
-            $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
-                .then(function (response) {
-                    $scope.texts = response.data;
-                });
-            $scope.glossaries = [];
-            $http.get('/ajax/glossary', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
-                .then(function (response) {
-                    $scope.glossaries = response.data;
-                });
-            $http.get('/ajax/tmx', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
-                .then(function (response) {
-                    $scope.tmxes = response.data;
-                });
+            if (window['pageType'] !== "stats") {
+                $http.get('/ajax/participant', {params: {project: $scope.projectId}})
+                    .then(function (response) {
+                        $scope.participants = response.data;
+                    });
+                $scope.texts = [];
+                $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
+                    .then(function (response) {
+                        $scope.texts = response.data;
+                    });
+                $scope.glossaries = [];
+                $http.get('/ajax/glossary', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
+                    .then(function (response) {
+                        $scope.glossaries = response.data;
+                    });
+                $http.get('/ajax/tmx', {params: {project: $scope.projectId, target_lang: $scope.targetLang}})
+                    .then(function (response) {
+                        $scope.tmxes = response.data;
+                    });
+            }
             $scope.addParticipant = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'addParticipantModal.html',
