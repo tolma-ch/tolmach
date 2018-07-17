@@ -171,21 +171,25 @@ class Project(models.Model):
         project_progress = cache.get("%d_project_progress" % self.id)
 
         if not project_progress:
-            common_progress = 0
+            translated_progress = 0
+            approved_progress = 0
             translations_num = 0
             texts = Text.objects.filter(project=self)
             for text in texts:
                 translations = TextTranslation.objects.filter(text=text)
                 for translation in translations:
                     translations_num += 1
-                    common_progress += translation.get_progress()[1][1]
+                    translated_progress += translation.get_progress()[1][0]
+                    approved_progress += translation.get_progress()[1][1]
 
             if not texts.count() == 0:
-                project_progress = common_progress / translations_num
+                project_progress = [int(approved_progress / translations_num),
+                                    int(translated_progress / translations_num) - int(approved_progress / translations_num)]
             else:
-                project_progress = 0
+                project_progress = [0, 0]
+            print(project_progress)
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
-        return int(project_progress)
+        return project_progress
 
     def invite_user(self, user):
         new_proj_user, created = ProjectMember.objects.get_or_create(user=user, project=self)

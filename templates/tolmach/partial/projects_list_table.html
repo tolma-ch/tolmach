@@ -13,14 +13,16 @@
                                             {% endif %}
                                             <span class="user-statistics-table__project-title">{{ project.name }}</span>
                                             <div class="progress-bar progress-bar-mobile">
-                                                <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
+                                                <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>
+                                                <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>
                                             </div>
                                         </a>
                                     </td>
                                     <td class="user-statistics-table__progress">
                                         <div class="progress-bar">
-                                            <div class="progress-bar__gauge" style="width:{{ project.progress }}%;background:#02c14f"></div>
-                                            <span class="progress-bar__value">{{ project.progress }}%</span>
+                                            <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>
+                                            <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>
+                                            <span class="progress-bar__value">{{ project.progress.0 }}%</span>
                                         </div>
                                     </td>
                                     <td class="user-statistics-table__remove-btn">
