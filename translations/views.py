@@ -190,6 +190,9 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
                     pr_translation_progress['users_translated'].append(user)
 
         # print("OLOLO_FINAL", pr_translation_progress)
+    pr_translation_progress['users_translated'] = sorted(pr_translation_progress['users_translated'],
+                                                         key=lambda k: k['fragments_translated']['fragments'],
+                                                         reverse=True)
 
     try:
         membership_status = ProjectMember.objects.get(project=pr,

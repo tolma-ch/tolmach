@@ -106,17 +106,17 @@
                         <div class="project-list-participant__item" style="display: inline-block;">
                             <div class="project-list-participant__ava"
                                    ng-class="{'project-list-participant__ava': true,
-                                              'project-list-participant__ava__owner': participant.status == 10,
-                                              'project-list-participant__ava__editor': participant.status == 0,
-                                              'project-list-participant__ava__translator': participant.status == 1,
-                                              'project-list-participant__ava__spectator': participant.status == 2,}">
+                                              'project-list-participant__ava__owner': {{ participant.status }} == 10,
+                                              'project-list-participant__ava__editor': {{ participant.status }} == 0,
+                                              'project-list-participant__ava__translator': {{ participant.status }} == 1,
+                                              'project-list-participant__ava__spectator': {{ participant.status }} == 2,}">
                                 <img src="/media/{{ participant.avatar }}" alt="{{ participant.name }}">
                                 <i aria-hidden="true"
                                    ng-class="{'fa': true,
-                                              'fa-star': participant.status == 10,
-                                              'fa-pencil-square-o': participant.status == 0,
-                                              'fa-pencil': participant.status == 1,
-                                              'fa-eye': participant.status == 2,}"></i>
+                                              'fa-star': {{ participant.status }} == 10,
+                                              'fa-pencil-square-o': {{ participant.status }} == 0,
+                                              'fa-pencil': {{ participant.status }} == 1,
+                                              'fa-eye': {{ participant.status }} == 2,}"></i>
                             </div>
                             <div class="project-list-participant__name " style="display: inline-block;">
                                 {{ participant.name }}
