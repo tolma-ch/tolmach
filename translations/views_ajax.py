@@ -461,6 +461,7 @@ def update_text(request, text):
 @accept_text
 @login_required
 def get_translation_progress(request, text):
+    import re
     post = request.POST or json.loads(request.body)
     try:
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['target_lang']))
@@ -476,22 +477,21 @@ def get_translation_progress(request, text):
     else:
         translated_entries = TextEntry.objects.filter(translation=translation)
 
-        # TODO: убрать из подсчётов знаки тегов
-        translated_chars = sum([len(x.body) for x in translated_entries])
-        translated_chars_without_spaces = sum([len(x.body.replace(" ", "")) for x in translated_entries])
+        translated_chars = sum([len(re.sub(r"<hr [rl].*?>", "", x.body)) for x in translated_entries])
+        translated_chars_without_spaces = sum([len(re.sub(r"<hr [rl].*?>", "", x.body).replace(" ", "")) for x in translated_entries])
 
         activity_by_user = {}
 
         for entry in translated_entries:
             if entry.author in activity_by_user:
                 activity_by_user[entry.author]['fragments'] += 1
-                activity_by_user[entry.author]['chars_with_spaces'] += len(entry.body)
-                activity_by_user[entry.author]['chars_without_spaces'] += len(entry.body.replace(" ", ""))
+                activity_by_user[entry.author]['chars_with_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                activity_by_user[entry.author]['chars_without_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
             else:
                 activity_by_user[entry.author] = {}
                 activity_by_user[entry.author]['fragments'] = 1
-                activity_by_user[entry.author]['chars_with_spaces'] = len(entry.body)
-                activity_by_user[entry.author]['chars_without_spaces'] = len(entry.body.replace(" ", ""))
+                activity_by_user[entry.author]['chars_with_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                activity_by_user[entry.author]['chars_without_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
 
         users_translated = []
         for key, value in activity_by_user.items():
