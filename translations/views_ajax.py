@@ -342,6 +342,7 @@ def text_ajax(request, project):
         else:
             source_lang = project.source_lang
             target_lang = post["project_target_lang"]
+            file_path = ""
 
             file_type, file_name, title, text_body, custom_parse = "", "", "", "", ""
             split_mode = post.get('split_mode', 'default')
@@ -378,6 +379,7 @@ def text_ajax(request, project):
                     if not os.path.isdir(target_path):
                         os.makedirs(target_path)
                     shutil.move(file_path, '%s/%s' % (target_path, file_name))
+                    file_path = '%s/%s' % (target_path, file_name)
                 title = post['title']
                 text_body = ""
 
@@ -407,6 +409,8 @@ def text_ajax(request, project):
             if the_page["Error"] == 0:
                 text = Text.objects.get(id=the_page["Text"])
             else:
+                if file_path:
+                    os.remove(file_path)
                 return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=post['project_target_lang']))

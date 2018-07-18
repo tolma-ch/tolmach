@@ -107,16 +107,18 @@ def upload_file(file_object, max_size):
     return file_name, file_path, file_type, error
 
 def chtec_request(url, values):
-    try:
-        from urllib2 import urlopen, Request
-        from urllib import urlencode
-    except:
-        from urllib.parse import urlencode
-        from urllib.request import urlopen, Request
+    from urllib.parse import urlencode
+    from urllib.request import urlopen, Request
+    from urllib.error import HTTPError, URLError
 
     data = urlencode(values).encode('ascii')
     req = Request(url, data)
-    response = urlopen(req)
+    try:
+        response = urlopen(req)
+    except HTTPError as e:
+        return json.dumps({'Error': e.code, "Text": _("Something went wrong")})
+    except URLError as e:
+        return json.dumps({'Error': 500, "Text": _("Something went wrong")})
 
     return response.read()
 
