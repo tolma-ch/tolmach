@@ -1156,6 +1156,7 @@
                         })
                         .success(function (text) {
                             $scope.busy = false;
+                            console.log(text);
                             if (ext === 'xlsx') {
                                 var serverFileName = text['file_name'],
                                     serverFileType = text['file_type'],
@@ -1192,6 +1193,12 @@
                                             ranges[i]['target_coords'].push(range.target.text);
                                         }
                                     }
+                                    function getFirstKey( data ) {
+                                        for (var elem in data ) {
+                                            return elem;
+                                        }
+                                    }
+                                    console.log(getFirstKey(ranges));
                                     var data = {
                                         project: window['projectId'],
                                         title: $scope.text.title,
@@ -1199,7 +1206,7 @@
                                         subject: $scope.text.subject,
                                         file_name: serverFileName,
                                         file_type: serverFileType,
-                                        custom_parse: ranges
+                                        custom_parse: ranges[getFirstKey(ranges)]['source_coords'].length > 0 ? ranges : []
                                     };
                                     $scope.busy = true;
                                     $http.post('/ajax/text/', data)
