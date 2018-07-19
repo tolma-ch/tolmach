@@ -705,12 +705,16 @@
                 $scope.showEntryCommentsModal = !$scope.showEntryCommentsModal;
             };
 
-            $scope.showDictModal = false;
+            $rootScope.showDictModal = false;
             $scope.lastFocusedEntryInputId = '';
             $scope.lastFocusedEntryInputPosition = 0;
-            $scope.dictOpener = function () {
-                $scope.showDictModal = !$scope.showDictModal;
+            $rootScope.dictOpener = function () {
+                $rootScope.showDictModal = !$rootScope.showDictModal;
             };
+            $rootScope.dictClose = function () {
+                $rootScope.showDictModal = false;
+            };
+            // $scope.dict
             $scope.$on('GlobalKeydown', function (e, event) {
                 var code = event.keyCode ? event.keyCode : event.which;
                 if (event.ctrlKey && event.altKey) {
@@ -722,7 +726,7 @@
                         event.preventDefault();
                         e.preventDefault();
                         // hotkey for showing dictionary window
-                        if (!$scope.showDictModal) {
+                        if (!$rootScope.showDictModal) {
                             // if dict window is not shown right now
                             // looking for current element focused
                             var curFocus = document.activeElement.id;
@@ -748,7 +752,7 @@
                                 $scope.lastFocusedEntryInputId = '';
                             }
                         }
-                        $scope.showDictModal = !$scope.showDictModal;
+                        $rootScope.showDictModal = !$rootScope.showDictModal;
                     }
                     return;
                 }
@@ -758,7 +762,7 @@
                         event.preventDefault();
                         e.preventDefault();
                         // hotkey for showing dictionary window
-                        if (!$scope.showDictModal) {
+                        if (!$rootScope.showDictModal) {
                             // if dict window is not shown right now
                             // looking for current element focused
                             var curFocus = document.activeElement.id;
@@ -784,7 +788,7 @@
                                 $scope.lastFocusedEntryInputId = '';
                             }
                         }
-                        $scope.showDictModal = !$scope.showDictModal;
+                        $rootScope.showDictModal = !$rootScope.showDictModal;
                     }
                     return;
                 }
@@ -1017,7 +1021,7 @@
                         return;
                     }
                     $rootScope.setDictWord(phrase);
-                    $scope.showDictModal = true;
+                    $rootScope.showDictModal = true;
                     // var prevPhrase = $scope.translatedPhrase;
                     // $scope.translatedPhrase = phrase;
                     // if (phrase === prevPhrase) {

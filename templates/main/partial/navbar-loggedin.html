@@ -114,8 +114,22 @@
 {#        <i class="fa fa-times"#}
 {#           ng-click="searchText = ''; showSearch = false;"></i>#}
 {#    </div>#}
-
-    <li class="navbar-nav__button button_blue">
+    <li class="navbar-nav__button button_blue"
+        ng-show="pagesCount !== undefined"
+        ng-cloak
+        tooltip="{% trans 'Dictionary' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
+        <a class="" href="#" ng-click="dictOpener()"
+           style="font-size: 22px;
+                padding-top: 14px;">
+			<i class="fa fa-book" ></i>
+		</a>
+    </li>
+    <li class="navbar-nav__button button_blue"
+        tooltip="{% trans 'Select page' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
         <div class='text-overview__paginator'
             ng-show="pagesCount > 1"
             ng-cloak
