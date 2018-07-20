@@ -187,6 +187,7 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
                             i["fragments_translated"]["chars_without_spaces"] += user["fragments_translated"]["chars_without_spaces"]
                             continue
                 else:
+                    user["last_seen"] = TextEntry.objects.filter(text__in=all_pr_texts, author_id=user['id']).latest("time_created").time_created
                     pr_translation_progress['users_translated'].append(user)
 
         # print("OLOLO_FINAL", pr_translation_progress)
