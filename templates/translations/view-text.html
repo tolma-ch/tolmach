@@ -45,10 +45,9 @@
         }
         html > body > .main {
             padding-bottom: 0;
-            padding-top: 50px;
         }
         .navbar {
-            margin-top: -50px;
+            z-index: 999;
         }
         .page-content {
             padding-top: 0;
@@ -393,21 +392,6 @@
                     </div>
                 </div>
             </div>
-            {% block navprogress %}
-                <div class="progress header-progress"
-                      tooltip="{% trans 'Fragments approved:' %} {= translationCounts[2] =}
-                      {% trans 'Fragments translated:' %} {= translationCounts[1] =}"
-                      tooltip-placement="bottom"
-                      tooltip-append-to-body="true">
-                    <div class="progress-bar-success header-progress-full" role="progressbar"
-                  aria-valuemin="0" aria-valuemax="100"
-                         style="transition: width 0.3s ease-in-out;"
-                         ng-style="{width : ( translationProgress[1] + '%' ) }"></div>
-                    <div class="progress-bar-success header-progress-full" role="progressbar"
-                  aria-valuemin="0" aria-valuemax="100"
-                         style="transition: width 0.3s ease-in-out;" ng-style="{width : ( translationProgress[0] - translationProgress[1] + '%' ), background: 'rgb(255, 217, 121)' }"></div>
-                </div>
-            {% endblock %}
         </div>
         {% include "translations/partial/dictionary_modal.html" %}
     </div>
