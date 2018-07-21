@@ -5,8 +5,8 @@
 
     module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$location', '$timeout', 'localStorageService',
         function ($rootScope, $scope, $sce, $http, $location, $timeout, localStorageService) {
-            $scope.translationProgress = window['translation_progress'];
-            $scope.translationCounts = window['translation_counts'];
+            $rootScope.translationProgress = window['translation_progress'];
+            $rootScope.translationCounts = window['translation_counts'];
             $scope.userMembershipStatus = window['userMembershipStatus'];
             $scope.currentTextId = window['textId'];
             $scope.currentTargetLang = window['translationTargetLang'];
@@ -52,8 +52,8 @@
                 var ws_data = JSON.parse(message.data);
                 if ('progress' in ws_data) {
                     //console.log('updating progressbars');
-                    $scope.translationProgress = ws_data['progress']['translation_progress'];
-                    $scope.translationCounts = ws_data['progress']['translation_counts'];
+                    $rootScope.translationProgress = ws_data['progress']['translation_progress'];
+                    $rootScope.translationCounts = ws_data['progress']['translation_counts'];
                 }
                 if ('entry_to_approve' in ws_data) {
                     if (!($scope.user == ws_data['user'])) {
@@ -255,8 +255,8 @@
                             target_lang: window['translationTargetLang'],
                             short: true
                         }).success(function (data) {
-                            $scope.translationProgress = data['translation_progress'];
-                            $scope.translationCounts = data['translation_counts'];
+                            $rootScope.translationProgress = data['translation_progress'];
+                            $rootScope.translationCounts = data['translation_counts'];
                         }).error(function (a) {
                             //console.error(a);
                         });

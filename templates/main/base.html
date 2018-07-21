@@ -12,7 +12,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#3B8DB6" />
 
-        {% with front_version="1.10.24" %}
+        {% with front_version="1.10.25" %}
 
 
         <link href="{% static 'img/favicon.ico' %}?v={{ front_version }}" rel="shortcut icon">
@@ -260,6 +260,64 @@
 		<script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
 		<script src="{% static 'js/name-generator.js' %}"></script>
 		<script src="{% static 'js/screenfull.js' %}"></script>
+
+        <script>
+            // if we're on a view text page
+            if (window['textId'] !== undefined) {
+                console.log($("header"));
+                $("body").css("padding-top", "50px");
+                var headerStyles = {
+                    position: "fixed",
+                    top: "0",
+                    transition: "top 0.2s ease-in-out",
+                    width: "100%"
+                };
+                $("header").css(headerStyles);
+                // Hide Header on on scroll down
+                var didScroll;
+                var lastScrollTop = 0;
+                var delta = 5;
+                var navbarHeight = $('header').outerHeight();
+
+                $(window).scroll(function(event){
+                    didScroll = true;
+                });
+
+                setInterval(function() {
+                    if (didScroll) {
+                        hasScrolled();
+                        didScroll = false;
+                    }
+                }, 250);
+
+                function hasScrolled() {
+                    var st = $(this).scrollTop();
+
+                    // Make sure they scroll more than delta
+                    if(Math.abs(lastScrollTop - st) <= delta)
+                        return;
+
+                    // If they scrolled down and are past the navbar, add class .nav-up.
+                    // This is necessary so you never see what is "behind" the navbar.
+                    if (st > lastScrollTop && st > navbarHeight){
+                        // Scroll Down
+                        $('header').removeClass('nav-down').addClass('nav-up');
+                    } else {
+                        // Scroll Up
+                        if(st + $(window).height() < $(document).height()) {
+                            $('header').removeClass('nav-up').addClass('nav-down');
+                        }
+                    }
+
+                    lastScrollTop = st;
+                }
+            }
+        </script>
+        <style>
+            .nav-up {
+                top: -50px !important;
+            }
+        </style>
 
 		<script type="text/javascript">
 			if("ontouchend" in document) document.write("<script src='{% static 'js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
