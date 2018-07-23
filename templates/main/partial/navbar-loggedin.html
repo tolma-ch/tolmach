@@ -5,6 +5,7 @@
 {% trans 'Logout' as logout %}
 {% trans 'See all messages' as messages %}
 {% trans 'Language' as language %}
+{% include "tolmach/partial/global_search_typeahead_template.html" %}
 <ul class="navbar-nav pull-right">
     <style>
         .text-overview__paginator a {
@@ -95,7 +96,7 @@
             background: transparent;
         }
         .search-btn_open .search-btn__input {
-            width: 200px;
+            width: 250px;
             opacity: 1 !important;
             padding: 2px 35px 2px 12px !important;
             background: white;
@@ -103,19 +104,23 @@
         }
     </style>
 
-{#    <div class="search-btn"#}
-{#         ng-class="{'search-btn_open': showSearch}">#}
-{#        <input class="search-btn__input" type="text"#}
-{#               ng-model="searchText"#}
-{#               focus-me="focusSearchInput"#}
-{#               ng-blur="!searchText && (showSearch = false)">#}
-{#        <i class="fa fa-search"#}
-{#           ng-click="showSearch = true; focusSearchInput = true"></i>#}
-{#        <i class="fa fa-times"#}
-{#           ng-click="searchText = ''; showSearch = false;"></i>#}
-{#    </div>#}
+    <div class="search-btn"
+         ng-show="pagesCount !== undefined"
+         ng-class="{'search-btn_open': showSearch}">
+        <input class="search-btn__input" type="text"
+               ng-model="searchText"
+               focus-me="focusSearchInput"
+               ng-blur="!searchText && (showSearch = false)"
+               typeahead="searchText as searchText.searched_text for searchText in globalSearch($viewValue)"
+               typeahead-template-url="globalSearchTypeaheadTemplate.html"
+               typeahead-on-select="onSearchSelect($item, $model, $label)">
+        <i class="fa fa-search"
+           ng-click="showSearch = true; focusSearchInput = true"></i>
+        <i class="fa fa-times"
+           ng-click="searchText = ''; showSearch = false;"></i>
+    </div>
     <li class="navbar-nav__button button_blue"
-        ng-show="pagesCount !== undefined"
+        ng-show="(pagesCount !== undefined) && (showSearch == false)"
         ng-cloak
         tooltip="{% trans 'Dictionary' %}"
         tooltip-append-to-body="true"
@@ -130,7 +135,7 @@
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
         <div class='text-overview__paginator'
-            ng-show="pagesCount > 1"
+            ng-show="(pagesCount > 1) && (showSearch == false)"
             ng-cloak
             style="padding-top: 15px;
                 padding-left: 5px;
@@ -168,6 +173,7 @@
         </div>
     </li>
     <li class="navbar-nav__button button_blue hidden-md hidden-lg hidden-xl"
+        ng-show="showSearch == false"
         tooltip="{% trans 'Fullscreen' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
