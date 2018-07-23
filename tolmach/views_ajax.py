@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from tolmach.models import Organization, OrganizationMember
 from tolmach.decorators import accept_organization
@@ -140,3 +141,52 @@ def organization_members_ajax(request, org):
         }
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+@login_required
+def global_search_ajax(request):
+    import math
+    import textwrap
+
+    from translations.models import Text, TextTranslation, TextEntry
+    if request.GET['textId'] == 0:
+        return HttpResponse(json.dumps([]), content_type="application/json")
+    text_id = int(request.GET['textId'])
+    r = request.GET['q'] if 'q' in request.GET else False
+    text_tr = TextTranslation.objects.get(target_lang__code=request.GET['targetLang'], text__id=text_id)
+    if r:
+        entries = TextEntry.objects.filter(
+            Q(body__icontains=r),
+            Q(text__id=text_id),
+            Q(translation=text_tr) | Q(parent_entry=None)
+        )[:10]
+    else:
+        entries = User.objects.all()[:5]
+    result = []
+    for ent in entries:
+        searched_text = ent.body
+        fragment = int(ent.id_in_text if ent.id_in_text > 0 else ent.parent_entry.id_in_text)
+        page = math.ceil(fragment/100)
+        result.append({
+            'id': ent.id,
+            'searched_text': textwrap.shorten(text=searched_text, width=70),
+            'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=70),
+            'type': "fragment",
+            'link': "/text/%d/ru/#?page=%d&fragment=%d" % (text_id, page, fragment),
+            'additional_data': {'page': page, 'fragment': fragment}
+        })
+
+    # r = request.GET['q'] if 'q' in request.GET else False
+    # if r:
+    #     users = User.objects.filter(
+    #         Q(username__icontains=r) | Q(first_name__icontains=r) | Q(last_name__icontains=r)).all()[:5]
+    # else:
+    #     users = User.objects.all()[:5]
+    # result = []
+    # for user in users:
+    #     username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
+    #     result.append({
+    #         'id': user.id,
+    #         'username': username,
+    #         'link': "/user/%d" % user.id
+    #     })
+    return HttpResponse(json.dumps(result), content_type="application/json")

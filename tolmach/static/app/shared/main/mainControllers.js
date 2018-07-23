@@ -45,6 +45,30 @@
             };
             updateMessages();
 
+            $scope.showSearch = false;
+            $scope.globalSearch = function (query) {
+                $scope.searchTextId = window['textId'] !== undefined ? window['textId'] : 0;
+                $scope.searchTargetLang = window['translationTargetLang'] !== undefined ? window['translationTargetLang'] : 'none';
+                return $http.get('/ajax/search', {params: {q: query,
+                                                           textId: $scope.searchTextId,
+                                                           targetLang: $scope.searchTargetLang}})
+                    .then(function (response) {
+                        return response.data;
+                    });
+            };
+            $scope.onSearchSelect = function($item, $model, $label){
+                $scope.$item = $item;
+                $scope.$model = $model;
+                $scope.$label = $label;
+                console.log($scope.item);
+                window.location = $scope.$item.link;
+
+                // only needed when updating angular-routed urls including "#"
+                if ($scope.$item.link.includes("#")) {
+                    window.location.reload(true);
+                }
+            };
+
             $scope.redrawHelp = function () {
                 if (!$scope.currentBlock) {
                     return;

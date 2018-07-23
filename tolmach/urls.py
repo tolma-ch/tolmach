@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
 
     # ajax
+    url(r'^ajax/search/$', main_ajax.global_search_ajax, name='global_search_ajax'),
     url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
     url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
