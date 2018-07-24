@@ -7,103 +7,6 @@
 {% trans 'Language' as language %}
 {% include "tolmach/partial/global_search_typeahead_template.html" %}
 <ul class="navbar-nav pull-right">
-    <style>
-        .text-overview__paginator a {
-            color: #ffffff;
-            margin-top: -6px;
-        }
-        .text-overview__paginator a:hover {
-            background-color: #367798;
-            color: #5DBE3E;
-        }
-        .text-overview__paginator-text:hover {
-            background: #367798;
-            color: #5DBE3E;
-        }
-        .text-overview__paginator-text i {
-            font-size: 19px;
-        }
-        .text-overview__dropmenu {
-            position: absolute;
-            background: white;
-            z-index: 999;
-            right: 0;
-            color: black;
-            width: 100%;
-            text-align: center;
-            border: 1px solid #D5D5D5;
-            box-shadow: #00000047 0px 5px 17px 0px;
-            max-height: 309px;
-            overflow-y: auto;
-        }
-        .text-overview__dropitem {
-            padding: 5px 0;
-            cursor: pointer;
-        }
-        .text-overview__dropitem:hover {
-            background-color: #f5f5f5 !important;
-        }
-        .search-btn {
-            float: left;
-            height: 50px;
-            line-height: 50px;
-            color: white;
-            font-size: 130%;
-            min-width: 50px;
-            position: relative;
-            cursor: pointer;
-        }
-        .search-btn:hover {
-            background: #32779a;
-        }
-        .search-btn i {
-            position: absolute;
-            height: 50px;
-            width: 50px;
-            top: 0;
-            right: 0;
-            line-height: 50px;
-            transition: all .5s;
-            text-align: center;
-        }
-        .search-btn i.fa-search {
-            display: block;
-        }
-        .search-btn i.fa-times {
-            display: none;
-        }
-        .search-btn__input {
-            width: 0;
-            opacity: 0 !important;
-            padding: 0 !important;
-            background: transparent;
-            border: none !important;
-            border-radius: 111px !important;
-            line-height: 30px !important;
-            transition: all .5s;
-        }
-        .search-btn_open {
-            color: #438EB9;
-        }
-        .search-btn_open i.fa-search {
-            display: none;
-        }
-        .search-btn_open i.fa-times {
-            display: block;
-            width: 30px;
-        }
-        .search-btn_open:hover {
-            background: transparent;
-        }
-        .search-btn_open .search-btn__input {
-            width: 250px;
-            opacity: 1 !important;
-            padding: 2px 35px 2px 12px !important;
-            background: white;
-            border-radius: 111px !important;
-        }
-    </style>
-
     <div class="search-btn"
          ng-show="pagesCount !== undefined"
          ng-class="{'search-btn_open': showSearch}">
@@ -159,14 +62,6 @@
                     {= n + 1 =}
                 </div>
             </div>
-
-            <!--<input type="text"-->
-                   <!--ng-show="editPage"-->
-                   <!--focus-me="focusPaginator"-->
-                   <!--ng-model="page"-->
-                   <!--ng-keypress="paginatorKeypress($event)"-->
-                   <!--ng-blur="paginatorBlur()">-->
-
             <a href=""
                class="hidden-sm hidden-xs"
                ng-click="nextPage()"><i class="fa fa-chevron-right"></i></a>
@@ -185,6 +80,7 @@
 		</a>
     </li>
     <li class="navbar-nav__button button_blue hidden-xs"
+        ng-show="showSearch == false"
         tooltip="{% trans 'Help' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
@@ -246,22 +142,6 @@
                 </a>
             </li>
 
-            <!--<li>-->
-                <!--<a href="#">-->
-                    <!--<i class="fa-cog"></i>-->
-                    <!--Settings-->
-                <!--</a>-->
-            <!--</li>-->
-
-            <!--<li>-->
-                <!--<a href="/">-->
-                    <!--<i class="fa-user"></i>-->
-                    <!--Profile-->
-                <!--</a>-->
-            <!--</li>-->
-
-            <!--<li class="divider"></li>-->
-
             <li class="dropdown-hover dropleft">
                 <a href="#" tabindex="-1">
                     <i class="fa fa-globe" aria-hidden="true"></i>
@@ -280,12 +160,6 @@
                             Russian
                         </a>
                     </li>
-
-                    <!--<li>-->
-                        <!--<a href="" ng-click="changeLanguage('it')">-->
-                            <!--Italian-->
-                        <!--</a>-->
-                    <!--</li>-->
 
                     <li>
                         <a href="" ng-click="changeLanguage('zh')">
