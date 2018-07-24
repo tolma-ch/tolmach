@@ -1,57 +1,5 @@
-<style>
-    .search-btn .dropdown-menu {
-        right: 0 !important;
-        left: auto !important;
-    }
-    .search-result__icon {
-        display: inline-block;
-        margin-right: 8px;
-        vertical-align: super;
-    }
-    .search-result__icon i {
-        position: relative !important;
-        color: #b3b3b3 !important;
-        font-size: 15px;
-        border: 1px dotted #b3b3b3;
-        width: 40px !important;
-        height: 40px !important;
-        line-height: 40px !important;
-        transition: none !important;
-    }
-    .search-result__text {
-        display: inline-block;
-    }
-    .search-result__text__main {
-        display: block;
-    }
-    .search-result__text__parent {
-        display: inline-block;
-        font-size: 12px;
-        color: grey;
-    }
-    .search-result__text__additional_data {
-        font-size: 11px;
-    }
-    .search-result__text__additional_data i {
-        position: relative !important;
-        height: 10px !important;
-        line-height: 10px !important;
-        font-size: 11px;
-        width: 10px !important;
-        margin-right: 3px;
-        margin-left: 5px;
-        transition: none !important;
-    }
-    li.active .search-result__text__parent {
-        color: #c7c7c7;
-    }
-    li.active .search-result__icon i {
-        color: #ffffff !important;
-        border: 1px dotted #ffffff;
-    }
-</style>
 <script type="text/ng-template" id="globalSearchTypeaheadTemplate.html">
-    <a>
+    <a class="search-result">
         <div class="search-result__icon">
             <i aria-hidden="true"
                ng-class="{'fa fa-align-center': (match.model.type == 'fragment'),

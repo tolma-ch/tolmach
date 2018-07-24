@@ -150,6 +150,7 @@ def global_search_ajax(request):
     from translations.models import Text, TextTranslation, TextEntry
     if request.GET['textId'] == 0:
         return HttpResponse(json.dumps([]), content_type="application/json")
+    # TODO: сделать проверку на доступ пользователя к документу, по которому ищем
     text_id = int(request.GET['textId'])
     r = request.GET['q'] if 'q' in request.GET else False
     text_tr = TextTranslation.objects.get(target_lang__code=request.GET['targetLang'], text__id=text_id)
@@ -168,8 +169,8 @@ def global_search_ajax(request):
         page = math.ceil(fragment/100)
         result.append({
             'id': ent.id,
-            'searched_text': textwrap.shorten(text=searched_text, width=70),
-            'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=70),
+            'searched_text': textwrap.shorten(text=searched_text, width=100),
+            'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=50),
             'type': "fragment",
             'link': "/text/%d/ru/#?page=%d&fragment=%d" % (text_id, page, fragment),
             'additional_data': {'page': page, 'fragment': fragment}
