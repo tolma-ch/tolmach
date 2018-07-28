@@ -39,54 +39,30 @@ def projects(request, proj_type):
         page_title = _('My projects') + " / Tolma.ch"
         projects_text = _('My projects')
         page_url = '/projects/my/'
-        user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
-        for pr in user_projects_list:
-            pr.list_button = 'none'
         active_tab = 'my'
     elif proj_type == 'thirdparty':
         page_title = _('Third-party projects') + " / Tolma.ch"
         projects_text = _('Third-party projects')
         page_url = '/projects/thirdparty/'
-        user_memberships = ProjectMember.objects.filter(user=user)
-        user_projects_list = [x.project for x in user_memberships]
-        user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
-        for pr in user_projects_list:
-            pr.list_button = 'leave'
         active_tab = 'thirdparty'
     elif proj_type == 'public':
         page_title = _('Public projects') + " / Tolma.ch"
         projects_text = _('Public projects')
         page_url = '/projects/public/'
         active_tab = 'public'
-        if not request.user.is_staff == 1:
-            user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
-        else:
-            user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
-        for pr in user_projects_list:
-            if pr.is_user_manager(request.user):
-                pr.list_button = 'none'
-            elif pr.is_user_a_member(request.user):
-                pr.list_button = 'leave'
-            else:
-                pr.list_button = 'enter'
+        # if not request.user.is_staff == 1:
+        #     user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
+        # else:
+        #     user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
+        # for pr in user_projects_list:
+        #     if pr.is_user_manager(request.user):
+        #         pr.list_button = 'none'
+        #     elif pr.is_user_a_member(request.user):
+        #         pr.list_button = 'leave'
+        #     else:
+        #         pr.list_button = 'enter'
     else:
         raise Http404("Poll does not exist")
-
-    # print(user_projects_list)
-
-    paginator = Paginator(user_projects_list, 10)
-
-    page = request.GET.get('page')
-    try:
-        result_proj_list = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        result_proj_list = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        result_proj_list = paginator.page(paginator.num_pages)
-
-
 
     lang_list = []
     # Получаем список названий языков для текущей локали
@@ -97,8 +73,8 @@ def projects(request, proj_type):
         localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
 
-    for proj in result_proj_list:
-        proj.progress = proj.get_progress()
+    # for proj in result_proj_list:
+    #     proj.progress = proj.get_progress()
 
     user_data = {
                 'firstName': first_name,
@@ -119,9 +95,10 @@ def projects(request, proj_type):
                 {'title': projects_text, 'url': page_url, 'type': ''},
             ],
             'languages': lang_list,
-            'projects': result_proj_list,
+            # 'projects': result_proj_list,
             'projects_page_active': True,
-            'messages': messages.get_messages(request)
+            'messages': messages.get_messages(request),
+            'organization': {'id': 0}
             }
 
     template = 'translations/projects.html'

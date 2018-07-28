@@ -682,6 +682,8 @@
                 $scope.texts = [];
                 $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
                     .then(function (response) {
+                        var progressIcon = document.getElementById("documents-preloader");
+                        progressIcon.style.display = "none";
                         $scope.texts = response.data;
                     });
                 $scope.glossaries = [];
@@ -1432,8 +1434,16 @@
 
     var module = angular.module('projectsControllers', []);
 
-    module.controller('projectsCtrl', ['$scope', '$modal',
-        function ($scope, $modal) {
+    module.controller('projectsCtrl', ['$scope', '$modal', '$http',
+        function ($scope, $modal, $http) {
+            $scope.projects = {};
+            $http.get('/ajax/projects/' + window['active_tab'] + '/')
+                .then(function (response) {
+                    var progressIcon = document.getElementById("projects-preloader");
+                    progressIcon.style.display = "none";
+                    $scope.projects = response.data;
+                });
+            console.log($scope.projects);
             $scope.startNewProject = function () {
                 var modalInstance = $modal.open({
                     templateUrl: 'newProjectModal.html',

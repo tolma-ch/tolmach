@@ -13,6 +13,9 @@
 {% trans 'Public' as public_checkbox %}
 {% trans 'Private' as private_checkbox %}
 {% trans 'Add' as add_button %}
+    <script>
+        window['active_tab'] = 'user/{{ user_id }}';
+    </script>
 <div class="profile-container" ng-controller="projectsCtrl">
     <aside class="profile-sidebar">
         <div class="user-sidebar">

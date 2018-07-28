@@ -187,7 +187,6 @@ class Project(models.Model):
                                     int(translated_progress / translations_num) - int(approved_progress / translations_num)]
             else:
                 project_progress = [0, 0]
-            print(project_progress)
             cache.set("%d_project_progress" % self.id, project_progress, 60*20)
         return project_progress
 

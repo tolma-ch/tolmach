@@ -12,6 +12,7 @@
 {% trans "There're no projects here at the moment." as empty_projects_label %}
     <script>
     window.userData = {{ userData | safe }};
+    window['active_tab'] = 'dashboard';
     </script>
 <div class="profile-container" ng-controller="projectsCtrl">
     <!-- Messages from HttpReturn. TODO: create new styles for messages. -->
