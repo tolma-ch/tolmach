@@ -1,38 +1,38 @@
                         <table cellpadding="0" cellspacing="0" class="user-statistics-table">
                             <tbody>
-                                {% for project in projects %}
-                                <tr class="user-statistics-table__row">
+                                <tr class="user-statistics-table__row" ng-repeat="project in projects.object_list" ng-cloak>
                                     <td class="user-statistics-table__title">
-                                        <a href="/project/{{ project.id }}/">
-                                            {% if project.organization and not organization.id == project.organization.id %}
-                                                <span class="user-statistics-table__project-manager"><i class="fa fa-sitemap"></i> {{ project.organization|truncatechars:20 }} /</span>
-                                            {% else %}
-                                                {% if not project.manager.username == user.username %}
-                                                    <span class="user-statistics-table__project-manager"> {{ project.manager|truncatechars:20 }} /</span>
-                                                {% endif %}
-                                            {% endif %}
-                                            <span class="user-statistics-table__project-title">{{ project.name }}</span>
+                                        <a href="/project/{=:: project.id =}/">
+                                            <span class="user-statistics-table__project-manager"
+                                                  ng-if="(project.organization.id > 0) &&
+                                                        ({{ organization.id }} !== project.organization.id)"
+                                            ><i class="fa fa-sitemap"></i> {=:: project.organization.name|limitTo:20 =} /</span>
+                                            <span class="user-statistics-table__project-manager"
+                                                  ng-if="(project.manager.username !== '{{ user.username }}') && (project.organization.id == 0)"> {=:: project.manager.username | limitTo:20 =} /</span>
+                                            <span class="user-statistics-table__project-title">{=:: project.name =}</span>
                                             <div class="progress-bar progress-bar-mobile">
-                                                <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>
-                                                <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>
+                                                <div class="progress-bar__gauge" style="width:{=:: project.progress[0] =}%;background:#02c14f"></div>
+                                                <div class="progress-bar__gauge" style="width:{=:: project.progress[1] =}%;background:rgb(255, 217, 121)"></div>
                                             </div>
                                         </a>
                                     </td>
                                     <td class="user-statistics-table__progress">
                                         <div class="progress-bar">
-                                            <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>
-                                            <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>
-                                            <span class="progress-bar__value">{{ project.progress.0 }}%</span>
+                                            <div class="progress-bar__gauge" style="width:{=:: project.progress[0] =}%;background:#02c14f"></div>
+                                            <div class="progress-bar__gauge" style="width:{=:: project.progress[1] =}%;background:rgb(255, 217, 121)"></div>
+                                            <span class="progress-bar__value">{=:: project.progress[0] =}%</span>
                                         </div>
                                     </td>
                                     <td class="user-statistics-table__remove-btn">
-                                        {% if project.is_private %}
-                                        <i class="fa fa-lock"></i>
-                                        {% endif %}
+                                        <i class="fa fa-lock" ng-if="project.is_private == true"></i>
                                     </td>
                                 </tr>
-                                {% empty %}
-                                <div class="projects-background">
+                                <div class="user-statistics-table__preloader" id="projects-preloader">
+                                    {% include "tolmach/partial/preloader.html" %}
+                                </div>
+                                <div class="projects-background"
+                                     ng-if="projects.object_list.length == 0"
+                                     ng-cloak>
                                     <div class="projects-background__tabs">
                                         <span class="projects-background__icon">
                                             <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">
@@ -44,9 +44,57 @@
                                         </span>
                                     </div>
                                 </div>
-                                {% endfor %}
                             </tbody>
                         </table>
+{#                        <table cellpadding="0" cellspacing="0" class="user-statistics-table">#}
+{#                            <tbody>#}
+{#                                {% for project in projects %}#}
+{#                                <tr class="user-statistics-table__row">#}
+{#                                    <td class="user-statistics-table__title">#}
+{#                                        <a href="/project/{{ project.id }}/">#}
+{#                                            {% if project.organization and not organization.id == project.organization.id %}#}
+{#                                                <span class="user-statistics-table__project-manager"><i class="fa fa-sitemap"></i> {{ project.organization|truncatechars:20 }} /</span>#}
+{#                                            {% else %}#}
+{#                                                {% if not project.manager.username == user.username %}#}
+{#                                                    <span class="user-statistics-table__project-manager"> {{ project.manager|truncatechars:20 }} /</span>#}
+{#                                                {% endif %}#}
+{#                                            {% endif %}#}
+{#                                            <span class="user-statistics-table__project-title">{{ project.name }}</span>#}
+{#                                            <div class="progress-bar progress-bar-mobile">#}
+{#                                                <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>#}
+{#                                                <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>#}
+{#                                            </div>#}
+{#                                        </a>#}
+{#                                    </td>#}
+{#                                    <td class="user-statistics-table__progress">#}
+{#                                        <div class="progress-bar">#}
+{#                                            <div class="progress-bar__gauge" style="width:{{ project.progress.0 }}%;background:#02c14f"></div>#}
+{#                                            <div class="progress-bar__gauge" style="width: {{ project.progress.1 }}%;background:rgb(255, 217, 121)"></div>#}
+{#                                            <span class="progress-bar__value">{{ project.progress.0 }}%</span>#}
+{#                                        </div>#}
+{#                                    </td>#}
+{#                                    <td class="user-statistics-table__remove-btn">#}
+{#                                        {% if project.is_private %}#}
+{#                                        <i class="fa fa-lock"></i>#}
+{#                                        {% endif %}#}
+{#                                    </td>#}
+{#                                </tr>#}
+{#                                {% empty %}#}
+{#                                <div class="projects-background">#}
+{#                                    <div class="projects-background__tabs">#}
+{#                                        <span class="projects-background__icon">#}
+{#                                            <i class="fa fa-file-text-o projects-background__icon__back" aria-hidden="true">#}
+{#                                                <i class="fa fa-file-text-o projects-background__icon__front" aria-hidden="true"></i>#}
+{#                                            </i>#}
+{#                                        </span>#}
+{#                                        <span class="projects-background__text">#}
+{#                                            {{ empty_projects_label }}#}
+{#                                        </span>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                {% endfor %}#}
+{#                            </tbody>#}
+{#                        </table>#}
                         {% if projects.paginator.num_pages > 1 %}
                         <div class="pagination-block" style="margin: 0 auto; margin-bottom: -20px;">
                         <ul class="pagination projects-paginator">

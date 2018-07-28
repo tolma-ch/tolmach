@@ -6,6 +6,9 @@
 {% trans 'Third-party' as third_party_tab_label %}
 {% trans 'Public' as public_tab_label %}
 {% trans "There're no projects here at the moment." as empty_projects_label %}
+    <script>
+        window['active_tab'] = '{{ active_tab }}';
+    </script>
             <ul class="project-type-selector">
                 <li class="{% if active_tab == 'my' %}active{% endif %}" id="mytab">
                     <a href="/projects/my/"><span>{{ my_tab_label }}</span></a>

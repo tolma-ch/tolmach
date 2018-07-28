@@ -25,15 +25,6 @@ def index(request):
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = tolmach_utils.get_user_stat(request.user)
 
-        recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
-        recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
-        recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
-        recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
-        all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
-        recent_projects = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
-        for proj in recent_projects:
-            proj.progress = proj.get_progress()
-
         lang_list = []
         # Получаем список названий языков для текущей локали
         from babel import Locale
@@ -43,11 +34,6 @@ def index(request):
             localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
             lang_list.append(localized_lang)
 
-        # Костыль для выведения пустых столбиков статистики
-        empty_list = []
-        if len(ordered_stat) < 3:
-            empty_list = range(3-len(ordered_stat))
-
         user_data = {
                 'firstName': first_name,
                 'lastName': last_name,
@@ -56,7 +42,6 @@ def index(request):
             }
 
         data = {
-            'projects': recent_projects,
             'username': request.user.username,
             'usermeta': usermeta,
             'first_name': first_name,
@@ -66,8 +51,8 @@ def index(request):
             'languages': lang_list,
             'active_tab': 'main',
             'stat': ordered_stat,
-            'empty_list': empty_list,
-            'entries_total': total_translated
+            'entries_total': total_translated,
+            'organization': {'id': 0}
         }
         template = 'tolmach/profile.html'
     else:
@@ -83,34 +68,24 @@ def user_page(request, user_id):
     user = get_object_or_404(User, id=user_id)
     first_name = user.first_name
     last_name = user.last_name
-    if request.user == user or request.user.is_staff == 1:
-        projects = Project.objects.filter(manager=user).order_by('-last_modified')
-    else:
-        projects = Project.objects.filter(manager=user, is_private=False).order_by('-last_modified')
+
     usermeta = UserMeta.objects.get(user=user)
     ordered_stat, total_translated = tolmach_utils.get_user_stat(user)
 
-    for proj in projects:
-        proj.progress = proj.get_progress()
-
-    # Костыль для выведения пустых столбиков статистики
-    empty_list = []
-    if len(ordered_stat) < 3:
-        empty_list = range(3-len(ordered_stat))
     data = {
-        'projects': projects,
         'username': user.username,
         'usermeta': usermeta,
+        'user_id': user.id,
         'first_name': first_name,
         'last_name': last_name,
         'website': usermeta.website,
         'page_title': "%s %s (%s) / Tolma.ch" % (first_name, last_name, user.username),
         'stat': ordered_stat,
-        'empty_list': empty_list,
         'entries_total': total_translated,
         'breadcrumbs': [
             {'title': user.username, 'url': '', 'type': ''},
         ],
+        'organization': {'id': 0},
     }
     template = 'tolmach/view_user.html'
 

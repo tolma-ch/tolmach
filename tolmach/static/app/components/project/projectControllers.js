@@ -22,6 +22,8 @@
                 $scope.texts = [];
                 $http.get('/ajax/text', {params: {project: $scope.projectId, project_target_lang: $scope.targetLang}})
                     .then(function (response) {
+                        var progressIcon = document.getElementById("documents-preloader");
+                        progressIcon.style.display = "none";
                         $scope.texts = response.data;
                     });
                 $scope.glossaries = [];

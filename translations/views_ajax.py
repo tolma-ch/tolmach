@@ -8,8 +8,11 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from entries.models import Subject
 from entries.models import Language
 from translations import utils
@@ -19,6 +22,101 @@ from translations.models import Project, ProjectTranslation, ProjectMember, Glos
 from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
 import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
+
+
+@login_required
+def projects_ajax(request, proj_type, object_id=""):
+    user = User.objects.get(username=request.user)
+
+    user_projects_list = []
+    if proj_type == 'my':
+        user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
+        for pr in user_projects_list:
+            pr.list_button = 'none'
+    elif proj_type == 'thirdparty':
+        user_memberships = ProjectMember.objects.filter(user=user)
+        user_projects_list = [x.project for x in user_memberships]
+        user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
+        for pr in user_projects_list:
+            pr.list_button = 'leave'
+    elif proj_type == 'public':
+        if not request.user.is_staff == 1:
+            user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
+        else:
+            user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
+        for pr in user_projects_list:
+            if pr.is_user_manager(request.user):
+                pr.list_button = 'none'
+            elif pr.is_user_a_member(request.user):
+                pr.list_button = 'leave'
+            else:
+                pr.list_button = 'enter'
+    elif proj_type == 'dashboard':
+        recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
+        recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
+        recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
+        recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
+        all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
+        user_projects_list = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
+    elif proj_type == 'user':
+        try:
+            target_user_id = int(object_id)
+        except:
+            raise Http404("Poll does not exist")
+        target_user = get_object_or_404(User, id=target_user_id)
+        if request.user == user or request.user.is_staff == 1:
+            user_projects_list = Project.objects.filter(manager=target_user).order_by('-last_modified')
+        else:
+            user_projects_list = Project.objects.filter(manager=target_user, is_private=False).order_by('-last_modified')
+    else:
+        raise Http404("Poll does not exist")
+
+    paginator = Paginator(user_projects_list, 10)
+
+    page = request.GET.get('page')
+    try:
+        result_proj_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        result_proj_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        result_proj_list = paginator.page(paginator.num_pages)
+
+    for proj in result_proj_list:
+        proj.progress = proj.get_progress()
+
+    def page_to_json(page_to_serialize):
+        obj_to_return = {}
+        obj_list = []
+        for pr in page_to_serialize.object_list:
+            obj_list.append({
+                'id': pr.id,
+                'manager': {
+                    'username': pr.manager.username
+                },
+                'name': pr.name,
+                'is_private': pr.is_private,
+                'progress': pr.progress,
+                'organization': {
+                    'id': pr.organization.id if pr.organization else 0,
+                    'name': pr.organization.name if pr.organization else ""
+                }
+            })
+        obj_to_return['object_list'] = obj_list
+        # obj_to_return['previous_page_number'] = page_to_serialize.previous_page_number
+        obj_to_return['number'] = int(page_to_serialize.number)
+        # obj_to_return['next_page_number'] = page_to_serialize.next_page_number
+        obj_to_return['paginator'] = {
+            'num_pages': result_proj_list.paginator.num_pages
+        }
+
+        return obj_to_return
+
+    print(page_to_json(result_proj_list))
+    print(vars(result_proj_list.paginator))
+
+    return HttpResponse(json.dumps(page_to_json(result_proj_list)), content_type="application/json")
 
 
 @login_required
