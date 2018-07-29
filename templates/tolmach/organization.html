@@ -8,8 +8,9 @@
 {% trans "Members" as members_tab_label %}
 {% trans "Settings" as settings_tab_label %}
     <script>
-    window.userData = {{ userData | safe }};
-    window.activeTab = "{{ active_tab }}";
+        window.userData = {{ userData | safe }};
+        window.activeTab = "{{ active_tab }}";
+        window['active_tab'] = 'organization/{{ organization.slug }}';
     </script>
 <div class="profile-container" ng-controller="projectsCtrl">
     <section class="organization-content">

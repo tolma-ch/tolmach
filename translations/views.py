@@ -33,8 +33,6 @@ def projects(request, proj_type):
 
     page_title = ''
     page_url = ''
-    # Getting data about user's projects
-    user_projects_list = []
     if proj_type == 'my':
         page_title = _('My projects') + " / Tolma.ch"
         projects_text = _('My projects')
@@ -50,17 +48,6 @@ def projects(request, proj_type):
         projects_text = _('Public projects')
         page_url = '/projects/public/'
         active_tab = 'public'
-        # if not request.user.is_staff == 1:
-        #     user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
-        # else:
-        #     user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
-        # for pr in user_projects_list:
-        #     if pr.is_user_manager(request.user):
-        #         pr.list_button = 'none'
-        #     elif pr.is_user_a_member(request.user):
-        #         pr.list_button = 'leave'
-        #     else:
-        #         pr.list_button = 'enter'
     else:
         raise Http404("Poll does not exist")
 
@@ -72,9 +59,6 @@ def projects(request, proj_type):
         localized_lang = lang
         localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
         lang_list.append(localized_lang)
-
-    # for proj in result_proj_list:
-    #     proj.progress = proj.get_progress()
 
     user_data = {
                 'firstName': first_name,
@@ -95,7 +79,6 @@ def projects(request, proj_type):
                 {'title': projects_text, 'url': page_url, 'type': ''},
             ],
             'languages': lang_list,
-            # 'projects': result_proj_list,
             'projects_page_active': True,
             'messages': messages.get_messages(request),
             'organization': {'id': 0}
