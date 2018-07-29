@@ -68,6 +68,12 @@ def projects_ajax(request, proj_type, object_id=""):
             user_projects_list = Project.objects.filter(manager=target_user).order_by('-last_modified')
         else:
             user_projects_list = Project.objects.filter(manager=target_user, is_private=False).order_by('-last_modified')
+    elif proj_type == 'organization':
+        try:
+            org = Organization.objects.get(slug=object_id)
+        except Organization.DoesNotExist:
+            raise Http404(_('Sorry, no such project here!'))
+        user_projects_list = Project.objects.filter(organization=org).order_by('-last_modified')
     else:
         raise Http404("Poll does not exist")
 

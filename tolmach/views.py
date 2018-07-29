@@ -154,30 +154,9 @@ def organization_page(request, slug=""):
     if not org.is_user_member(request.user):
         return HttpResponseRedirect('/')
 
-    projects = Project.objects.filter(organization=org).order_by('-last_modified')
-    for proj in projects:
-        proj.progress = proj.get_progress()
-
-    recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
-    recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
-    recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
-    recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
-    all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
-    recent_projects = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
-    for proj in recent_projects:
-        proj.progress = proj.get_progress()
-
-    paginator = Paginator(recent_projects, 10)
-
-    page = request.GET.get('page')
-    try:
-        result_proj_list = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        result_proj_list = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        result_proj_list = paginator.page(paginator.num_pages)
+    # projects = Project.objects.filter(organization=org).order_by('-last_modified')
+    # for proj in projects:
+    #     proj.progress = proj.get_progress()
 
     lang_list = []
     # Получаем список названий языков для текущей локали
@@ -199,7 +178,7 @@ def organization_page(request, slug=""):
         'organization': org,
         'profileType': 'organization',
         'languages': lang_list,
-        'projects': projects,
+        # 'projects': projects,
         'page_title': "%s / %s / Tolma.ch" % (org.name[:30], _("Organizations")),
         'breadcrumbs': [
             {'title': _("Organizations"), 'url': '/orgs/', 'type': ''},
