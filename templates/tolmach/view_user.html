@@ -53,7 +53,6 @@
     </aside>
     <section class="profile-content">
         <div class="user-statistics__recent-progress">
-            {% if projects %}
             <div class="user-statistics__recent-progress-title stripy-heading">
                 <span class="stripy-heading__before"></span>
                 <span class="stripy-heading__text">{{ projects_label }}</span>
@@ -63,7 +62,6 @@
             <div class="user-statistics__recent-progress-table">
                 {% include "tolmach/partial/projects_list_table.html" %}
             </div>
-            {% endif %}
 
         </div>
 
