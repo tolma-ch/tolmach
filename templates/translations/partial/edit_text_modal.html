@@ -88,16 +88,16 @@
             </div>
             <br>
             <div class="document-stats__header" ng-if="text.translation.users_translated.length > 0">{% trans "Contribution by members" %}:</div>
-            <div class="project-list-participant"
+            <div class="project-sidebar-participant"
                  ng-repeat="participant in text.translation.users_translated"
-                 ng-class="{'project-list-participant_active': activeParticipant === participant}">
-                <div class="project-list-participant__item" style="display: inline-block;">
-                    <div class="project-list-participant__ava"
-                           ng-class="{'project-list-participant__ava': true,
-                                      'project-list-participant__ava__owner': participant.status == 10,
-                                      'project-list-participant__ava__editor': participant.status == 0,
-                                      'project-list-participant__ava__translator': participant.status == 1,
-                                      'project-list-participant__ava__spectator': participant.status == 2,}">
+                 ng-class="{'project-sidebar-participant_active': activeParticipant === participant}">
+                <div class="project-sidebar-participant__item" style="display: inline-block;">
+                    <div class="project-sidebar-participant__ava"
+                           ng-class="{'project-sidebar-participant__ava': true,
+                                      'project-sidebar-participant__ava__owner': participant.status == 10,
+                                      'project-sidebar-participant__ava__editor': participant.status == 0,
+                                      'project-sidebar-participant__ava__translator': participant.status == 1,
+                                      'project-sidebar-participant__ava__spectator': participant.status == 2,}">
                         <img src="/media/{=:: participant.avatar =}" alt="{=:: participant.name =}">
                         <i aria-hidden="true"
                            ng-class="{'fa': true,
@@ -106,11 +106,11 @@
                                       'fa-pencil': participant.status == 1,
                                       'fa-eye': participant.status == 2,}"></i>
                     </div>
-                    <div class="project-list-participant__name " style="display: inline-block;">
+                    <div class="project-sidebar-participant__name " style="display: inline-block;">
                         {=:: participant.name =}
                     </div>
                 </div>
-                <div class="project-list-participant__translated">
+                <div class="project-sidebar-participant__translated">
                     <table class="document-stats__numbers__table">
                         <tr ng-class="{'invisiblerow': !$first}">
                             <td class="document-stats__title__cell">{% trans "Fragments" %}</td>

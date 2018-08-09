@@ -3,6 +3,7 @@
 *.pyc
 *.mo
 .idea
+.vscode
 .DS_Store
 local_settings.py
 

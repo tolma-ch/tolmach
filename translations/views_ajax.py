@@ -372,7 +372,10 @@ def participant_ajax(request, project):
             user = User.objects.get(id=request.GET['user'])
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
-        if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+
+        # check for cases when user leaves the project
+        if (request.user.id != int(request.GET['user'])) and \
+            (not project.is_user_manager(request.user) and not project.is_user_editor(request.user)):
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
         if user == project.manager:
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
@@ -389,16 +392,17 @@ def participant_ajax(request, project):
         else:
             user_in_project.delete()
 
-        from django.utils import timezone
-        message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+        if (request.user.id != int(request.GET['user'])):
+            from django.utils import timezone
+            message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
-        new_message = Messages(
-            message_type='A',
-            addressee=user,
-            originator=request.user,
-            message=message
-        )
-        new_message.save()
+            new_message = Messages(
+                message_type='A',
+                addressee=user,
+                originator=request.user,
+                message=message
+            )
+            new_message.save()
 
         result = {
             'id': user.id
