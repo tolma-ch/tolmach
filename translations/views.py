@@ -249,7 +249,9 @@ def project_by_translation(request, pr, projects_text, projects_url, projects_ty
     try:
         membership_status = ProjectMember.objects.get(project=pr,
                                                       user=request.user).status
+        is_user_a_member = True
     except:
+        is_user_a_member = False
         if request.user.is_staff or pr.is_user_manager(request.user):
             membership_status = ProjectMember.EDITOR
         else:
@@ -262,6 +264,8 @@ def project_by_translation(request, pr, projects_text, projects_url, projects_ty
                                 ProjectMember.TRANSLATOR: _("Translator"),
                                 ProjectMember.SPECTATOR: _("Spectator")},
         'user_membership_status': membership_status,
+        'is_user_a_member': 'true' if is_user_a_member else 'false',
+        'user_id': request.user.id,
         'target_lang': target_lang,
         'page_title': "%s [%s-%s] / Tolma.ch" % (pr.name[:30], pr.source_lang.code.upper(), target_lang.upper()),
         'project': pr,

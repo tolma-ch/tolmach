@@ -6,13 +6,12 @@
         pageType="project";
         project={{ projectData | safe }};
         projectId={{ project.id }};
+        userId={{ user_id }};
         isUserManager = {{ is_user_manager }};
         managerId = {{ manager_id }};
         targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
         userMembershipStatus = {{ user_membership_status }};
-//        membershipStatuses = {{ membership_statuses | safe }};
-        console.log(userMembershipStatus);
     </script>
     <style>
         .page-header {
@@ -200,27 +199,27 @@
                         <div class="helped-block" ng-init="activeParticipant = null"
                                    help-text='{% trans "Here you can see all the members" %}'>
                             <div class="project-sidebar">
-                                <div class="project-list-participant helped-block"
+                                <div class="project-sidebar-participant helped-block"
                                      help-text='{% trans "Click here to add member" %}'
                                      ng-click="addParticipant()"
                                      ng-show="(isUserManager || (userMembershipStatus == 0))">
-                                    <div class="project-list-participant__add">
+                                    <div class="project-sidebar-participant__add">
                                         <i class="fa fa-plus"></i>
                                     </div>
-                                    <div class="project-list-participant__name">
+                                    <div class="project-sidebar-participant__name">
                                         {% trans 'Add' %}
                                     </div>
                                 </div>
-                                <div class="project-list-participant"
+                                <div class="project-sidebar-participant"
                                      ng-repeat="participant in participants"
                                      ng-click="activeParticipant = participant"
-                                     ng-class="{'project-list-participant_active': activeParticipant === participant}">
-                                    <div class="project-list-participant__ava"
-                                           ng-class="{'project-list-participant__ava': true,
-                                                      'project-list-participant__ava__owner': participant.status == 10,
-                                                      'project-list-participant__ava__editor': participant.status == 0,
-                                                      'project-list-participant__ava__translator': participant.status == 1,
-                                                      'project-list-participant__ava__spectator': participant.status == 2,}">
+                                     ng-class="{'project-sidebar-participant_active': activeParticipant === participant}">
+                                    <div class="project-sidebar-participant__ava"
+                                           ng-class="{'project-sidebar-participant__ava': true,
+                                                      'project-sidebar-participant__ava__owner': participant.status == 10,
+                                                      'project-sidebar-participant__ava__editor': participant.status == 0,
+                                                      'project-sidebar-participant__ava__translator': participant.status == 1,
+                                                      'project-sidebar-participant__ava__spectator': participant.status == 2,}">
                                         <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
                                         <i aria-hidden="true"
                                            ng-class="{'fa': true,
@@ -229,12 +228,12 @@
                                                       'fa-pencil': participant.status == 1,
                                                       'fa-eye': participant.status == 2,}"></i>
                                     </div>
-                                    <div class="project-list-participant__name">
+                                    <div class="project-sidebar-participant__name">
                                         {=:: participant.name =}
                                     </div>
-                                    <div class="project-list-participant__btns">
-                                        <a class="project-list-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
-                                        <a class="project-list-participant__btn tooltip-warning" href=""
+                                    <div class="project-sidebar-participant__btns">
+                                        <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
+                                        <a class="project-sidebar-participant__btn tooltip-warning" href=""
                                            tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
                                            ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"
@@ -251,7 +250,7 @@
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <div class="project-list-participant__menu"
+                                    <div class="project-sidebar-participant__menu"
                                             ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
                                         <i class="fa fa-bars"></i>
                                     </div>
@@ -265,27 +264,20 @@
                         <div class="helped-block"
                              help-text='{% trans "Here will be TMXes and glossaries" %}'>
                             <div class="project-sidebar project-sidebar__instruments-block">
-                                <div class="project-list-participant helped-block"
+                                <div class="project-sidebar-participant helped-block"
                                      ng-if="(isUserManager || (userMembershipStatus == 0))"
                                      help-text='{% trans "Click here to translation memory or glossary" %}'>
                                     <a data-toggle="dropdown"
                                        class="dropdown-toggle"
                                        href="">
-                                            <div class="project-list-participant__add">
+                                            <div class="project-sidebar-participant__add">
                                                 <i class="fa fa-plus"></i>
                                             </div>
-                                            <div class="project-list-participant__name">
+                                            <div class="project-sidebar-participant__name">
                                                 {% trans 'Add' %}
                                             </div>
                                     </a>
                                     <ul class="pull-left dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                                        <!--<li>-->
-                                            <!--<a href="#"-->
-                                               <!--ng-click="addTmx()">-->
-                                                <!--<i class="fa fa-th-list"></i>-->
-                                                <!--{% trans "TMX" %}-->
-                                            <!--</a>-->
-                                        <!--</li>-->
                                         <li>
                                             <a href="#"
                                                ng-click="addGlossary()">
@@ -384,7 +376,7 @@
                                       ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
                             {% endif %}
                             {% if is_user_manager == 'true' %}
-                            <div class="">
+                            <div>
                                 <a href="/project/{{ project.id }}/stats/"
                                    class="btn btn-sm btn-info">
                                     <i class="fa fa-bar-chart" aria-hidden="true"></i>
@@ -394,13 +386,23 @@
                             <div class="project-list-glossary-header">
                                 {% trans 'Attention!' %}
                             </div>
-                            <div class="">
+                            <div>
                                 <a popover-template="'projectRemovePopover.html'"
                                    popover-placement="right"
                                    style="z-index: 999;"
                                    class="btn btn-sm btn-danger">
                                     <i class="fa fa-trash-o" aria-hidden="true"></i>
                                     {% trans "Remove Project" %}
+                                </a>
+                            </div>
+                            {% elif is_user_a_member == 'true' %}
+                            <div>
+                                <a popover-template="'projectLeavePopover.html'"
+                                   popover-placement="right"
+                                   style="z-index: 999;"
+                                   class="btn btn-sm btn-danger">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                                    {% trans "Leave Project" %}
                                 </a>
                             </div>
                             {% endif %}
@@ -427,4 +429,5 @@
     {% include "translations/partial/tmx_remove_popover.html" %}
     {% include "translations/partial/project_remove_popover.html" %}
     {% endif %}
+    {% include "translations/partial/project_leave_popover.html" %}
 {% endblock %}

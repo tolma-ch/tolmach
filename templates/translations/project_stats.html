@@ -102,14 +102,14 @@
                     <div class="document-stats__header">{% trans "Contribution by members" %}:</div>
                     {% endif %}
                     {% for participant in project_stats.users_translated %}
-                    <div class="project-list-participant">
-                        <div class="project-list-participant__item" style="display: inline-block;">
-                            <div class="project-list-participant__ava"
-                                   ng-class="{'project-list-participant__ava': true,
-                                              'project-list-participant__ava__owner': {{ participant.status }} == 10,
-                                              'project-list-participant__ava__editor': {{ participant.status }} == 0,
-                                              'project-list-participant__ava__translator': {{ participant.status }} == 1,
-                                              'project-list-participant__ava__spectator': {{ participant.status }} == 2,}">
+                    <div class="project-sidebar-participant">
+                        <div class="project-sidebar-participant__item" style="display: inline-block;">
+                            <div class="project-sidebar-participant__ava"
+                                   ng-class="{'project-sidebar-participant__ava': true,
+                                              'project-sidebar-participant__ava__owner': {{ participant.status }} == 10,
+                                              'project-sidebar-participant__ava__editor': {{ participant.status }} == 0,
+                                              'project-sidebar-participant__ava__translator': {{ participant.status }} == 1,
+                                              'project-sidebar-participant__ava__spectator': {{ participant.status }} == 2,}">
                                 <img src="/media/{{ participant.avatar }}" alt="{{ participant.name }}">
                                 <i aria-hidden="true"
                                    ng-class="{'fa': true,
@@ -118,14 +118,14 @@
                                               'fa-pencil': {{ participant.status }} == 1,
                                               'fa-eye': {{ participant.status }} == 2,}"></i>
                             </div>
-                            <div class="project-list-participant__name " style="display: inline-block;">
+                            <div class="project-sidebar-participant__name " style="display: inline-block;">
                                 {{ participant.name }}
                                 <div class="translation-variant__date">
                                     {{ participant.last_seen }}
                                 </div>
                             </div>
                         </div>
-                        <div class="project-list-participant__translated">
+                        <div class="project-sidebar-participant__translated">
                             <table class="document-stats__numbers__table">
                                 {% if forloop.first %}
                                 <tr>

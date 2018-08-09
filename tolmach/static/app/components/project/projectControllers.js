@@ -10,6 +10,7 @@
             $scope.isUserManager = window['isUserManager'];
             $scope.userMembershipStatus = window['userMembershipStatus'];
             $scope.managerId = window['managerId'];
+            $scope.userId = window['userId'];
             $scope.targetLang = window['targetLang'];
             $scope.languages = window['languages'];
             $scope.participants = [];
@@ -90,6 +91,22 @@
                             delete $scope.participants.splice(i, 1);
                         }
                         $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.leaveProject = function () {
+                var data = {
+                    'project': window['projectId'],
+                    'user': $scope.userId
+                };
+                $scope.busy = true;
+                $http.delete('/ajax/participant/', {params: data})
+                    .success(function () {
+                        $scope.busy = false;
+                        location.href = '/projects/my/';
                     })
                     .error(function (data) {
                         $scope.error = data;
