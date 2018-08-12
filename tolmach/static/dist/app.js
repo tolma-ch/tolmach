@@ -3118,14 +3118,13 @@
 
     var module = angular.module('mainControllers', []);
 
-    module.controller('mainCtrl', ['$scope', '$http', '$timeout', '$modal', '$window', '$rootScope',
-        function ($scope, $http, $timeout, $modal, $window, $rootScope) {
+    module.controller('mainCtrl', ['$scope', '$http', '$interval', '$modal', '$window', '$rootScope',
+        function ($scope, $http, $interval, $modal, $window, $rootScope) {
 
             $rootScope.editPage = false;
-            var updateMessages = function () {
+            $rootScope.updateMessages = function () {
                 $http.get('/ajax/message/').success(function (data) {
                     $scope.messages = data;
-                    $timeout(updateMessages, 15 * 60 * 1000);
                 }).error(function (data) {
                 })
             };
@@ -3137,13 +3136,6 @@
             $scope.toggleSidebar = function () {
                 $scope.sidebarCollapsed = !$scope.sidebarCollapsed;
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
-            };
-            $scope.readMessage = function (message) {
-                $http.post('/ajax/message/', {id: message.id}).success(function (data) {
-                    $scope.messages = data;
-                    $timeout(updateMessages, 5000);
-                }).error(function (data) {
-                })
             };
             $scope.showAllMessages = function () {
                 var modalInstance = $modal.open({
@@ -3158,7 +3150,7 @@
                 }, function () {
                 });
             };
-            updateMessages();
+            $interval($rootScope.updateMessages, 5000);
 
             $scope.showSearch = false;
             $scope.globalSearch = function (query) {
@@ -3368,14 +3360,26 @@
         }
     ]);
 
-    module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http',
-        function ($scope, $modalInstance, $http) {
+    module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http', '$rootScope',
+        function ($scope, $modalInstance, $http, $rootScope) {
             $scope.error = '';
             $http.get('/ajax/message/all').success(function (data) {
                 $scope.messages = data;
-                $timeout(updateMessages, 5000);
             }).error(function (data) {
             });
+            $scope.readMessage = function (message) {
+                if (message.was_read !== true) {
+                    $http.post('/ajax/message/', {id: message.id}).success(function (data) {
+                        for (var i in $scope.messages) {
+                            if ($scope.messages[i].id == message.id) {
+                                $scope.messages[i].was_read = true;
+                            }
+                        }
+                        $rootScope.updateMessages();
+                    }).error(function (data) {
+                    })
+                }
+            };
 
             $scope.cancel = function () {
                 $modalInstance.dismiss('cancel');

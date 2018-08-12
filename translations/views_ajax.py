@@ -1422,9 +1422,9 @@ def message_ajax(request, all):
 
     if request.method == 'GET':
         if all:
-            messages = Messages.objects.filter(addressee=request.user)
+            messages = Messages.objects.filter(addressee=request.user).order_by('-time_created')
         else:
-            messages = Messages.objects.filter(addressee=request.user, was_read=False)
+            messages = Messages.objects.filter(addressee=request.user, was_read=False).order_by('-time_created')
         result = []
         for message in messages:
             sender_meta = UserMeta.objects.get(user=message.originator)
@@ -1437,7 +1437,8 @@ def message_ajax(request, all):
                 'project_id': data['project_id'],
                 'project_name': data['project'],
                 'type': data['type'],
-                'time_created': message.time_created.strftime('%H:%M %d-%m-%Y')
+                'was_read': message.was_read,
+                'time_created': message.time_created.strftime('%Y-%m-%dT%H:%M:%S+0000')
             })
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
