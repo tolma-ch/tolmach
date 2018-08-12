@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-09 20:31+0300\n"
+"POT-Creation-Date: 2018-08-09 21:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -645,6 +645,14 @@ msgstr "Введите имя или ник"
 #: templates/tolmach/partial/organization_members.html:51
 msgid "Invite"
 msgstr "Пригласить"
+
+#: templates/tolmach/partial/all_messages_modal.html:48
+msgid "You were removed from the project"
+msgstr "Вы были исключены из проекта"
+
+#: templates/tolmach/partial/all_messages_modal.html:49
+msgid "You were invited to the project"
+msgstr "Вы были приглашены в проект"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37

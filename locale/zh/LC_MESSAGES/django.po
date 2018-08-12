@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-09 20:31+0300\n"
+"POT-Creation-Date: 2018-08-09 21:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -600,6 +600,18 @@ msgstr "进入注册或名称"
 #: templates/tolmach/partial/organization_members.html:51
 msgid "Invite"
 msgstr ""
+
+#: templates/tolmach/partial/all_messages_modal.html:48
+#, fuzzy
+#| msgid "User is not a member of project"
+msgid "You were removed from the project"
+msgstr "该用户不是项目成员"
+
+#: templates/tolmach/partial/all_messages_modal.html:49
+#, fuzzy
+#| msgid "User is not a member of project"
+msgid "You were invited to the project"
+msgstr "该用户不是项目成员"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
