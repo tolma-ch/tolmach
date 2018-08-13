@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from api.decorators import check_apikey
 
-from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
+from translations.models import Text, TextTranslation
 import json
 
 keys = {

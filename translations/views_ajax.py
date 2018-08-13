@@ -19,7 +19,7 @@ from translations import utils
 from translations.decorators import accept_text, accept_project
 from tolmach.models import UserMeta, Messages, PairStats, Organization, OrganizationMember
 from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
-from translations.models import TextEntry, TextEntryMeta, Text, TextMeta, TextTranslation, TextTranslationMeta
+from translations.models import TextEntry, Text, TextTranslation, TextTranslationMeta
 import json, os, shutil
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
@@ -902,7 +902,7 @@ def entry_ajax(request, action, text):
                 entry.glossary_body = entry.body
             entry_translations = []
             if has_plurals:
-                entry_meta = json.loads(TextEntryMeta.objects.get(entry=entry).meta_data)
+                entry_meta = json.loads(entry.meta_data)
             else:
                 entry_meta = ""
             approved = False

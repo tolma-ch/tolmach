@@ -370,6 +370,7 @@ class TextEntry(models.Model):
     id_in_text = models.IntegerField(default=0)
     translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
+    meta_data = models.TextField(default="")
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
