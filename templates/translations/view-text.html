@@ -96,9 +96,26 @@
                                     {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
                                 <div ng-if="!entry.approved && (entry.translations.length > 0)">
-                                    <span html-content="entry.translations[entry.translations.length-1].body"></span>
-                                    {% include "translations/partial/text-page-now-editing-icon.html" %}
-                                    <br>
+                                    <span class="text-piece__body">
+                                        <span html-content="entry.translations[entry.translations.length-1].body"></span>
+                                        {% include "translations/partial/text-page-now-editing-icon.html" %}
+                                    </span>
+                                    <div class="text-piece__icons" ng-if="entry.translations.length == 1">
+                                        <a ng-show="(userIsManager || userMembershipStatus == 0) && !entry.approved"
+                                           ng-click="approveEntry(entry.translations[entry.translations.length-1], entry)"
+                                           ng-disabled="entry.translations[entry.translations.length-1].busy"
+                                           tooltip="{% trans 'Approve translation' %}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-check-circle"></i>
+                                        </a>
+                                        <a ng-show="(userIsManager || userMembershipStatus == 0 || (user == translation.author.id)) && !(userMembershipStatus == 2)"
+                                           ng-click="editTranslation(entry, entry.translations[entry.translations.length-1])"
+                                           ng-disabled="entry.translations[entry.translations.length-1].busy"
+                                           tooltip="{% trans 'Edit translation' %}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    </div>
                                     <div class="translation-variant__author">
                                         <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
                                     </div>
