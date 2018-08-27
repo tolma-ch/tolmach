@@ -44,14 +44,9 @@ def dict_search_1(request):
 def dict_search(request):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        # print(post)
-
-        try:
-            from urllib2 import urlopen
-            from urllib import urlencode
-        except:
-            from urllib.parse import urlencode
-            from urllib.request import urlopen
+        from urllib.error import HTTPError, URLError
+        from urllib.parse import urlencode
+        from urllib.request import urlopen
 
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
@@ -69,23 +64,29 @@ def dict_search(request):
             }
         )
         url = "https://glosbe.com/gapi/translate?%s" % data
-        # print(url)
-        f = urlopen(url)
 
-        data = json.loads(f.read())
+        try:
+            response = urlopen(url)
+            glosbe = True
+        except HTTPError as e:
+            glosbe = False
+        except URLError as e:
+            glosbe = False
 
-        glosbe_data = {"dict": "Glosbe",
-                       "word": word,
-                       "definition": ""}
+        if glosbe:
+            data = json.loads(response.read())
 
-        # print(json.dumps(data["tuc"]))
-        if data['result'] == 'ok':
-            if 'tuc' in data:
-                for entry in data['tuc']:
-                    if "phrase" in entry:
-                        glosbe_data["definition"] += entry["phrase"]["text"] + ", "
-        if glosbe_data["definition"]:
-            return_data.append(glosbe_data)
+            glosbe_data = {"dict": "Glosbe",
+                           "word": word,
+                           "definition": ""}
+
+            if data['result'] == 'ok':
+                if 'tuc' in data:
+                    for entry in data['tuc']:
+                        if "phrase" in entry:
+                            glosbe_data["definition"] += entry["phrase"]["text"] + ", "
+            if glosbe_data["definition"]:
+                return_data.append(glosbe_data)
 
         return HttpResponse(json.dumps(return_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
     else:
