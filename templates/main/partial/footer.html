@@ -4,6 +4,7 @@
 {% trans "We're in vk.com" as vk_title %}
 {% trans 'Tolma.ch on Google+' as gp_title %}
 {% trans 'Our Twitter' as tw_title %}
+{% trans 'Telegram live chat' as tg_title %}
 {% trans 'Tolma.ch on Facebook' as fb_title %}
 
 {% if user.is_authenticated %}
@@ -70,6 +71,9 @@
                             </li>
                             <li class="footer-social__item">
                                 <a href="https://twitter.com/tolma_ch" target="_blank" title="{{ tw_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_tw"></a>
+                            </li>
+                            <li class="footer-social__item">
+                                <a href="https://t.me/tolma_ch" target="_blank" title="{{ tg_title }}" class="footer-social__icon footer-social__icon_small footer-social__item_tg"></a>
                             </li>
                         </ul>
                     </div>

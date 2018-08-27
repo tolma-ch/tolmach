@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-08-09 21:55+0300\n"
+"POT-Creation-Date: 2018-08-27 17:20+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,6 +158,10 @@ msgid "Our Twitter"
 msgstr "Наш Twitter"
 
 #: templates/main/partial/footer.html:7
+msgid "Telegram live chat"
+msgstr "Живой Telegram-чат"
+
+#: templates/main/partial/footer.html:8
 msgid "Tolma.ch on Facebook"
 msgstr "Tolma.ch на Facebook"
 
@@ -646,11 +650,11 @@ msgstr "Введите имя или ник"
 msgid "Invite"
 msgstr "Пригласить"
 
-#: templates/tolmach/partial/all_messages_modal.html:48
+#: templates/tolmach/partial/all_messages_modal.html:60
 msgid "You were removed from the project"
 msgstr "Вы были исключены из проекта"
 
-#: templates/tolmach/partial/all_messages_modal.html:49
+#: templates/tolmach/partial/all_messages_modal.html:61
 msgid "You were invited to the project"
 msgstr "Вы были приглашены в проект"
 
@@ -1273,57 +1277,59 @@ msgstr "Перевод"
 msgid "Add with"
 msgstr "Добавлять с помощью"
 
-#: templates/translations/view-text.html:115
-#: templates/translations/view-text.html:296
-msgid "Disapprove translation"
-msgstr "Отклонить перевод"
-
-#: templates/translations/view-text.html:141
-msgid "singular:"
-msgstr "един.ч.:"
-
-#: templates/translations/view-text.html:142
-msgid "plural:"
-msgstr "множ.ч.:"
-
-#: templates/translations/view-text.html:306
+#: templates/translations/view-text.html:107
+#: templates/translations/view-text.html:323
 msgid "Approve translation"
 msgstr "Утвердить перевод"
 
-#: templates/translations/view-text.html:313
+#: templates/translations/view-text.html:114
+#: templates/translations/view-text.html:330
 msgid "Edit translation"
 msgstr "Редактировать перевод"
 
-#: templates/translations/view-text.html:400
+#: templates/translations/view-text.html:132
+#: templates/translations/view-text.html:313
+msgid "Disapprove translation"
+msgstr "Отклонить перевод"
+
+#: templates/translations/view-text.html:158
+msgid "singular:"
+msgstr "един.ч.:"
+
+#: templates/translations/view-text.html:159
+msgid "plural:"
+msgstr "множ.ч.:"
+
+#: templates/translations/view-text.html:417
 msgid "Here we can see all the fragments text was splitted to"
 msgstr "Здесь фрагменты для перевода, на которые был разбит текст"
 
-#: templates/translations/view-text.html:401
+#: templates/translations/view-text.html:418
 msgid "Click to expand fragment and begin translation"
 msgstr "Нажмите, чтобы развернуть фрагмент для начала перевода"
 
-#: templates/translations/view-text.html:402
+#: templates/translations/view-text.html:419
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr "Поле ввода, варианты машинного перевода и баз памяти"
 
-#: templates/translations/view-text.html:403
+#: templates/translations/view-text.html:420
 msgid "Click to add new translation"
 msgstr "Нажмите, чтобы добавить перевод"
 
-#: templates/translations/view-text.html:404
+#: templates/translations/view-text.html:421
 msgid "Here we can see the whole text"
 msgstr "Здесь отображается весь текст целиком"
 
-#: templates/translations/view-text.html:405
+#: templates/translations/view-text.html:422
 msgid "Click on the fragment in text to move to its translation form"
 msgstr "Кликните на предложение в тексте, чтобы быстро перейти к его переводу"
 
-#: templates/translations/view-text.html:406
+#: templates/translations/view-text.html:423
 msgid "Source text"
 msgstr "Исходный текст"
 
-#: templates/translations/view-text.html:407
+#: templates/translations/view-text.html:424
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
