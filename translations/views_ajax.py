@@ -1344,9 +1344,9 @@ def tmdb_search(request):
                 dmp = diff_match_patch.diff_match_patch()
 
                 for item in res['hits']['hits']:
-                    seq=difflib.SequenceMatcher(a=entry_body_clean.lower(), b=item['fields'][entry_source_lang.code][0].lower())
+                    seq=difflib.SequenceMatcher(a=utils.unescape_html(entry_body_clean).lower(), b=item['fields'][entry_source_lang.code][0].lower())
                     if seq.ratio() > 0.5:
-                        diffs = dmp.diff_main(item['fields'][entry_source_lang.code][0], entry_body_clean)
+                        diffs = dmp.diff_main(item['fields'][entry_source_lang.code][0], utils.unescape_html(entry_body_clean))
                         dmp.diff_cleanupSemantic(diffs)
                         tmx_diff =  dmp.diff_prettyHtml(diffs)
                         obj = {
