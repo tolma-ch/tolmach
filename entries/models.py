@@ -6,6 +6,7 @@ class Language(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=3)
     code_639_3 = models.CharField(max_length=3)
+    code_tmx = models.CharField(max_length=5)
     plural_forms = models.CharField(max_length=200)
 
     def __str__(self):

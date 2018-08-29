@@ -8,6 +8,7 @@ import os
 import json
 from django.utils.translation import ugettext as _
 from django.db import transaction
+from django.db.models import Q
 from entries.models import Language
 from translations.models import ProjectTranslation, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
@@ -200,6 +201,15 @@ def glossary_to_entry(entry_body, glossary_list):
 def parse_tmx(filename, tmdb_name, project, target_lang, request):
     from lxml import etree
 
+    def fix_lang(lang):
+        if len(lang) == 5:
+            if "_" in lang:
+                return "%s-%s" % (lang.split("-")[0].lower(), lang.split("_")[1].upper())
+            elif "-" in lang:
+                return "%s-%s" % (lang.split("-")[0].lower(), lang.split("-")[1].upper())
+        else:
+            return lang.lover()
+
     target_translation = ProjectTranslation.objects.get(target_lang__code=target_lang, project=project)
     # учитываем различия в аттрибутах языка в разных версиях спеки TMX
     lang_11 = "lang"
@@ -208,32 +218,39 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
     result = []
     error_code = 0
     error_message = ""
-    try:
+
+    with transaction.atomic():
         with open(filename, 'rb') as source:
-            context = etree.iterparse(source, events=('end',), tag='tu')
+            try:
+                context = etree.iterparse(source, events=('end',), tag='tu')
 
-            # проверяем TMX на бардак и мультиязычность
-            lang_pairs = []
+                # проверяем TMX на бардак и мультиязычность
+                lang_pairs = []
 
-            # Получаем список языковых пар в tmx'е
-            for event, elem in context:
-                tuv = elem.findall('tuv')
-                try:
-                    source_lang = tuv[0].attrib[lang_14].lower()
-                    target_lang = tuv[1].attrib[lang_14].lower()
-                except KeyError:
-                    source_lang = tuv[0].attrib[lang_11].lower()
-                    target_lang = tuv[1].attrib[lang_11].lower()
+                # Получаем список языковых пар в tmx'е
+                for event, elem in context:
+                    tuv = elem.findall('tuv')
+                    try:
+                        source_lang = fix_lang(tuv[0].attrib[lang_14])
+                        target_lang = fix_lang(tuv[1].attrib[lang_14])
+                    except KeyError:
+                        source_lang = fix_lang(tuv[0].attrib[lang_11])
+                        target_lang = fix_lang(tuv[1].attrib[lang_11])
 
-                # TODO: Обрабатывать обратные пары как прямые
-                if not "%s-%s" % (source_lang, target_lang) in lang_pairs:
-                    lang_pairs.append("%s-%s" % (source_lang, target_lang))
-                # Нет обращений к потомкам, поэтому вызов clear() безопасен
-                elem.clear()
+                    # TODO: Обрабатывать обратные пары как прямые
+                    # между названиями языков используется EM DASH - длинное тире
+                    if not "%s—%s" % (source_lang, target_lang) in lang_pairs:
+                        lang_pairs.append("%s—%s" % (source_lang, target_lang))
+                    # Нет обращений к потомкам, поэтому вызов clear() безопасен
+                    elem.clear()
 
-                # Удалите пустые ссылки из корневого узла в <Title>
-                while elem.getprevious() is not None:
-                    del elem.getparent()[0]
+                    # Удалите пустые ссылки из корневого узла в <Title>
+                    while elem.getprevious() is not None:
+                        del elem.getparent()[0]
+            except etree.XMLSyntaxError:
+                error_code = 400
+                error_message = "File formatting is broken"
+                return {'error': error_code, 'message': error_message}
 
             # print(lang_pairs)
 
@@ -243,29 +260,24 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
             # - код исходного языка и целевого языка в двухбуквенном коде соответственно
             if len(lang_pairs) > 1:
                 for pair in lang_pairs:
-                    source_lang_name = pair.split("-")[0]
-                    target_lang_name = pair.split("-")[1]
+                    source_lang_name = pair.split("—")[0]
+                    target_lang_name = pair.split("—")[1]
                     try:
-                        source_lang_obj = Language.objects.get(code=source_lang_name)
+                        source_lang_obj = Language.objects.get(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))
                     except Language.DoesNotExist:
                         print('This source language is not supported yet')
                         error_code = 400
                         error_message = _('This source language is not supported yet')
                         return {'error': error_code, 'message': error_message}
-                        # return HttpResponse(json.dumps(_('This source language is not supported yet')),
-                        #                     content_type="application/json",
-                        #                     status=400)
 
                     try:
-                        target_lang_obj = Language.objects.get(code=target_lang_name)
+                        target_lang_obj = Language.objects.get(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))
                     except Language.DoesNotExist:
                         print('This target language is not supported yet')
                         error_code = 400
                         error_message = _('This target language is not supported yet')
                         return {'error': error_code, 'message': error_message}
-                        # return HttpResponse(json.dumps(_('This target language is not supported yet')),
-                        #                     content_type="application/json",
-                        #                     status=400)
+
                     new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
                                           owner=request.user,
                                           source_lang=source_lang_obj,
@@ -279,31 +291,25 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     })
                     # Записываем соответствия языковых пар и ID'шников свежесозданных баз памяти в словарь
                     tmdb_names[pair] = new_tmdb.id
+
             # Если же языковая пара всего одна, то забиваем и создаём одну базу памяти
             else:
-                source_lang_name = lang_pairs[0].split("-")[0]
-                target_lang_name = lang_pairs[0].split("-")[1]
+                source_lang_name = lang_pairs[0].split("—")[0]
+                target_lang_name = lang_pairs[0].split("—")[1]
                 try:
-                    source_lang_obj = Language.objects.get(code=source_lang_name)
+                    source_lang_obj = Language.objects.get(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))
                 except Language.DoesNotExist:
-                    print('This source language is not supported yet')
                     error_code = 400
                     error_message = _('This source language is not supported yet')
                     return {'error': error_code, 'message': error_message}
-                    # return HttpResponse(json.dumps(_('This source language is not supported yet')),
-                    #                     content_type="application/json",
-                    #                     status=400)
 
                 try:
-                    target_lang_obj = Language.objects.get(code=target_lang_name)
+                    target_lang_obj = Language.objects.get(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))
                 except Language.DoesNotExist:
                     print('This target language is not supported yet')
                     error_code = 400
                     error_message = _('This target language is not supported yet')
                     return {'error': error_code, 'message': error_message}
-                    # return HttpResponse(json.dumps(_('This target language is not supported yet')),
-                    #                     content_type="application/json",
-                    #                     status=400)
 
                 new_tmdb = TMDatabase(name=tmdb_name,
                                       owner=request.user,
@@ -317,13 +323,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     'name': new_tmdb.name,
                 })
                 tmdb_names[lang_pairs[0]] = new_tmdb.id
-    except etree.XMLSyntaxError:
-        error_code = 400
-        error_message = "File formatting is broken"
-        return {'error': error_code, 'message': error_message, 'result': result}
 
-
-    with transaction.atomic():
         with open(filename, 'rb') as source:
             from elasticsearch import Elasticsearch
             es = Elasticsearch(settings.ELASTIC_LIST)
@@ -334,14 +334,13 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
             for event, elem in parse_context:
                 tuv = elem.findall('tuv')
                 try:
-                    source_lang = tuv[0].attrib[lang_14].lower()
-                    target_lang = tuv[1].attrib[lang_14].lower()
+                    source_lang = fix_lang(tuv[0].attrib[lang_14])
+                    target_lang = fix_lang(tuv[1].attrib[lang_14])
                 except KeyError:
-                    source_lang = tuv[0].attrib[lang_11].lower()
-                    target_lang = tuv[1].attrib[lang_11].lower()
+                    source_lang = fix_lang(tuv[0].attrib[lang_11])
+                    target_lang = fix_lang(tuv[1].attrib[lang_11])
 
-                lang_pair = "%s-%s" % (source_lang, target_lang)
-                # print(lang_pair)
+                lang_pair = "%s—%s" % (source_lang, target_lang)
 
                 source_text = tuv[0].find('seg').text
                 target_text = tuv[1].find('seg').text
@@ -372,9 +371,9 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
 
                 if not target_text == "":
                     new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
-                                                     orig_lang=source_lang.lower(),
+                                                     orig_lang=source_lang,
                                                      orig_text=source_text,
-                                                     target_lang=target_lang.lower(),
+                                                     target_lang=target_lang,
                                                      target_text=target_text,
                                                      target_author=target_author,
                                                      target_created=target_created,
