@@ -54,6 +54,16 @@ def escape_html(string):
     return "".join(html_escape_table.get(c,c) for c in string)
 
 
+def unescape_html(s, with_backslashes=False):
+    s = s.replace("&lt;", "<")
+    s = s.replace("&gt;", ">")
+    if with_backslashes:
+        s = s.replace("&#92;n", "\n")
+    # this has to be last:
+    s = s.replace("&amp;", "&")
+    return s
+
+
 def get_plural_examples(p):
     matcher = re.compile('plural=(.*);')
     match = matcher.search(p)
@@ -436,36 +446,6 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     from elasticsearch import Elasticsearch
     es = Elasticsearch(settings.ELASTIC_LIST)
     for tmdb in tmdbs:
-#         if not es.indices.exists(tmdb):
-#             es.indices.create(index=tmdb, body={
-#     "settings": {
-# 		"analysis": {
-# 			"analyzer": {
-# 				"my_analyzer": {
-# 					"type": "custom",
-# 					"tokenizer": "standard",
-# 					"filter": ["lowercase", "english_morphology", "my_stopwords"]
-# 				}
-# 			},
-# 			"filter": {
-# 				"my_stopwords": {
-# 					"type": "stop",
-# 					"stopwords": "a,an,and,are,as,at,be,but,by,for,if,in,into,is,it,no,not,of,on,or,such,that,the,their,then,there,these,they,this,to,was,will,with"
-# 				}
-# 			}
-# 		}
-# 	}
-# })
-#             es.indices.put_mapping(doc_type="tmx1",
-#                                    index=tmdb,
-#                                    doc={
-# 	"tmx1": {
-#         "_all" : {"analyzer" : "english_morphology"},
-#     	"properties" : {
-#         	"text" : { "type" : "string", "analyzer" : "my_analyzer" }
-#     	}
-# 	}
-# })
         try:
             import HTMLParser
             h = HTMLParser.HTMLParser()
