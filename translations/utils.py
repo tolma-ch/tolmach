@@ -7,6 +7,7 @@ import re
 import os
 import json
 from django.utils.translation import ugettext as _
+from django.db import transaction
 from entries.models import Language
 from translations.models import ProjectTranslation, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from django.conf import settings
@@ -186,9 +187,10 @@ def glossary_to_entry(entry_body, glossary_list):
 
     return body_to_return
 
-def parse_tmx(filename, tmdb_name, project, request):
+def parse_tmx(filename, tmdb_name, project, target_lang, request):
     from lxml import etree
 
+    target_translation = ProjectTranslation.objects.get(target_lang__code=target_lang, project=project)
     # учитываем различия в аттрибутах языка в разных версиях спеки TMX
     lang_11 = "lang"
     lang_14 = "{http://www.w3.org/XML/1998/namespace}lang"
@@ -197,7 +199,7 @@ def parse_tmx(filename, tmdb_name, project, request):
     error_code = 0
     error_message = ""
     try:
-        with open(filename) as source:
+        with open(filename, 'rb') as source:
             context = etree.iterparse(source, events=('end',), tag='tu')
 
             # проверяем TMX на бардак и мультиязычность
@@ -223,7 +225,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 while elem.getprevious() is not None:
                     del elem.getparent()[0]
 
-            print(lang_pairs)
+            # print(lang_pairs)
 
             tmdb_names = {}
             # Если языковых пар больше одной, то создаём базы памяти для каждой из них
@@ -256,11 +258,11 @@ def parse_tmx(filename, tmdb_name, project, request):
                         #                     status=400)
                     new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
                                           owner=request.user,
-                                          project=project,
                                           source_lang=source_lang_obj,
                                           target_lang=target_lang_obj
                                           )
                     new_tmdb.save()
+                    target_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
                     result.append({
                         'id': new_tmdb.id,
                         'name': new_tmdb.name,
@@ -299,19 +301,26 @@ def parse_tmx(filename, tmdb_name, project, request):
                                       target_lang=target_lang_obj
                                       )
                 new_tmdb.save()
-                project.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
+                target_translation.tmdatabases_list.add(TMDatabase.objects.get(id=new_tmdb.id))
                 result.append({
                     'id': new_tmdb.id,
                     'name': new_tmdb.name,
                 })
                 tmdb_names[lang_pairs[0]] = new_tmdb.id
+    except etree.XMLSyntaxError:
+        error_code = 400
+        error_message = "File formatting is broken"
+        return {'error': error_code, 'message': error_message, 'result': result}
 
-        with open(filename) as source:
+
+    with transaction.atomic():
+        with open(filename, 'rb') as source:
             from elasticsearch import Elasticsearch
             es = Elasticsearch(settings.ELASTIC_LIST)
             elastic_id = 1
             # парсим файлик и записываем пары предложений в соответствующую базу памяти
             parse_context = etree.iterparse(source, events=('end',), tag='tu')
+            bulk_entries_list = []
             for event, elem in parse_context:
                 tuv = elem.findall('tuv')
                 try:
@@ -322,13 +331,10 @@ def parse_tmx(filename, tmdb_name, project, request):
                     target_lang = tuv[1].attrib[lang_11].lower()
 
                 lang_pair = "%s-%s" % (source_lang, target_lang)
-                print(lang_pair)
+                # print(lang_pair)
 
                 source_text = tuv[0].find('seg').text
                 target_text = tuv[1].find('seg').text
-
-                # print("Source: Lang - %s, Segment - %s" % (source_lang, source_text))
-                # print("Target: Lang - %s, Segment - %s" % (target_lang, target_text))
 
                 try:
                     target_author = tuv[1].attrib["creationid"]
@@ -354,22 +360,19 @@ def parse_tmx(filename, tmdb_name, project, request):
                     target_edited = None
                     target_editor = None
 
-                # print("Target creator: %s" % target_author if target_author else "Target creator:")
-                # print("Tagret created: %s" % target_created if target_created else "Tagret created:")
-                # print("Target editor: %s" % target_editor if target_editor else "Target editor:")
-                # print("Target edited: %s" % target_edited if target_edited else "Target edited:")
-
-                new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
-                                                 orig_lang=source_lang.lower(),
-                                                 orig_text=source_text,
-                                                 target_lang=target_lang.lower(),
-                                                 target_text=target_text,
-                                                 target_author=target_author,
-                                                 target_created=target_created,
-                                                 target_editor=target_editor,
-                                                 target_edited=target_edited,
-                                                 )
-                new_tmdb_entry.save()
+                if not target_text == "":
+                    new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
+                                                     orig_lang=source_lang.lower(),
+                                                     orig_text=source_text,
+                                                     target_lang=target_lang.lower(),
+                                                     target_text=target_text,
+                                                     target_author=target_author,
+                                                     target_created=target_created,
+                                                     target_editor=target_editor,
+                                                     target_edited=target_edited,
+                                                     )
+                    bulk_entries_list.append(new_tmdb_entry)
+                    # new_tmdb_entry.save()
 
                 # doc = {
                 #     'db_id': new_tmdb_entry.id,
@@ -393,8 +396,7 @@ def parse_tmx(filename, tmdb_name, project, request):
                 # Удалите пустые ссылки из корневого узла в <Title>
                 while elem.getprevious() is not None:
                     del elem.getparent()[0]
-    except etree.XMLSyntaxError:
-        pass
+            TMDatabaseEntry.objects.bulk_create(bulk_entries_list)
 
     return {'error': error_code, 'message': error_message, 'result': result}
 

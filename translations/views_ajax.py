@@ -780,10 +780,17 @@ def tmx_ajax(request, project):
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
+
         if 'name' not in post:
             return HttpResponse(json.dumps(_('TMX name is not set')), content_type="application/json",
                                 status=400)
         tmdb_name = post['name']
+
+        target_lang = post.get("target_lang", False)
+        if not target_lang:
+            return HttpResponse(json.dumps(_('Target lang is not specified')), content_type="application/json",
+                                status=400)
+
         if 'file' not in request.FILES:
             return HttpResponse(json.dumps(_('TMX file is not passed')), content_type="application/json",
                                 status=400)
@@ -798,7 +805,7 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                 status=400)
 
-        parse_result = utils.parse_tmx(file_path, tmdb_name, project, request)
+        parse_result = utils.parse_tmx(file_path, tmdb_name, project, target_lang, request)
         if not parse_result['error'] == 0:
             os.remove(file_path)
             return HttpResponse(json.dumps(parse_result['message'],
@@ -1344,7 +1351,7 @@ def tmdb_search(request):
                         tmx_diff =  dmp.diff_prettyHtml(diffs)
                         obj = {
                               'id': 123,
-                              'text': item['fields'][entry_target_lang.code][0],
+                              'text': utils.escape_html(item['fields'][entry_target_lang.code][0]),
                               'percent': int(seq.ratio()*100),
                               'tmx': tmx.name,
                               'diff': tmx_diff,
