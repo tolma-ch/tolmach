@@ -755,6 +755,7 @@
                 var data = $scope.tmx;
                 data['name'] = data['name'].substring(0, 250);
                 data['project'] = window['projectId'];
+                data['target_lang'] = window['targetLang'];
 
                 Upload.upload({
                         url: '/ajax/tmx/',
