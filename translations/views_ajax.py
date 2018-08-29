@@ -1302,7 +1302,7 @@ def tmdb_search(request):
                                                                 'query': {
                                                                     'match':
                                                                     {
-                                                                        entry_source_lang.code: entry_body_clean
+                                                                        entry_source_lang.code: utils.unescape_html(entry_body_clean)
                                                                     }
                                                                     }
                                                                 })
