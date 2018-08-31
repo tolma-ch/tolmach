@@ -828,7 +828,7 @@ def tmx_ajax(request, project):
 
         text_translation_meta_all = TextTranslationMeta.objects.filter(meta_type="tmdb_to_write")
         for translation_meta in text_translation_meta_all:
-            tmdbs_to_write = filter(None, translation_meta.meta_data.split(","))
+            tmdbs_to_write = list(filter(None, translation_meta.meta_data.split(",")))
             if str(tmx.id) in tmdbs_to_write:
                 tmdbs_to_write.remove(str(tmx.id))
             translation_meta.meta_data = ",".join(tmdbs_to_write)
