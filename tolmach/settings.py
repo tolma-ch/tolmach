@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'translations',
     'entries',
     'chat',
+    'stats',
     'channels',
     'social_auth_widget',
     'social_django',

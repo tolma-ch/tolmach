@@ -5,7 +5,11 @@ from __future__ import print_function
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.utils import timezone
 import json, subprocess
+
+from stats.models import DictStats
+from entries.models import Language
 
 # Create your views here.
 
@@ -87,6 +91,14 @@ def dict_search(request):
                             glosbe_data["definition"] += entry["phrase"]["text"] + ", "
             if glosbe_data["definition"]:
                 return_data.append(glosbe_data)
+
+        counter, created = DictStats.objects.get_or_create(user=request.user,
+                                                            date=timezone.now().strftime("%Y%m%d"),
+                                                           source_lang=Language.objects.get(code=source_lang),
+                                                           target_lang=Language.objects.get(code=target_lang))
+
+        counter.action_count = counter.action_count + 1
+        counter.save()
 
         return HttpResponse(json.dumps(return_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
     else:

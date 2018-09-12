@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from tolmach.models import Messages
-from tolmach.models import PairStats, UserMeta
+from tolmach.models import UserMeta
 from tolmach.models import OrganizationMember, Organization
+from stats.models import PairStats
 from translations.models import Project
 
 from django.shortcuts import get_object_or_404

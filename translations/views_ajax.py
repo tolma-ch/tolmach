@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -17,10 +18,11 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta, Messages, PairStats, Organization, OrganizationMember
+from tolmach.models import UserMeta, Messages, Organization, OrganizationMember
+from stats.models import PairStats, EntryStats
 from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, Text, TextTranslation, TextTranslationMeta
-import json, os, shutil
+import json, os, shutil, re
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
 
 
@@ -340,7 +342,6 @@ def participant_ajax(request, project):
             new_proj_user = ProjectMember(user=user, project=project)
             new_proj_user.save()
 
-            from django.utils import timezone
             message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
             new_message = Messages(
@@ -393,7 +394,6 @@ def participant_ajax(request, project):
             user_in_project.delete()
 
         if (request.user.id != int(request.GET['user'])):
-            from django.utils import timezone
             message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
 
             new_message = Messages(
@@ -1011,61 +1011,71 @@ def translate_entry_ajax(request):
     if not text.is_user_allowed_to_write(request.user):
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
     else:
-        if 'translation_id' in post:
-            try:
-                entry_translation = TextEntry.objects.get(id=post['translation_id'])
-            except TextEntry.DoesNotExist:
-                return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
-            if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
-                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
-            # strip is for elimination garbage newlines from wild browsers
-            entry_translation.body = post['text'].strip()
-        else:
-            set_approved = False
-            if not project.users.count():
-                approved_translation = TextEntry.objects.filter(parent_entry=entry,
-                                                                translation=entry.translation,
-                                                                 is_approved=True).count()
-                if not approved_translation:
-                    set_approved = True
+        with transaction.atomic():
+            if 'translation_id' in post:
+                action_type = "edit"
+                try:
+                    entry_translation = TextEntry.objects.get(id=post['translation_id'])
+                except TextEntry.DoesNotExist:
+                    return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+                if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
+                    return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+                # strip is for elimination garbage newlines from wild browsers
+                entry_translation.body = post['text'].strip()
+            else:
+                action_type = "add"
+                set_approved = False
+                if not project.users.count():
+                    approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                    translation=entry.translation,
+                                                                     is_approved=True).count()
+                    if not approved_translation:
+                        set_approved = True
 
-            try:
-                entry_target_text = target_text=post['text']
-            except KeyError:
-                return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
+                try:
+                    entry_target_text = target_text=post['text']
+                except KeyError:
+                    return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
 
-            import re
-            # strip is for elimination garbage newlines from wild browsers
-            entry_target_text = re.sub('&nbsp;', ' ', entry_target_text).strip()
+                # strip is for elimination garbage newlines from wild browsers
+                entry_target_text = re.sub('&nbsp;', ' ', entry_target_text).strip()
 
-            if settings.PROD:
-                utils.add_pair_to_tmx(request, text, project,
-                                      source_text=entry.body, target_text=entry_target_text.split("‡")[0],
-                                      source_lang=text.source_lang, target_lang=text_translation.target_lang,
-                                      )
-            entry_translation = TextEntry(body=entry_target_text,
-                                          parent_entry=entry,
-                                          text=text,
-                                          author=request.user,
-                                          translation=text_translation,
-                                          is_approved=set_approved)
+                if settings.PROD:
+                    utils.add_pair_to_tmx(request, text, project,
+                                          source_text=entry.body, target_text=entry_target_text.split("‡")[0],
+                                          source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                          )
+                entry_translation = TextEntry(body=entry_target_text,
+                                              parent_entry=entry,
+                                              text=text,
+                                              author=request.user,
+                                              translation=text_translation,
+                                              is_approved=set_approved)
 
-            # Инкрементим стату по указанной языковой паре
-            try:
-                is_pair = PairStats.objects.get(user=request.user,
-                                      source_lang=text.source_lang,
-                                      target_lang=text_translation.target_lang)
-            except:
-                is_pair = PairStats(user=request.user,
-                                      source_lang=text.source_lang,
-                                      target_lang=text_translation.target_lang)
-                is_pair.save()
-            PairStats.objects.filter(user=request.user,
-                                      source_lang=text.source_lang,
-                                      target_lang=text_translation.target_lang).update(
-                fragments_translated=F('fragments_translated')+1
-            )
-        entry_translation.save()
+                # Инкрементим стату по указанной языковой паре
+                try:
+                    is_pair = PairStats.objects.get(user=request.user,
+                                          source_lang=text.source_lang,
+                                          target_lang=text_translation.target_lang)
+                except:
+                    is_pair = PairStats(user=request.user,
+                                          source_lang=text.source_lang,
+                                          target_lang=text_translation.target_lang)
+                    is_pair.save()
+                PairStats.objects.filter(user=request.user,
+                                          source_lang=text.source_lang,
+                                          target_lang=text_translation.target_lang).update(
+                    fragments_translated=F('fragments_translated')+1
+                )
+            entry_translation.save()
+            counter, created = EntryStats.objects.get_or_create(user=request.user,
+                                                                date=timezone.now().strftime("%Y%m%d"),
+                                                                project=project,
+                                                                action_type=action_type)
+
+            counter.action_count = counter.action_count + 1
+            counter.characters_count = counter.characters_count + len(re.sub(r"<hr [rl].*?>", "", entry_translation.body)) if action_type == "add" else counter.characters_count
+            counter.save()
 
         entry_new_translation = {
             'id': entry.id,
@@ -1081,8 +1091,6 @@ def translate_entry_ajax(request):
                 'user': request.user.id
             }
         )})
-
-        from django.utils import timezone
 
         project.last_modified = timezone.now()
         project.save()
@@ -1153,13 +1161,21 @@ def approve_entry_ajax(request):
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
     if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
-        if entry.parent_entry:
-            TextEntry.objects.filter(~Q(id=entry_id),
-                                     parent_entry=entry.parent_entry,
-                                     translation=entry.translation,
-                                     is_approved=True).update(is_approved=False)
-        entry.is_approved = True
-        entry.save()
+        with transaction.atomic():
+            if entry.parent_entry:
+                TextEntry.objects.filter(~Q(id=entry_id),
+                                         parent_entry=entry.parent_entry,
+                                         translation=entry.translation,
+                                         is_approved=True).update(is_approved=False)
+            entry.is_approved = True
+            entry.save()
+            counter, created = EntryStats.objects.get_or_create(user=request.user,
+                                                                date=timezone.now().strftime("%Y%m%d"),
+                                                                project=entry.text.project,
+                                                                action_type="approve")
+
+            counter.action_count = counter.action_count + 1
+            counter.save()
         entry_to_approve = {
             'id': entry.parent_entry.id,
             'idInText': entry.parent_entry.id_in_text,
@@ -1195,8 +1211,16 @@ def disapprove_entry_ajax(request):
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
         if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
-            entry.is_approved = False
-            entry.save()
+            with transaction.atomic():
+                entry.is_approved = False
+                entry.save()
+                counter, created = EntryStats.objects.get_or_create(user=request.user,
+                                                                    date=timezone.now().strftime("%Y%m%d"),
+                                                                    project=entry.text.project,
+                                                                    action_type="disapprove")
+
+                counter.action_count = counter.action_count + 1
+                counter.save()
             entry_to_disapprove = {
                 'id': entry.parent_entry.id,
                 'idInText': entry.parent_entry.id_in_text,
@@ -1223,7 +1247,6 @@ def yandex_translate_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
         from yandex_translate import YandexTranslate, YandexTranslateException
-        import re
 
         string1 = post['entry_body']
 
@@ -1287,7 +1310,6 @@ def tmdb_search(request):
 
         search_results = []
 
-        import re
         if translation_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept

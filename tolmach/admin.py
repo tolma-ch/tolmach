@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from tolmach.models import PairStats, EmailTemplate, EmailTemplateBody, Organization, OrganizationMember
+from tolmach.models import EmailTemplate, EmailTemplateBody, Organization, OrganizationMember
+from stats.models import PairStats
 
 
 class PairStatsAdmin(admin.ModelAdmin):
