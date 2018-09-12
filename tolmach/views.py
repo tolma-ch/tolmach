@@ -13,7 +13,8 @@ from django.db.models import Sum, Q
 from translations.models import Project, Text, TextTranslation, TextEntry
 from entries.models import Language, Subject
 
-from tolmach.models import UserMeta, PairStats, Organization, OrganizationMember
+from tolmach.models import UserMeta, Organization, OrganizationMember
+from stats.models import PairStats
 from tolmach import utils as tolmach_utils
 
 
