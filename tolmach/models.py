@@ -25,6 +25,7 @@ class UserMeta(models.Model):
     email = models.EmailField()
     website = models.URLField()
     avatar = models.ImageField(upload_to='avatar/', default=None)
+    last_online = models.DateTimeField(default=timezone.now)
 
     member_of = models.TextField(default="")
     invited_to = models.TextField(default="")
