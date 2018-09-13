@@ -144,9 +144,27 @@ def parse_glossary(file_on_disk, filetype):
                 pass
         return s.decode('ascii', 'ignore')
 
-    array = []
+    def detect_by_bom(path, default):
+        import codecs
+        import chardet
+        with open(path, 'rb') as f:
+            raw = f.read(4)  # will read less if the file is smaller
+        for enc, boms in \
+                ('utf-8-sig', (codecs.BOM_UTF8,)), \
+                ('utf-16', (codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)), \
+                ('utf-32', (codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE)):
+            if any(raw.startswith(bom) for bom in boms): return enc
+        with open(path, 'rb') as f:
+            raw = f.read()
+        guess = chardet.detect(raw)
+        if guess['confidence'] > 0.9:
+            return guess['encoding']
+        return default
 
-    with open(file_on_disk, 'r') as file_to_show:
+    array = []
+    import codecs
+    enc = detect_by_bom(file_on_disk, 'utf-8-sig')
+    with codecs.open(file_on_disk, 'r', encoding=enc) as file_to_show:
         # открываем файл
         for line in file_to_show:
             if not line == '':
