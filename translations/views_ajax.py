@@ -1450,6 +1450,15 @@ def message_ajax(request, all):
         return HttpResponse(json.dumps(True), content_type="application/json")
 
     if request.method == 'GET':
+        ########
+        #
+        #  Updating user online status
+        #
+        ########
+        user_meta = UserMeta.objects.get(user=request.user)
+        user_meta.last_online = timezone.now()
+        user_meta.save()
+
         if all:
             messages = Messages.objects.filter(addressee=request.user).order_by('-time_created')
         else:
