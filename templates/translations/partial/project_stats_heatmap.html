@@ -1,0 +1,69 @@
+{% load staticfiles %}
+        <script src="{% static 'assets/plotly/plotly-v1.41.0.min.js' %}" charset="utf-8"></script>
+        <div id="myDiv" style="width: 650px; margin: 0 auto;"><!-- Plotly chart will be drawn inside this DIV --></div>
+        <script>
+            var pSize = 25;
+            var margin = 10;
+
+            var zValues = {{ heatmap_data }};
+
+            var colorscaleValue = [
+                [0, '#EEEEEE'],
+                [0.01, '#66C6FF'],
+                [0.08, '#66C6FF'],
+                [0.4, '#66C6FF'],
+                [0.4, '#3393CC'],
+                [0.8, '#3393CC'],
+                [0.8, '#1979B2'],
+                [1, '#006099']
+                ];
+
+            var text = {{ heatmap_text | safe }};
+            console.log(text);
+            var data = [{
+                z: zValues,
+                hoverinfo: 'text',
+                text: text,
+                xgap: 5,
+                ygap: 5,
+                type: 'heatmap',
+                colorscale: colorscaleValue,
+                showscale: false
+            }];
+
+            var layout = {
+                title: '',
+                annotations: [],
+                width: 24 * pSize + 2 * margin,
+                height: 7 * pSize + 2 * margin,
+                margin: {t: margin, b: margin, l: margin, r: margin},
+                xaxis: {
+                    ticks: '',
+                    showgrid: false,
+                    zeroline: false,
+                    showline: false,
+                    autotick: true,
+                    showticklabels: false,
+                    fixedrange: true
+                },
+                yaxis: {
+                    ticks: '',
+                    autosize: false,
+                    autotick: false,
+                    showgrid: false,
+                    zeroline: false,
+                    showline: false,
+                    autotick: true,
+                    showticklabels: false,
+                    fixedrange: true
+                }
+            };
+
+           Plotly.newPlot('myDiv', data, layout, {displayModeBar: false});
+           {#window.onresize = function() {#}
+           {#   Plotly.relayout(myDiv, {#}
+           {#     width: 0.9 * window.innerWidth,#}
+           {#     height: 0.9 * window.innerWidth#}
+           {#   })#}
+           {# }#}
+       </script>
