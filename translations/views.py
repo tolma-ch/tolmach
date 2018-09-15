@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 import json
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import ngettext, ugettext as _
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -90,6 +90,8 @@ def projects(request, proj_type):
 @login_required
 @define_project_breadcrumbs
 def project_stats(request, pr, projects_text, projects_url, projects_type):
+    from stats.models import EntryStats
+    from django.db.models import Sum
     import re
 
     if not pr.is_user_allowed(request.user):
@@ -109,6 +111,55 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
     # pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
 
     # pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
+
+    project_stats_history = EntryStats.objects.filter(project=pr).values('date').annotate(data_sum=Sum('action_count'))
+    project_stats_prepaired = {}
+    for i in project_stats_history:
+        project_stats_prepaired[i['date']] = i['data_sum']
+
+
+    def create_heatmap_data(pr_stats):
+        from datetime import datetime, timedelta
+        import json
+
+        NUM_OF_WEEKS = 24
+
+        today = int(datetime.today().strftime("%Y%m%d"))
+
+        today_dow = datetime.strptime(str(today), "%Y%m%d").weekday()
+
+        nearest_sunday = today + (6 - today_dow)
+
+        total_list = []
+        total_list_text = []
+
+        for dayofweek in range(7):
+            # iterating over days of week generating lists by DoW
+            # starting from the nearest_sunday
+            list_by_day = []
+            list_by_day_text = []
+            start_date = datetime.strptime(str(nearest_sunday - dayofweek), "%Y%m%d")
+
+            for weeknumber in range(NUM_OF_WEEKS):
+                date = (start_date - timedelta(days=weeknumber * 7))
+                number_count = (pr_stats[int(date.strftime("%Y%m%d"))] if int(date.strftime("%Y%m%d")) in pr_stats else 0) if date <= datetime.today() else None
+                cell_title = "%s" % date.strftime("%d.%m.%Y")
+                if isinstance(number_count, int):
+                    tooltip_text = ngettext(
+                        '<br>%(number_count)d action done',
+                        '<br>%(number_count)d actions done',
+                        number_count) % {
+                               'number_count': number_count,
+                           }
+                    cell_title += tooltip_text
+                list_by_day.append(number_count)
+                list_by_day_text.append(cell_title)
+            total_list.append(list(reversed(list_by_day)))
+            total_list_text.append(list(reversed(list_by_day_text)))
+
+        return json.dumps(total_list), json.dumps(total_list_text)
+
+    heatmap_data, heatmap_text = create_heatmap_data(project_stats_prepaired)
 
     all_pr_translations = ProjectTranslation.objects.filter(project=pr)
     # print("OSDFADSFAS")
@@ -179,6 +230,8 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
             'name': pr.name,
             'description': pr.description,
         }),
+        'heatmap_data': heatmap_data,
+        'heatmap_text': heatmap_text,
         'project_stats': pr_translation_progress,
         'languages': lang_list,
         'languagesData': json.dumps([{
