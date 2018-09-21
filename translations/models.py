@@ -312,7 +312,10 @@ class TextTranslation(models.Model):
                 cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
 
             if not entries_total == 0:
-                return [int(entries_total), int(entries_translated), int(entries_approved)], [int(math.ceil(entries_translated/(entries_total/100.0))), int(math.ceil(entries_approved/(entries_total/100.0)))]
+                percent_translated = int(math.ceil(entries_translated/(entries_total/100.0))) if (entries_translated < entries_total) else 100
+                percent_approved = int(math.ceil(entries_approved/(entries_total/100.0)))
+                
+                return [int(entries_total), int(entries_translated), int(entries_approved)], [percent_translated, percent_approved]
             else:
                 return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
         elif detalization == "full":
