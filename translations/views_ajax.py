@@ -1057,7 +1057,7 @@ def translate_entry_ajax(request):
                                       target_lang=text_translation.target_lang)
             pair_stats.fragments_translated += 1
             pair_stats.save()
-            
+
         with transaction.atomic():
             entry_translation.save()
             counter, created = EntryStats.objects.get_or_create(user=request.user,
