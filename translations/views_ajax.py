@@ -1011,62 +1011,54 @@ def translate_entry_ajax(request):
     if not text.is_user_allowed_to_write(request.user):
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
     else:
+        if 'translation_id' in post:
+            action_type = "edit"
+            try:
+                entry_translation = TextEntry.objects.get(id=post['translation_id'])
+            except TextEntry.DoesNotExist:
+                return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+            if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
+                return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
+            # strip is for elimination garbage newlines from wild browsers
+            entry_translation.body = post['text'].strip()
+        else:
+            action_type = "add"
+            set_approved = False
+            if not project.users.count():
+                approved_translation = TextEntry.objects.filter(parent_entry=entry,
+                                                                translation=entry.translation,
+                                                                 is_approved=True).count()
+                if not approved_translation:
+                    set_approved = True
+
+            try:
+                entry_target_text = target_text=post['text']
+            except KeyError:
+                return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
+
+            # strip is for elimination garbage newlines from wild browsers
+            entry_target_text = re.sub('&nbsp;', ' ', entry_target_text).strip()
+
+            if settings.PROD:
+                utils.add_pair_to_tmx(request, text, project,
+                                      source_text=entry.body, target_text=entry_target_text.split("‡")[0],
+                                      source_lang=text.source_lang, target_lang=text_translation.target_lang,
+                                      )
+            entry_translation = TextEntry(body=entry_target_text,
+                                          parent_entry=entry,
+                                          text=text,
+                                          author=request.user,
+                                          translation=text_translation,
+                                          is_approved=set_approved)
+
+            # Инкрементим стату по указанной языковой паре
+            pair_stats, created = PairStats.objects.get_or_create(user=request.user,
+                                      source_lang=text.source_lang,
+                                      target_lang=text_translation.target_lang)
+            pair_stats.update(
+                fragments_translated=F('fragments_translated')+1
+            )
         with transaction.atomic():
-            if 'translation_id' in post:
-                action_type = "edit"
-                try:
-                    entry_translation = TextEntry.objects.get(id=post['translation_id'])
-                except TextEntry.DoesNotExist:
-                    return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
-                if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
-                    return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
-                # strip is for elimination garbage newlines from wild browsers
-                entry_translation.body = post['text'].strip()
-            else:
-                action_type = "add"
-                set_approved = False
-                if not project.users.count():
-                    approved_translation = TextEntry.objects.filter(parent_entry=entry,
-                                                                    translation=entry.translation,
-                                                                     is_approved=True).count()
-                    if not approved_translation:
-                        set_approved = True
-
-                try:
-                    entry_target_text = target_text=post['text']
-                except KeyError:
-                    return HttpResponse(json.dumps(_('Entry translation text is not set')), content_type="application/json", status=400)
-
-                # strip is for elimination garbage newlines from wild browsers
-                entry_target_text = re.sub('&nbsp;', ' ', entry_target_text).strip()
-
-                if settings.PROD:
-                    utils.add_pair_to_tmx(request, text, project,
-                                          source_text=entry.body, target_text=entry_target_text.split("‡")[0],
-                                          source_lang=text.source_lang, target_lang=text_translation.target_lang,
-                                          )
-                entry_translation = TextEntry(body=entry_target_text,
-                                              parent_entry=entry,
-                                              text=text,
-                                              author=request.user,
-                                              translation=text_translation,
-                                              is_approved=set_approved)
-
-                # Инкрементим стату по указанной языковой паре
-                try:
-                    is_pair = PairStats.objects.get(user=request.user,
-                                          source_lang=text.source_lang,
-                                          target_lang=text_translation.target_lang)
-                except:
-                    is_pair = PairStats(user=request.user,
-                                          source_lang=text.source_lang,
-                                          target_lang=text_translation.target_lang)
-                    is_pair.save()
-                PairStats.objects.filter(user=request.user,
-                                          source_lang=text.source_lang,
-                                          target_lang=text_translation.target_lang).update(
-                    fragments_translated=F('fragments_translated')+1
-                )
             entry_translation.save()
             counter, created = EntryStats.objects.get_or_create(user=request.user,
                                                                 date=timezone.now().strftime("%Y%m%d"),
@@ -1076,6 +1068,9 @@ def translate_entry_ajax(request):
             counter.action_count = counter.action_count + 1
             counter.characters_count = counter.characters_count + len(re.sub(r"<hr [rl].*?>", "", entry_translation.body)) if action_type == "add" else counter.characters_count
             counter.save()
+
+            project.last_modified = timezone.now()
+            project.save()
 
         entry_new_translation = {
             'id': entry.id,
@@ -1092,8 +1087,7 @@ def translate_entry_ajax(request):
             }
         )})
 
-        project.last_modified = timezone.now()
-        project.save()
+
         translation_array = translation_to_json(entry_translation)
         translation_array['isVoted'] = entry_translation.is_voted(request.user)
         return HttpResponse(json.dumps(translation_array), content_type="application/json")
