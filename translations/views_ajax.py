@@ -888,9 +888,12 @@ def entry_ajax(request, action, text):
             )
         )
         base_entries = TextEntry.objects.filter(text=text, parent_entry=None)[offset:offset+entries_per_page]
+        base_entries_ids_int_text = [ent.id_in_text for ent in base_entries]
         pre_glossary_text = []
 
-        target_lang_entries = TextEntry.objects.filter(text=text, translation=text_translation)
+        target_lang_entries = TextEntry.objects.filter(text=text,
+                                                       translation=text_translation,
+                                                       parent_entry__id_in_text__range=(base_entries_ids_int_text[0], base_entries_ids_int_text[-1]))
 
         # Если глоссарии привязаны к тексту, то
         if project_translation.glossaries_list:
