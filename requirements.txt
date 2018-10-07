@@ -17,7 +17,6 @@ lxml
 elasticsearch
 babel
 srt
-ass
 sparkpost
 django-debug-toolbar
 python-memcached
