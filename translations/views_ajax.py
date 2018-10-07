@@ -889,7 +889,6 @@ def entry_ajax(request, action, text):
         )
         base_entries = TextEntry.objects.filter(text=text, parent_entry=None)[offset:offset+entries_per_page]
         base_entries_ids_int_text = [ent.id_in_text for ent in base_entries]
-        pre_glossary_text = []
 
         target_lang_entries = TextEntry.objects.filter(text=text,
                                                        translation=text_translation,
@@ -897,11 +896,10 @@ def entry_ajax(request, action, text):
 
         # Если глоссарии привязаны к тексту, то
         if project_translation.glossaries_list:
-            for entry in base_entries:
-                pre_glossary_text.append(entry.body)
+            pre_glossary_text = [entry.body for entry in base_entries]
 
             # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry('†'.join(pre_glossary_text), project_translation.glossaries_list.all()).split('†')
+            post_glossary_entries = utils.glossary_to_entry(' † '.join(pre_glossary_text), project_translation.glossaries_list.all()).split(' † ')
 
             # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
             for post, clean in zip(post_glossary_entries, base_entries):
