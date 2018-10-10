@@ -93,7 +93,7 @@ def dict_search(request):
                 return_data.append(glosbe_data)
 
         counter, created = DictStats.objects.get_or_create(user=request.user,
-                                                            date=timezone.now().strftime("%Y%m%d"),
+                                                           date=timezone.now().strftime("%Y%m%d"),
                                                            source_lang=Language.objects.get(code=source_lang),
                                                            target_lang=Language.objects.get(code=target_lang))
 

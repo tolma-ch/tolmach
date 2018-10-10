@@ -393,9 +393,3 @@ class TextEntry(models.Model):
             self.time_created = timezone.now()
         self.last_modified = timezone.now()
         super(TextEntry, self).save(*args, **kwargs)
-
-
-class TextEntryMeta(models.Model):
-    entry = models.ForeignKey('translations.TextEntry', related_name='metas_entry', on_delete=models.deletion.CASCADE)
-    text_meta = models.ForeignKey('translations.TextMeta', related_name='entry_meta_parent', on_delete=models.deletion.CASCADE)
-    meta_data = models.TextField()
