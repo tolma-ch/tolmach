@@ -80,6 +80,7 @@ def projects_ajax(request, proj_type, object_id=""):
         raise Http404("Poll does not exist")
 
     paginator = Paginator(user_projects_list, 10)
+    page_range = list(paginator.page_range)
 
     page = request.GET.get('page')
     try:
@@ -112,11 +113,14 @@ def projects_ajax(request, proj_type, object_id=""):
                 }
             })
         obj_to_return['object_list'] = obj_list
-        # obj_to_return['previous_page_number'] = page_to_serialize.previous_page_number
         obj_to_return['number'] = int(page_to_serialize.number)
-        # obj_to_return['next_page_number'] = page_to_serialize.next_page_number
         obj_to_return['paginator'] = {
-            'num_pages': result_proj_list.paginator.num_pages
+            'num_pages': result_proj_list.paginator.num_pages,
+            'has_previous': result_proj_list.has_previous(),
+            'has_next': result_proj_list.has_next(),
+            'previous_page_number': result_proj_list.previous_page_number() if result_proj_list.has_previous() else None,
+            'next_page_number': result_proj_list.next_page_number() if result_proj_list.has_next() else None,
+            'page_range': page_range
         }
 
         return obj_to_return

@@ -3,15 +3,21 @@
 
     var module = angular.module('projectsControllers', []);
 
-    module.controller('projectsCtrl', ['$scope', '$modal', '$http',
-        function ($scope, $modal, $http) {
+    module.controller('projectsCtrl', ['$scope', '$modal', '$http', '$location',
+        function ($scope, $modal, $http, $location) {
+            $scope.page = parseInt($location.search().page ? $location.search().page : 1) || 1;
             $scope.projects = {};
-            $http.get('/ajax/projects/' + window['active_tab'] + '/')
-                .then(function (response) {
-                    var progressIcon = document.getElementById("projects-preloader");
-                    progressIcon.style.display = "none";
-                    $scope.projects = response.data;
+            $scope.busy = false;
+
+            var updateProjects = function () {
+                $scope.busy = true;
+                $http.get('/ajax/projects/' + window['active_tab'] + '/?page=' + $scope.page)
+                    .then(function (response) {
+                        $scope.projects = response.data;
+                        $scope.busy = false;
                 });
+            };
+            updateProjects();
             console.log($scope.projects);
             $scope.startNewProject = function () {
                 var modalInstance = $modal.open({
@@ -25,6 +31,17 @@
                 modalInstance.result.then(function () {
                 }, function () {
                 });
+            };
+
+            $scope.changePage = function (page_num) {
+                if ($scope.busy) {
+                    return;
+                }
+                if (1 <= page_num <= $scope.projects.paginator.num_pages) {
+                    $scope.page = page_num;
+                    updateProjects();
+                    $location.search('page', $scope.page).replace();
+                }
             };
 
         }
