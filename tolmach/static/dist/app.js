@@ -1462,8 +1462,6 @@
                 $scope.busy = true;
                 $http.get('/ajax/projects/' + window['active_tab'] + '/?page=' + $scope.page)
                     .then(function (response) {
-                        // var progressIcon = document.getElementById("projects-preloader");
-                        // progressIcon.style.display = "none";
                         $scope.projects = response.data;
                         $scope.busy = false;
                 });
@@ -1770,6 +1768,8 @@
                     }
                     entrySetEditingStatus(entry, 'start');
                     scrollToEntry(entry);
+                    var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
+                    entry.suggestion = localStorageService.get('sug-' + textAreaId, entry.suggestion) || "";
                 };
             $scope.toggleEntry = function (entry, $event) {
                 if ($scope.activeEntry === entry) {
@@ -2085,6 +2085,8 @@
                         }
                     }
                     entry.editing = false;
+                    var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
+                    localStorageService.remove("sug-" + textAreaId);
                     entry.suggestion = '';
                     if (data.isApproved === true) {
                         if (entry === $scope.activeEntry) {
@@ -2200,6 +2202,10 @@
                         event.preventDefault(); // char on new line moves to the beginning of the line
                     }
                 }
+            };
+            $scope.textareaAutoSave = function (event, entry) {
+                var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
+                localStorageService.set('sug-' + textAreaId, entry.suggestion);
             };
 
             $scope.showEntryCommentsModal = false;
