@@ -16,7 +16,7 @@
                ng-model="searchText"
                focus-me="focusSearchInput"
                ng-blur="!searchText && (showSearch = false)"
-               typeahead="searchText as searchText.searched_text for searchText in globalSearch($viewValue)"
+               uib-typeahead="searchText as searchText.searched_text for searchText in globalSearch($viewValue)"
                typeahead-template-url="globalSearchTypeaheadTemplate.html"
                typeahead-on-select="onSearchSelect($item, $model, $label)">
         <i class="fa fa-search"
