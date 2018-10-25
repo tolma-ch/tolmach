@@ -3,8 +3,8 @@
 
     var module = angular.module('projectsControllers', []);
 
-    module.controller('projectsCtrl', ['$scope', '$modal', '$http', '$location',
-        function ($scope, $modal, $http, $location) {
+    module.controller('projectsCtrl', ['$scope', '$uibModal', '$http', '$location',
+        function ($scope, $uibModal, $http, $location) {
             $scope.page = parseInt($location.search().page ? $location.search().page : 1) || 1;
             $scope.projects = {};
             $scope.busy = false;
@@ -20,7 +20,7 @@
             updateProjects();
             console.log($scope.projects);
             $scope.startNewProject = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'newProjectModal.html',
                     controller: 'NewProjectModalCtrl',
                     size: 'md',
@@ -47,8 +47,8 @@
         }
     ]);
 
-    module.controller('NewProjectModalCtrl', ['$scope', '$modalInstance', '$http',
-        function ($scope, $modalInstance, $http) {
+    module.controller('NewProjectModalCtrl', ['$scope', '$uibModalInstance', '$http',
+        function ($scope, $uibModalInstance, $http) {
             $scope.name = generateRandomName();
             $scope.error = '';
             $scope.type = 'private';
@@ -70,13 +70,13 @@
                     .error(function (data) {
                         $scope.error = data;
                         $scope.busy = false;
-                        //$modalInstance.close();
+                        //$uibModalInstance.close();
                     });
             };
 
             $scope.addProjectAdvancedOptions = false;
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);

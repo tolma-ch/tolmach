@@ -33,7 +33,7 @@
                                         <td class="user-statistics-table__remove-btn">
                                             {% if is_admin %}
                                             <a class="tooltip-warning" href=""
-                                               tooltip="{% trans 'Remove participant' %}"
+                                               uib-tooltip="{% trans 'Remove participant' %}"
                                                tooltip-append-to-body="true"
                                                ng-if="(member.status != 'owner')"
                                                popover-template="'removeOrgParticipantPopover.html'"

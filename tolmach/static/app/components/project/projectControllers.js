@@ -3,8 +3,8 @@
 
     var module = angular.module('projectControllers', []);
 
-    module.controller('projectCtrl', ['$scope', '$modal', '$http',
-        function ($scope, $modal, $http) {
+    module.controller('projectCtrl', ['$scope', '$uibModal', '$http',
+        function ($scope, $uibModal, $http) {
             $scope.project = window['project'];
             $scope.projectId = window['projectId'];
             $scope.isUserManager = window['isUserManager'];
@@ -38,7 +38,7 @@
                     });
             }
             $scope.addParticipant = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addParticipantModal.html',
                     controller: 'AddParticipantModalCtrl',
                     size: 'md',
@@ -117,7 +117,7 @@
                 if (!$scope.isUserManager && !($scope.userMembershipStatus == 0)) {
                     return;
                 }
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addProjectTranslationModal.html',
                     controller: 'AddProjectTranslationModalCtrl',
                     size: 'md',
@@ -126,7 +126,7 @@
                 });
             };
             $scope.addText = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addTextModal.html',
                     controller: 'AddTextModalCtrl',
                     size: 'md',
@@ -143,7 +143,7 @@
                 if (!$scope.isUserManager && !($scope.userMembershipStatus == 0)) {
                     return;
                 }
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'editTextModal.html',
                     controller: 'EditTextModalCtrl',
                     size: 'md',
@@ -197,7 +197,7 @@
                     });
             };
             $scope.addGlossary = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addGlossaryModal.html',
                     controller: 'AddGlossaryModalCtrl',
                     size: 'md',
@@ -215,7 +215,7 @@
                 });
             };
             $scope.addTmx = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addTmxModal.html',
                     controller: 'AddTmxModalCtrl',
                     size: 'md',
@@ -238,7 +238,7 @@
                 });
             };
             $scope.editGlossary = function (glossary) {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addGlossaryModal.html',
                     controller: 'AddGlossaryModalCtrl',
                     size: 'md',
@@ -358,8 +358,8 @@
         }
     ]);
 
-    module.controller('AddParticipantModalCtrl', ['$scope', '$modalInstance', '$http',
-        function ($scope, $modalInstance, $http) {
+    module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http',
+        function ($scope, $uibModalInstance, $http) {
             $scope.getUsers = function (query) {
                 return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
@@ -375,7 +375,7 @@
                 $scope.busy = true;
                 $http.post('/ajax/participant/', data)
                     .success(function (participant) {
-                        $modalInstance.close(participant);
+                        $uibModalInstance.close(participant);
                         $scope.busy = false;
                     })
                     .error(function (data) {
@@ -385,12 +385,12 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('AddProjectTranslationModalCtrl', ['$scope', '$modalInstance', '$http',
-        function ($scope, $modalInstance, $http) {
+    module.controller('AddProjectTranslationModalCtrl', ['$scope', '$uibModalInstance', '$http',
+        function ($scope, $uibModalInstance, $http) {
             $scope.error = '';
             $scope.ok = function () {
                 $scope.error = '';
@@ -406,16 +406,16 @@
                     .error(function (data) {
                         $scope.error = data;
                         $scope.busy = false;
-                        //$modalInstance.close();
+                        //$uibModalInstance.close();
                     });
             };
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('SelectTextRangesModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', 'data', '$timeout',
-        function ($scope, $modalInstance, $http, Upload, data, $timeout) {
+    module.controller('SelectTextRangesModalCtrl', ['$scope', '$uibModalInstance', '$http', 'Upload', 'data', '$timeout',
+        function ($scope, $uibModalInstance, $http, Upload, data, $timeout) {
             var result = {},
                 checkResult = function () {
                     for (var sheetName in result) {
@@ -457,15 +457,15 @@
                 if (!checkResult()) {
                     return;
                 }
-                $modalInstance.close(result);
+                $uibModalInstance.close(result);
             };
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('AddTextModalCtrl', ['$scope', '$modalInstance', '$http', 'Upload', '$modal',
-        function ($scope, $modalInstance, $http, Upload, $modal) {
+    module.controller('AddTextModalCtrl', ['$scope', '$uibModalInstance', '$http', 'Upload', '$uibModal',
+        function ($scope, $uibModalInstance, $http, Upload, $uibModal) {
             $scope.busy = false;
             $scope.progress = 0;
             $scope.text = {
@@ -520,7 +520,7 @@
                                 var serverFileName = text['file_name'],
                                     serverFileType = text['file_type'],
                                     sheets = text['Text'],
-                                    modalInstance = $modal.open({
+                                    modalInstance = $uibModal.open({
                                     templateUrl: 'selectTextRangesModal.html',
                                     controller: 'SelectTextRangesModalCtrl',
                                     size: 'lg',
@@ -570,7 +570,7 @@
                                     $http.post('/ajax/text/', data)
                                         .success(function (text) {
                                             $scope.busy = false;
-                                            $modalInstance.close(text);
+                                            $uibModalInstance.close(text);
                                         })
                                         .error(function (data) {
                                             $scope.busy = false;
@@ -579,7 +579,7 @@
                                 });
 
                             } else {
-                                $modalInstance.close(text);
+                                $uibModalInstance.close(text);
                             }
                         })
                         .error(function (data) {
@@ -595,7 +595,7 @@
                     $scope.busy = true;
                     $http.post('/ajax/text/', data)
                         .success(function (text) {
-                            $modalInstance.close(text);
+                            $uibModalInstance.close(text);
                             $scope.busy = false;
                         })
                         .error(function (data) {
@@ -606,12 +606,12 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('EditTextModalCtrl', ['$scope', '$modalInstance', '$http', 'text',
-        function ($scope, $modalInstance, $http, text) {
+    module.controller('EditTextModalCtrl', ['$scope', '$uibModalInstance', '$http', 'text',
+        function ($scope, $uibModalInstance, $http, text) {
             $scope.text = text;
             $scope.options = {};
             $scope.ok = function () {
@@ -642,7 +642,7 @@
                 $scope.busy = true;
                 $http.post('/ajax/text/', data)
                     .success(function (text) {
-                        $modalInstance.close(text);
+                        $uibModalInstance.close(text);
                         $scope.busy = false;
                     })
                     .error(function (data) {
@@ -660,7 +660,7 @@
                 $http.delete('/ajax/text/', {params: data})
                     .success(function () {
                         $scope.busy = false;
-                        $modalInstance.close('removed');
+                        $uibModalInstance.close('removed');
                     })
                     .error(function (data) {
                         $scope.busy = false;
@@ -676,12 +676,12 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('AddGlossaryModalCtrl', ['$scope', '$modalInstance', '$http', 'glossary', 'Upload',
-        function ($scope, $modalInstance, $http, glossary, Upload) {
+    module.controller('AddGlossaryModalCtrl', ['$scope', '$uibModalInstance', '$http', 'glossary', 'Upload',
+        function ($scope, $uibModalInstance, $http, glossary, Upload) {
             $scope.glossary = glossary || {
                     rows: [['', '']],
                     name: generateRandomName()
@@ -712,7 +712,7 @@
                     delete data.file;
                     $http.post('/ajax/glossary/', data)
                         .success(function (glossary) {
-                            $modalInstance.close(glossary);
+                            $uibModalInstance.close(glossary);
                             $scope.busy = false;
                         })
                         .error(function (data) {
@@ -728,7 +728,7 @@
                         .progress(function (evt) {
                         })
                         .success(function (glossary) {
-                            $modalInstance.close(glossary);
+                            $uibModalInstance.close(glossary);
                             $scope.busy = false;
                         })
                         .error(function (data) {
@@ -739,12 +739,12 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
-    module.controller('AddTmxModalCtrl', ['$scope', '$modalInstance', '$http', 'tmx', 'Upload',
-        function ($scope, $modalInstance, $http, tmx, Upload) {
+    module.controller('AddTmxModalCtrl', ['$scope', '$uibModalInstance', '$http', 'tmx', 'Upload',
+        function ($scope, $uibModalInstance, $http, tmx, Upload) {
             $scope.tmx = tmx || {
                     rows: [['', '']],
                     name: generateRandomName()
@@ -765,7 +765,7 @@
                     .progress(function (evt) {
                     })
                     .success(function (tmxes) {
-                        $modalInstance.close(tmxes);
+                        $uibModalInstance.close(tmxes);
                         $scope.busy = false;
                     })
                     .error(function (data) {
@@ -775,7 +775,7 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);

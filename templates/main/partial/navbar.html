@@ -38,7 +38,7 @@
                                         overflow: hidden;">
                             <a class="breadcrumbs2__btn"
                                href="/text/{{ text.id }}/{{ target_lang }}/export/"
-                               tooltip="{% trans 'Export translation' %}"
+                               uib-tooltip="{% trans 'Export translation' %}"
                                tooltip-placement="bottom"
                                tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
                         </span>
@@ -59,7 +59,7 @@
                 {% if text.id %}
                 {% block navprogress %}
                 <div class="progress header-progress"
-                      tooltip="{% trans 'Fragments approved:' %} {= translationCounts[2] =}
+                      uib-tooltip="{% trans 'Fragments approved:' %} {= translationCounts[2] =}
                       {% trans 'Fragments translated:' %} {= translationCounts[1] =}"
                       tooltip-placement="bottom"
                       tooltip-append-to-body="true">

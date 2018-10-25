@@ -3,8 +3,8 @@
 
     var module = angular.module('mainControllers', []);
 
-    module.controller('mainCtrl', ['$scope', '$http', '$interval', '$modal', '$window', '$rootScope',
-        function ($scope, $http, $interval, $modal, $window, $rootScope) {
+    module.controller('mainCtrl', ['$scope', '$http', '$interval', '$uibModal', '$window', '$rootScope',
+        function ($scope, $http, $interval, $uibModal, $window, $rootScope) {
 
             $rootScope.editPage = false;
             $rootScope.updateMessages = function () {
@@ -23,7 +23,7 @@
                 sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
             };
             $scope.showAllMessages = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'allMessagesModal.html',
                     controller: 'AllMessagesModalCtrl',
                     size: 'md',
@@ -245,8 +245,8 @@
         }
     ]);
 
-    module.controller('AllMessagesModalCtrl', ['$scope', '$modalInstance', '$http', '$rootScope',
-        function ($scope, $modalInstance, $http, $rootScope) {
+    module.controller('AllMessagesModalCtrl', ['$scope', '$uibModalInstance', '$http', '$rootScope',
+        function ($scope, $uibModalInstance, $http, $rootScope) {
             $scope.error = '';
             $http.get('/ajax/message/all').success(function (data) {
                 $scope.messages = data;
@@ -267,7 +267,7 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
