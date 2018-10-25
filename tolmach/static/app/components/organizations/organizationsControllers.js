@@ -3,8 +3,8 @@
 
     var module = angular.module('organizationsControllers', []);
 
-    module.controller('organizationsCtrl', ['$scope', '$modal', '$http',
-        function ($scope, $modal, $http) {
+    module.controller('organizationsCtrl', ['$scope', '$uibModal', '$http',
+        function ($scope, $uibModal, $http) {
             $scope.activeTab = window['activeTab'];
             $scope.orgId = window.userData['orgId'];
             $scope.members = [];
@@ -20,7 +20,7 @@
             }
 
             $scope.createNewOrg = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'newOrganizationModal.html',
                     controller: 'NewOrganizationModalCtrl',
                     size: 'md',
@@ -34,7 +34,7 @@
             };
 
             $scope.addOrgParticipant = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'addOrgParticipantModal.html',
                     controller: 'AddOrgParticipantModalCtrl',
                     size: 'md',
@@ -92,8 +92,8 @@
         }
     ]);
 
-    module.controller('NewOrganizationModalCtrl', ['$scope', '$modalInstance', '$http',
-        function ($scope, $modalInstance, $http) {
+    module.controller('NewOrganizationModalCtrl', ['$scope', '$uibModalInstance', '$http',
+        function ($scope, $uibModalInstance, $http) {
             $scope.name = generateRandomName();
             $scope.error = '';
             $scope.ok = function () {
@@ -109,19 +109,19 @@
                     .error(function (data) {
                         $scope.error = data;
                         $scope.busy = false;
-                        //$modalInstance.close();
+                        //$uibModalInstance.close();
                     });
             };
 
             $scope.createOrgAdvancedOptions = false;
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
 
-    module.controller('AddOrgParticipantModalCtrl', ['$scope', '$modalInstance', '$http', '$window',
-        function ($scope, $modalInstance, $http, $window) {
+    module.controller('AddOrgParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http', '$window',
+        function ($scope, $uibModalInstance, $http, $window) {
             $scope.getUsers = function (query) {
                 return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
@@ -137,7 +137,7 @@
                 $scope.busy = true;
                 $http.post('/ajax/orgs/members/', data)
                     .success(function (participant) {
-                        $modalInstance.close(participant);
+                        $uibModalInstance.close(participant);
                         $scope.busy = false;
                     })
                     .error(function (data) {
@@ -147,7 +147,7 @@
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);

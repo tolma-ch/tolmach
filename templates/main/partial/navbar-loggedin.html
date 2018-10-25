@@ -26,7 +26,7 @@
     <li class="navbar-nav__button button_blue"
         ng-show="(pagesCount !== undefined) && (showSearch == false)"
         ng-cloak
-        tooltip="{% trans 'Dictionary' %}"
+        uib-tooltip="{% trans 'Dictionary' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
         <a class="" href="#" ng-click="dictOpener()"
@@ -70,7 +70,7 @@
     </li>
     <li class="navbar-nav__button button_blue hidden-md hidden-lg hidden-xl"
         ng-show="showSearch == false"
-        tooltip="{% trans 'Fullscreen' %}"
+        uib-tooltip="{% trans 'Fullscreen' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
         <a class="" href="#" ng-click="toggleFullscreen()"
@@ -82,7 +82,7 @@
     </li>
     <li class="navbar-nav__button button_blue hidden-xs"
         ng-show="showSearch == false"
-        tooltip="{% trans 'Help' %}"
+        uib-tooltip="{% trans 'Help' %}"
         tooltip-append-to-body="true"
         tooltip-placement="bottom">
         <a class="" href="#" ng-click="beginHelpPresentation()"
@@ -92,7 +92,7 @@
 		</a>
     </li>
     <!--<li class="navbar-nav__button button_gray"-->
-        <!--tooltip="{% trans 'Chat' %}"-->
+        <!--uib-tooltip="{% trans 'Chat' %}"-->
         <!--tooltip-append-to-body="true"-->
         <!--tooltip-placement="bottom">-->
         <!--<a class="" href="#" ng-click="toggleChat()">-->

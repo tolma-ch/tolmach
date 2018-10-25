@@ -13,14 +13,14 @@
             </span>
             <div class="input-group">
 {#                <span class="input-group-addon"#}
-{#                      tooltip="{% trans 'Re-create' %}"#}
+{#                      uib-tooltip="{% trans 'Re-create' %}"#}
 {#                      tooltip-append-to-body="true">#}
 {#                    <i class="fa fa-recycle" aria-hidden="true"></i>#}
 {#                </span>#}
                 <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/org/i/{{ organization.invite_link_code }}/">
                 <span class="input-group-addon"
                       ng-click-copy="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/"
-                      tooltip="{% trans 'Copy' %}"
+                      uib-tooltip="{% trans 'Copy' %}"
                       tooltip-append-to-body="true">
                     <i class="fa fa-clipboard" aria-hidden="true"></i>
                 </span>

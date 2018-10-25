@@ -104,14 +104,14 @@
                                         <a ng-show="(userIsManager || userMembershipStatus == 0) && !entry.approved"
                                            ng-click="approveEntry(entry.translations[entry.translations.length-1], entry)"
                                            ng-disabled="entry.translations[entry.translations.length-1].busy"
-                                           tooltip="{% trans 'Approve translation' %}"
+                                           uib-tooltip="{% trans 'Approve translation' %}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-check-circle"></i>
                                         </a>
                                         <a ng-show="(userIsManager || userMembershipStatus == 0 || (user == translation.author.id)) && !(userMembershipStatus == 2)"
                                            ng-click="editTranslation(entry, entry.translations[entry.translations.length-1])"
                                            ng-disabled="entry.translations[entry.translations.length-1].busy"
-                                           tooltip="{% trans 'Edit translation' %}"
+                                           uib-tooltip="{% trans 'Edit translation' %}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-pencil"></i>
                                         </a>
@@ -129,7 +129,7 @@
                                         <a class="active"
                                            ng-click="disapproveEntry(entry)"
                                            ng-disabled="entry.busy"
-                                           tooltip="{% trans 'Disapprove translation' %}"
+                                           uib-tooltip="{% trans 'Disapprove translation' %}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-check"></i>
                                         </a>
@@ -145,7 +145,7 @@
                                             <a ng-init="entryUrl = baseHost + '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
 {#                                               ng-href="{= entryUrl =}"#}
                                                ng-click-copy="{= entryUrl =}"
-                                               tooltip="{{ fragment_link }}"
+                                               uib-tooltip="{{ fragment_link }}"
                                                tooltip-append-to-body="true"
                                                tooltip-trigger="'click':'mouseleave'"
                                                style="font-size: 16px;">
@@ -223,7 +223,7 @@
                                             </div>
                                             <a href=""
                                                ng-click="suggestTranslation(entry)"
-                                               tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
+                                               uib-tooltip="{= entry.suggestionId ? '{{ save_translation }}' : '{{ add_translation }}' =}"
                                                tooltip-append-to-body="true">
                                                 <i class="fa fa-fw fa-floppy-o"></i>
                                             </a>
@@ -231,13 +231,13 @@
                                         <a href=""
                                            ng-show="entry.suggestionId"
                                            ng-click="removeTranslation(entry)"
-                                           tooltip="{{ remove_translation }}"
+                                           uib-tooltip="{{ remove_translation }}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-fw fa-trash-o"></i>
                                         </a>
                                         <a href=""
                                            ng-click="cancelEditing(entry)"
-                                           tooltip="{{ cancel_translation }}"
+                                           uib-tooltip="{{ cancel_translation }}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-fw fa-times"></i>
                                         </a>
@@ -311,7 +311,7 @@
                                         <a class="active"
                                            ng-click="disapproveEntry(entry)"
                                            ng-disabled="entry.busy"
-                                           tooltip="{% trans 'Disapprove translation' %}"
+                                           uib-tooltip="{% trans 'Disapprove translation' %}"
                                            ng-show="translation.isApproved"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-check"></i>
@@ -321,14 +321,14 @@
                                         <a ng-show="(userIsManager || userMembershipStatus == 0) && !entry.approved"
                                            ng-click="approveEntry(translation, entry)"
                                            ng-disabled="translation.busy"
-                                           tooltip="{% trans 'Approve translation' %}"
+                                           uib-tooltip="{% trans 'Approve translation' %}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-check-circle"></i>
                                         </a>
                                         <a ng-show="(userIsManager || userMembershipStatus == 0 || (user == translation.author.id)) && !(userMembershipStatus == 2)"
                                            ng-click="editTranslation(entry, translation)"
                                            ng-disabled="translation.busy"
-                                           tooltip="{% trans 'Edit translation' %}"
+                                           uib-tooltip="{% trans 'Edit translation' %}"
                                            tooltip-append-to-body="true">
                                             <i class="fa fa-pencil"></i>
                                         </a>

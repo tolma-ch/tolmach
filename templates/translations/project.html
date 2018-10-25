@@ -105,7 +105,7 @@
                                     </td>
                                     <td class="user-statistics-table__progress">
                                         <div class="progress-bar"
-                                             tooltip="{% trans 'Fragments total:' %} {=:: text.translation.counts[0] =}
+                                             uib-tooltip="{% trans 'Fragments total:' %} {=:: text.translation.counts[0] =}
 {% trans 'Translated:' %} {=:: text.translation.counts[1] =}
 {% trans 'Approved:' %} {=:: text.translation.counts[2] =}"
                                              tooltip-append-to-body="true">
@@ -118,7 +118,7 @@
                                         <a class="project-list-text__btn dropdown"
                                            href="#"
                                            data-toggle="dropdown"
-                                           tooltip="{% trans 'Options' %}"
+                                           uib-tooltip="{% trans 'Options' %}"
                                            tooltip-append-to-body="true"><i class="fa fa-chevron-down"></i></a>
                                         <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                                             <li>
@@ -152,7 +152,7 @@
                            class="btn helped-block btn-sm new-proj-block-btn"
                            ng-click="addText()"
                            ng-show="(isUserManager || (userMembershipStatus == 0))"
-                           tooltip="{% trans 'Add' %}"
+                           uib-tooltip="{% trans 'Add' %}"
                            tooltip-append-to-body="true"
                            help-text='{% trans "Click here to add new document to translate" %}'>{% trans 'Add' %}</a>
                     </div><!-- /widget-body -->
@@ -238,7 +238,7 @@
                                     <div class="project-sidebar-participant__btns">
                                         <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
                                         <a class="project-sidebar-participant__btn tooltip-warning" href=""
-                                           tooltip="{% trans 'Remove participant' %}"
+                                           uib-tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
                                            ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"
                                            popover-template="'participantRemovePopover.html'"

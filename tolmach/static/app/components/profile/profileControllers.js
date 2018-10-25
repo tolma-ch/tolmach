@@ -3,11 +3,11 @@
 
     var module = angular.module('profileControllers', []);
 
-    module.controller('ProfileCtrl', ['$scope', '$modal',
-        function ($scope, $modal) {
+    module.controller('ProfileCtrl', ['$scope', '$uibModal',
+        function ($scope, $uibModal) {
             $scope.userData = window['userData'];
             $scope.editProfile = function () {
-                var modalInstance = $modal.open({
+                var modalInstance = $uibModal.open({
                     templateUrl: 'editProfileModal.html',
                     controller: 'EditProfileModalCtrl',
                     size: 'md',
@@ -28,8 +28,8 @@
         }
     ]);
 
-    var controller = module.controller('EditProfileModalCtrl', ['$scope', '$modalInstance', '$http', 'userData',
-        function ($scope, $modalInstance, $http, userData) {
+    var controller = module.controller('EditProfileModalCtrl', ['$scope', '$uibModalInstance', '$http', 'userData',
+        function ($scope, $uibModalInstance, $http, userData) {
             $scope.cropper = {};
             $scope.cropper.sourceImage = null;
             $scope.cropper.croppedImage   = null;
@@ -53,22 +53,22 @@
                                 })
                                 .error(function() {
                                     $scope.busy = false;
-                                    $modalInstance.close(data);
+                                    $uibModalInstance.close(data);
                                 });
                         } else {
-                            $modalInstance.close(data);
+                            $uibModalInstance.close(data);
                         }
                         location.reload();
                     })
                     .error(function(data) {
                         $scope.error = data;
                         $scope.busy = false;
-                        //$modalInstance.close();
+                        //$uibModalInstance.close();
                     });
             };
 
             $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
+                $uibModalInstance.dismiss('cancel');
             };
         }
     ]);
