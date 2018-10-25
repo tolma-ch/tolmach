@@ -241,7 +241,7 @@
                                            uib-tooltip="{% trans 'Remove participant' %}"
                                            tooltip-append-to-body="true"
                                            ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"
-                                           popover-template="'participantRemovePopover.html'"
+                                           uib-popover-template="'participantRemovePopover.html'"
                                            popover-placement="left"
                                            popover-append-to-body="true"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
@@ -331,7 +331,7 @@
                                     <div class="project-list-glossary__btns">
                                         <a class="project-list-glossary__btn" href=""
                                            ng-show="(isUserManager || (userMembershipStatus == 0))"
-                                           popover-template="'tmxRemovePopover.html'"
+                                           uib-popover-template="'tmxRemovePopover.html'"
                                            popover-placement="left"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                     </div>
@@ -351,7 +351,7 @@
                                     <div class="project-list-glossary__btns">
                                         <a class="project-list-glossary__btn" href=""
                                            ng-show="(isUserManager || (userMembershipStatus == 0))"
-                                           popover-template="'glossaryRemovePopover.html'"
+                                           uib-popover-template="'glossaryRemovePopover.html'"
                                            popover-placement="left"
                                            class="btn btn-default"><i class="fa fa-trash-o"></i></a>
                                     </div>
@@ -398,7 +398,7 @@
                                 {% trans 'Attention!' %}
                             </div>
                             <div>
-                                <a popover-template="'projectRemovePopover.html'"
+                                <a uib-popover-template="'projectRemovePopover.html'"
                                    popover-placement="right"
                                    style="z-index: 999;"
                                    class="btn btn-sm btn-danger">
@@ -408,7 +408,7 @@
                             </div>
                             {% elif is_user_a_member == 'true' %}
                             <div>
-                                <a popover-template="'projectLeavePopover.html'"
+                                <a uib-popover-template="'projectLeavePopover.html'"
                                    popover-placement="right"
                                    style="z-index: 999;"
                                    class="btn btn-sm btn-danger">
