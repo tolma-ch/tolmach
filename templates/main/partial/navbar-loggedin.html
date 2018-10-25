@@ -12,6 +12,7 @@
          ng-class="{'search-btn_open': showSearch}"
          ng-cloak>
         <input class="search-btn__input" type="text"
+               autocomplete="off"
                ng-model="searchText"
                focus-me="focusSearchInput"
                ng-blur="!searchText && (showSearch = false)"

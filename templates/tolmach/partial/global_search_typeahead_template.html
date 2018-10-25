@@ -6,11 +6,11 @@
                           'fa fa-user': (match.model.type == 'user')}"></i>
         </div>
         <div class="search-result__text">
-            <span class="search-result__text__main" ng-bind-html="match.model.searched_text | typeaheadHighlight:query"></span>
-            <span class="search-result__text__parent" ng-bind-html="match.model.parent_text | typeaheadHighlight:query"></span>
+            <span class="search-result__text__main" ng-bind-html="match.model.searched_text | uibTypeaheadHighlight:query"></span>
+            <span class="search-result__text__parent" ng-bind-html="match.model.parent_text | uibTypeaheadHighlight:query"></span>
             <span class="search-result__text__additional_data" ng-if="match.model.type == 'fragment'">
-                <i class="fa fa-file-text-o" aria-hidden="true"></i><span ng-bind-html="match.model.additional_data.page | typeaheadHighlight:query"></span>
-                <i class="fa fa-align-center" aria-hidden="true"></i><span ng-bind-html="match.model.additional_data.fragment | typeaheadHighlight:query"></span>
+                <i class="fa fa-file-text-o" aria-hidden="true"></i><span ng-bind-html="match.model.additional_data.page | uibTypeaheadHighlight:query"></span>
+                <i class="fa fa-align-center" aria-hidden="true"></i><span ng-bind-html="match.model.additional_data.fragment | uibTypeaheadHighlight:query"></span>
             </span>
         </div>
     </a>
