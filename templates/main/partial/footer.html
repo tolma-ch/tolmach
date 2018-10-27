@@ -7,10 +7,12 @@
 {% trans 'Telegram live chat' as tg_title %}
 {% trans 'Tolma.ch on Facebook' as fb_title %}
 
-{% if user.is_authenticated %}
+{% trans 'Privacy policy' as privacy %}
+
+{#{% if user.is_authenticated %}#}
     <style>
         .footer {
-            margin-bottom: 10px;
+            padding-bottom: 10px;
         }
         .footer-grid {
             width: 100%;
@@ -77,6 +79,13 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="footer-data__links">
+                        <ul class="footer-data__links__list">
+                            <li class="footer-data__links__list__item">
+                                <a href="/privacy/">{{ privacy }}</a>
+                            </li>
+                        </ul>
+                    </div>
                     <!--<div class="footer-data__links">-->
                         <!--<ul>-->
                             <!--<li>-->
@@ -91,33 +100,33 @@
             </div>
         </div>
 	</footer>
-{% else %}
-	<footer class="footer footer-default" id="footer">
-		<div class="footer-container" id="footer-container">
-			<div class="footer-logo pull-left">
-                <a href="/">
-                    <img src="{% static 'img/top-logo.svg' %}">
-                </a><!-- /.brand -->
-			</div><!-- /.navbar-header -->
-
-			<ul class="footer-social pull-right">
-				<li class="footer-social__item">
-					<a href="http://vk.com/tolma_ch" target="_blank" title="{{ vk_title }}" class="footer-social__icon footer-social__item_vk"></a>
-				</li>
-                <!--<li class="footer-social__item">-->
-					<!--<a href="#" target="_blank" title="{{ gp_title }}" class="footer-social__icon footer-social__item_gp"></a>-->
-				<!--</li>-->
-                <li class="footer-social__item">
-					<a href="https://twitter.com/tolma_ch" target="_blank" title="{{ tw_title }}" class="footer-social__icon footer-social__item_tw"></a>
-				</li>
-                <!--<li class="footer-social__item">-->
-					<!--<a href="#" target="_blank" title="{{ fb_title }}" class="footer-social__icon footer-social__item_fb"></a>-->
-				<!--</li>-->
-                <li class="footer-social__item">
-                    <a href="//www.iubenda.com/privacy-policy/7774144" class="iubenda-white iubenda-embed" title="Privacy Policy">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
-                </li>
-			</ul>
-
-		</div><!-- /.container -->
-	</footer>	
-{% endif %}
+{#{% else %}#}
+{#	<footer class="footer footer-default" id="footer">#}
+{#		<div class="footer-container" id="footer-container">#}
+{#			<div class="footer-logo pull-left">#}
+{#                <a href="/">#}
+{#                    <img src="{% static 'img/top-logo.svg' %}">#}
+{#                </a><!-- /.brand -->#}
+{#			</div><!-- /.navbar-header -->#}
+{##}
+{#			<ul class="footer-social pull-right">#}
+{#				<li class="footer-social__item">#}
+{#					<a href="http://vk.com/tolma_ch" target="_blank" title="{{ vk_title }}" class="footer-social__icon footer-social__item_vk"></a>#}
+{#				</li>#}
+{#                <!--<li class="footer-social__item">-->#}
+{#					<!--<a href="#" target="_blank" title="{{ gp_title }}" class="footer-social__icon footer-social__item_gp"></a>-->#}
+{#				<!--</li>-->#}
+{#                <li class="footer-social__item">#}
+{#					<a href="https://twitter.com/tolma_ch" target="_blank" title="{{ tw_title }}" class="footer-social__icon footer-social__item_tw"></a>#}
+{#				</li>#}
+{#                <!--<li class="footer-social__item">-->#}
+{#					<!--<a href="#" target="_blank" title="{{ fb_title }}" class="footer-social__icon footer-social__item_fb"></a>-->#}
+{#				<!--</li>-->#}
+{#                <li class="footer-social__item">#}
+{#                    <a href="//www.iubenda.com/privacy-policy/7774144" class="iubenda-white iubenda-embed" title="Privacy Policy">Privacy Policy</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src = "//cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>#}
+{#                </li>#}
+{#			</ul>#}
+{##}
+{#		</div><!-- /.container -->#}
+{#	</footer>	#}
+{#{% endif %}#}
