@@ -49,6 +49,7 @@
         <title>Tolma.ch</title>
 
         <link rel="stylesheet" href="{% static 'assets/bootstrap/dist/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'dist/all.css' %}">
 {#        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>#}
         <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'dist/landing.css' %}">
@@ -303,6 +304,7 @@
                 </div>
             </div>
         </div>
+        {% include "main/partial/footer.html" %}
 
         <svg:svg>
             <svg:filter id="blur-svg">

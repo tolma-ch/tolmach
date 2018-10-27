@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 import django.contrib.auth.views
 import tolmach.views as main_views
 import tolmach.views_ajax as main_ajax
@@ -24,6 +25,7 @@ urlpatterns = [
 
     # main
     url(r'^$', main_views.index, name='index'),
+    url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html')),
     url(r'^%slogout/$' % PATH, django.contrib.auth.views.logout, {'next_page': '/'}),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
