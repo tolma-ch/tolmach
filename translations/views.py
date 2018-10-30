@@ -124,11 +124,8 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
 
         NUM_OF_WEEKS = 24
 
-        today = int(datetime.today().strftime("%Y%m%d"))
-
-        today_dow = datetime.strptime(str(today), "%Y%m%d").weekday()
-
-        nearest_sunday = today + (6 - today_dow)
+        today_dow = datetime.today().weekday()
+        nearest_sunday = datetime.today() + timedelta(days=6 - today_dow)
 
         total_list = []
         total_list_text = []
@@ -138,7 +135,7 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
             # starting from the nearest_sunday
             list_by_day = []
             list_by_day_text = []
-            start_date = datetime.strptime(str(nearest_sunday - dayofweek), "%Y%m%d")
+            start_date = nearest_sunday - timedelta(days=dayofweek)
 
             for weeknumber in range(NUM_OF_WEEKS):
                 date = (start_date - timedelta(days=weeknumber * 7))
