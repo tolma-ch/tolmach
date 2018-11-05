@@ -933,9 +933,9 @@ def entry_ajax(request, action, text):
                     approved = approved or entry_translation.is_approved
 
             if has_plurals:
-                entry_translation = approved_text.split("‡")[0] or user_translation_text.split("‡")[0] or entry.body
+                entry_translation = approved_text.split("‡")[0] if approved else entry.body
             else:
-                entry_translation = approved_text or user_translation_text or entry.body
+                entry_translation = approved_text if approved else entry.body
 
             entries.append({
                 'id': entry.id,
