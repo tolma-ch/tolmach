@@ -1747,7 +1747,9 @@
                         if (status == "start") {
                             $scope.socket.send(JSON.stringify({"text": {
                                     "current_edit_start" : entry.id,
-                                    "user": $scope.user
+                                    "user": $scope.user,
+                                    "page": $rootScope.page,
+                                    "fragment": entry.idInText
                                 }}));
                         } else if (status == "stop") {
                             $scope.socket.send(JSON.stringify({"text": {
@@ -1914,6 +1916,21 @@
             $scope.textTab = 0;
             $scope.initialPage = parseInt($location.search().page ? $location.search().page : 1) || 1;
             $scope.entryToFocus = $location.search().fragment ? $location.search().fragment : 0;
+
+            // Checking if it is initial text opening or direct link to the fragment
+            console.log($scope.initialPage);
+            console.log($scope.entryToFocus);
+            if ($scope.initialPage == 1 && $scope.entryToFocus == 0) {
+                // if this is simple text opening, getting the last position
+                if (parseInt(window['savedPosition'].page) > 0) {
+                    console.log(123);
+                    $scope.initialPage = parseInt(window['savedPosition'].page);
+                    $scope.entryToFocus = parseInt(window['savedPosition'].fragment);
+
+                    $location.search('page', $scope.initialPage).replace();
+                }
+            }
+
             $scope.countPerPage = 100;
             $rootScope.pagesCount = window['pagesCount'];
             $rootScope.page = ($scope.initialPage > $rootScope.pagesCount) ? ($rootScope.pagesCount) : ($scope.initialPage < 1 ? 1 : $scope.initialPage);

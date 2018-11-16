@@ -6,7 +6,7 @@ import json
 from channels.channel import Group
 from channels.auth import channel_session_user_from_http, channel_session_user
 
-from translations.models import TextTranslation, Text, Project
+from translations.models import TextTranslation, Text, Project, TextTranslationUserPosition
 from entries.models import Language
 
 
@@ -41,6 +41,16 @@ def ws_text_translation_message(message, text_id, target_lang):
         translation.websocket_group.send({'text': json.dumps(
             json.loads(message.content['text'])['text']
         )})
+
+        if 'current_edit_start' in message.content['text']:
+            pos, created = TextTranslationUserPosition.objects.get_or_create(
+                user=message.user,
+                translation=translation
+            )
+
+            pos.page = json.loads(message.content['text'])['text']['page']
+            pos.fragment = json.loads(message.content['text'])['text']['fragment']
+            pos.save()
 
 
 @channel_session_user
