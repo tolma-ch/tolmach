@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.decorators import define_project_breadcrumbs
-from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation
+from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation, TextTranslationUserPosition
 from entries.models import Language, Subject
 import translations.utils as utils
 
@@ -400,6 +400,15 @@ def view_translation(request, text_id, target_lang):
         else:
             membership_status = 999
 
+    try:
+        user_pos = TextTranslationUserPosition.objects.get(
+            user=request.user,
+            translation=translation
+        )
+        saved_position = {'page': user_pos.page, 'fragment': user_pos.fragment}
+    except TextTranslationUserPosition.DoesNotExist:
+        saved_position = {}
+
     data = {'username': request.user,
             'user_membership_status': membership_status,
             'breadcrumbs': [
@@ -418,6 +427,7 @@ def view_translation(request, text_id, target_lang):
             'ws_connect_host': settings.WS_HOST,
             'language_codes': [x.code for x in Language.objects.all()],
             'total_pages': total_pages,
+            'saved_position': saved_position
             }
     template = 'translations/view-text.html'
     return render(request, template, data)

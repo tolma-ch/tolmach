@@ -366,6 +366,15 @@ class TextTranslationMeta(models.Model):
     meta_data = models.TextField()
 
 
+class TextTranslationUserPosition(models.Model):
+    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_user_position', on_delete=models.deletion.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
+    page = models.IntegerField(default=0)
+    fragment = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ("translation", "user")
+
 class TextEntry(models.Model):
     body = models.TextField(default="")
     parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)

@@ -70,6 +70,7 @@
         window['wsTextConnectHost'] = '{{ ws_connect_host }}';
         window['userMembershipStatus'] = {{ user_membership_status }};
         window['pagesCount'] = {{ total_pages }};
+        window['savedPosition'] = {{ saved_position | safe }};
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
@@ -147,7 +148,7 @@
                                                ng-click-copy="{= entryUrl =}"
                                                uib-tooltip="{{ fragment_link }}"
                                                tooltip-append-to-body="true"
-                                               tooltip-trigger="'click':'mouseleave'"
+                                               tooltip-trigger="'click' 'mouseleave'"
                                                style="font-size: 16px;">
                                                 <i class="fa fa-fw fa-link"></i>
                                             </a>
