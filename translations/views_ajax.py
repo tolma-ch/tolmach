@@ -33,26 +33,15 @@ def projects_ajax(request, proj_type, object_id=""):
     user_projects_list = []
     if proj_type == 'my':
         user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
-        for pr in user_projects_list:
-            pr.list_button = 'none'
     elif proj_type == 'thirdparty':
         user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
-        for pr in user_projects_list:
-            pr.list_button = 'leave'
     elif proj_type == 'public':
         if not request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
         else:
             user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
-        for pr in user_projects_list:
-            if pr.is_user_manager(request.user):
-                pr.list_button = 'none'
-            elif pr.is_user_a_member(request.user):
-                pr.list_button = 'leave'
-            else:
-                pr.list_button = 'enter'
     elif proj_type == 'dashboard':
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
         recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
