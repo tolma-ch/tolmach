@@ -2,7 +2,7 @@
 
 import json
 from django.utils import translation
-from django_uwsgi.decorators import spool
+from django_uwsgi.decorators import spool, cron
 
 
 @spool
@@ -48,5 +48,40 @@ def email_send(arguments):
         )
     email.template = template
     email.send()
+
+    return True
+
+@cron(-10, -1, -1, -1, -1, target="worker")
+def update_projects_progress(arguments):
+    from datetime import datetime, timedelta
+    from translations.models import Project, Text, TextTranslation
+
+    time_threshold = datetime.now() - timedelta(minutes=10)
+    # if not arguments.get('full_update', False):
+    #     results = Project.objects.filter(last_modified__gt=time_threshold)
+    # else:
+    results = Project.objects.all()
+
+    for project in results:
+        translated_progress = 0
+        approved_progress = 0
+        translations_num = 0
+        texts = Text.objects.filter(project=project)
+        for text in texts:
+            translations = TextTranslation.objects.filter(text=text)
+            for translation in translations:
+                translations_num += 1
+                translated_progress += translation.get_progress()[1][0]
+                approved_progress += translation.get_progress()[1][1]
+
+        if not texts.count() == 0:
+            project_progress = [int(approved_progress / translations_num),
+                                int(translated_progress / translations_num) - int(approved_progress / translations_num)]
+        else:
+            project_progress = [0, 0]
+
+        project.progress_data = json.dumps(project_progress)
+        project.last_modified = project.last_modified
+        project.save(skip_last_modified=True)
 
     return True

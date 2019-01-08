@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.db.models import Q
 from django.db import models
-import math
+import math, json
 
 from channels import Group
 
@@ -97,6 +97,7 @@ class Project(models.Model):
     users = models.ManyToManyField('auth.User', through=ProjectMember, related_name='project_members')
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
+    progress_data = models.CharField(max_length=15, default="[0, 0]")
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
     organization = models.ForeignKey('tolmach.Organization',
@@ -109,11 +110,12 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
+    def save(self, skip_last_modified=False, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
             self.time_created = timezone.now()
-        self.last_modified = timezone.now()
+        if not skip_last_modified:
+            self.last_modified = timezone.now()
         super(Project, self).save(*args, **kwargs)
 
     def is_user_manager(self, user):
@@ -168,27 +170,28 @@ class Project(models.Model):
         """
         Get progress percentage of the current project and return Int from 0 to 100
         """
-        project_progress = cache.get("%d_project_progress" % self.id)
-
-        if not project_progress:
-            translated_progress = 0
-            approved_progress = 0
-            translations_num = 0
-            texts = Text.objects.filter(project=self)
-            for text in texts:
-                translations = TextTranslation.objects.filter(text=text)
-                for translation in translations:
-                    translations_num += 1
-                    translated_progress += translation.get_progress()[1][0]
-                    approved_progress += translation.get_progress()[1][1]
-
-            if not texts.count() == 0:
-                project_progress = [int(approved_progress / translations_num),
-                                    int(translated_progress / translations_num) - int(approved_progress / translations_num)]
-            else:
-                project_progress = [0, 0]
-            cache.set("%d_project_progress" % self.id, project_progress, 60*20)
-        return project_progress
+        return json.loads(self.progress_data)
+        # project_progress = cache.get("%d_project_progress" % self.id)
+        #
+        # if not project_progress:
+        #     translated_progress = 0
+        #     approved_progress = 0
+        #     translations_num = 0
+        #     texts = Text.objects.filter(project=self)
+        #     for text in texts:
+        #         translations = TextTranslation.objects.filter(text=text)
+        #         for translation in translations:
+        #             translations_num += 1
+        #             translated_progress += translation.get_progress()[1][0]
+        #             approved_progress += translation.get_progress()[1][1]
+        #
+        #     if not texts.count() == 0:
+        #         project_progress = [int(approved_progress / translations_num),
+        #                             int(translated_progress / translations_num) - int(approved_progress / translations_num)]
+        #     else:
+        #         project_progress = [0, 0]
+        #     cache.set("%d_project_progress" % self.id, project_progress, 60*20)
+        # return project_progress
 
     def invite_user(self, user):
         new_proj_user, created = ProjectMember.objects.get_or_create(user=user, project=self)
