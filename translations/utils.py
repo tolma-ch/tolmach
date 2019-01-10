@@ -226,7 +226,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
             elif "-" in lang:
                 return "%s-%s" % (lang.split("-")[0].lower(), lang.split("-")[1].upper())
         else:
-            return lang.lover()
+            return lang.lower()
 
     target_translation = ProjectTranslation.objects.get(target_lang__code=target_lang, project=project)
     # учитываем различия в аттрибутах языка в разных версиях спеки TMX
