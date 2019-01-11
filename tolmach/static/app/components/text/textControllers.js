@@ -676,6 +676,19 @@
                         event.preventDefault(); // char on new line moves to the beginning of the line
                     }
                 }
+                if (event.altKey) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    if (code === 77) { // Alt - m
+                        // hotkey for copying machine translation to textarea
+                        if (typeof entry.yaMachines !== 'undefined') {
+                            entry.suggestion = entry.yaMachines[0].text;
+                        }
+                    } else if (code === 79) { // Alt - o
+                        // hotkey for copying original text to textarea
+                        entry.suggestion = entry.body;
+                    }
+                }
             };
             $scope.textareaAutoSave = function (event, entry) {
                 var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
