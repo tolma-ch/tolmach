@@ -1892,8 +1892,6 @@
                         $scope.busy = false;
 
                         if ($scope.entryToFocus > 0) {
-                            console.log($scope.entryToFocus in $scope.entriesById);
-                            console.log(window.location.pathname);
                             if ($scope.entryToFocus in $scope.entriesById){
                                 $scope.toggleEntry($scope.entriesById[$scope.entryToFocus]);
                             }
@@ -1918,12 +1916,9 @@
             $scope.entryToFocus = $location.search().fragment ? $location.search().fragment : 0;
 
             // Checking if it is initial text opening or direct link to the fragment
-            console.log($scope.initialPage);
-            console.log($scope.entryToFocus);
             if ($scope.initialPage == 1 && $scope.entryToFocus == 0) {
                 // if this is simple text opening, getting the last position
                 if (parseInt(window['savedPosition'].page) > 0) {
-                    console.log(123);
                     $scope.initialPage = parseInt(window['savedPosition'].page);
                     $scope.entryToFocus = parseInt(window['savedPosition'].fragment);
 
@@ -2217,6 +2212,19 @@
                     } else if ((code === 13 || code === 10) && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
                         event.stopPropagation(); // Disabling new-lines with Enter key to prevent a bug when cursor after first
                         event.preventDefault(); // char on new line moves to the beginning of the line
+                    }
+                }
+                if (event.altKey) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    if (code === 77) { // Alt - m
+                        // hotkey for copying machine translation to textarea
+                        if (typeof entry.yaMachines !== 'undefined') {
+                            entry.suggestion = entry.yaMachines[0].text;
+                        }
+                    } else if (code === 79) { // Alt - o
+                        // hotkey for copying original text to textarea
+                        entry.suggestion = entry.body;
                     }
                 }
             };
