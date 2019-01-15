@@ -934,6 +934,7 @@ def entry_ajax(request, action, text):
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
+                'disabled': entry.is_disabled,
                 'translation': entry_translation,
                 'isBeingEdited': {}
             })
@@ -1136,6 +1137,91 @@ def remove_entry_ajax(request):
 
 
 @login_required
+def disable_entry_ajax(request):
+    if not request.method == 'POST':
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    post = json.loads(request.body)
+    if 'id' not in post:
+        return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
+    entry_id = post['id']
+    try:
+        entry = TextEntry.objects.get(id=entry_id)
+    except TextEntry.DoesNotExist:
+        return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+    text = entry.text
+    if text.project.is_user_a_member(request.user) or text.project.is_user_manager(request.user):
+        with transaction.atomic():
+            for ent in TextEntry.objects.filter(parent_entry=entry):
+                ent.is_approved = False
+                ent.save()
+            entry.is_disabled = True
+            entry.save()
+        entry_to_disable = {
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            'approved': entry.is_disabled,
+            # 'translation': translation_to_json(entry)
+        }
+        for text_translation in TextTranslation.objects.filter(text = entry.text):
+            translation_counts, translation_progress = text_translation.get_progress()
+            text_translation.websocket_group.send({'text': json.dumps(
+                {
+                    'progress': {'translation_progress': translation_progress,
+                                 'translation_counts': translation_counts},
+                    'entry_to_disable': entry_to_disable,
+                    # 'user': request.user.id
+                }
+            )})
+        return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(_('You have to be a manager of project')),
+                            content_type="application/json",
+                            status=400)
+
+@login_required
+def enable_entry_ajax(request):
+    if not request.method == 'POST':
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    post = json.loads(request.body)
+    if 'id' not in post:
+        return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
+    entry_id = post['id']
+    try:
+        entry = TextEntry.objects.get(id=entry_id)
+    except TextEntry.DoesNotExist:
+        return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
+    text = entry.text
+    if text.project.is_user_a_member(request.user) or text.project.is_user_manager(request.user):
+        with transaction.atomic():
+            for ent in TextEntry.objects.filter(parent_entry=entry):
+                ent.is_approved = False
+                ent.save()
+            entry.is_disabled = False
+            entry.save()
+        entry_to_enable = {
+            'id': entry.id,
+            'idInText': entry.id_in_text,
+            'disabled': entry.is_disabled,
+            # 'translation': translation_to_json(entry)
+        }
+        for text_translation in TextTranslation.objects.filter(text = entry.text):
+            translation_counts, translation_progress = text_translation.get_progress()
+            text_translation.websocket_group.send({'text': json.dumps(
+                {
+                    'progress': {'translation_progress': translation_progress,
+                                 'translation_counts': translation_counts},
+                    'entry_to_enable': entry_to_enable,
+                    # 'user': request.user.id
+                }
+            )})
+        return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(_('You have to be a manager of project')),
+                            content_type="application/json",
+                            status=400)
+
+
+@login_required
 def approve_entry_ajax(request):
     if not request.method == 'POST':
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -1148,7 +1234,7 @@ def approve_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
-    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
+    if text.project.is_user_a_member(request.user):
         with transaction.atomic():
             if entry.parent_entry:
                 TextEntry.objects.filter(~Q(id=entry_id),
