@@ -2002,6 +2002,34 @@
                 var entry = $scope.entriesById[id];
                 expandEntry(entry);
             };
+            $scope.disableEntry = function (entry, skip_active_null) {
+                skip_active_null = typeof skip_active_null !== 'undefined' ? skip_active_null : false;
+                $http.post('/ajax/entry-disable/', {id: entry.id}).success(function () {
+                    entry.disabled = true;
+                    entry.approved = false;
+                    entrySetEditingStatus(entry, 'stop');
+                    var t;
+                    for (var i = entry['translations'].length - 1; i >= 0; i--) {
+                        t = entry['translations'][i];
+                        t.isApproved = false;
+                    }
+                    if (!skip_active_null) {
+                        $scope.activeEntry = null;
+                    }
+                })
+            };
+            $scope.enableEntry = function (entry) {
+                $http.post('/ajax/entry-enable/', {id: entry.id}).success(function () {
+                    entry.disabled = false;
+                    var t;
+                    for (var i = entry['translations'].length - 1; i >= 0; i--) {
+                        t = entry['translations'][i];
+                        t.isApproved = false;
+                    }
+                    $scope.activeEntry = entry;
+                    entrySetEditingStatus(entry, 'start');
+                })
+            };
             $scope.approveEntry = function (translation, entry) {
                 $http.post('/ajax/entry-approve/', {id: translation.id}).success(function () {
                     translation.isApproved = true;
@@ -2184,7 +2212,25 @@
                     found = false;
                 for (i in $scope.entries) {
                     var someEntry = $scope.entries[i];
-                    if (found === true && !someEntry.approved) {
+                    if (found === true && !someEntry.approved && !someEntry.disabled) {
+                        $scope.toggleEntry(someEntry);
+                        break;
+                    }
+                    if (someEntry === entry) {
+                        found = true;
+                    }
+                }
+            };
+            var skipHotKey = function (entry) {
+                // $('#entry-' + entry.idInText).trigger("blur");
+                $timeout(function () {
+                    $scope.disableEntry(entry, true);
+                }, 501);
+                var i,
+                    found = false;
+                for (i in $scope.entries) {
+                    var someEntry = $scope.entries[i];
+                    if (found === true && !someEntry.approved && !someEntry.disabled) {
                         $scope.toggleEntry(someEntry);
                         break;
                     }
@@ -2225,6 +2271,8 @@
                     } else if (code === 79) { // Alt - o
                         // hotkey for copying original text to textarea
                         entry.suggestion = entry.body;
+                    } else if (code === 83) { // Alt - s
+                        skipHotKey(entry);
                     }
                 }
             };
@@ -2373,7 +2421,7 @@
                             //up
                             for (--index; index >= 0; index--) {
                                 someEntry = $scope.entries[index];
-                                if (!someEntry.approved) {
+                                if (!someEntry.approved && !someEntry.disabled) {
                                     entry = someEntry;
                                     break;
                                 }
@@ -2383,7 +2431,7 @@
                             //down
                             for (index++; index < $scope.entries.length; index++) {
                                 someEntry = $scope.entries[index];
-                                if (!someEntry.approved) {
+                                if (!someEntry.approved && !someEntry.disabled) {
                                     entry = someEntry;
                                     break;
                                 }

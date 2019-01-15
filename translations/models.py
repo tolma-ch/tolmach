@@ -308,16 +308,24 @@ class TextTranslation(models.Model):
                 entries_total = all_stats[0]
                 entries_translated = all_stats[1]
                 entries_approved = all_stats[2]
+                entries_disabled = all_stats[3]
+                entries_enabled = entries_total - entries_disabled
             else:
                 entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
-                entries_translated = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct().count()
+                entries_disabled = TextEntry.objects.filter(text=self.text, parent_entry=None, is_disabled=True).count()
+                entries_enabled = entries_total - entries_disabled
+                translated_entries_list = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct()
+                translated_ids_list = [i['parent_entry'] for i in translated_entries_list]
+
+                entries_translated = TextEntry.objects.filter(id__in=translated_ids_list, is_disabled=False).count()
+
                 entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
-                cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved], 60*10)
+                cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved, entries_disabled], 60*10)
 
             if not entries_total == 0:
-                percent_translated = int(math.ceil(entries_translated/(entries_total/100.0))) if (entries_translated < entries_total) else 100
-                percent_approved = int(math.ceil(entries_approved/(entries_total/100.0)))
-                
+                percent_translated = int(math.ceil(entries_translated/( entries_enabled /100.0))) if (entries_translated < entries_enabled) else 100
+                percent_approved = int(math.ceil(entries_approved/( entries_enabled /100.0)))
+
                 return [int(entries_total), int(entries_translated), int(entries_approved)], [percent_translated, percent_approved]
             else:
                 return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
@@ -389,6 +397,7 @@ class TextEntry(models.Model):
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
+    is_disabled = models.BooleanField(default=False)
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
 

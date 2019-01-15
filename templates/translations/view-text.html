@@ -14,6 +14,7 @@
 {% trans 'Save' as save_translation %}
 {% trans 'Remove' as remove_translation %}
 {% trans 'Cancel (Esc)' as cancel_translation %}
+{% trans 'Skip translation (Alt-S)' as disable_translation %}
 {% trans 'Copied!' as fragment_link %}
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
@@ -81,11 +82,12 @@
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
-                         ng-click="($parent.activeEntry !== entry) && toggleEntry(entry)"
+                         ng-click="($parent.activeEntry !== entry) && !entry.disabled && toggleEntry(entry)"
                          ng-class="{'text-piece_closed': $parent.activeEntry !== entry,
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
                                     'text-piece_approved': entry.approved,
-                                    'text-piece_translated': !entry.approved && (entry.translations.length > 0),
+                                    'text-piece_disabled': entry.disabled,
+                                    'text-piece_translated': !entry.approved && !entry.disabled && (entry.translations.length > 0),
                                     'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}">
                         <!---------------------------------
                                    original text
@@ -96,7 +98,7 @@
                                     <span html-content="entry.body"></span>
                                     {% include "translations/partial/text-page-now-editing-icon.html" %}
                                 </div>
-                                <div ng-if="!entry.approved && (entry.translations.length > 0)">
+                                <div ng-if="!entry.approved && !entry.disabled && (entry.translations.length > 0)">
                                     <span class="text-piece__body">
                                         <span html-content="entry.translations[entry.translations.length-1].body"></span>
                                         {% include "translations/partial/text-page-now-editing-icon.html" %}
@@ -136,6 +138,20 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div ng-if="entry.disabled">
+                                    <span class="text-piece__body" ng-if="entry.translations.length > 0">
+                                        <span html-content="entry.body"></span>
+                                    </span>
+                                    <div class="text-piece__icons">
+                                        <a class="active"
+                                           ng-click="enableEntry(entry)"
+                                           ng-disabled="entry.busy"
+                                           uib-tooltip="{% trans 'Enable translation' %}"
+                                           tooltip-append-to-body="true">
+                                            <i class="fa fa-ban"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
@@ -146,11 +162,17 @@
                                             <a ng-init="entryUrl = baseHost + '/text/' + currentTextId + '/' + currentTargetLang + '/#?page=' + page + '&fragment=' + entry['idInText']"
 {#                                               ng-href="{= entryUrl =}"#}
                                                ng-click-copy="{= entryUrl =}"
-                                               uib-tooltip="{{ fragment_link }}"
-                                               tooltip-append-to-body="true"
-                                               tooltip-trigger="'click' 'mouseleave'"
+{#                                               uib-tooltip="{{ fragment_link }}"#}
+{#                                               tooltip-append-to-body="true"#}
+{#                                               tooltip-trigger="'click' 'mouseleave'"#}
                                                style="font-size: 16px;">
                                                 <i class="fa fa-fw fa-link"></i>
+                                            </a>
+                                            <a href=""
+                                               ng-click="disableEntry(entry)"
+                                               uib-tooltip="{{ disable_translation }}"
+                                               tooltip-append-to-body="true">
+                                                <i class="fa fa-fw fa-ban"></i>
                                             </a>
                                         </div>
                                     </span>
