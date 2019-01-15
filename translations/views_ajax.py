@@ -1234,7 +1234,7 @@ def approve_entry_ajax(request):
     except TextEntry.DoesNotExist:
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
-    if text.project.is_user_a_member(request.user):
+    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
         with transaction.atomic():
             if entry.parent_entry:
                 TextEntry.objects.filter(~Q(id=entry_id),
