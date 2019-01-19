@@ -1169,7 +1169,7 @@ def disable_entry_ajax(request):
                     'progress': {'translation_progress': translation_progress,
                                  'translation_counts': translation_counts},
                     'entry_to_disable': entry_to_disable,
-                    # 'user': request.user.id
+                    'user': request.user.id
                 }
             )})
         return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
@@ -1211,7 +1211,7 @@ def enable_entry_ajax(request):
                     'progress': {'translation_progress': translation_progress,
                                  'translation_counts': translation_counts},
                     'entry_to_enable': entry_to_enable,
-                    # 'user': request.user.id
+                    'user': request.user.id
                 }
             )})
         return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
