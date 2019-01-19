@@ -98,6 +98,44 @@
                         });
                     }
                 }
+                if ('entry_to_disable' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_disable = ws_data['entry_to_disable'];
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == entry_to_disable.id) {
+                                var local_entry_to_disable = item;
+                                //console.log("entry: " + item);
+                                local_entry_to_disable.disabled = true;
+                                local_entry_to_disable.approved = false;
+                                var t;
+                                for (var y = local_entry_to_disable['translations'].length - 1; y >= 0; y--) {
+                                    t = local_entry_to_disable['translations'][y];
+                                    t.isApproved = false;
+                                }
+                                if ($scope.activeEntry == local_entry_to_disable) {
+                                    $scope.activeEntry = null;
+                                }
+                            }
+                        });
+                    }
+                }
+                if ('entry_to_enable' in ws_data) {
+                    if (!($scope.user == ws_data['user'])) {
+                        var entry_to_enable = ws_data['entry_to_enable'];
+                        $scope.entries.forEach(function (item, i, arr) {
+                            if (item.id == entry_to_enable.id) {
+                                var local_entry_to_enable = item;
+                                //console.log("entry: " + item);
+                                local_entry_to_enable.disabled = false;
+                                var t;
+                                for (var y = local_entry_to_enable['translations'].length - 1; y >= 0; y--) {
+                                    t = local_entry_to_enable['translations'][y];
+                                    t.isApproved = false;
+                                }
+                            }
+                        });
+                    }
+                }
                 if ('entry_new_translation' in ws_data) {
                     if (!($scope.user == ws_data['user'])) {
                         var entry_new_translation = ws_data['entry_new_translation'];
@@ -355,7 +393,11 @@
 
                         if ($scope.entryToFocus > 0) {
                             if ($scope.entryToFocus in $scope.entriesById){
-                                $scope.toggleEntry($scope.entriesById[$scope.entryToFocus]);
+                                if (!$scope.entriesById[$scope.entryToFocus].disabled) {
+                                    $scope.toggleEntry($scope.entriesById[$scope.entryToFocus]);
+                                } else {
+                                    scrollToEntry($scope.entriesById[$scope.entryToFocus]);
+                                }
                             }
                             $location.search('fragment', null).replace();
                             $scope.entryToFocus = 0;
