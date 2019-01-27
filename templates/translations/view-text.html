@@ -329,6 +329,29 @@
                                 <div class="translation-variant__date">
                                     {= translation.lastModified | date:'short' =}
                                 </div>
+                                <div class="translation-variant__options">
+                                    <a class="project-list-text__btn dropdown"
+                                           href="#"
+                                           data-toggle="dropdown"
+                                           uib-tooltip="{% trans 'Options' %}"
+                                           tooltip-append-to-body="true"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+                                        <ul class="dropdown-menu dropdown-yellow dropdown-caret">
+                                            <li>
+                                                <a href=""
+                                                    ng-click="approveEntriesByUser(translation.author)">
+                                                    <i class="fa fa-check-circle"></i>
+                                                    &nbsp{% trans 'Approve all entries from user' %}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href=""
+                                                    ng-click="disapproveEntriesByUser(translation.author)">
+                                                    <i class="fa fa-check-circle"></i>
+                                                    &nbsp{% trans 'Disapprove all entries from user' %}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                </div>
                                 <div class="translation-variant__icons">
                                     <div ng-if="entry.approved">
                                         <a class="active"

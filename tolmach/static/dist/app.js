@@ -1589,7 +1589,7 @@
                 // 4) [done] Показывать пользователям, какие фрагменты в данный момент переводят
                 var ws_data = JSON.parse(message.data);
                 if ('progress' in ws_data) {
-                    //console.log('updating progressbars');
+                    console.log('updating progressbars');
                     $rootScope.translationProgress = ws_data['progress']['translation_progress'];
                     $rootScope.translationCounts = ws_data['progress']['translation_counts'];
                 }
@@ -2086,6 +2086,20 @@
                             t.isApproved = false;
                         }
                     }
+                })
+            };
+            $scope.approveEntriesByUser = function (user) {
+                $http.post('/ajax/entry-approve-by-user/', {translationTargetLang: $scope.currentTargetLang,
+                                                            text: $scope.currentTextId,
+                                                            userId: user.id}).success(function () {
+                    $scope.activeEntry = null;
+                })
+            };
+            $scope.disapproveEntriesByUser = function (user) {
+                $http.post('/ajax/entry-disapprove-by-user/', {translationTargetLang: $scope.currentTargetLang,
+                                                            text: $scope.currentTextId,
+                                                            userId: user.id}).success(function () {
+                    $scope.activeEntry = null;
                 })
             };
             $scope.disapproveEntry = function (entry) {

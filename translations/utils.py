@@ -7,12 +7,16 @@ import re
 import os
 import json
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q
 from entries.models import Language
-from translations.models import ProjectTranslation, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry
+from translations.models import ProjectTranslation, TextTranslation, TextTranslationMeta, GlossaryEntry, TMDatabase, TMDatabaseEntry, TextEntry
 from django.conf import settings
 import datetime
+
+from stats.models import EntryStats
+from translations.utils_ajax import translation_to_json
 
 
 FORMATS = {
@@ -509,3 +513,85 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
         print("ELASTICSEARCH: ", res['created'])
 
         return True
+
+
+def approve_entry(entry, request):
+    with transaction.atomic():
+        if entry.parent_entry:
+            TextEntry.objects.filter(~Q(id=entry.id),
+                                     parent_entry=entry.parent_entry,
+                                     translation=entry.translation,
+                                     is_approved=True).update(is_approved=False)
+        entry.is_approved = True
+        entry.save()
+        counter, created = EntryStats.objects.get_or_create(user=request.user,
+                                                            date=timezone.now().strftime("%Y%m%d"),
+                                                            project=entry.text.project,
+                                                            action_type="approve")
+
+        counter.action_count = counter.action_count + 1
+        counter.save()
+    ws_send_entry_status("approve", [entry], request.user.id)
+
+    return entry
+
+
+def disapprove_entry(entry, request):
+    with transaction.atomic():
+        entry.is_approved = False
+        entry.save()
+        counter, created = EntryStats.objects.get_or_create(user=request.user,
+                                                            date=timezone.now().strftime("%Y%m%d"),
+                                                            project=entry.text.project,
+                                                            action_type="disapprove")
+
+        counter.action_count = counter.action_count + 1
+        counter.save()
+    ws_send_entry_status("disapprove", [entry], request.user.id)
+
+    return entry
+
+def ws_send_entry_status(action, entries, user_id):
+    translation_counts, translation_progress = entries[0].translation.get_progress()
+    entries[0].translation.websocket_group.send({'text': json.dumps(
+        {
+            'progress': {'translation_progress': translation_progress,
+                         'translation_counts': translation_counts}
+        }
+    )})
+    for ent in entries:
+        if action == "approve":
+            entry = {
+                'id': ent.parent_entry.id,
+                'idInText': ent.parent_entry.id_in_text,
+                'approved': ent.is_approved,
+                'translation': translation_to_json(ent)
+            }
+        elif action == "disapprove":
+            entry = {
+                'id': ent.parent_entry.id,
+                'idInText': ent.parent_entry.id_in_text,
+            }
+        else:
+            return False
+        ent.translation.websocket_group.send({'text': json.dumps(
+            {
+                'entry_to_%s' % action: entry,
+                'user': user_id
+            }
+        )})
+
+    return True
+
+def update_entry_stats(user, action, project, count):
+    if not action in ["approve", "disapprove", "add", "remove"]:
+        return False
+    counter, created = EntryStats.objects.get_or_create(user=user,
+                                                        date=timezone.now().strftime("%Y%m%d"),
+                                                        project=project,
+                                                        action_type=action)
+
+    counter.action_count = counter.action_count + count
+    counter.save()
+
+    return True
