@@ -329,7 +329,8 @@
                                 <div class="translation-variant__date">
                                     {= translation.lastModified | date:'short' =}
                                 </div>
-                                <div class="translation-variant__options">
+                                <div class="translation-variant__options"
+                                     ng-show="(userIsManager || userMembershipStatus == 0)">
                                     <a class="project-list-text__btn dropdown"
                                            href="#"
                                            data-toggle="dropdown"
