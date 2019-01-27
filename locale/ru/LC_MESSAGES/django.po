@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-15 12:26+0300\n"
+"POT-Creation-Date: 2019-01-27 10:53+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1161,6 +1161,7 @@ msgid "Approved:"
 msgstr "Подтверждено:"
 
 #: templates/translations/project.html:121
+#: templates/translations/view-text.html:336
 msgid "Options"
 msgstr "Опции"
 
@@ -1297,17 +1298,17 @@ msgid "Add with"
 msgstr "Добавлять с помощью"
 
 #: templates/translations/view-text.html:110
-#: templates/translations/view-text.html:347
+#: templates/translations/view-text.html:370
 msgid "Approve translation"
 msgstr "Утвердить перевод"
 
 #: templates/translations/view-text.html:117
-#: templates/translations/view-text.html:354
+#: templates/translations/view-text.html:377
 msgid "Edit translation"
 msgstr "Редактировать перевод"
 
 #: templates/translations/view-text.html:135
-#: templates/translations/view-text.html:337
+#: templates/translations/view-text.html:360
 msgid "Disapprove translation"
 msgstr "Отклонить перевод"
 
@@ -1323,36 +1324,44 @@ msgstr "един.ч.:"
 msgid "plural:"
 msgstr "множ.ч.:"
 
-#: templates/translations/view-text.html:441
+#: templates/translations/view-text.html:343
+msgid "Approve all entries from user"
+msgstr "Утвердить все переводы пользователя"
+
+#: templates/translations/view-text.html:350
+msgid "Disapprove all entries from user"
+msgstr "Отклонить все переводы пользователя"
+
+#: templates/translations/view-text.html:464
 msgid "Here we can see all the fragments text was splitted to"
 msgstr "Здесь фрагменты для перевода, на которые был разбит текст"
 
-#: templates/translations/view-text.html:442
+#: templates/translations/view-text.html:465
 msgid "Click to expand fragment and begin translation"
 msgstr "Нажмите, чтобы развернуть фрагмент для начала перевода"
 
-#: templates/translations/view-text.html:443
+#: templates/translations/view-text.html:466
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr "Поле ввода, варианты машинного перевода и баз памяти"
 
-#: templates/translations/view-text.html:444
+#: templates/translations/view-text.html:467
 msgid "Click to add new translation"
 msgstr "Нажмите, чтобы добавить перевод"
 
-#: templates/translations/view-text.html:445
+#: templates/translations/view-text.html:468
 msgid "Here we can see the whole text"
 msgstr "Здесь отображается весь текст целиком"
 
-#: templates/translations/view-text.html:446
+#: templates/translations/view-text.html:469
 msgid "Click on the fragment in text to move to its translation form"
 msgstr "Кликните на предложение в тексте, чтобы быстро перейти к его переводу"
 
-#: templates/translations/view-text.html:447
+#: templates/translations/view-text.html:470
 msgid "Source text"
 msgstr "Исходный текст"
 
-#: templates/translations/view-text.html:448
+#: templates/translations/view-text.html:471
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
@@ -1439,20 +1448,20 @@ msgstr "Номер проекта не указан"
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
-#: translations/utils.py:109
+#: translations/utils.py:113
 msgid "File is too big"
 msgstr "Файл слишком большой"
 
-#: translations/utils.py:131 translations/utils.py:133
-#: translations/views_ajax.py:1351
+#: translations/utils.py:135 translations/utils.py:137
+#: translations/views_ajax.py:1373
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-#: translations/utils.py:288 translations/utils.py:321
+#: translations/utils.py:292 translations/utils.py:325
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:296 translations/utils.py:329
+#: translations/utils.py:300 translations/utils.py:333
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
@@ -1489,8 +1498,9 @@ msgstr "Простите, указанная страница не найден�
 #: translations/views_ajax.py:229 translations/views_ajax.py:317
 #: translations/views_ajax.py:423 translations/views_ajax.py:528
 #: translations/views_ajax.py:647 translations/views_ajax.py:774
-#: translations/views_ajax.py:1176 translations/views_ajax.py:1217
-#: translations/views_ajax.py:1268 translations/views_ajax.py:1311
+#: translations/views_ajax.py:1177 translations/views_ajax.py:1219
+#: translations/views_ajax.py:1241 translations/views_ajax.py:1280
+#: translations/views_ajax.py:1301 translations/views_ajax.py:1334
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
@@ -1598,14 +1608,14 @@ msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
 #: translations/views_ajax.py:984 translations/views_ajax.py:1145
-#: translations/views_ajax.py:1186 translations/views_ajax.py:1228
-#: translations/views_ajax.py:1278 translations/views_ajax.py:1369
+#: translations/views_ajax.py:1187 translations/views_ajax.py:1230
+#: translations/views_ajax.py:1290 translations/views_ajax.py:1391
 msgid "Id is not set"
 msgstr "Номер не указан"
 
 #: translations/views_ajax.py:989 translations/views_ajax.py:1014
 #: translations/views_ajax.py:1100 translations/views_ajax.py:1117
-#: translations/views_ajax.py:1283 translations/views_ajax.py:1374
+#: translations/views_ajax.py:1295 translations/views_ajax.py:1396
 msgid "Not found"
 msgstr "Не найдено"
 
@@ -1629,7 +1639,7 @@ msgstr "Номер фрагмента не указан"
 msgid "translation is not set"
 msgstr "Преевод не указан"
 
-#: translations/views_ajax.py:1404
+#: translations/views_ajax.py:1426
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 

@@ -24,7 +24,7 @@ from translations.models import Project, ProjectTranslation, ProjectMember, Glos
 from translations.models import TextEntry, Text, TextTranslation, TextTranslationMeta
 import json, os, shutil, re
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
-
+from translations.utils import approve_entry, disapprove_entry, ws_send_entry_status
 
 @login_required
 def projects_ajax(request, proj_type, object_id=""):
@@ -1235,37 +1235,47 @@ def approve_entry_ajax(request):
         return HttpResponse(json.dumps('Not found'), content_type="application/json", status=400)
     text = entry.text
     if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
-        with transaction.atomic():
-            if entry.parent_entry:
-                TextEntry.objects.filter(~Q(id=entry_id),
-                                         parent_entry=entry.parent_entry,
-                                         translation=entry.translation,
-                                         is_approved=True).update(is_approved=False)
-            entry.is_approved = True
-            entry.save()
-            counter, created = EntryStats.objects.get_or_create(user=request.user,
-                                                                date=timezone.now().strftime("%Y%m%d"),
-                                                                project=entry.text.project,
-                                                                action_type="approve")
+        saved_entry = approve_entry(entry, request)
+        return HttpResponse(json.dumps(saved_entry.is_approved), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(_('You have to be a manager of project')),
+                            content_type="application/json",
+                            status=400)
 
-            counter.action_count = counter.action_count + 1
-            counter.save()
-        entry_to_approve = {
-            'id': entry.parent_entry.id,
-            'idInText': entry.parent_entry.id_in_text,
-            'approved': entry.is_approved,
-            'translation': translation_to_json(entry)
-        }
-        translation_counts, translation_progress = entry.translation.get_progress()
-        entry.translation.websocket_group.send({'text': json.dumps(
-            {
-                'progress': {'translation_progress': translation_progress,
-                             'translation_counts': translation_counts},
-                'entry_to_approve': entry_to_approve,
-                'user': request.user.id
-            }
-        )})
-        return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
+
+@login_required
+@accept_text
+def approve_all_entries_by_user_ajax(request, text):
+    if not request.method == 'POST':
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    post = json.loads(request.body)
+    target_lang = post['translationTargetLang']
+    try:
+        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
+    except TextTranslation.DoesNotExist:
+        return HttpResponse(json.dumps('Text translation not found'), content_type="application/json", status=400)
+    except Language.DoesNotExist:
+        return HttpResponse(json.dumps('Language not found'), content_type="application/json", status=400)
+
+    try:
+        user =  User.objects.get(id=post['userId'])
+    except User.DoesNotExist:
+        return HttpResponse(json.dumps('User not found'), content_type="application/json", status=400)
+    except KeyError:
+        return HttpResponse(json.dumps('User id is not set'), content_type="application/json", status=400)
+
+    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
+        approved_parent_entries = list(
+            set(
+                [entry.parent_entry for entry in TextEntry.objects.filter(translation=text_translation, is_approved=True)]
+            )
+        )
+        user_entries = list(TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
+                                                translation=text_translation, author=user, is_approved=False))
+        TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
+                                 translation=text_translation, author=user, is_approved=False).update(is_approved=True)
+        ws_send_entry_status("approve", user_entries, None)
+        return HttpResponse(json.dumps(True), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
@@ -1285,35 +1295,45 @@ def disapprove_entry_ajax(request):
             return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
         text = entry.text
         if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
-            with transaction.atomic():
-                entry.is_approved = False
-                entry.save()
-                counter, created = EntryStats.objects.get_or_create(user=request.user,
-                                                                    date=timezone.now().strftime("%Y%m%d"),
-                                                                    project=entry.text.project,
-                                                                    action_type="disapprove")
-
-                counter.action_count = counter.action_count + 1
-                counter.save()
-            entry_to_disapprove = {
-                'id': entry.parent_entry.id,
-                'idInText': entry.parent_entry.id_in_text,
-            }
-            translation_counts, translation_progress = entry.translation.get_progress()
-            entry.translation.websocket_group.send({'text': json.dumps(
-                {
-                    'progress': {'translation_progress': translation_progress,
-                                 'translation_counts': translation_counts},
-                    'entry_to_disapprove': entry_to_disapprove,
-                    'user': request.user.id
-                }
-            )})
-            return HttpResponse(json.dumps(entry.is_approved), content_type="application/json")
+            saved_entry = disapprove_entry(entry, request)
+            return HttpResponse(json.dumps(saved_entry.is_approved), content_type="application/json")
         else:
             return HttpResponse(json.dumps(_('You have to be a manager of project')),
                                 content_type="application/json",
                                 status=400)
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
+
+@login_required
+@accept_text
+def disapprove_all_entries_by_user_ajax(request, text):
+    if not request.method == 'POST':
+        return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+    post = json.loads(request.body)
+    target_lang = post['translationTargetLang']
+    try:
+        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code=target_lang))
+    except TextTranslation.DoesNotExist:
+        return HttpResponse(json.dumps('Text translation not found'), content_type="application/json", status=400)
+    except Language.DoesNotExist:
+        return HttpResponse(json.dumps('Language not found'), content_type="application/json", status=400)
+
+    try:
+        user =  User.objects.get(id=post['userId'])
+    except User.DoesNotExist:
+        return HttpResponse(json.dumps('User not found'), content_type="application/json", status=400)
+    except KeyError:
+        return HttpResponse(json.dumps('User id is not set'), content_type="application/json", status=400)
+
+    if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
+        user_entries = list(TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True))
+        TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True).update(is_approved=False)
+        ws_send_entry_status("disapprove", user_entries, None)
+        return HttpResponse(json.dumps(True), content_type="application/json")
+    else:
+        return HttpResponse(json.dumps(_('You have to be a manager of project')),
+                            content_type="application/json",
+                            status=400)
 
 
 @login_required

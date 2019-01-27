@@ -550,6 +550,20 @@
                     }
                 })
             };
+            $scope.approveEntriesByUser = function (user) {
+                $http.post('/ajax/entry-approve-by-user/', {translationTargetLang: $scope.currentTargetLang,
+                                                            text: $scope.currentTextId,
+                                                            userId: user.id}).success(function () {
+                    $scope.activeEntry = null;
+                })
+            };
+            $scope.disapproveEntriesByUser = function (user) {
+                $http.post('/ajax/entry-disapprove-by-user/', {translationTargetLang: $scope.currentTargetLang,
+                                                            text: $scope.currentTextId,
+                                                            userId: user.id}).success(function () {
+                    $scope.activeEntry = null;
+                })
+            };
             $scope.disapproveEntry = function (entry) {
                 var i,
                     someTranslation,
