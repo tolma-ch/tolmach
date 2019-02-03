@@ -1589,7 +1589,7 @@
                 // 4) [done] Показывать пользователям, какие фрагменты в данный момент переводят
                 var ws_data = JSON.parse(message.data);
                 if ('progress' in ws_data) {
-                    console.log('updating progressbars');
+                    //console.log('updating progressbars');
                     $rootScope.translationProgress = ws_data['progress']['translation_progress'];
                     $rootScope.translationCounts = ws_data['progress']['translation_counts'];
                 }
@@ -1927,6 +1927,7 @@
                         $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
                         $rootScope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
+                        console.log($scope.entriesById);
                         $scope.busy = false;
 
                         if ($scope.entryToFocus > 0) {
@@ -2041,8 +2042,10 @@
                 }, 10);
             };
             $scope.focusEntry = function (id) {
-                var entry = $scope.entriesById[id];
-                expandEntry(entry);
+                if (!$scope.entriesById[id].disabled) {
+                    var entry = $scope.entriesById[id];
+                    expandEntry(entry);
+                }
             };
             $scope.disableEntry = function (entry, skip_active_null) {
                 skip_active_null = typeof skip_active_null !== 'undefined' ? skip_active_null : false;
@@ -2877,7 +2880,8 @@
                 return '<span ng-click="focusEntry(' + id + ')" ' +
                     'id="res-entry-' + id + '" ' +
                     'ng-class="{active: activeEntry.idInText === ' + id + ',' +
-                    'approved: entriesById[' + id + '].approved}">' +
+                    'approved: entriesById[' + id + '].approved,' +
+                    'disabled: entriesById[' + id + '].disabled}">' +
                     '<span ng-show="textTab == 0">' + elem.html() + '</span>' +
                     '<span ng-show="textTab == 1" ' +
                     'ng-bind-html="entriesById[' + id + '].translation | trusted"></span>' +
@@ -2913,7 +2917,7 @@
                     'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                     'tooltip-append-to-body="true" ' +
                     'tooltip-placement="top" ' +
-                    'tooltip="' + word + '">'
+                    'uib-tooltip="' + word + '">'
                     + elem.html() + '</span>';
             },
             link: function (scope, element, attrs) {

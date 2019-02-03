@@ -31,7 +31,8 @@
                 return '<span ng-click="focusEntry(' + id + ')" ' +
                     'id="res-entry-' + id + '" ' +
                     'ng-class="{active: activeEntry.idInText === ' + id + ',' +
-                    'approved: entriesById[' + id + '].approved}">' +
+                    'approved: entriesById[' + id + '].approved,' +
+                    'disabled: entriesById[' + id + '].disabled}">' +
                     '<span ng-show="textTab == 0">' + elem.html() + '</span>' +
                     '<span ng-show="textTab == 1" ' +
                     'ng-bind-html="entriesById[' + id + '].translation | trusted"></span>' +
@@ -67,7 +68,7 @@
                     'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                     'tooltip-append-to-body="true" ' +
                     'tooltip-placement="top" ' +
-                    'tooltip="' + word + '">'
+                    'uib-tooltip="' + word + '">'
                     + elem.html() + '</span>';
             },
             link: function (scope, element, attrs) {

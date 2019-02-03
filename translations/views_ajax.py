@@ -5,7 +5,7 @@ from __future__ import print_function
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.db.models import Q, F
 from django.utils.translation import ugettext as _
 from django.utils import timezone
@@ -1598,7 +1598,11 @@ def user_ajax(request):
                 request.user.last_name = post['lastName']
             if 'username' in post:
                 request.user.username = post['username']
-            request.user.save()
+            try:
+                request.user.save()
+            except IntegrityError:
+                return HttpResponse(json.dumps("This username is already used, try find another one"), content_type="application/json")
+
             usermeta = UserMeta.objects.get(user=request.user)
             if 'website' in post:
                 usermeta.website = post['website']

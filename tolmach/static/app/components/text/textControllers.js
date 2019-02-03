@@ -389,6 +389,7 @@
                         $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
                         $rootScope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
+                        console.log($scope.entriesById);
                         $scope.busy = false;
 
                         if ($scope.entryToFocus > 0) {
@@ -503,8 +504,10 @@
                 }, 10);
             };
             $scope.focusEntry = function (id) {
-                var entry = $scope.entriesById[id];
-                expandEntry(entry);
+                if (!$scope.entriesById[id].disabled) {
+                    var entry = $scope.entriesById[id];
+                    expandEntry(entry);
+                }
             };
             $scope.disableEntry = function (entry, skip_active_null) {
                 skip_active_null = typeof skip_active_null !== 'undefined' ? skip_active_null : false;
