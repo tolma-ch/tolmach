@@ -782,10 +782,10 @@
                     }
                 }
                 if (event.altKey) {
-                    event.stopPropagation();
-                    event.preventDefault();
                     if (code === 77) { // Alt - m
                         // hotkey for copying machine translation to textarea
+                        event.stopPropagation();
+                        event.preventDefault();
                         if (typeof entry.yaMachines !== 'undefined') {
                             entry.suggestion = entry.yaMachines[0].text;
                             var input = $('#entry-suggestion-' + entry.id);
@@ -796,6 +796,8 @@
                         }
                     } else if (code === 79) { // Alt - o
                         // hotkey for copying original text to textarea
+                        event.stopPropagation();
+                        event.preventDefault();
                         entry.suggestion = entry.rawBody;
                         var input = $('#entry-suggestion-' + entry.id);
                         input.focus();
@@ -803,6 +805,8 @@
                             moveCursorToEnd(input[0]);
                         }, 10);
                     } else if (code === 83) { // Alt - s
+                        event.stopPropagation();
+                        event.preventDefault();
                         skipHotKey(entry);
                     }
                 }
