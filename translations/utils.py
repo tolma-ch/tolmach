@@ -524,13 +524,14 @@ def approve_entry(entry, request):
                                      is_approved=True).update(is_approved=False)
         entry.is_approved = True
         entry.save()
-        counter, created = EntryStats.objects.get_or_create(user=request.user,
-                                                            date=timezone.now().strftime("%Y%m%d"),
-                                                            project=entry.text.project,
-                                                            action_type="approve")
-
-        counter.action_count = counter.action_count + 1
-        counter.save()
+        update_entry_stats(request.user, "approve", entry.text.project, 1)
+        # counter, created = EntryStats.objects.get_or_create(user=request.user,
+        #                                                     date=timezone.now().strftime("%Y%m%d"),
+        #                                                     project=entry.text.project,
+        #                                                     action_type="approve")
+        #
+        # counter.action_count = counter.action_count + 1
+        # counter.save()
     ws_send_entry_status("approve", [entry], request.user.id)
 
     return entry
@@ -540,13 +541,14 @@ def disapprove_entry(entry, request):
     with transaction.atomic():
         entry.is_approved = False
         entry.save()
-        counter, created = EntryStats.objects.get_or_create(user=request.user,
-                                                            date=timezone.now().strftime("%Y%m%d"),
-                                                            project=entry.text.project,
-                                                            action_type="disapprove")
-
-        counter.action_count = counter.action_count + 1
-        counter.save()
+        update_entry_stats(request.user, "disapprove", entry.text.project, 1)
+        # counter, created = EntryStats.objects.get_or_create(user=request.user,
+        #                                                     date=timezone.now().strftime("%Y%m%d"),
+        #                                                     project=entry.text.project,
+        #                                                     action_type="disapprove")
+        #
+        # counter.action_count = counter.action_count + 1
+        # counter.save()
     ws_send_entry_status("disapprove", [entry], request.user.id)
 
     return entry
