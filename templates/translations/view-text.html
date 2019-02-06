@@ -120,7 +120,7 @@
                                         </a>
                                     </div>
                                     <div class="translation-variant__author">
-                                        <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
+                                        <span ng-if="entry.translations.length > 1"> ({= entry.translations.length =})</span> <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
                                     </div>
                                 </div>
                                 <div ng-if="entry.approved">
