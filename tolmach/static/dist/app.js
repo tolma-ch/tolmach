@@ -28,6 +28,11 @@
         $httpProvider.defaults.xsrfCookieName = 'csrftoken';
         $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     });
+    module.config(function (localStorageServiceProvider) {
+        localStorageServiceProvider
+            .setStorageType('localStorage')
+            .setDefaultToCookie(false);
+    });
 }());;(function () {
     'use strict';
 
