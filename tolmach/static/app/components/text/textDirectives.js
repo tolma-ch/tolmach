@@ -61,9 +61,9 @@
             template: function (elem, attr) {
                 var word = attr['glossaryWord'];
 
-                return '<span ng-show="entry !== activeEntry || !entry.editing">'
+                return '<span ng-show="entry !== activeEntry">'
                     + elem.html() + '</span>' +
-                    '<span ng-show="entry === activeEntry && entry.editing" ' +
+                    '<span ng-show="entry === activeEntry" ' +
                     'class="glossary-word" ' +
                     'ng-click="insertText($event, entry, \'' + word + '\')" ' +
                     'tooltip-append-to-body="true" ' +
