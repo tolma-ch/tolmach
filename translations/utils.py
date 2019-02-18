@@ -216,7 +216,10 @@ def glossary_to_entry(entry_body, glossary_list):
     for glos in glossary_list:
         gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
         for pair in gloss_entries:
-            body_to_return = re.sub(escape_brackets(pair.source_entry), highlight_word(pair.target_entry), body_to_return)
+            body_to_return = re.sub(escape_brackets(pair.source_entry),
+                                    highlight_word(pair.target_entry),
+                                    body_to_return,
+                                    flags=re.IGNORECASE)
 
     return body_to_return
 
