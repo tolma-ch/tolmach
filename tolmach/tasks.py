@@ -65,16 +65,22 @@ def update_projects_progress(arguments):
     results = Project.objects.all()
 
     for project in results:
-        translated_progress = 0
-        approved_progress = 0
-        translations_num = 0
-        texts = Text.objects.filter(project=project)
-        for text in texts:
-            translations = TextTranslation.objects.filter(text=text)
-            for translation in translations:
-                translations_num += 1
-                translated_progress += translation.get_progress()[1][0]
-                approved_progress += translation.get_progress()[1][1]
+        # translated_progress = 0
+        # approved_progress = 0
+        # translations_num = 0
+        # texts = Text.objects.filter(project=project)
+        # for text in texts:
+        #     translations = TextTranslation.objects.filter(text=text)
+        #     for translation in translations:
+        #         translations_num += 1
+        #         translated_progress += translation.get_progress()[1][0]
+        #         approved_progress += translation.get_progress()[1][1]
+
+        # if not texts.count() == 0:
+        #     project_progress = [int(approved_progress / translations_num),
+        #                         int(translated_progress / translations_num) - int(approved_progress / translations_num)]
+        # else:
+        #     project_progress = [0, 0]
 
         project_translations = ProjectTranslation.objects.filter(project=project).count()
         entries_total = TextEntry.objects.filter(text__project=project, parent_entry=None).count() * project_translations
@@ -94,7 +100,15 @@ def update_projects_progress(arguments):
                         entries_translated < entries_enabled) else 100
             percent_approved = int(math.ceil(entries_approved / (entries_enabled / 100.0)))
 
-            project_progress = [percent_translated, percent_translated-percent_approved]
+            # if project.id == 796:
+            #     print("PROJECT:", )
+            #     print("ENTRIES total:", entries_total)
+            #     print("ENTRIES disabled:", entries_disabled)
+            #     print("ENTRIES enabled:", entries_enabled)
+            #     print("ENTRIES translated:", entries_translated)
+            #     print("ENTRIES approved:", entries_approved)
+
+            project_progress = [percent_approved, percent_translated-percent_approved]
         else:
             project_progress = [0, 0]
 
