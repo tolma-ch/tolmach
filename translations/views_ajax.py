@@ -637,19 +637,13 @@ def glossary_ajax(request, project):
 
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
-        if 'project' not in post:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
-        try:
-            project = Project.objects.get(id=post['project'])
-        except Project.DoesNotExist:
-            return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        if 'name' not in post:
+        if 'name' not in post and 'text' not in post:
             return HttpResponse(json.dumps(_('Glossary name is not set')), content_type="application/json",
                                 status=400)
-        glossary_name = post['name']
+        glossary_name = post.get('name', "")
         if 'file' in request.FILES:
             file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.GLOSSARY_FILE_SIZE)
 
@@ -675,6 +669,20 @@ def glossary_ajax(request, project):
             except Glossary.DoesNotExist:
                 return HttpResponse(json.dumps(_('Glossary not found')), content_type="application/json", status=400)
             GlossaryEntry.objects.filter(glossary=glossary).delete()
+        elif 'text' in post:
+            glossary, created = Glossary.objects.get_or_create(name=project.name + " - default",
+                                                      owner=project.manager)
+            if created:
+                glossary.save()
+                try:
+                    project_translation = ProjectTranslation.objects.get(
+                        project=project,
+                        target_lang=Language.objects.get(code=post['target_lang'])
+                    )
+                except:
+                    return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json",
+                                        status=400)
+                project_translation.glossaries_list.add(Glossary.objects.get(id=glossary.id))
         else:
             glossary = Glossary(name=glossary_name,
                                 owner=project.manager)

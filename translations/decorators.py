@@ -33,7 +33,15 @@ def accept_project(func):
         else:
             params = request.GET
         if 'project' not in params:
-            return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
+            # workaround for pushing new glossary pair strait from the text translation page
+            if 'text' in params:
+                try:
+                    params['project'] = Text.objects.get(id=params['text']).project.id
+                except Text.DoesNotExist:
+                    return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
+            else:
+                return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
+            # return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
         project_id = params['project']
         try:
             project = Project.objects.get(id=project_id)

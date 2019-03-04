@@ -21,6 +21,7 @@
 {% trans 'Add with' as text_options %}
 {% trans 'enter word' as dict_input_placeholder %}
 {% trans 'Nothing found' as dict_nothing_found %}
+{% trans 'To glossary' as add_to_glossary %}
 
     <style>
         .sidebar {
@@ -75,6 +76,13 @@
     </script>
 
     <div class="workbench-layout" ng-controller="transCtrl">
+        <script type="text/ng-template" id="myPopoverTemplate.html">
+            <div class="btn-group btn-group-xs" role="group" aria-label="...">
+              <button type="button" class="btn btn-default" ng-click="toGlossary()"
+              ng-show="(userIsManager || userMembershipStatus == 0)">{{ add_to_glossary }}</button>
+              <button type="button" class="btn btn-default" ng-click="translatePhrase()">{{ make_translation }}</button>
+            </div>
+        </script>
         <div class="workbench-layout__row row" ng-cloak>
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
@@ -88,7 +96,10 @@
                                     'text-piece_approved': entry.approved,
                                     'text-piece_disabled': entry.disabled,
                                     'text-piece_translated': !entry.approved && !entry.disabled && (entry.translations.length > 0),
-                                    'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}">
+                                    'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}"
+                         uib-popover-template="'myPopoverTemplate.html'"
+                         popover-is-open="entry.popoverIsOpen"
+                         popover-trigger="'none'">
                         <!---------------------------------
                                    original text
                         ---------------------------------->
@@ -459,6 +470,7 @@
             </div>
         </div>
         {% include "translations/partial/dictionary_modal.html" %}
+        {% include "translations/partial/view_text/to_glossary_modal.html" %}
     </div>
     <script>
         var helpTexts = {
