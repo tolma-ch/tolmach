@@ -3,8 +3,8 @@
 
     var module = angular.module('textControllers', []);
 
-    module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$location', '$timeout', 'localStorageService',
-        function ($rootScope, $scope, $sce, $http, $location, $timeout, localStorageService) {
+    module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$location', '$timeout', '$uibModal', 'localStorageService',
+        function ($rootScope, $scope, $sce, $http, $location, $timeout, $uibModal, localStorageService) {
             $rootScope.translationProgress = window['translation_progress'];
             $rootScope.translationCounts = window['translation_counts'];
             $scope.userMembershipStatus = window['userMembershipStatus'];
@@ -382,6 +382,7 @@
                             entry.translations.forEach(function(trans) {
                                 trans.body = trans.body.replace(/\n/g, "<br>");
                             });
+                            entry.popoverIsOpen = false;
                             updateTranslation(entry);
                             entriesById[entry['idInText']] = entry;
                         }
@@ -389,7 +390,7 @@
                         $scope.textBody = data['text_body'].replace(/\n/g, "<br />");
                         $rootScope.pagesCount = data['total_pages'];
                         $scope.entriesById = entriesById;
-                        console.log($scope.entriesById);
+                        // console.log($scope.entriesById);
                         $scope.busy = false;
 
                         if ($scope.entryToFocus > 0) {
@@ -1166,56 +1167,16 @@
                     }
                     return [text, x, y, width];
                 },
-                translate = function (target) {
-                    var selection = getSelectionText(target),
-                        phrase = selection[0].trim().toLowerCase(),
-                        coords = {'x': selection[1], 'y': selection[2]},
-                        width = selection[3];
-                    if (!phrase) {
-                        return;
-                    }
-                    $rootScope.setDictWord(phrase);
-                    $rootScope.showDictModal = true;
-                    // var prevPhrase = $scope.translatedPhrase;
-                    // $scope.translatedPhrase = phrase;
-                    // if (phrase === prevPhrase) {
-                    //     $scope.$parent.showTranslatePopup = false;
-                    //     $scope.translatedPhrase = false;
+                translate = function (phrase) {
+                    // var selection = getSelectionText(target),
+                    //     phrase = selection[0].trim().toLowerCase(),
+                    //     coords = {'x': selection[1], 'y': selection[2]},
+                    //     width = selection[3];
+                    // if (!phrase) {
                     //     return;
                     // }
-                    // $http.jsonp('https://glosbe.com/gapi/translate', {
-                    //     params: {
-                    //         from: $scope.langPair3[0],
-                    //         dest: $scope.langPair3[1],
-                    //         phrase: phrase,
-                    //         callback: 'JSON_CALLBACK',
-                    //         format: 'json'
-                    //     }
-                    // }).success(function (res) {
-                    //     var results = [];
-                    //     if (angular.isArray(res['tuc'])) {
-                    //         angular.forEach(res['tuc'], function (elem) {
-                    //             if (elem['phrase'] && elem['phrase']['text']) {
-                    //                 results.push(elem['phrase']['text']);
-                    //             }
-                    //         });
-                    //     }
-                    //     $scope.$parent.translationResults = results;
-                    //     $scope.$parent.translatePopupStyle = {
-                    //         display: 'block',
-                    //         left: coords['x'] + 'px',
-                    //         top: coords['y'] + 'px'
-                    //     };
-                    //     $scope.$parent.showTranslatePopup = true;
-                    //     if ($scope.$parent.showTranslatePopup) {
-                    //         $timeout(function () {
-                    //             var elem = $('#translation-popup'),
-                    //                 elemWidth = elem.width(),
-                    //                 left = coords['x'] + (width - elemWidth) / 2;
-                    //             $scope.$parent.translatePopupStyle.left = left + 'px';
-                    //         },1);
-                    //     }
-                    // })
+                    $rootScope.setDictWord(phrase);
+                    $rootScope.showDictModal = true;
                 };
             $scope.$parent.copyToClipboard = function (text) {
                 if ($scope.activeEntry && $scope.activeEntry.editing) {
@@ -1226,15 +1187,56 @@
                 $scope.$parent.showTranslatePopup = false;
             };
             $scope.$on('GlobalClick', function (e, event) {
-                $scope.$parent.showTranslatePopup = false;
-                $scope.translatedPhrase = false;
+                $scope.entries.forEach(function (item, i, arr) {
+                    item.popoverIsOpen = false;
+                });
             });
-            $scope.mouseup = function ($event) {
-                translate($event.target);
+            $scope.selectedEntryText = "";
+            $scope.togglePopover = function(entryId, close){
+                $scope.entries.forEach(function (item, i, arr) {
+                    // console.log(entryId + " " + item.idInText);
+                    if (item.idInText == entryId) {
+                        if (typeof close !== 'undefined') {
+                            console.log("close set");
+                            item.popoverIsOpen = false;
+                        } else {
+                            console.log("close NOT set");
+                            item.popoverIsOpen = !item.popoverIsOpen;
+                        }
+                    } else {
+                        item.popoverIsOpen = false;
+                    }
+                });
             };
-            //$scope.$on('GlobalMouseup', function (e, event) {
-            //    translate();
-            //});
+            $scope.mouseup = function ($event) {
+                var selection = getSelectionText($event.target)[0];
+                if (selection !== "") {
+                    var entryId = $event.currentTarget.parentElement.id.split('-')[1];
+                    $scope.selectedEntryText = selection.trim().toLowerCase();
+                    $scope.togglePopover(entryId);
+                }
+            };
+            $scope.translatePhrase = function () {
+                translate($scope.selectedEntryText);
+            };
+            $scope.toGlossary = function () {
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'toGlossaryModal.html',
+                    controller: 'ToGlossaryModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        selectedText: function () {
+                            return $scope.selectedEntryText;
+                        }
+                    }
+                });
+                modalInstance.result.then(function (result) {
+                    $scope.entryToFocus = $scope.activeEntry.idInText;
+                    updateEntries()
+                }, function () {
+                });
+            };
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;
@@ -1311,6 +1313,34 @@
                     $scope.activeEntry.suggestion = element.innerHTML;
                 })
             });
+        }
+    ]);
+
+    module.controller('ToGlossaryModalCtrl', ['$scope', '$uibModalInstance', '$http', 'selectedText',
+        function ($scope, $uibModalInstance, $http, selectedText) {
+            $scope.glossary = {
+                    rows: [[selectedText, '']]
+                };
+            $scope.ok = function () {
+                $scope.error = '';
+                $scope.busy = true;
+                var data = $scope.glossary;
+                data['text'] = window['textId'];
+                data['target_lang'] = window['translationTargetLang'];
+                $http.post('/ajax/glossary/', data)
+                    .success(function (glossary) {
+                        $uibModalInstance.close(glossary);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
         }
     ]);
 }());
