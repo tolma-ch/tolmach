@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-27 10:53+0300\n"
+"POT-Creation-Date: 2019-02-25 18:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1077,7 +1077,7 @@ msgid "Approved:"
 msgstr ""
 
 #: templates/translations/project.html:121
-#: templates/translations/view-text.html:336
+#: templates/translations/view-text.html:347
 msgid "Options"
 msgstr ""
 
@@ -1215,73 +1215,77 @@ msgstr ""
 msgid "Add with"
 msgstr ""
 
-#: templates/translations/view-text.html:110
-#: templates/translations/view-text.html:370
+#: templates/translations/view-text.html:24
+msgid "To glossary"
+msgstr ""
+
+#: templates/translations/view-text.html:120
+#: templates/translations/view-text.html:381
 msgid "Approve translation"
 msgstr ""
 
-#: templates/translations/view-text.html:117
-#: templates/translations/view-text.html:377
+#: templates/translations/view-text.html:127
+#: templates/translations/view-text.html:388
 msgid "Edit translation"
 msgstr ""
 
-#: templates/translations/view-text.html:135
-#: templates/translations/view-text.html:360
+#: templates/translations/view-text.html:145
+#: templates/translations/view-text.html:371
 msgid "Disapprove translation"
 msgstr ""
 
-#: templates/translations/view-text.html:149
+#: templates/translations/view-text.html:159
 #, fuzzy
 #| msgid "Export translation"
 msgid "Enable translation"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:181
+#: templates/translations/view-text.html:191
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:182
+#: templates/translations/view-text.html:192
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:343
+#: templates/translations/view-text.html:354
 msgid "Approve all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:350
+#: templates/translations/view-text.html:361
 msgid "Disapprove all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:464
+#: templates/translations/view-text.html:475
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:465
+#: templates/translations/view-text.html:476
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:466
+#: templates/translations/view-text.html:477
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:467
+#: templates/translations/view-text.html:478
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:468
+#: templates/translations/view-text.html:479
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:469
+#: templates/translations/view-text.html:480
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:470
+#: templates/translations/view-text.html:481
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:471
+#: templates/translations/view-text.html:482
 msgid "All the text with translated fragments"
 msgstr ""
 
@@ -1376,11 +1380,11 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/utils.py:292 translations/utils.py:325
+#: translations/utils.py:295 translations/utils.py:328
 msgid "This source language is not supported yet"
 msgstr ""
 
-#: translations/utils.py:300 translations/utils.py:333
+#: translations/utils.py:303 translations/utils.py:336
 msgid "This target language is not supported yet"
 msgstr ""
 
