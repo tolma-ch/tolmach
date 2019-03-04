@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-27 10:53+0300\n"
+"POT-Creation-Date: 2019-02-25 18:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1161,7 +1161,7 @@ msgid "Approved:"
 msgstr ""
 
 #: templates/translations/project.html:121
-#: templates/translations/view-text.html:336
+#: templates/translations/view-text.html:347
 #, fuzzy
 #| msgid "Translation"
 msgid "Options"
@@ -1315,79 +1315,85 @@ msgstr "翻译"
 msgid "Add with"
 msgstr "保存用"
 
-#: templates/translations/view-text.html:110
-#: templates/translations/view-text.html:370
+#: templates/translations/view-text.html:24
+#, fuzzy
+#| msgid "Add glossary"
+msgid "To glossary"
+msgstr "添加词库"
+
+#: templates/translations/view-text.html:120
+#: templates/translations/view-text.html:381
 #, fuzzy
 #| msgid "Remove translation"
 msgid "Approve translation"
 msgstr "删除翻译题"
 
-#: templates/translations/view-text.html:117
-#: templates/translations/view-text.html:377
+#: templates/translations/view-text.html:127
+#: templates/translations/view-text.html:388
 msgid "Edit translation"
 msgstr "编辑翻译"
 
-#: templates/translations/view-text.html:135
-#: templates/translations/view-text.html:360
+#: templates/translations/view-text.html:145
+#: templates/translations/view-text.html:371
 #, fuzzy
 #| msgid "Remove translation"
 msgid "Disapprove translation"
 msgstr "删除翻译题"
 
-#: templates/translations/view-text.html:149
+#: templates/translations/view-text.html:159
 #, fuzzy
 #| msgid "Machine translations"
 msgid "Enable translation"
 msgstr "机器翻译"
 
-#: templates/translations/view-text.html:181
+#: templates/translations/view-text.html:191
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:182
+#: templates/translations/view-text.html:192
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:343
+#: templates/translations/view-text.html:354
 msgid "Approve all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:350
+#: templates/translations/view-text.html:361
 msgid "Disapprove all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:464
+#: templates/translations/view-text.html:475
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:465
+#: templates/translations/view-text.html:476
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:466
+#: templates/translations/view-text.html:477
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:467
+#: templates/translations/view-text.html:478
 #, fuzzy
 #| msgid "Collective translations"
 msgid "Click to add new translation"
 msgstr "众包翻译"
 
-#: templates/translations/view-text.html:468
+#: templates/translations/view-text.html:479
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:469
+#: templates/translations/view-text.html:480
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:470
+#: templates/translations/view-text.html:481
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:471
+#: templates/translations/view-text.html:482
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
@@ -1496,11 +1502,11 @@ msgstr "文件太大"
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/utils.py:292 translations/utils.py:325
+#: translations/utils.py:295 translations/utils.py:328
 msgid "This source language is not supported yet"
 msgstr "该原语言暂时未支持"
 
-#: translations/utils.py:300 translations/utils.py:333
+#: translations/utils.py:303 translations/utils.py:336
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
@@ -1710,6 +1716,11 @@ msgstr "文案ID未设置"
 #: translations/views_ajax.py:1426
 msgid "TMDB unavaliable at the moment"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Add glossary"
+#~ msgid "Add to glossary"
+#~ msgstr "添加词库"
 
 #~ msgid "TMX"
 #~ msgstr "TMX"
