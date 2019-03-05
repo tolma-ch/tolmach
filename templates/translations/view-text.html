@@ -90,7 +90,7 @@
                     <div class="text-piece"
                          ng-repeat="entry in entries"
                          id="entry-{= entry.idInText =}"
-                         ng-click="($parent.activeEntry !== entry) && !entry.disabled && toggleEntry(entry)"
+                         ng-click="($parent.activeEntry !== entry) && !entry.disabled && toggleEntry(entry, $event)"
                          ng-class="{'text-piece_closed': $parent.activeEntry !== entry,
                                     'text-piece_editing': ($parent.activeEntry === entry) && entry.editing,
                                     'text-piece_approved': entry.approved,
