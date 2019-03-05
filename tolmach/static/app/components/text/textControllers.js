@@ -274,10 +274,18 @@
                     entry.suggestion = localStorageService.get('sug-' + textAreaId, entry.suggestion) || "";
                 };
             $scope.toggleEntry = function (entry, $event) {
-                if ($scope.activeEntry === entry) {
-                    $scope.activeEntry = null;
-                } else {
-                    expandEntry(entry);
+                var skipToggle = false;
+                if (typeof $event !== 'undefined') {
+                    if ($event.target.className == "fa fa-check-circle") {
+                        skipToggle = true;
+                    }
+                }
+                if (!skipToggle) {
+                    if ($scope.activeEntry === entry) {
+                        $scope.activeEntry = null;
+                    } else {
+                        expandEntry(entry);
+                    }
                 }
                 if ($event) {
                     $event.stopPropagation();
