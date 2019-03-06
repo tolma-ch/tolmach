@@ -670,7 +670,11 @@
                     $scope.entrySuggestSending = false;
                 });
             };
-            $scope.editTranslation = function (entry, translation) {
+            $scope.editTranslation = function (entry, translation, event) {
+                if (event) {
+                    event.stopPropagation();
+                }
+                $scope.toggleEntry(entry);
                 entry.editing = true;
                 if (entry['meta'] && entry['meta']['msgid_plural']) {
                     entry.plural = 0;
@@ -680,6 +684,11 @@
                     entry.suggestion = translation.body;
                 }
                 entry.suggestionId = translation.id;
+                setTimeout(function () {
+                    var input = $('#entry-suggestion-' + entry.id);
+                    input.focus();
+                    moveCursorToEnd(input[0]);
+                }, 10);
             };
             $scope.voteTranslation = function (entry, translation) {
                 translation.busy = true;
