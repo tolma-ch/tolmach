@@ -133,6 +133,12 @@
                                                     &nbsp{% trans 'Download bilingual XLSX' %}
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/po/">
+                                                    <i class="fa fa-download"></i>
+                                                    &nbsp{% trans 'Download as PO-file' %}
+                                                </a>
+                                            </li>
                                             <li class="divider"
                                                    ng-if="(isUserManager || (userMembershipStatus == 0))"></li>
                                             <li ng-if="(isUserManager || (userMembershipStatus == 0))">

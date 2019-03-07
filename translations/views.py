@@ -444,7 +444,7 @@ def export_translation(request, text_id, target_lang, extra=None):
 
     title = text.title
 
-    if extra and not extra == "pairs":
+    if extra and not extra in ["pairs", "po"]:
         raise Http404(_('Sorry, no such page here!'))
 
     if extra == "pairs":
@@ -453,6 +453,12 @@ def export_translation(request, text_id, target_lang, extra=None):
               'target_lang': target_lang,
               'export_pairs': 1
             }
+    elif extra == "po":
+        values = {
+            'text_id': text.id,
+            'target_lang': target_lang,
+            'export_as_po': 1
+        }
     else:
         values = {
           'text_id': text.id,
