@@ -244,18 +244,18 @@ def add_project_translation(request):
             all_project_texts = Text.objects.filter(project=project)
 
             for project_text in all_project_texts:
-                translation_meta = {}
-                all_text_translations = TextTranslation.objects.filter(text=project_text)
-                if all_text_translations:
-                    gettext_meta = TextTranslationMeta.objects.filter(translation=all_text_translations[0], meta_type='gettext_metadata')
-                    if gettext_meta:
-                        meta_type = 'gettext_metadata'
-                        translation_meta = json.loads(gettext_meta[0].meta_data)
-                        target_lang = target_lang
-                        plural_examples = utils.get_plural_examples(target_lang.plural_forms)
-                        translation_meta["all_meta"]["Plural-Forms"] = target_lang.plural_forms
-                        translation_meta["all_meta"]["Language"] = target_lang.code
-                        translation_meta["plural_examples"] = plural_examples
+                # translation_meta = {}
+                # all_text_translations = TextTranslation.objects.filter(text=project_text)
+                # if all_text_translations:
+                #     gettext_meta = TextTranslationMeta.objects.filter(translation=all_text_translations[0], meta_type='gettext_metadata')
+                #     if gettext_meta:
+                #         meta_type = 'gettext_metadata'
+                #         translation_meta = json.loads(gettext_meta[0].meta_data)
+                #         target_lang = target_lang
+                        # plural_examples = utils.get_plural_examples(target_lang.plural_forms)
+                        # translation_meta["all_meta"]["Plural-Forms"] = target_lang.plural_forms
+                        # translation_meta["all_meta"]["Language"] = target_lang.code
+                        # translation_meta["plural_examples"] = plural_examples
 
                 # проверяем, нет ли ещё такого перевода у текста
                 check_translation = TextTranslation.objects.filter(target_lang=target_lang, text=project_text)
@@ -265,12 +265,12 @@ def add_project_translation(request):
                                                       target_lang=target_lang)
                     new_translation.save()
 
-                    if translation_meta:
-                        trans_meta = TextTranslationMeta(translation=new_translation,
-                                                         meta_type=meta_type,
-                                                         meta_data=json.dumps(translation_meta),
-                                                         )
-                        trans_meta.save()
+                    # if translation_meta:
+                    #     trans_meta = TextTranslationMeta(translation=new_translation,
+                    #                                      meta_type=meta_type,
+                    #                                      meta_data=json.dumps(translation_meta),
+                    #                                      )
+                    #     trans_meta.save()
 
         return HttpResponse(json.dumps({'project_id': project.id,
                                         'target_lang': project_translation.target_lang.code}),
@@ -857,7 +857,7 @@ def entry_ajax(request, action, text):
                                                        )
         if text.document_format in [utils.FORMATS["po"], utils.FORMATS["mo"], utils.FORMATS["pot"]]:
             has_plurals = True
-            plural_examples = json.loads(TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata").meta_data)["plural_examples"]
+            plural_examples = utils.get_plural_examples(target_lang.plural_forms)
         else:
             has_plurals = False
             plural_examples = {}
