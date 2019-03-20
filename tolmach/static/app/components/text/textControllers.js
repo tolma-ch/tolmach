@@ -674,7 +674,9 @@
                 if (event) {
                     event.stopPropagation();
                 }
-                $scope.toggleEntry(entry);
+                if ($scope.activeEntry !== entry) {
+                    $scope.toggleEntry(entry);
+                }
                 entry.editing = true;
                 if (entry['meta'] && entry['meta']['msgid_plural']) {
                     entry.plural = 0;
