@@ -708,59 +708,20 @@
                     controller: 'AddParticipantModalCtrl',
                     size: 'md',
                     backdrop: 'static',
-                    resolve: {}
+                    resolve: {
+                        projectId: function () {
+                            return $scope.projectId;
+                        },
+                        managerId: function () {
+                            return $scope.managerId;
+                        }
+                    }
                 });
 
                 modalInstance.result.then(function (participant) {
                     $scope.participants.push(participant);
                 }, function () {
                 });
-            };
-            $scope.changeParticipantStatus = function (participant) {
-                console.log(participant);
-                var ids = participant.split(",");
-                var data = {
-                    'project': window['projectId'],
-                    'user': parseInt(ids[0]),
-                    'status': parseInt(ids[1])
-                };
-                $scope.busy = true;
-                $http.post('/ajax/participant/', data)
-                    .success(function () {
-                        for (var i in $scope.participants) {
-                            if (i.id == parseInt(ids[0])) {
-                                i.status = parseInt(ids[1]);
-                            }
-                        }
-                        $scope.busy = false;
-                        $http.get('/ajax/participant', {params: {project: $scope.projectId}})
-                            .then(function (response) {
-                                $scope.participants = response.data;
-                            });
-                    })
-                    .error(function (data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
-            };
-            $scope.removeParticipant = function (participant) {
-                var data = {
-                    'project': window['projectId'],
-                    'user': participant.id
-                };
-                $scope.busy = true;
-                $http.delete('/ajax/participant/', {params: data})
-                    .success(function () {
-                        var i = $scope.participants.indexOf(participant);
-                        if (i > -1) {
-                            delete $scope.participants.splice(i, 1);
-                        }
-                        $scope.busy = false;
-                    })
-                    .error(function (data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
             };
             $scope.leaveProject = function () {
                 var data = {
@@ -1023,8 +984,59 @@
         }
     ]);
 
-    module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http',
-        function ($scope, $uibModalInstance, $http) {
+    module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http', 'projectId', 'managerId',
+        function ($scope, $uibModalInstance, $http, projectId, managerId) {
+            $http.get('/ajax/participant', {params: {project: projectId}})
+                .then(function (response) {
+                    $scope.participants = response.data;
+                });
+            $scope.managerId = managerId;
+            $scope.changeParticipantStatus = function (participant) {
+                console.log(participant);
+                var ids = participant.split(",");
+                var data = {
+                    'project': projectId,
+                    'user': parseInt(ids[0]),
+                    'status': parseInt(ids[1])
+                };
+                $scope.busy = true;
+                $http.post('/ajax/participant/', data)
+                    .success(function () {
+                        for (var i in $scope.participants) {
+                            if (i.id == parseInt(ids[0])) {
+                                i.status = parseInt(ids[1]);
+                            }
+                        }
+                        $scope.busy = false;
+                        $http.get('/ajax/participant', {params: {project: projectId}})
+                            .then(function (response) {
+                                $scope.participants = response.data;
+                            });
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.removeParticipant = function (participant) {
+                var data = {
+                    'project': projectId,
+                    'user': participant.id
+                };
+                $scope.busy = true;
+                $http.delete('/ajax/participant/', {params: data})
+                    .success(function () {
+                        var i = $scope.participants.indexOf(participant);
+                        if (i > -1) {
+                            delete $scope.participants.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
             $scope.getUsers = function (query) {
                 return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
@@ -2217,7 +2229,9 @@
                 if (event) {
                     event.stopPropagation();
                 }
-                $scope.toggleEntry(entry);
+                if ($scope.activeEntry !== entry) {
+                    $scope.toggleEntry(entry);
+                }
                 entry.editing = true;
                 if (entry['meta'] && entry['meta']['msgid_plural']) {
                     entry.plural = 0;
@@ -2230,14 +2244,8 @@
                 setTimeout(function () {
                     var input = $('#entry-suggestion-' + entry.id);
                     input.focus();
-                    // $('#entry-suggestion-' + entry.id).focus();
                     moveCursorToEnd(input[0]);
                 }, 10);
-
-
-                // setTimeout(function () {
-                //
-                // }, 10);
             };
             $scope.voteTranslation = function (entry, translation) {
                 translation.busy = true;
