@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load staticfiles %}
+
+{% trans "Translating together!" as trans_together %}
+{% trans "Login via social networks" as social_networks %}
+{% trans "What is «Tolmach»?" as what_is %}
+{% trans "«Tolmach» is an integrated translating environment, service that combines all necessary tools for the translator in one place — glossaries, translation memory databases, dictionaries, machine translation engines and more. All the paperwork also will be done by «Tolmach». All you have to do is to load the document into the system. All the extraction of useful text and division up into easy to translate fragments will be produced automatically." as tolmach_ite %}
+{% trans "A problem shared is a problem halved" as two_heads %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tolma.ch</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.0.4/fullpage.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/all.css' %}">
+{#        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>#}
+    <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/landing.css' %}">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.0.4/fullpage.min.js"></script>
+    <style type="text/css">
+        .slide1 {
+            background-image: url("/static/img/landing/trianglify.svg");
+            background-size: cover;
+            color: #fff;
+            text-shadow: 1px 1px 10px #00000070;
+            overflow: hidden;
+        }
+        .slide2 {
+            background-color: #00b765;
+            background-image: url("/static/img/landing/new_landing_bg2.svg");
+            color: #fff;
+            text-shadow: 1px 1px 10px #00000070;
+        }
+        .slide2 h2 {
+            text-align: center;
+            color: #fff;
+        }
+        .slide3 {
+            background-image: url('/static/img/landing/bg2.jpg');
+            background-size: cover;
+        }
+        .sign-in-btn {
+            box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
+            margin-bottom: 300px;
+        }
+        .tolmach-short {
+            max-width: 700px;
+            margin: 0 auto;
+            margin-bottom: 50px;
+        }
+        #menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 70;
+            -webkit-font-smoothing: antialiased;
+            -moz-font-smoothing: antialiased;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+        }
+        #menu li {
+            display: inline-block;
+            margin: 10px 0;
+        }
+        #menu a {
+            color: #fff;
+            text-shadow: 1px 1px 10px #00000070;
+        }
+        .menu-active {
+            font-weight: 700;
+        }
+        .header-logo {
+            position: absolute;
+            left: 20px;
+            top: 14px;
+            z-index: 99;
+            opacity: 1;
+        }
+        .header-logo img {
+            filter: drop-shadow( 1px 1px 3px rgba(0, 0, 0, .4));
+        }
+        .main-image {
+            margin-top: -250px;
+            width: 75%;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .main-image img {
+            border-radius: 10px;
+            box-shadow: 0px 0 20px 0px #0006;
+        }
+        .slide__img {
+            width: 55%;
+            margin: 0 auto;
+            margin-bottom: 30px;
+        }
+        .slide__img img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 5px;
+            box-shadow: 0px 0 20px 0px #0006;
+        }
+        .slide__content {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="fullpage">
+        <div class="section slide1">
+            <h1>{{ trans_together }}</h1>
+            <p class="tolmach-short center">
+                Tolma.ch - не просто CAT. Tolma.ch даёт возможность объединять усилия людям, стремящимся к максимальной точности и аккуратности в переносе культурных ценностей с одного языка на другой.
+            </p>
+            <p class="center">
+                <a href=""
+                   class="btn btn-default open-modal-btn sign-in-btn"
+                   data-toggle="modal"
+                   data-target="#myModal">{% trans "Sign up and login" %}</a>
+            </p>
+            <div class="main-image">
+                <img data-src="/static/img/landing/tolmach_2019_1.jpg" width="99%">
+            </div>
+        </div>
+        <div class="section slide2">
+            <div class="slide">
+                <h2>{% trans "Personal page" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/profile_orig.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "This is a user's personal page. You do not need to fill out tedious questionnaires during registration - we can get your stuff from your social network profile." %}
+                    </p>
+                    <p>
+                        {% trans "Here you can see all the statistics that present your experience as translator: total number of translated fragments and graphs showing which language pairs do you prefer to work with." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Collective translations" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/project_translators.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "Now several interpreters can comfortably work with one document simultaneously — share the responsibility for exact pieces of text between different translators, offer different translations of the same fragments, choosing, in the end, the best offered fragments." %}
+                    </p>
+                    <p>
+                        {% trans "Team editor now can watch the whole process live — he will not have to spend huge amount of time to wait for the results of translation, and translators will be able to get feedback almost immediately after translation publication." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Multilingual translations" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/project_langs.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "No need to upload the same document several times - it is possible to translate the same one into several languages at once." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Translation memory databases and glossaries" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/project_tm_glossaries.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "Translation memory databases help you to translate similar documents faster, reusing previously made translations." %}
+                    </p>
+                    <p>
+                        {% trans "Correctly formatted glossaries will help to maintain a consistent style of translation, regardless of whether you work alone or in a group." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Only translation, nothing more" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/translation_page.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "We put a lot of effort to make the «Tolmach» interface as easy and minimalistic as possible." %}
+                    </p>
+                    <p>
+                        {% trans "And despite the fact that we have already achieved significant results, we are constantly looking for new opportunities to make «Tolmach» even more simple and convenient." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Visual progress" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/translation_page_trans.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "Evaluate the integrity and consistency of the translated text without being distracted from the process of translation, literally by a single click." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Advanced formatting" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/translation_tags.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "Documents with complex formatting is not a problem for the «Tolmach». You don't need to think about how the text was formatted in the original document. Was it bold, italic, or underlined. All this does not matter in the translating process and should not distract you from what is most important. And in order to save the formatting of the translated document similar to the original, «Tolmach» will tell you where to make the necessary notes." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Machine translation systems" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/translation_tags_mt.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "Despite the fact that machine translations result texts' quality is far from perfect, they can be a good help during the initial stages of translation. They help to make an initial, very rough translation on the basis of which the final, much more high-quality translation is built." %}
+                    </p>
+                </div>
+            </div>
+            <div class="slide">
+                <h2>{% trans "Dictionaries" %}</h2>
+                <div class="slide__img">
+                    <img data-src="{% static 'img/landing/translation_tags_dict.png' %}" alt="">
+                </div>
+                <div class="slide__content">
+                    <p>
+                        {% trans "When you see an unfamiliar word, you don't need to interrupt the translating process to use an external dictionary. You can just select the word and translate it in one click using the «Tolmach» inner dictionary. Dictionary database is not static and is being constantly updated." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="section slide3">
+            <div class="black-column">
+                <div class="container-fluid">
+                    <h1>{% trans "Try «Tolmach».<br> It's great." %}</h1>
+                    <p class="center">
+                        {% trans "Just register or log in to the service using your Vkontakte, Facebook or Twitter account." %}
+                    </p>
+                    <p class="center">
+                        {% trans "If you don't like it – just log out of your account. But, we think you'll like it:)" %}
+                    </p>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="center small">
+                                <span class="huge">0</span>
+                                {% trans "rubles you need to use the service." %}
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="center small">
+                                <span class="huge">{{ fragments_translated }}</span>
+                                {% trans "that's how many fragments we have already translated" %}
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="center small">
+                                <span class="huge">42</span>
+                                {% trans "the answer to the ultimate question of life, the universe and everything" %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="gap4"></div>
+                    <p class="center">
+                        <a href=""
+                           class="btn btn-default"
+                           data-toggle="modal"
+                           data-target="#myModal">{% trans "Sign up and login" %}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul id="menu">
+        <li><a href="/docs/" class="show-examples">{% trans "Docs" %}</a></li>
+        <li id="menu-contact"><a href="https://alvarotrigo.com/#contact-page">Contact</a></li>
+    </ul>
+    <div class="header-logo">
+        <a href="/">
+            <img src="{% static 'img/top-logo' %}{{ logo_special }}.svg"
+                 class="hidden-xs">
+            <img src="{% static 'img/android-chrome-512x512.png' %}"
+                 class="hidden-sm hidden-md hidden-lg hidden-xl"
+                 style="height: 45px;margin: 3px 0 3px;">
+        </a><!-- /.brand -->
+    </div>
+    <script>
+        new fullpage('#fullpage', {
+        //options here
+        autoScrolling:true,
+        scrollingSpeed: 1000,
+        continuousVertical: true,
+        scrollHorizontally: true
+    });
+    </script>
+    {% include 'tolmach/partial/register_modal.html' %}
+    <script src="{% static 'assets/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+</body>
+</html>
