@@ -1,4 +1,29 @@
 {% load i18n %}
+<style>
+    .project-participants {
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: scroll;
+
+        background:
+        /* Shadow covers */
+        linear-gradient(white 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), white 70%) 0 100%,
+        /* Shadows */
+        radial-gradient(50% 0, farthest-side, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(50% 100%, farthest-side, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+        background:
+        /* Shadow covers */
+        linear-gradient(white 30%, rgba(255, 255, 255, 0)), linear-gradient(rgba(255, 255, 255, 0), white 70%) 0 100%,
+        /* Shadows */
+        radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)), radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, .2), rgba(0, 0, 0, 0)) 0 100%;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+        /* Opera doesn't support this in the shorthand */
+        background-attachment: local, local, scroll, scroll;
+        z-index:1;
+        position:relative;
+    }
+</style>
 <script type="text/ng-template" id="addParticipantModal.html">
     <div class="modal-header">
         <button type="button"
@@ -13,8 +38,12 @@
             </span>
             <div class="input-group">
                 <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/project/i/{{ project.invite_link_code }}/">
-                <span class="input-group-addon">
-                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                <span class="input-group-btn">
+                    <button class="btn btn-sm btn-default"
+                            type="button"
+                            ng-click-copy="{{ base_domain }}/project/i/{{ project.invite_link_code }}/">
+                        <i class="fa fa-clipboard" aria-hidden="true"></i>
+                    </button>
                 </span>
             </div>
         </div>
@@ -22,7 +51,7 @@
             {% trans "or find one among the users of Tolma.ch:" %}
         </span>
         <form>
-            <div class="form-group">
+            <div class="input-group">
                 <input type="text"
                        autocomplete="off"
                        id="form-field-1"
@@ -30,16 +59,74 @@
                        class="form-control"
                        ng-model="user"
                        uib-typeahead="user as user.username for user in getUsers($viewValue)"
-                       typeahead-template-url="userTypeaheadTemplate.html"></div>
+                       typeahead-template-url="userTypeaheadTemplate.html">
+
+                <span class="input-group-btn">
+                    <button class="btn btn-sm btn-default" type="button" ng-click="addParticipant()">{% trans "Add" %}</button>
+                </span>
+            </div>
 
             <div class="form-group" ng-show="error">
                 <div class="label label-danger">{= error =}</div>
             </div>
         </form>
+        <div class="project-participants">
+            <div class="user-statistics-table__preloader"
+                ng-if="participants.length < 1">
+                {% include "tolmach/partial/preloader.html" %}
+            </div>
+            <div class="project-sidebar-participant"
+                 ng-repeat="participant in participants"
+                 ng-click="activeParticipant = participant"
+                 ng-class="{'project-sidebar-participant_active': activeParticipant === participant}">
+                <div class="project-sidebar-participant__ava"
+                       ng-class="{'project-sidebar-participant__ava': true,
+                                  'project-sidebar-participant__ava__owner': participant.status == 10,
+                                  'project-sidebar-participant__ava__editor': participant.status == 0,
+                                  'project-sidebar-participant__ava__translator': participant.status == 1,
+                                  'project-sidebar-participant__ava__spectator': participant.status == 2,}">
+                    <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
+                    <i aria-hidden="true"
+                       ng-class="{'fa': true,
+                                  'fa-star': participant.status == 10,
+                                  'fa-pencil-square-o': participant.status == 0,
+                                  'fa-pencil': participant.status == 1,
+                                  'fa-eye': participant.status == 2,}"></i>
+                </div>
+                <div class="project-sidebar-participant__name">
+                    {=:: participant.name =}
+                </div>
+                <div class="project-sidebar-participant__btns">
+                    <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
+                    <a class="project-sidebar-participant__btn tooltip-warning" href=""
+                       ng-if="!(participant.id == managerId)"
+                       uib-tooltip="{% trans 'Remove participant' %}"
+                       tooltip-append-to-body="true"
+                       uib-popover-template="'participantRemovePopover.html'"
+                       popover-placement="left"
+                       popover-append-to-body="true"
+                       class="btn btn-default"><i class="fa fa-trash-o"></i></a>
+                    <select ng-if="!(participant.id == managerId)"
+                            ng-change="changeParticipantStatus(participantNewStatus)"
+                            ng-model="participantNewStatus"
+                            ng-init="participantNewStatus=participant.id + ',' + participant.status">
+                        {% for status, text in membership_statuses.items %}
+                            <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="project-sidebar-participant__menu"
+                        ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div>
+
+
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-success"
                 ng-click="ok()"
-                ng-disabled="busy">{% trans "Add" %}</button>
+                ng-disabled="busy">{% trans "Done" %}</button>
     </div>
 </script>

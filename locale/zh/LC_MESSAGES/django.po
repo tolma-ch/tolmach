@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 17:39+0300\n"
+"POT-Creation-Date: 2019-03-30 09:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,8 +106,8 @@ msgid "People"
 msgstr "人众"
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:302
-#: templates/translations/project.html:330
+#: templates/translations/project.html:318
+#: templates/translations/project.html:346
 msgid "TM Databases"
 msgstr "翻译数据库"
 
@@ -587,7 +587,7 @@ msgid "Invite organization participant"
 msgstr "翻译"
 
 #: templates/tolmach/partial/add_org_participant_modal.html:12
-#: templates/translations/partial/add_participant_modal.html:12
+#: templates/translations/partial/add_participant_modal.html:37
 msgid "Invite users from all over the world via link:"
 msgstr ""
 
@@ -596,12 +596,12 @@ msgid "Copy"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:30
-#: templates/translations/partial/add_participant_modal.html:22
+#: templates/translations/partial/add_participant_modal.html:47
 msgid "or find one among the users of Tolma.ch:"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:37
-#: templates/translations/partial/add_participant_modal.html:29
+#: templates/translations/partial/add_participant_modal.html:54
 msgid "Enter nick or name"
 msgstr "进入注册或名称"
 
@@ -742,7 +742,7 @@ msgid "admin"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:36
-#: templates/translations/project.html:247
+#: templates/translations/partial/add_participant_modal.html:95
 #, fuzzy
 #| msgid "Add participant"
 msgid "Remove participant"
@@ -923,15 +923,14 @@ msgstr "私人"
 
 #: templates/tolmach/view_user.html:15
 #: templates/translations/partial/add_glossary_modal.html:88
-#: templates/translations/partial/add_participant_modal.html:43
+#: templates/translations/partial/add_participant_modal.html:61
 #: templates/translations/partial/add_project_translation_modal.html:29
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:47
-#: templates/translations/project.html:161
-#: templates/translations/project.html:163
-#: templates/translations/project.html:220
-#: templates/translations/project.html:287
+#: templates/translations/project.html:177
+#: templates/translations/project.html:179
+#: templates/translations/project.html:303
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr "添加"
@@ -958,9 +957,13 @@ msgstr "手动添加"
 msgid "Glossary name"
 msgstr "词库名称"
 
-#: templates/translations/partial/add_participant_modal.html:7
+#: templates/translations/partial/add_participant_modal.html:32
 msgid "Add participant"
 msgstr "添加参与者"
+
+#: templates/translations/partial/add_participant_modal.html:122
+msgid "Done"
+msgstr ""
 
 #: templates/translations/partial/add_project_translation_modal.html:7
 msgid "Add project translation"
@@ -1140,122 +1143,114 @@ msgstr ""
 msgid "Someone is working on this fragment right now..."
 msgstr ""
 
-#: templates/translations/project.html:76
+#: templates/translations/project.html:80
 #, fuzzy
 #| msgid "Add new translation"
 msgid "Add new translation language"
 msgstr "添加新翻译题"
 
-#: templates/translations/project.html:90
+#: templates/translations/project.html:93
+msgid "Participants"
+msgstr "参与者"
+
+#: templates/translations/project.html:106
 msgid "Documents"
 msgstr "文档"
 
-#: templates/translations/project.html:108
+#: templates/translations/project.html:124
 #, fuzzy
 #| msgid "Fragments translated:"
 msgid "Fragments total:"
 msgstr "翻译的碎片"
 
-#: templates/translations/project.html:109
+#: templates/translations/project.html:125
 #, fuzzy
 #| msgid "Translate"
 msgid "Translated:"
 msgstr "翻译"
 
-#: templates/translations/project.html:110
+#: templates/translations/project.html:126
 msgid "Approved:"
 msgstr ""
 
-#: templates/translations/project.html:121
+#: templates/translations/project.html:137
 #: templates/translations/view-text.html:348
 #, fuzzy
 #| msgid "Translation"
 msgid "Options"
 msgstr "翻译"
 
-#: templates/translations/project.html:127
+#: templates/translations/project.html:143
 #, fuzzy
 #| msgid "Translated document"
 msgid "Download translated document"
 msgstr "翻译的文档"
 
-#: templates/translations/project.html:133
+#: templates/translations/project.html:149
 msgid "Download bilingual XLSX"
 msgstr "双语XLSX"
 
-#: templates/translations/project.html:139
+#: templates/translations/project.html:155
 #, fuzzy
 #| msgid "Upload file"
 msgid "Download as PO-file"
 msgstr "上传文件"
 
-#: templates/translations/project.html:147
+#: templates/translations/project.html:163
 #, fuzzy
 #| msgid "Documents"
 msgid "Document params"
 msgstr "文档"
 
-#: templates/translations/project.html:163
+#: templates/translations/project.html:179
 #, fuzzy
 #| msgid "Click here to add member"
 msgid "Click here to add new document to translate"
 msgstr "点击添加新人员"
 
-#: templates/translations/project.html:197
-msgid "Participants"
-msgstr "参与者"
-
-#: templates/translations/project.html:200
+#: templates/translations/project.html:216
 msgid "Tools"
 msgstr "工具"
 
-#: templates/translations/project.html:203
+#: templates/translations/project.html:219
 msgid "About"
 msgstr "项目"
 
-#: templates/translations/project.html:210
-msgid "Here you can see all the members"
-msgstr ""
-
-#: templates/translations/project.html:213
-msgid "Click here to add member"
-msgstr "点击添加新人员"
-
-#: templates/translations/project.html:275
+#: templates/translations/project.html:291
 msgid "Here will be TMXes and glossaries"
 msgstr ""
 
-#: templates/translations/project.html:279
+#: templates/translations/project.html:295
 msgid "Click here to translation memory or glossary"
 msgstr ""
 
-#: templates/translations/project.html:295
+#: templates/translations/project.html:311
 msgid "Glossary"
 msgstr "词库"
 
-#: templates/translations/project.html:350
+#: templates/translations/project.html:366
 msgid "Glossaries"
 msgstr "词库"
 
-#: templates/translations/project.html:375
+#: templates/translations/project.html:391
 msgid "Description"
 msgstr "描述"
 
-#: templates/translations/project.html:400
+#: templates/translations/project.html:416
 #, fuzzy
 #| msgid "Documents"
 msgid "Project statistics"
 msgstr "文档"
 
-#: templates/translations/project.html:404
+#: templates/translations/project.html:420
 msgid "Attention!"
 msgstr "注意!"
 
-#: templates/translations/project.html:412
+#: templates/translations/project.html:428
 msgid "Remove Project"
 msgstr "移除项目"
 
-#: templates/translations/project.html:422
+#: templates/translations/project.html:438
 #, fuzzy
 #| msgid "Remove Project"
 msgid "Leave Project"
@@ -1728,6 +1723,9 @@ msgstr "文案ID未设置"
 #: translations/views_ajax.py:1434
 msgid "TMDB unavaliable at the moment"
 msgstr ""
+
+#~ msgid "Click here to add member"
+#~ msgstr "点击添加新人员"
 
 #, fuzzy
 #~| msgid "Add glossary"

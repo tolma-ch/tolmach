@@ -41,41 +41,57 @@
         .tooltip-inner {
             white-space:pre-wrap;
         }
+        .project-members {
+            float: right;
+        }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
             <h1>
-                {% if is_user_manager == 'true' or user_membership_status == 0 %}
-                <input class="form-contrl" type="text"
-                       ng-show="editingName"
-                       ng-model="projectName"/>
-                <small ng-if="!editingName"><a class="float-right"
-                          href=""
-                          ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
-                <small ng-if="editingName"><a class="float-right"
-                          href=""
-                          ng-click="saveName()"><i class="fa fa-check"></i></a></small>
-                <small ng-if="editingName"><a class="float-right"
-                          href=""
-                          ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
-                {% endif %}
-                <span ng-show="!editingName">
-                    {= project.name =}
-                </span>
-                <div class="project-language-pair">
-                    <i class="flag flag-{{ project.source_lang }}"></i>
-                    <i class="fa fa-chevron-right"></i>
-                    <div class="dropdown project-select-translation">
-                      <button class="btn dropdown-toggle project-select-translation__button" type="button" data-toggle="dropdown">
-                          <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang_local }}
-                      <span class="caret"></span></button>
-                      <ul class="dropdown-menu project-select-translation__menu">
-                          {% for pr_translation in project.translations %}
-                        <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
-                          {% endfor %}
-                        <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation language' %}</a></li>
-                      </ul>
+                <div class="page-header__left" style="max-width: 80%; display: inline-block;">
+                    {% if is_user_manager == 'true' or user_membership_status == 0 %}
+                    <input class="form-contrl" type="text"
+                           ng-show="editingName"
+                           ng-model="projectName"/>
+                    <small ng-if="!editingName"><a class="float-right"
+                              href=""
+                              ng-click="editName()"><i class="fa fa-pencil"></i></a></small>
+                    <small ng-if="editingName"><a class="float-right"
+                              href=""
+                              ng-click="saveName()"><i class="fa fa-check"></i></a></small>
+                    <small ng-if="editingName"><a class="float-right"
+                              href=""
+                              ng-click="cancelEditName()"><i class="fa fa-times"></i></a></small>
+                    {% endif %}
+                    <span ng-show="!editingName">
+                        {= project.name =}
+                    </span>
+                    <div class="project-language-pair">
+                        <i class="flag flag-{{ project.source_lang }}"></i>
+                        <i class="fa fa-chevron-right"></i>
+                        <div class="dropdown project-select-translation">
+                          <button class="btn dropdown-toggle project-select-translation__button" type="button" data-toggle="dropdown">
+                              <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang_local }}
+                          <span class="caret"></span></button>
+                          <ul class="dropdown-menu project-select-translation__menu">
+                              {% for pr_translation in project.translations %}
+                            <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
+                              {% endfor %}
+                            <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation language' %}</a></li>
+                          </ul>
+                        </div>
                     </div>
+                </div>
+                <div class="project-members">
+                    <a href=""
+                       class="btn helped-block btn-sm project-members__button"
+                       ng-click="addParticipant()"
+                       ng-show="(isUserManager || (userMembershipStatus == 0))"
+                       uib-tooltip="Добавить"
+                       tooltip-append-to-body="true"
+                       help-text="Нажмите, чтобы добавить новый документ для перевода">
+                        <i class="fa fa-user-plus"></i>  <span class="hidden-xs" style="display: inline">{% trans "Participants" %}</span>
+                    </a>
                 </div>
 
             </h1>
@@ -193,84 +209,84 @@
                 </style>
                 <div id="exTab2" class="">
                     <ul class="nav nav-tabs project-page-tabs">
+{#                        <li class="active">#}
+{#                            <a  href="#1" data-toggle="tab">{% trans "Participants" %}</a>#}
+{#                        </li>#}
                         <li class="active">
-                            <a  href="#1" data-toggle="tab">{% trans "Participants" %}</a>
+                            <a href="#1" data-toggle="tab">{% trans "Tools" %}</a>
                         </li>
                         <li>
-                            <a href="#2" data-toggle="tab">{% trans "Tools" %}</a>
-                        </li>
-                        <li>
-                            <a href="#3" data-toggle="tab">{% trans "About" %}</a>
+                            <a href="#2" data-toggle="tab">{% trans "About" %}</a>
                         </li>
                     </ul>
 
                 <div class="tab-content project-page-tabs-content">
+{#                    <div class="tab-pane active" id="1">#}
+{#                        <div class="helped-block" ng-init="activeParticipant = null"#}
+{#                                   help-text='{% trans "Here you can see all the members" %}'>#}
+{#                            <div class="project-sidebar">#}
+{#                                <div class="project-sidebar-participant helped-block"#}
+{#                                     help-text='{% trans "Click here to add member" %}'#}
+{#                                     ng-click="addParticipant()"#}
+{#                                     ng-show="(isUserManager || (userMembershipStatus == 0))">#}
+{#                                    <div class="project-sidebar-participant__add">#}
+{#                                        <i class="fa fa-plus"></i>#}
+{#                                    </div>#}
+{#                                    <div class="project-sidebar-participant__name">#}
+{#                                        {% trans 'Add' %}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                                <div class="project-sidebar-participant"#}
+{#                                     ng-repeat="participant in participants"#}
+{#                                     ng-click="activeParticipant = participant"#}
+{#                                     ng-class="{'project-sidebar-participant_active': activeParticipant === participant}">#}
+{#                                    <div class="project-sidebar-participant__ava"#}
+{#                                           ng-class="{'project-sidebar-participant__ava': true,#}
+{#                                                      'project-sidebar-participant__ava__owner': participant.status == 10,#}
+{#                                                      'project-sidebar-participant__ava__editor': participant.status == 0,#}
+{#                                                      'project-sidebar-participant__ava__translator': participant.status == 1,#}
+{#                                                      'project-sidebar-participant__ava__spectator': participant.status == 2,}">#}
+{#                                        <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">#}
+{#                                        <i aria-hidden="true"#}
+{#                                           ng-class="{'fa': true,#}
+{#                                                      'fa-star': participant.status == 10,#}
+{#                                                      'fa-pencil-square-o': participant.status == 0,#}
+{#                                                      'fa-pencil': participant.status == 1,#}
+{#                                                      'fa-eye': participant.status == 2,}"></i>#}
+{#                                    </div>#}
+{#                                    <div class="project-sidebar-participant__name">#}
+{#                                        {=:: participant.name =}#}
+{#                                    </div>#}
+{#                                    <div class="project-sidebar-participant__btns">#}
+{#                                        <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>#}
+{#                                        <a class="project-sidebar-participant__btn tooltip-warning" href=""#}
+{#                                           uib-tooltip="{% trans 'Remove participant' %}"#}
+{#                                           tooltip-append-to-body="true"#}
+{#                                           ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"#}
+{#                                           uib-popover-template="'participantRemovePopover.html'"#}
+{#                                           popover-placement="left"#}
+{#                                           popover-append-to-body="true"#}
+{#                                           class="btn btn-default"><i class="fa fa-trash-o"></i></a>#}
+{#                                        <select ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)"#}
+{#                                                ng-change="changeParticipantStatus(participantNewStatus)"#}
+{#                                                ng-model="participantNewStatus"#}
+{#                                                ng-init="participantNewStatus=participant.id + ',' + participant.status">#}
+{#                                            {% for status, text in membership_statuses.items %}#}
+{#                                                <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>#}
+{#                                            {% endfor %}#}
+{#                                        </select>#}
+{#                                    </div>#}
+{#                                    <div class="project-sidebar-participant__menu"#}
+{#                                            ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">#}
+{#                                        <i class="fa fa-bars"></i>#}
+{#                                    </div>#}
+{#                                </div>#}
+{##}
+{##}
+{#                            </div><!-- /project-sidebar -->#}
+{#                        </div><!-- /widget-body -->#}
+{#                    </div>#}
                     <div class="tab-pane active" id="1">
-                        <div class="helped-block" ng-init="activeParticipant = null"
-                                   help-text='{% trans "Here you can see all the members" %}'>
-                            <div class="project-sidebar">
-                                <div class="project-sidebar-participant helped-block"
-                                     help-text='{% trans "Click here to add member" %}'
-                                     ng-click="addParticipant()"
-                                     ng-show="(isUserManager || (userMembershipStatus == 0))">
-                                    <div class="project-sidebar-participant__add">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                    <div class="project-sidebar-participant__name">
-                                        {% trans 'Add' %}
-                                    </div>
-                                </div>
-                                <div class="project-sidebar-participant"
-                                     ng-repeat="participant in participants"
-                                     ng-click="activeParticipant = participant"
-                                     ng-class="{'project-sidebar-participant_active': activeParticipant === participant}">
-                                    <div class="project-sidebar-participant__ava"
-                                           ng-class="{'project-sidebar-participant__ava': true,
-                                                      'project-sidebar-participant__ava__owner': participant.status == 10,
-                                                      'project-sidebar-participant__ava__editor': participant.status == 0,
-                                                      'project-sidebar-participant__ava__translator': participant.status == 1,
-                                                      'project-sidebar-participant__ava__spectator': participant.status == 2,}">
-                                        <img src="/media/{=:: participant.avatar =}" alt="Jason's Photo">
-                                        <i aria-hidden="true"
-                                           ng-class="{'fa': true,
-                                                      'fa-star': participant.status == 10,
-                                                      'fa-pencil-square-o': participant.status == 0,
-                                                      'fa-pencil': participant.status == 1,
-                                                      'fa-eye': participant.status == 2,}"></i>
-                                    </div>
-                                    <div class="project-sidebar-participant__name">
-                                        {=:: participant.name =}
-                                    </div>
-                                    <div class="project-sidebar-participant__btns">
-                                        <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
-                                        <a class="project-sidebar-participant__btn tooltip-warning" href=""
-                                           uib-tooltip="{% trans 'Remove participant' %}"
-                                           tooltip-append-to-body="true"
-                                           ng-show="(isUserManager || (userMembershipStatus == 0)) && !(participant.id == managerId)"
-                                           uib-popover-template="'participantRemovePopover.html'"
-                                           popover-placement="left"
-                                           popover-append-to-body="true"
-                                           class="btn btn-default"><i class="fa fa-trash-o"></i></a>
-                                        <select ng-if="(userMembershipStatus == 0 || isUserManager) && !(participant.id == managerId)"
-                                                ng-change="changeParticipantStatus(participantNewStatus)"
-                                                ng-model="participantNewStatus"
-                                                ng-init="participantNewStatus=participant.id + ',' + participant.status">
-                                            {% for status, text in membership_statuses.items %}
-                                                <option ng-selected="participant.status == {{ status }}" value="{=:: participant.id =},{{ status }}">{{ text }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="project-sidebar-participant__menu"
-                                            ng-click="activeParticipant === participant && (activeParticipant = null || $event.stopPropagation())">
-                                        <i class="fa fa-bars"></i>
-                                    </div>
-                                </div>
-
-
-                            </div><!-- /project-sidebar -->
-                        </div><!-- /widget-body -->
-                    </div>
-                    <div class="tab-pane" id="2">
                         <div class="helped-block"
                              help-text='{% trans "Here will be TMXes and glossaries" %}'>
                             <div class="project-sidebar project-sidebar__instruments-block">
@@ -369,7 +385,7 @@
                             </div><!-- /project-sidebar -->
                         </div><!-- /widget-body -->
                     </div>
-                    <div class="tab-pane" id="3">
+                    <div class="tab-pane" id="2">
                         <div class="project-sidebar">
                             <div class="project-list-glossary-header">
                                 {% trans 'Description' %}
