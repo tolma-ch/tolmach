@@ -60,7 +60,7 @@ def index(request):
         data = {
             'fragments_translated': PairStats.objects.aggregate(Sum('fragments_translated'))['fragments_translated__sum']
         }
-        template = 'tolmach/landing.html'
+        template = 'tolmach/new_landing.html'
     return render(request, template, data)
 
 
