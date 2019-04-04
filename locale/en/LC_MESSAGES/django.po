@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-07 17:39+0300\n"
+"POT-Creation-Date: 2019-03-30 09:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,8 +104,8 @@ msgid "People"
 msgstr ""
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:302
-#: templates/translations/project.html:330
+#: templates/translations/project.html:318
+#: templates/translations/project.html:346
 msgid "TM Databases"
 msgstr ""
 
@@ -555,7 +555,7 @@ msgid "Invite organization participant"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:12
-#: templates/translations/partial/add_participant_modal.html:12
+#: templates/translations/partial/add_participant_modal.html:37
 msgid "Invite users from all over the world via link:"
 msgstr ""
 
@@ -564,12 +564,12 @@ msgid "Copy"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:30
-#: templates/translations/partial/add_participant_modal.html:22
+#: templates/translations/partial/add_participant_modal.html:47
 msgid "or find one among the users of Tolma.ch:"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:37
-#: templates/translations/partial/add_participant_modal.html:29
+#: templates/translations/partial/add_participant_modal.html:54
 msgid "Enter nick or name"
 msgstr ""
 
@@ -694,7 +694,7 @@ msgid "admin"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:36
-#: templates/translations/project.html:247
+#: templates/translations/partial/add_participant_modal.html:95
 msgid "Remove participant"
 msgstr ""
 
@@ -867,15 +867,14 @@ msgstr ""
 
 #: templates/tolmach/view_user.html:15
 #: templates/translations/partial/add_glossary_modal.html:88
-#: templates/translations/partial/add_participant_modal.html:43
+#: templates/translations/partial/add_participant_modal.html:61
 #: templates/translations/partial/add_project_translation_modal.html:29
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:47
-#: templates/translations/project.html:161
-#: templates/translations/project.html:163
-#: templates/translations/project.html:220
-#: templates/translations/project.html:287
+#: templates/translations/project.html:177
+#: templates/translations/project.html:179
+#: templates/translations/project.html:303
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr ""
@@ -902,8 +901,12 @@ msgstr ""
 msgid "Glossary name"
 msgstr ""
 
-#: templates/translations/partial/add_participant_modal.html:7
+#: templates/translations/partial/add_participant_modal.html:32
 msgid "Add participant"
+msgstr ""
+
+#: templates/translations/partial/add_participant_modal.html:122
+msgid "Done"
 msgstr ""
 
 #: templates/translations/partial/add_project_translation_modal.html:7
@@ -1062,104 +1065,96 @@ msgstr ""
 msgid "Someone is working on this fragment right now..."
 msgstr ""
 
-#: templates/translations/project.html:76
+#: templates/translations/project.html:80
 msgid "Add new translation language"
 msgstr ""
 
-#: templates/translations/project.html:90
+#: templates/translations/project.html:93
+msgid "Participants"
+msgstr ""
+
+#: templates/translations/project.html:106
 msgid "Documents"
 msgstr ""
 
-#: templates/translations/project.html:108
+#: templates/translations/project.html:124
 msgid "Fragments total:"
 msgstr ""
 
-#: templates/translations/project.html:109
+#: templates/translations/project.html:125
 msgid "Translated:"
 msgstr ""
 
-#: templates/translations/project.html:110
+#: templates/translations/project.html:126
 msgid "Approved:"
 msgstr ""
 
-#: templates/translations/project.html:121
+#: templates/translations/project.html:137
 #: templates/translations/view-text.html:348
 msgid "Options"
 msgstr ""
 
-#: templates/translations/project.html:127
+#: templates/translations/project.html:143
 msgid "Download translated document"
 msgstr ""
 
-#: templates/translations/project.html:133
+#: templates/translations/project.html:149
 msgid "Download bilingual XLSX"
 msgstr ""
 
-#: templates/translations/project.html:139
+#: templates/translations/project.html:155
 msgid "Download as PO-file"
 msgstr ""
 
-#: templates/translations/project.html:147
+#: templates/translations/project.html:163
 msgid "Document params"
 msgstr ""
 
-#: templates/translations/project.html:163
+#: templates/translations/project.html:179
 msgid "Click here to add new document to translate"
 msgstr ""
 
-#: templates/translations/project.html:197
-msgid "Participants"
-msgstr ""
-
-#: templates/translations/project.html:200
+#: templates/translations/project.html:216
 msgid "Tools"
 msgstr ""
 
-#: templates/translations/project.html:203
+#: templates/translations/project.html:219
 msgid "About"
 msgstr ""
 
-#: templates/translations/project.html:210
-msgid "Here you can see all the members"
-msgstr ""
-
-#: templates/translations/project.html:213
-msgid "Click here to add member"
-msgstr ""
-
-#: templates/translations/project.html:275
+#: templates/translations/project.html:291
 msgid "Here will be TMXes and glossaries"
 msgstr ""
 
-#: templates/translations/project.html:279
+#: templates/translations/project.html:295
 msgid "Click here to translation memory or glossary"
 msgstr ""
 
-#: templates/translations/project.html:295
+#: templates/translations/project.html:311
 msgid "Glossary"
 msgstr ""
 
-#: templates/translations/project.html:350
+#: templates/translations/project.html:366
 msgid "Glossaries"
 msgstr ""
 
-#: templates/translations/project.html:375
+#: templates/translations/project.html:391
 msgid "Description"
 msgstr ""
 
-#: templates/translations/project.html:400
+#: templates/translations/project.html:416
 msgid "Project statistics"
 msgstr ""
 
-#: templates/translations/project.html:404
+#: templates/translations/project.html:420
 msgid "Attention!"
 msgstr ""
 
-#: templates/translations/project.html:412
+#: templates/translations/project.html:428
 msgid "Remove Project"
 msgstr ""
 
-#: templates/translations/project.html:422
+#: templates/translations/project.html:438
 msgid "Leave Project"
 msgstr ""
 

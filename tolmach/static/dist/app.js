@@ -718,10 +718,10 @@
                     }
                 });
 
-                modalInstance.result.then(function (participant) {
-                    $scope.participants.push(participant);
-                }, function () {
-                });
+                // modalInstance.result.then(function (participant) {
+                //     $scope.participants.push(participant);
+                // }, function () {
+                // });
             };
             $scope.leaveProject = function () {
                 var data = {
@@ -986,6 +986,7 @@
 
     module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http', 'projectId', 'managerId',
         function ($scope, $uibModalInstance, $http, projectId, managerId) {
+            $scope.participants = [];
             $http.get('/ajax/participant', {params: {project: projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;
@@ -1043,7 +1044,7 @@
                         return response.data;
                     });
             };
-            $scope.ok = function () {
+            $scope.addParticipant = function () {
                 $scope.error = '';
                 var data = {
                     'project': window['projectId'],
@@ -1052,13 +1053,19 @@
                 $scope.busy = true;
                 $http.post('/ajax/participant/', data)
                     .success(function (participant) {
-                        $uibModalInstance.close(participant);
                         $scope.busy = false;
+                        $http.get('/ajax/participant', {params: {project: projectId}})
+                            .then(function (response) {
+                                $scope.participants = response.data;
+                            });
                     })
                     .error(function (data) {
                         $scope.error = data;
                         $scope.busy = false;
                     });
+            };
+            $scope.ok = function () {
+                $uibModalInstance.close();
             };
 
             $scope.cancel = function () {
