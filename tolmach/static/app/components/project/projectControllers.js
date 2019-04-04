@@ -43,59 +43,20 @@
                     controller: 'AddParticipantModalCtrl',
                     size: 'md',
                     backdrop: 'static',
-                    resolve: {}
+                    resolve: {
+                        projectId: function () {
+                            return $scope.projectId;
+                        },
+                        managerId: function () {
+                            return $scope.managerId;
+                        }
+                    }
                 });
 
-                modalInstance.result.then(function (participant) {
-                    $scope.participants.push(participant);
-                }, function () {
-                });
-            };
-            $scope.changeParticipantStatus = function (participant) {
-                console.log(participant);
-                var ids = participant.split(",");
-                var data = {
-                    'project': window['projectId'],
-                    'user': parseInt(ids[0]),
-                    'status': parseInt(ids[1])
-                };
-                $scope.busy = true;
-                $http.post('/ajax/participant/', data)
-                    .success(function () {
-                        for (var i in $scope.participants) {
-                            if (i.id == parseInt(ids[0])) {
-                                i.status = parseInt(ids[1]);
-                            }
-                        }
-                        $scope.busy = false;
-                        $http.get('/ajax/participant', {params: {project: $scope.projectId}})
-                            .then(function (response) {
-                                $scope.participants = response.data;
-                            });
-                    })
-                    .error(function (data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
-            };
-            $scope.removeParticipant = function (participant) {
-                var data = {
-                    'project': window['projectId'],
-                    'user': participant.id
-                };
-                $scope.busy = true;
-                $http.delete('/ajax/participant/', {params: data})
-                    .success(function () {
-                        var i = $scope.participants.indexOf(participant);
-                        if (i > -1) {
-                            delete $scope.participants.splice(i, 1);
-                        }
-                        $scope.busy = false;
-                    })
-                    .error(function (data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
+                // modalInstance.result.then(function (participant) {
+                //     $scope.participants.push(participant);
+                // }, function () {
+                // });
             };
             $scope.leaveProject = function () {
                 var data = {
@@ -358,15 +319,67 @@
         }
     ]);
 
-    module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http',
-        function ($scope, $uibModalInstance, $http) {
+    module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http', 'projectId', 'managerId',
+        function ($scope, $uibModalInstance, $http, projectId, managerId) {
+            $scope.participants = [];
+            $http.get('/ajax/participant', {params: {project: projectId}})
+                .then(function (response) {
+                    $scope.participants = response.data;
+                });
+            $scope.managerId = managerId;
+            $scope.changeParticipantStatus = function (participant) {
+                console.log(participant);
+                var ids = participant.split(",");
+                var data = {
+                    'project': projectId,
+                    'user': parseInt(ids[0]),
+                    'status': parseInt(ids[1])
+                };
+                $scope.busy = true;
+                $http.post('/ajax/participant/', data)
+                    .success(function () {
+                        for (var i in $scope.participants) {
+                            if (i.id == parseInt(ids[0])) {
+                                i.status = parseInt(ids[1]);
+                            }
+                        }
+                        $scope.busy = false;
+                        $http.get('/ajax/participant', {params: {project: projectId}})
+                            .then(function (response) {
+                                $scope.participants = response.data;
+                            });
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+            $scope.removeParticipant = function (participant) {
+                var data = {
+                    'project': projectId,
+                    'user': participant.id
+                };
+                $scope.busy = true;
+                $http.delete('/ajax/participant/', {params: data})
+                    .success(function () {
+                        var i = $scope.participants.indexOf(participant);
+                        if (i > -1) {
+                            delete $scope.participants.splice(i, 1);
+                        }
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
             $scope.getUsers = function (query) {
                 return $http.get('/ajax/get-users', {params: {q: query}})
                     .then(function (response) {
                         return response.data;
                     });
             };
-            $scope.ok = function () {
+            $scope.addParticipant = function () {
                 $scope.error = '';
                 var data = {
                     'project': window['projectId'],
@@ -375,13 +388,19 @@
                 $scope.busy = true;
                 $http.post('/ajax/participant/', data)
                     .success(function (participant) {
-                        $uibModalInstance.close(participant);
                         $scope.busy = false;
+                        $http.get('/ajax/participant', {params: {project: projectId}})
+                            .then(function (response) {
+                                $scope.participants = response.data;
+                            });
                     })
                     .error(function (data) {
                         $scope.error = data;
                         $scope.busy = false;
                     });
+            };
+            $scope.ok = function () {
+                $uibModalInstance.close();
             };
 
             $scope.cancel = function () {
