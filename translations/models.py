@@ -347,17 +347,56 @@ class TextTranslation(models.Model):
                     activity_by_user[entry.author]['chars_with_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body))
                     activity_by_user[entry.author]['chars_without_spaces'] += len(
                         re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+                    activity_by_user[entry.author]['words_translated'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+                    if entry.is_approved:
+                        activity_by_user[entry.author]['fragments_approved'] += 1
+                        activity_by_user[entry.author]['chars_with_spaces_approved'] += len(
+                            re.sub(r"<hr [rl].*?>", "", entry.body))
+                        activity_by_user[entry.author]['chars_without_spaces_approved'] += len(
+                            re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+                        activity_by_user[entry.author]['words_translated_approved'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
                 else:
                     activity_by_user[entry.author] = {}
+                    activity_by_user[entry.author]['words_translated_approved'] = 0
+                    activity_by_user[entry.author]['chars_with_spaces_approved'] = 0
+                    activity_by_user[entry.author]['chars_without_spaces_approved'] = 0
+                    activity_by_user[entry.author]['fragments_approved'] = 0
                     activity_by_user[entry.author]['fragments'] = 1
                     activity_by_user[entry.author]['chars_with_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body))
                     activity_by_user[entry.author]['chars_without_spaces'] = len(
                         re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+                    activity_by_user[entry.author]['words_translated'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+                    if entry.is_approved:
+                        activity_by_user[entry.author]['fragments_approved'] = 1
+                        activity_by_user[entry.author]['chars_with_spaces_approved'] = len(
+                            re.sub(r"<hr [rl].*?>", "", entry.body))
+                        activity_by_user[entry.author]['chars_without_spaces_approved'] = len(
+                            re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
+                        activity_by_user[entry.author]['words_translated_approved'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+
 
             users_translated = []
             for key, value in activity_by_user.items():
                 user_dict = user_to_json(key, project=self.text.project)
                 user_dict["fragments_translated"] = value
+
+                user_translated_parents = [x.parent_entry.id for x in TextEntry.objects.filter(translation=self, is_approved=True, author=key)]
+                if len(user_translated_parents) > 0:
+                    user_fragments = len(set(user_translated_parents))
+                    user_words = len(" ".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]).split(" "))
+                    user_chars_with_spaces = len("".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]))
+                    user_chars_without_spaces = len("".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]).replace(" ", ""))
+                else:
+                    user_fragments = 0
+                    user_words = 0
+                    user_chars_with_spaces = 0
+                    user_chars_without_spaces = 0
+
+                user_dict["fragments_translated"]["fragments_original"] = user_fragments
+                user_dict["fragments_translated"]["words_translated_original"] = user_words
+                user_dict["fragments_translated"]["chars_with_spaces_original"] = user_chars_with_spaces
+                user_dict["fragments_translated"]["chars_without_spaces_original"] = user_chars_without_spaces
+
                 users_translated.append(user_dict)
 
             return translated_chars, translated_chars_without_spaces, users_translated
