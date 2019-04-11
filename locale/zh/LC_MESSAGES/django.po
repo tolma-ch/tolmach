@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-30 09:12+0300\n"
+"POT-Creation-Date: 2019-04-11 14:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgid "Projects"
 msgstr "项目"
 
 #: templates/main/base-logged-in.html:7 translations/decorators.py:66
-#: translations/views.py:37 translations/views.py:38 translations/views.py:369
+#: translations/views.py:71 translations/views.py:72 translations/views.py:417
 msgid "My projects"
 msgstr "我的项目"
 
@@ -97,7 +97,7 @@ msgid "Community"
 msgstr "社区"
 
 #: templates/main/base-logged-in.html:10 translations/decorators.py:72
-#: translations/views.py:47 translations/views.py:48 translations/views.py:375
+#: translations/views.py:81 translations/views.py:82 translations/views.py:423
 msgid "Public projects"
 msgstr "公共项目"
 
@@ -232,19 +232,19 @@ msgstr "肯定的碎片"
 msgid "Fragments translated:"
 msgstr "翻译的碎片"
 
-#: templates/tolmach/landing.html:5 templates/tolmach/new_landing.html:5
+#: templates/tolmach/landing.html:5
 msgid "Translating together!"
 msgstr "一起来翻译吧!"
 
-#: templates/tolmach/landing.html:6 templates/tolmach/new_landing.html:6
+#: templates/tolmach/landing.html:6
 msgid "Login via social networks"
 msgstr "社交网络登陆"
 
-#: templates/tolmach/landing.html:7 templates/tolmach/new_landing.html:7
+#: templates/tolmach/landing.html:7
 msgid "What is «Tolmach»?"
 msgstr "Tolmach是什么？"
 
-#: templates/tolmach/landing.html:8 templates/tolmach/new_landing.html:8
+#: templates/tolmach/landing.html:8
 msgid ""
 "«Tolmach» is an integrated translating environment, service that combines "
 "all necessary tools for the translator in one place — glossaries, "
@@ -259,13 +259,11 @@ msgstr ""
 "到Tolmach系统而已。这个软件自动地提取有用的文本也会把文本分裂成容易翻译的片"
 "段。"
 
-#: templates/tolmach/landing.html:9 templates/tolmach/new_landing.html:9
+#: templates/tolmach/landing.html:9
 msgid "A problem shared is a problem halved"
 msgstr "共享的问题就是减半的问题"
 
 #: templates/tolmach/landing.html:112 templates/tolmach/landing.html:300
-#: templates/tolmach/new_landing.html:124
-#: templates/tolmach/new_landing.html:278
 #: templates/tolmach/partial/register_modal.html:9
 msgid "Sign up and login"
 msgstr "注册/登录"
@@ -305,11 +303,11 @@ msgstr "使用方法："
 msgid "of"
 msgstr ""
 
-#: templates/tolmach/landing.html:193 templates/tolmach/new_landing.html:132
+#: templates/tolmach/landing.html:193
 msgid "Personal page"
 msgstr "私人页面"
 
-#: templates/tolmach/landing.html:195 templates/tolmach/new_landing.html:138
+#: templates/tolmach/landing.html:195
 msgid ""
 "This is a user's personal page. You do not need to fill out tedious "
 "questionnaires during registration - we can get your stuff from your social "
@@ -318,7 +316,7 @@ msgstr ""
 "这是用户个人页面登记注册时您不要填写那些冗长繁琐的问卷。所需要的信息是从您的"
 "社会网络我的个人资讯提取的。"
 
-#: templates/tolmach/landing.html:198 templates/tolmach/new_landing.html:141
+#: templates/tolmach/landing.html:198
 msgid ""
 "Here you can see all the statistics that present your experience as "
 "translator: total number of translated fragments and graphs showing which "
@@ -327,11 +325,11 @@ msgstr ""
 "在这里可以了解到您目前的翻译统计数据：已经翻译完文本片段总数表示对哪一些语文"
 "双您最感兴趣。"
 
-#: templates/tolmach/landing.html:202 templates/tolmach/new_landing.html:146
+#: templates/tolmach/landing.html:202
 msgid "Collective translations"
 msgstr "众包翻译"
 
-#: templates/tolmach/landing.html:204 templates/tolmach/new_landing.html:152
+#: templates/tolmach/landing.html:204
 msgid ""
 "Now several interpreters can comfortably work with one document "
 "simultaneously — share the responsibility for exact pieces of text between "
@@ -339,7 +337,7 @@ msgid ""
 "choosing, in the end, the best offered fragments."
 msgstr ""
 
-#: templates/tolmach/landing.html:207 templates/tolmach/new_landing.html:155
+#: templates/tolmach/landing.html:207
 msgid ""
 "Team editor now can watch the whole process live — he will not have to spend "
 "huge amount of time to wait for the results of translation, and translators "
@@ -347,68 +345,68 @@ msgid ""
 "publication."
 msgstr ""
 
-#: templates/tolmach/landing.html:211 templates/tolmach/new_landing.html:160
+#: templates/tolmach/landing.html:211
 #, fuzzy
 #| msgid "Machine translations"
 msgid "Multilingual translations"
 msgstr "机器翻译"
 
-#: templates/tolmach/landing.html:213 templates/tolmach/new_landing.html:166
+#: templates/tolmach/landing.html:213
 msgid ""
 "No need to upload the same document several times - it is possible to "
 "translate the same one into several languages at once."
 msgstr ""
 
-#: templates/tolmach/landing.html:217 templates/tolmach/new_landing.html:171
+#: templates/tolmach/landing.html:217
 msgid "Translation memory databases and glossaries"
 msgstr "翻译数据库和词库"
 
-#: templates/tolmach/landing.html:219 templates/tolmach/new_landing.html:177
+#: templates/tolmach/landing.html:219
 msgid ""
 "Translation memory databases help you to translate similar documents faster, "
 "reusing previously made translations."
 msgstr ""
 
-#: templates/tolmach/landing.html:222 templates/tolmach/new_landing.html:180
+#: templates/tolmach/landing.html:222
 msgid ""
 "Correctly formatted glossaries will help to maintain a consistent style of "
 "translation, regardless of whether you work alone or in a group."
 msgstr ""
 
-#: templates/tolmach/landing.html:226 templates/tolmach/new_landing.html:185
+#: templates/tolmach/landing.html:226
 #, fuzzy
 #| msgid "text id is not set"
 msgid "Only translation, nothing more"
 msgstr "文案ID未设置"
 
-#: templates/tolmach/landing.html:228 templates/tolmach/new_landing.html:191
+#: templates/tolmach/landing.html:228
 msgid ""
 "We put a lot of effort to make the «Tolmach» interface as easy and "
 "minimalistic as possible."
 msgstr ""
 
-#: templates/tolmach/landing.html:231 templates/tolmach/new_landing.html:194
+#: templates/tolmach/landing.html:231
 msgid ""
 "And despite the fact that we have already achieved significant results, we "
 "are constantly looking for new opportunities to make «Tolmach» even more "
 "simple and convenient."
 msgstr ""
 
-#: templates/tolmach/landing.html:235 templates/tolmach/new_landing.html:199
+#: templates/tolmach/landing.html:235
 msgid "Visual progress"
 msgstr "进度"
 
-#: templates/tolmach/landing.html:237 templates/tolmach/new_landing.html:205
+#: templates/tolmach/landing.html:237
 msgid ""
 "Evaluate the integrity and consistency of the translated text without being "
 "distracted from the process of translation, literally by a single click."
 msgstr ""
 
-#: templates/tolmach/landing.html:241 templates/tolmach/new_landing.html:210
+#: templates/tolmach/landing.html:241
 msgid "Advanced formatting"
 msgstr "高级格式化"
 
-#: templates/tolmach/landing.html:243 templates/tolmach/new_landing.html:216
+#: templates/tolmach/landing.html:243
 msgid ""
 "Documents with complex formatting is not a problem for the «Tolmach». You "
 "don't need to think about how the text was formatted in the original "
@@ -419,11 +417,11 @@ msgid ""
 "notes."
 msgstr ""
 
-#: templates/tolmach/landing.html:247 templates/tolmach/new_landing.html:221
+#: templates/tolmach/landing.html:247
 msgid "Machine translation systems"
 msgstr "机器翻译系统"
 
-#: templates/tolmach/landing.html:249 templates/tolmach/new_landing.html:227
+#: templates/tolmach/landing.html:249
 msgid ""
 "Despite the fact that machine translations result texts' quality is far from "
 "perfect, they can be a good help during the initial stages of translation. "
@@ -431,11 +429,11 @@ msgid ""
 "the final, much more high-quality translation is built."
 msgstr ""
 
-#: templates/tolmach/landing.html:253 templates/tolmach/new_landing.html:232
+#: templates/tolmach/landing.html:253
 msgid "Dictionaries"
 msgstr "字典"
 
-#: templates/tolmach/landing.html:255 templates/tolmach/new_landing.html:238
+#: templates/tolmach/landing.html:255
 msgid ""
 "When you see an unfamiliar word, you don't need to interrupt the translating "
 "process to use an external dictionary. You can just select the word and "
@@ -443,31 +441,31 @@ msgid ""
 "database is not static and is being constantly updated."
 msgstr ""
 
-#: templates/tolmach/landing.html:268 templates/tolmach/new_landing.html:246
+#: templates/tolmach/landing.html:268
 msgid "Try «Tolmach».<br> It's great."
 msgstr "试试Tolmach。<br> 你会喜欢。"
 
-#: templates/tolmach/landing.html:270 templates/tolmach/new_landing.html:248
+#: templates/tolmach/landing.html:270
 msgid ""
 "Just register or log in to the service using your Vkontakte, Facebook or "
 "Twitter account."
 msgstr ""
 
-#: templates/tolmach/landing.html:273 templates/tolmach/new_landing.html:251
+#: templates/tolmach/landing.html:273
 msgid ""
 "If you don't like it – just log out of your account. But, we think you'll "
 "like it:)"
 msgstr ""
 
-#: templates/tolmach/landing.html:279 templates/tolmach/new_landing.html:257
+#: templates/tolmach/landing.html:279
 msgid "rubles you need to use the service."
 msgstr "为开始翻译一毛也不须"
 
-#: templates/tolmach/landing.html:285 templates/tolmach/new_landing.html:263
+#: templates/tolmach/landing.html:285
 msgid "that's how many fragments we have already translated"
 msgstr "我们已经翻译了这么多碎片"
 
-#: templates/tolmach/landing.html:291 templates/tolmach/new_landing.html:269
+#: templates/tolmach/landing.html:291
 msgid ""
 "the answer to the ultimate question of life, the universe and everything"
 msgstr "生命、宇宙以及任何事情的終極答案"
@@ -596,12 +594,12 @@ msgid "Copy"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:30
-#: templates/translations/partial/add_participant_modal.html:47
+#: templates/translations/partial/add_participant_modal.html:51
 msgid "or find one among the users of Tolma.ch:"
 msgstr ""
 
 #: templates/tolmach/partial/add_org_participant_modal.html:37
-#: templates/translations/partial/add_participant_modal.html:54
+#: templates/translations/partial/add_participant_modal.html:58
 msgid "Enter nick or name"
 msgstr "进入注册或名称"
 
@@ -742,7 +740,7 @@ msgid "admin"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:36
-#: templates/translations/partial/add_participant_modal.html:95
+#: templates/translations/partial/add_participant_modal.html:103
 #, fuzzy
 #| msgid "Add participant"
 msgid "Remove participant"
@@ -868,7 +866,7 @@ msgid "No"
 msgstr "否"
 
 #: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
-#: translations/views.py:223 translations/views.py:244
+#: translations/views.py:271 translations/views.py:292
 msgid "Statistics"
 msgstr "统计"
 
@@ -923,7 +921,7 @@ msgstr "私人"
 
 #: templates/tolmach/view_user.html:15
 #: templates/translations/partial/add_glossary_modal.html:88
-#: templates/translations/partial/add_participant_modal.html:61
+#: templates/translations/partial/add_participant_modal.html:65
 #: templates/translations/partial/add_project_translation_modal.html:29
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
@@ -961,7 +959,7 @@ msgstr "词库名称"
 msgid "Add participant"
 msgstr "添加参与者"
 
-#: templates/translations/partial/add_participant_modal.html:122
+#: templates/translations/partial/add_participant_modal.html:130
 msgid "Done"
 msgstr ""
 
@@ -1055,64 +1053,65 @@ msgstr "文档"
 
 #: templates/translations/partial/edit_text_modal.html:45
 #: templates/translations/partial/edit_text_modal.html:116
-#: templates/translations/project_stats.html:57
-#: templates/translations/project_stats.html:136
+#: templates/translations/project_stats.html:85
+#: templates/translations/project_stats.html:153
 #, fuzzy
 #| msgid "Fragment link"
 msgid "Fragments"
 msgstr "碎片链接"
 
 #: templates/translations/partial/edit_text_modal.html:49
-#: templates/translations/project_stats.html:61
+#: templates/translations/project_stats.html:89
 #, fuzzy
 #| msgid "Total"
 msgid "total"
 msgstr "总计"
 
 #: templates/translations/partial/edit_text_modal.html:50
-#: templates/translations/project_stats.html:62
+#: templates/translations/project_stats.html:90
 #, fuzzy
 #| msgid "Translate"
 msgid "translated"
 msgstr "翻译"
 
 #: templates/translations/partial/edit_text_modal.html:51
-#: templates/translations/project_stats.html:63
+#: templates/translations/project_stats.html:91
 msgid "approved"
 msgstr ""
 
 #: templates/translations/partial/edit_text_modal.html:61
-#: templates/translations/project_stats.html:73
+#: templates/translations/project_stats.html:113
 msgid "Characters in original"
 msgstr ""
 
 #: templates/translations/partial/edit_text_modal.html:65
 #: templates/translations/partial/edit_text_modal.html:79
 #: templates/translations/partial/edit_text_modal.html:117
-#: templates/translations/project_stats.html:77
-#: templates/translations/project_stats.html:91
-#: templates/translations/project_stats.html:137
+#: templates/translations/project_stats.html:105
+#: templates/translations/project_stats.html:117
+#: templates/translations/project_stats.html:131
+#: templates/translations/project_stats.html:155
 msgid "with spaces"
 msgstr ""
 
 #: templates/translations/partial/edit_text_modal.html:66
 #: templates/translations/partial/edit_text_modal.html:80
 #: templates/translations/partial/edit_text_modal.html:118
-#: templates/translations/project_stats.html:78
-#: templates/translations/project_stats.html:92
-#: templates/translations/project_stats.html:138
+#: templates/translations/project_stats.html:118
+#: templates/translations/project_stats.html:132
+#: templates/translations/project_stats.html:156
 msgid "without spaces"
 msgstr ""
 
 #: templates/translations/partial/edit_text_modal.html:75
-#: templates/translations/project_stats.html:87
+#: templates/translations/project_stats.html:127
 #, fuzzy
 #| msgid "Machine translations"
 msgid "Characters in translation"
 msgstr "机器翻译"
 
 #: templates/translations/partial/edit_text_modal.html:90
-#: templates/translations/project_stats.html:103
+#: templates/translations/project_stats.html:143
 msgid "Contribution by members"
 msgstr ""
 
@@ -1255,6 +1254,75 @@ msgstr "移除项目"
 #| msgid "Remove Project"
 msgid "Leave Project"
 msgstr "移除项目"
+
+#: templates/translations/project_stats.html:101
+msgid "Words in original"
+msgstr ""
+
+#: templates/translations/project_stats.html:154
+#, fuzzy
+#| msgid "Password"
+msgid "Words"
+msgstr "密码"
+
+#: templates/translations/project_stats.html:184
+#, fuzzy
+#| msgid "Machine translations"
+msgid ""
+"Fragments of original text, that have approved translations made by "
+"participant"
+msgstr "机器翻译"
+
+#: templates/translations/project_stats.html:187
+#, fuzzy
+#| msgid "Machine translations"
+msgid "All fragments created by participant"
+msgstr "机器翻译"
+
+#: templates/translations/project_stats.html:192
+msgid ""
+"Words of original text, that have approved translations made by participant"
+msgstr ""
+
+#: templates/translations/project_stats.html:195
+msgid "Words of translation text made by participant, that have been approved"
+msgstr ""
+
+#: templates/translations/project_stats.html:198
+msgid "Words of all translation text made by participant"
+msgstr ""
+
+#: templates/translations/project_stats.html:203
+msgid ""
+"Characters of original text, that have approved translations made by "
+"participant"
+msgstr ""
+
+#: templates/translations/project_stats.html:206
+msgid "Characters of translations made by participant, that have been approved"
+msgstr ""
+
+#: templates/translations/project_stats.html:209
+#, fuzzy
+#| msgid "Machine translations"
+msgid "Characters of all translations made by participant"
+msgstr "机器翻译"
+
+#: templates/translations/project_stats.html:214
+msgid ""
+"Characters of original text, that have approved translations made by "
+"participant (without spaces)"
+msgstr ""
+
+#: templates/translations/project_stats.html:217
+msgid ""
+"Characters of translations made by participant, that have been approved "
+"(without spaces)"
+msgstr ""
+
+#: templates/translations/project_stats.html:220
+msgid "Words of all translated text made by participant (without spaces)"
+msgstr ""
 
 #: templates/translations/projects.html:5
 msgid "My"
@@ -1422,9 +1490,9 @@ msgid "member"
 msgstr ""
 
 #: tolmach/views.py:153 tolmach/views.py:200 tolmach/views.py:235
-#: translations/decorators.py:63 translations/views.py:98
-#: translations/views.py:261 translations/views.py:263
-#: translations/views.py:277 translations/views.py:279
+#: translations/decorators.py:63 translations/views.py:132
+#: translations/views.py:309 translations/views.py:311
+#: translations/views.py:325 translations/views.py:327
 #: translations/views_ajax.py:66
 msgid "Sorry, no such project here!"
 msgstr ""
@@ -1494,8 +1562,8 @@ msgstr "未找到"
 msgid "Project id is not set"
 msgstr "项目类型未设置"
 
-#: translations/decorators.py:69 translations/views.py:42
-#: translations/views.py:43 translations/views.py:372
+#: translations/decorators.py:69 translations/views.py:76
+#: translations/views.py:77 translations/views.py:420
 msgid "Third-party projects"
 msgstr "第三方项目"
 
@@ -1516,31 +1584,31 @@ msgstr "该原语言暂时未支持"
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
-#: translations/views.py:146
+#: translations/views.py:180
 #, python-format
 msgid "<br>%(number_count)d action done"
 msgid_plural "<br>%(number_count)d actions done"
 msgstr[0] ""
 msgstr[1] ""
 
-#: translations/views.py:218 translations/views.py:313
+#: translations/views.py:266 translations/views.py:361
 msgid "Editor"
 msgstr "编辑"
 
-#: translations/views.py:219 translations/views.py:314
+#: translations/views.py:267 translations/views.py:362
 msgid "Translator"
 msgstr "翻译"
 
-#: translations/views.py:220 translations/views.py:315
+#: translations/views.py:268 translations/views.py:363
 msgid "Spectator"
 msgstr "观察者"
 
-#: translations/views.py:351 translations/views.py:353
-#: translations/views.py:442
+#: translations/views.py:399 translations/views.py:401
+#: translations/views.py:490
 msgid "Sorry, no such text here!"
 msgstr ""
 
-#: translations/views.py:448
+#: translations/views.py:496
 msgid "Sorry, no such page here!"
 msgstr ""
 

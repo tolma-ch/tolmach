@@ -168,6 +168,11 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
                                'translated_chars': 0,
                                'translated_chars_without_spaces': 0,
                                'users_translated': [], }
+
+    # Counting all the words in original texts of the project
+    pr_translation_progress['words_total'] = len(" ".join([x.body for x in TextEntry.objects.filter(text__project=pr, parent_entry=None)])
+        .split(" "))
+
     all_pr_texts = Text.objects.filter(project=pr)
     for text in all_pr_texts:
         clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
@@ -190,9 +195,18 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
                 if next((item for item in pr_translation_progress['users_translated'] if item["id"] == user["id"]), None):
                     for i in pr_translation_progress['users_translated']:
                         if i["id"] == user["id"]:
+                            i["fragments_translated"]["fragments_original"] += user["fragments_translated"]["fragments_original"]
+                            i["fragments_translated"]["fragments_approved"] += user["fragments_translated"]["fragments_approved"]
                             i["fragments_translated"]["fragments"] += user["fragments_translated"]["fragments"]
                             i["fragments_translated"]["chars_with_spaces"] += user["fragments_translated"]["chars_with_spaces"]
                             i["fragments_translated"]["chars_without_spaces"] += user["fragments_translated"]["chars_without_spaces"]
+                            i["fragments_translated"]["chars_with_spaces_approved"] += user["fragments_translated"]["chars_with_spaces_approved"]
+                            i["fragments_translated"]["chars_without_spaces_approved"] += user["fragments_translated"]["chars_without_spaces_approved"]
+                            i["fragments_translated"]["chars_with_spaces_original"] += user["fragments_translated"]["chars_with_spaces_original"]
+                            i["fragments_translated"]["chars_without_spaces_original"] += user["fragments_translated"]["chars_without_spaces_original"]
+                            i["fragments_translated"]["words_translated_original"] += user["fragments_translated"]["words_translated_original"]
+                            i["fragments_translated"]["words_translated_approved"] += user["fragments_translated"]["words_translated_approved"]
+                            i["fragments_translated"]["words_translated"] += user["fragments_translated"]["words_translated"]
                             continue
                 else:
                     user["last_seen"] = TextEntry.objects.filter(text__in=all_pr_texts, author_id=user['id']).latest("time_created").time_created

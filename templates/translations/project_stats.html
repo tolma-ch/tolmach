@@ -24,6 +24,34 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+        .stats-participant__name {
+            margin-left: 50px;
+        }
+        .stats-participant__date {
+            font-size: 11px;
+            color: #9aaab4;
+        }
+        td.participant-list {
+            text-align: left;
+        }
+        tr td {
+            text-align: center;
+        }
+        td > div {
+          position: relative;
+        }
+        span.approved {
+            color: green;
+            font-size: 12px;
+        }
+        span.original {
+            font-size: 22px;
+            display: block;
+        }
+        span.translated {
+            color: rgb(255, 217, 121);
+            font-size: 12px;
+        }
     </style>
     <div ng-controller="projectCtrl" ng-cloak class="project-page">
         <div class="page-header">
@@ -70,6 +98,15 @@
                         </table>
                     </div>
                     <br>
+                    <div class="document-stats__header">{% trans "Words in original" %}:</div>
+                    <div class="document-stats__numbers">
+                        <table class="document-stats__numbers__table">
+                            <tr>
+                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.words_total }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
                     <div class="document-stats__header">{% trans "Characters in original" %}:</div>
                     <div class="document-stats__numbers">
                         <table class="document-stats__numbers__table">
@@ -83,69 +120,107 @@
                             </tr>
                         </table>
                     </div>
-                    <br>
-                    <div class="document-stats__header">{% trans "Characters in translation" %}:</div>
-                    <div class="document-stats__numbers">
-                        <table class="document-stats__numbers__table">
-                            <tr>
-                                <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
-                                <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
-                            </tr>
-                            <tr>
-                            <tr>
-                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.translated_chars }}</td>
-                                <td class="document-stats__numbers__cell numbers-cell-third">{{ project_stats.translated_chars_without_spaces }}</td>
-                            </tr>
-                        </table>
-                    </div>
+{#                    <br>#}
+{#                    <div class="document-stats__header">{% trans "Characters in translation" %}:</div>#}
+{#                    <div class="document-stats__numbers">#}
+{#                        <table class="document-stats__numbers__table">#}
+{#                            <tr>#}
+{#                                <td class="document-stats__title__cell">{% trans "with spaces" %}</td>#}
+{#                                <td class="document-stats__title__cell">{% trans "without spaces" %}</td>#}
+{#                            </tr>#}
+{#                            <tr>#}
+{#                            <tr>#}
+{#                                <td class="document-stats__numbers__cell numbers-cell-first">{{ project_stats.translated_chars }}</td>#}
+{#                                <td class="document-stats__numbers__cell numbers-cell-third">{{ project_stats.translated_chars_without_spaces }}</td>#}
+{#                            </tr>#}
+{#                        </table>#}
+{#                    </div>#}
                     <br>
                     {% if project_stats.users_translated %}
                     <div class="document-stats__header">{% trans "Contribution by members" %}:</div>
                     {% endif %}
-                    {% for participant in project_stats.users_translated %}
-                    <div class="project-sidebar-participant">
-                        <div class="project-sidebar-participant__item" style="display: inline-block;">
-                            <div class="project-sidebar-participant__ava"
-                                   ng-class="{'project-sidebar-participant__ava': true,
-                                              'project-sidebar-participant__ava__owner': {{ participant.status }} == 10,
-                                              'project-sidebar-participant__ava__editor': {{ participant.status }} == 0,
-                                              'project-sidebar-participant__ava__translator': {{ participant.status }} == 1,
-                                              'project-sidebar-participant__ava__spectator': {{ participant.status }} == 2,}">
-                                <img src="/media/{{ participant.avatar }}" alt="{{ participant.name }}">
-                                <i aria-hidden="true"
-                                   ng-class="{'fa': true,
-                                              'fa-star': {{ participant.status }} == 10,
-                                              'fa-pencil-square-o': {{ participant.status }} == 0,
-                                              'fa-pencil': {{ participant.status }} == 1,
-                                              'fa-eye': {{ participant.status }} == 2,}"></i>
-                            </div>
-                            <div class="project-sidebar-participant__name " style="display: inline-block;">
-                                {{ participant.name }}
-                                <div class="translation-variant__date">
-                                    {{ participant.last_seen }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="project-sidebar-participant__translated">
-                            <table class="document-stats__numbers__table">
-                                {% if forloop.first %}
-                                <tr>
-                                {% else %}
-                                <tr class="invisiblerow">
-                                {% endif %}
-                                    <td class="document-stats__title__cell">{% trans "Fragments" %}</td>
-                                    <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
-                                    <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
-                                </tr>
-                                <tr>
-                                    <td class="document-stats__numbers__cell numbers-cell-first">{{ participant.fragments_translated.fragments }}</td>
-                                    <td class="document-stats__numbers__cell numbers-cell-first">{{ participant.fragments_translated.chars_with_spaces }}</td>
-                                    <td class="document-stats__numbers__cell numbers-cell-third">{{ participant.fragments_translated.chars_without_spaces }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                    {% endfor %}
+                    <table class="document-stats__numbers__table">
+                        {% for participant in project_stats.users_translated %}
+                            {% if forloop.first %}
+                            <tr>
+                            {% else %}
+                            <tr class="invisiblerow">
+                            {% endif %}
+                                <td class="document-stats__title__cell"></td>
+                                <td class="document-stats__title__cell">{% trans "Fragments" %}</td>
+                                <td class="document-stats__title__cell">{% trans "Words" %}</td>
+                                <td class="document-stats__title__cell">{% trans "with spaces" %}</td>
+                                <td class="document-stats__title__cell">{% trans "without spaces" %}</td>
+                            </tr>
+                            <tr>
+                                <td class="participant-list">
+                                    <div class="project-sidebar-participant__item" style="display: inline-block;">
+                                        <div class="project-sidebar-participant__ava"
+                                               ng-class="{'project-sidebar-participant__ava': true,
+                                                          'project-sidebar-participant__ava__owner': {{ participant.status }} == 10,
+                                                          'project-sidebar-participant__ava__editor': {{ participant.status }} == 0,
+                                                          'project-sidebar-participant__ava__translator': {{ participant.status }} == 1,
+                                                          'project-sidebar-participant__ava__spectator': {{ participant.status }} == 2,}">
+                                            <img src="/media/{{ participant.avatar }}" alt="{{ participant.name }}">
+                                            <i aria-hidden="true"
+                                               ng-class="{'fa': true,
+                                                          'fa-star': {{ participant.status }} == 10,
+                                                          'fa-pencil-square-o': {{ participant.status }} == 0,
+                                                          'fa-pencil': {{ participant.status }} == 1,
+                                                          'fa-eye': {{ participant.status }} == 2,}"></i>
+                                        </div>
+                                        <div class="stats-participant__name" style="display: inline-block;">
+                                            {{ participant.name }}
+                                            <div class="stats-participant__date">
+                                                {{ participant.last_seen }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="document-stats__numbers__cell numbers-cell-first">
+                                    <span class="original"><abbr title="{% trans "Fragments of original text, that have approved translations made by participant" %}">
+                                        {{ participant.fragments_translated.fragments_original }}
+                                    </abbr></span>
+                                    <span class="translated"><abbr title="{% trans "All fragments created by participant" %}">
+                                        {{ participant.fragments_translated.fragments }}
+                                    </abbr></span>
+                                </td>
+                                <td class="document-stats__numbers__cell numbers-cell-second">
+                                    <span class="original"><abbr title="{% trans "Words of original text, that have approved translations made by participant" %}">
+                                        {{ participant.fragments_translated.words_translated_original }}
+                                    </abbr></span>
+                                    <span class="approved"><abbr title="{% trans "Words of translation text made by participant, that have been approved" %}">
+                                        {{ participant.fragments_translated.words_translated_approved }}
+                                    </abbr></span> /
+                                    <span class="translated"><abbr title="{% trans "Words of all translation text made by participant" %}">
+                                        {{ participant.fragments_translated.words_translated }}
+                                    </abbr></span>
+                                </td>
+                                <td class="document-stats__numbers__cell numbers-cell-third">
+                                    <span class="original"><abbr title="{% trans "Characters of original text, that have approved translations made by participant" %}">
+                                        {{ participant.fragments_translated.chars_with_spaces_original }}
+                                    </abbr></span>
+                                    <span class="approved"><abbr title="{% trans "Characters of translations made by participant, that have been approved" %}">
+                                        {{ participant.fragments_translated.chars_with_spaces_approved }}
+                                    </abbr></span> /
+                                    <span class="translated"><abbr title="{% trans "Characters of all translations made by participant" %}">
+                                        {{ participant.fragments_translated.chars_with_spaces }}
+                                    </abbr></span>
+                                </td>
+                                <td class="document-stats__numbers__cell numbers-cell-fourth">
+                                    <span class="original"><abbr title="{% trans "Characters of original text, that have approved translations made by participant (without spaces)" %}">
+                                        {{ participant.fragments_translated.chars_without_spaces_original }}
+                                    </abbr></span>
+                                    <span class="approved"><abbr title="{% trans "Characters of translations made by participant, that have been approved (without spaces)" %}">
+                                        {{ participant.fragments_translated.chars_without_spaces_approved }}
+                                    </abbr></span> /
+                                    <span class="translated"><abbr title="{% trans "Words of all translated text made by participant (without spaces)" %}">
+                                        {{ participant.fragments_translated.chars_without_spaces }}
+                                    </abbr></span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
             </div>
             <div class="col-sm-2"></div>
