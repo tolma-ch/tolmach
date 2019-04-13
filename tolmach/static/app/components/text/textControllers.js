@@ -999,11 +999,13 @@
                     return;
                 }
                 if (code === 27) {
-                    if ($scope.activeEntry) {
-                        if ($scope.activeEntry.editing) {
-                            $scope.cancelEditing($scope.activeEntry);
-                        } else {
-                            $scope.toggleEntry($scope.activeEntry);
+                    if (!document.activeElement.classList.contains('search-btn__input')) { // allowing to close search bar without closing active entry
+                        if ($scope.activeEntry) {
+                            if ($scope.activeEntry.editing) {
+                                $scope.cancelEditing($scope.activeEntry);
+                            } else {
+                                $scope.toggleEntry($scope.activeEntry);
+                            }
                         }
                     }
                 }
