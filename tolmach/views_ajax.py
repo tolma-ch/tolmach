@@ -147,23 +147,43 @@ def global_search_ajax(request):
     import math
     import textwrap
 
-    from translations.models import Text, TextTranslation, TextEntry
-    if request.GET['textId'] == 0:
+    from translations.models import Text, TextTranslation, TextEntry, Project, ProjectTranslation
+    text_id = int(request.GET.get('textId', 0))
+    if text_id == 0:
         return HttpResponse(json.dumps([]), content_type="application/json")
     # TODO: сделать проверку на доступ пользователя к документу, по которому ищем
-    text_id = int(request.GET['textId'])
-    r = request.GET['q'] if 'q' in request.GET else False
+    # text_id = int(request.GET['textId'])
+    # r = request.GET['q'] if 'q' in request.GET else False
+    r = request.GET.get('q', False)
+
+    # Searching through the current document
     text_tr = TextTranslation.objects.get(target_lang__code=request.GET['targetLang'], text__id=text_id)
     if r:
-        entries = TextEntry.objects.filter(
+        document_entries = TextEntry.objects.filter(
             Q(body__icontains=r),
             Q(text__id=text_id),
             Q(translation=text_tr) | Q(parent_entry=None)
         )[:10]
+        project = Text.objects.get(id=text_id).project
+        all_other_project_texts_ids = [x.id for x in Text.objects.filter(project=project) if x.id != text_id]
+        proj_tr = ProjectTranslation.objects.get(project=project, target_lang__code=request.GET['targetLang'])
+        all_other_text_translation_ids = [
+            x.id for x in TextTranslation.objects.filter(
+                project_translation=proj_tr,
+                text__id__in=all_other_project_texts_ids
+            )
+        ]
+        project_entries = TextEntry.objects.filter(
+            Q(body__icontains=r),
+            Q(text__id__in=all_other_project_texts_ids),
+            Q(translation__id__in=all_other_text_translation_ids) | Q(parent_entry=None)
+        )[:10]
     else:
         entries = User.objects.all()[:5]
+        document_entries = []
+        project_entries = []
     result = []
-    for ent in entries:
+    for ent in document_entries:
         searched_text = ent.body
         fragment = int(ent.id_in_text if ent.id_in_text > 0 else ent.parent_entry.id_in_text)
         page = math.ceil(fragment/100)
@@ -173,7 +193,21 @@ def global_search_ajax(request):
             'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=50),
             'type': "fragment",
             'link': "/text/%d/ru/#?page=%d&fragment=%d" % (text_id, page, fragment),
-            'additional_data': {'page': page, 'fragment': fragment}
+            'additional_data': {'page': page, 'fragment': fragment},
+            'block': 'document'
+        })
+    for ent in project_entries:
+        searched_text = ent.body
+        fragment = int(ent.id_in_text if ent.id_in_text > 0 else ent.parent_entry.id_in_text)
+        page = math.ceil(fragment/100)
+        result.append({
+            'id': ent.id,
+            'searched_text': textwrap.shorten(text=searched_text, width=100),
+            'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=50),
+            'type': "fragment",
+            'link': "/text/%d/ru/#?page=%d&fragment=%d" % (ent.text.id, page, fragment),
+            'additional_data': {'page': page, 'fragment': fragment, 'document_name': ent.text.title},
+            'block': 'project'
         })
 
     # r = request.GET['q'] if 'q' in request.GET else False

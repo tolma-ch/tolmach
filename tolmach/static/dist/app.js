@@ -2561,11 +2561,13 @@
                     return;
                 }
                 if (code === 27) {
-                    if ($scope.activeEntry) {
-                        if ($scope.activeEntry.editing) {
-                            $scope.cancelEditing($scope.activeEntry);
-                        } else {
-                            $scope.toggleEntry($scope.activeEntry);
+                    if (!document.activeElement.classList.contains('search-btn__input')) { // allowing to close search bar without closing active entry
+                        if ($scope.activeEntry) {
+                            if ($scope.activeEntry.editing) {
+                                $scope.cancelEditing($scope.activeEntry);
+                            } else {
+                                $scope.toggleEntry($scope.activeEntry);
+                            }
                         }
                     }
                 }
@@ -3374,15 +3376,6 @@
                 }).error(function (data) {
                 })
             };
-            try {
-                $scope.sidebarCollapsed = angular.fromJson(sessionStorage.sidebarCollapsed);
-            } catch (e) {
-                $scope.sidebarCollapsed = false;
-            }
-            $scope.toggleSidebar = function () {
-                $scope.sidebarCollapsed = !$scope.sidebarCollapsed;
-                sessionStorage.sidebarCollapsed = angular.toJson($scope.sidebarCollapsed);
-            };
             $scope.showAllMessages = function () {
                 var modalInstance = $uibModal.open({
                     templateUrl: 'allMessagesModal.html',
@@ -3402,7 +3395,7 @@
             $scope.globalSearch = function (query) {
                 $scope.searchTextId = window['textId'] !== undefined ? window['textId'] : 0;
                 $scope.searchTargetLang = window['translationTargetLang'] !== undefined ? window['translationTargetLang'] : 'none';
-                return $http.get('/ajax/search', {params: {q: query,
+                return $http.get('/ajax/search/', {params: {q: query,
                                                            textId: $scope.searchTextId,
                                                            targetLang: $scope.searchTargetLang}})
                     .then(function (response) {
@@ -3413,11 +3406,11 @@
                 $scope.$item = $item;
                 $scope.$model = $model;
                 $scope.$label = $label;
-                console.log($scope.item);
+                console.log($scope.$item);
                 window.location = $scope.$item.link;
 
                 // only needed when updating angular-routed urls including "#"
-                if ($scope.$item.link.includes("#")) {
+                if ($scope.$item.link.includes("/text/"+window['textId']+"/")) {
                     window.location.reload(true);
                 }
             };
@@ -3592,6 +3585,26 @@
             $scope.mouseup = function (event) {
                 $scope.$broadcast('GlobalMouseup', event);
             };
+
+            $scope.lastKeysPressed = [];
+            $scope.$on('GlobalKeydown', function (e, event) {
+                console.log($scope.lastKeysPressed);
+                var code = event.keyCode ? event.keyCode : event.which;
+                $scope.lastKeysPressed.push(code);
+                $scope.lastKeysPressed = $scope.lastKeysPressed.slice(-2);
+                if ($scope.lastKeysPressed[0] === 16 && $scope.lastKeysPressed[1] === 16) { // Double-shift press
+                    $scope.lastKeysPressed = [];
+                    $scope.showSearch = true;
+                    setTimeout(function () {
+                        $('.search-btn__input').focus();
+                    }, 10);
+                }
+                if (code === 27) {
+                    if ($scope.showSearch) {
+                        $scope.showSearch = false;
+                    }
+                }
+            });
 
             $scope.changeLanguage = function (language) {
                 $http({

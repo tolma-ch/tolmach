@@ -6,6 +6,38 @@
 {% trans 'See all messages' as messages %}
 {% trans 'Language' as language %}
 {% include "tolmach/partial/global_search_typeahead_template.html" %}
+<style>
+  .custom-popup-wrapper {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      display: none;
+      background-color: #f9f9f9;
+      box-shadow: 0 0 10px #1111116b;
+  }
+
+  .custom-popup-wrapper > .message {
+      padding: 0px 10px;
+      border-bottom: 1px solid #ddd;
+      color: #868686;
+      line-height: 23px;
+      font-size: 11px;
+      margin-bottom: 0px;
+  }
+
+  .custom-popup-wrapper > .dropdown-menu {
+      position: static;
+      float: none;
+      display: block;
+      min-width: 160px;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0px;
+  }
+</style>
 <ul class="navbar-nav pull-right">
     <div class="search-btn"
          ng-show="pagesCount !== undefined"
@@ -17,7 +49,7 @@
                focus-me="focusSearchInput"
                ng-blur="!searchText && (showSearch = false)"
                uib-typeahead="searchText as searchText.searched_text for searchText in globalSearch($viewValue)"
-               typeahead-template-url="globalSearchTypeaheadTemplate.html"
+               typeahead-popup-template-url="globalSearchTypeaheadTemplate.html"
                typeahead-on-select="onSearchSelect($item, $model, $label)">
         <i class="fa fa-search"
            ng-click="showSearch = true; focusSearchInput = true"></i>
