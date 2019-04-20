@@ -1,35 +1,12 @@
 (function () {
     'use strict';
 
-    var module = angular.module('profileControllers', []);
+    var module = angular.module('settingsControllers', []);
 
-    module.controller('ProfileCtrl', ['$scope', '$uibModal',
-        function ($scope, $uibModal) {
+    module.controller('settingsCtrl', ['$scope', '$http', 'localStorageService',
+        function ($scope, $http, localStorageService) {
             $scope.userData = window['userData'];
-            $scope.editProfile = function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: 'editProfileModal.html',
-                    controller: 'EditProfileModalCtrl',
-                    size: 'md',
-                    backdrop: 'static',
-                    resolve: {
-                        'userData': function () {
-                            return $scope.userData;
-                        }
-                    }
-                });
 
-                modalInstance.result.then(function (userData) {
-                    $scope.userData = userData;
-                }, function () {
-
-                });
-            };
-        }
-    ]);
-
-    var controller = module.controller('EditProfileModalCtrl', ['$scope', '$uibModalInstance', '$http', 'userData',
-        function ($scope, $uibModalInstance, $http, userData) {
             $scope.cropper = {};
             $scope.cropper.sourceImage = null;
             $scope.cropper.croppedImage   = null;
@@ -41,7 +18,7 @@
 
             $scope.error = '';
             $scope.userData = userData;
-            $scope.ok = function () {
+            $scope.saveProfile = function () {
                 $scope.busy = true;
                 $scope.error = '';
                 $http.post('/ajax/user/', $scope.userData)
@@ -53,10 +30,10 @@
                                 })
                                 .error(function() {
                                     $scope.busy = false;
-                                    $uibModalInstance.close(data);
+                                    // $uibModalInstance.close(data);
                                 });
                         } else {
-                            $uibModalInstance.close(data);
+                            // $uibModalInstance.close(data);
                         }
                         location.reload();
                     })
@@ -67,9 +44,15 @@
                     });
             };
 
-            $scope.cancel = function () {
-                $uibModalInstance.dismiss('cancel');
+            $scope.textTab = 0;
+            $scope.minFontSize = 10;
+            $scope.maxFontSize = 26;
+            $scope.increaseFontSize = 15;
+            $scope.newFontSize = function () {
+                console.log($scope.increaseFontSize);
+                localStorageService.set('customFontSize', $scope.increaseFontSize);
             };
         }
     ]);
+
 }());

@@ -8,7 +8,7 @@
         'ui.toggle',
         'ngClickCopy',
         'mainModule',
-        'profileModule',
+        'settingsModule',
         'projectModule',
         'projectsModule',
         'organizationsModule',
@@ -580,88 +580,6 @@
     var module = angular.module('organizationsModule', [
         'ui.bootstrap',
         'organizationsControllers'
-    ]);
-}());;(function () {
-    'use strict';
-
-    var module = angular.module('profileControllers', []);
-
-    module.controller('ProfileCtrl', ['$scope', '$uibModal',
-        function ($scope, $uibModal) {
-            $scope.userData = window['userData'];
-            $scope.editProfile = function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: 'editProfileModal.html',
-                    controller: 'EditProfileModalCtrl',
-                    size: 'md',
-                    backdrop: 'static',
-                    resolve: {
-                        'userData': function () {
-                            return $scope.userData;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function (userData) {
-                    $scope.userData = userData;
-                }, function () {
-
-                });
-            };
-        }
-    ]);
-
-    var controller = module.controller('EditProfileModalCtrl', ['$scope', '$uibModalInstance', '$http', 'userData',
-        function ($scope, $uibModalInstance, $http, userData) {
-            $scope.cropper = {};
-            $scope.cropper.sourceImage = null;
-            $scope.cropper.croppedImage   = null;
-            $scope.bounds = {};
-            $scope.bounds.left = 0;
-            $scope.bounds.right = 0;
-            $scope.bounds.top = 0;
-            $scope.bounds.bottom = 0;
-
-            $scope.error = '';
-            $scope.userData = userData;
-            $scope.ok = function () {
-                $scope.busy = true;
-                $scope.error = '';
-                $http.post('/ajax/user/', $scope.userData)
-                    .success(function(data) {
-                        if ($scope.cropper.croppedImage) {
-                            $http.post('/ajax/user/', JSON.stringify($scope.cropper.croppedImage))
-                                .success(function() {
-                                    location.reload();
-                                })
-                                .error(function() {
-                                    $scope.busy = false;
-                                    $uibModalInstance.close(data);
-                                });
-                        } else {
-                            $uibModalInstance.close(data);
-                        }
-                        location.reload();
-                    })
-                    .error(function(data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                        //$uibModalInstance.close();
-                    });
-            };
-
-            $scope.cancel = function () {
-                $uibModalInstance.dismiss('cancel');
-            };
-        }
-    ]);
-}());;(function () {
-    'use strict';
-
-    angular.module('profileModule', [
-        'ui.bootstrap',
-        'angular-img-cropper',
-        'profileControllers'
     ]);
 }());;(function () {
     'use strict';
@@ -1563,6 +1481,71 @@
 }());;(function () {
     'use strict';
 
+    var module = angular.module('settingsControllers', []);
+
+    module.controller('settingsCtrl', ['$scope', '$http', 'localStorageService',
+        function ($scope, $http, localStorageService) {
+            $scope.userData = window['userData'];
+
+            $scope.cropper = {};
+            $scope.cropper.sourceImage = null;
+            $scope.cropper.croppedImage   = null;
+            $scope.bounds = {};
+            $scope.bounds.left = 0;
+            $scope.bounds.right = 0;
+            $scope.bounds.top = 0;
+            $scope.bounds.bottom = 0;
+
+            $scope.error = '';
+            $scope.userData = userData;
+            $scope.saveProfile = function () {
+                $scope.busy = true;
+                $scope.error = '';
+                $http.post('/ajax/user/', $scope.userData)
+                    .success(function(data) {
+                        if ($scope.cropper.croppedImage) {
+                            $http.post('/ajax/user/', JSON.stringify($scope.cropper.croppedImage))
+                                .success(function() {
+                                    location.reload();
+                                })
+                                .error(function() {
+                                    $scope.busy = false;
+                                    // $uibModalInstance.close(data);
+                                });
+                        } else {
+                            // $uibModalInstance.close(data);
+                        }
+                        location.reload();
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                        //$uibModalInstance.close();
+                    });
+            };
+
+            $scope.textTab = 0;
+            $scope.minFontSize = 10;
+            $scope.maxFontSize = 26;
+            $scope.increaseFontSize = 15;
+            $scope.newFontSize = function () {
+                console.log($scope.increaseFontSize);
+                localStorageService.set('customFontSize', $scope.increaseFontSize);
+            };
+        }
+    ]);
+
+}());;(function () {
+    'use strict';
+
+    angular.module('settingsModule', [
+        'ui.bootstrap',
+        'angular-img-cropper',
+        'settingsControllers'
+    ]);
+}());;(function () {
+    'use strict';
+
     var module = angular.module('textControllers', []);
 
     module.controller('transCtrl', ['$rootScope', '$scope', '$sce', '$http', '$location', '$timeout', '$uibModal', 'localStorageService',
@@ -1572,6 +1555,15 @@
             $scope.userMembershipStatus = window['userMembershipStatus'];
             $scope.currentTextId = window['textId'];
             $scope.currentTargetLang = window['translationTargetLang'];
+
+            $scope.customFontSize = localStorageService.get('customFontSize') || false;
+
+            $scope.minFontSize = 10;
+            $scope.maxFontSize = 26;
+            $scope.increaseFontSize = 15;
+            $scope.getNewFontSize = function () {
+                return 15 + increaseFontSize;
+            };
 
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];

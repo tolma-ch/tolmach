@@ -3,6 +3,7 @@
 {% trans 'invited you to the project' as invitation %}
 {% trans 'pitched you out of the project' as uninvitation %}
 {% trans 'Logout' as logout %}
+{% trans 'Settings' as settings %}
 {% trans 'See all messages' as messages %}
 {% trans 'Language' as language %}
 {% include "tolmach/partial/global_search_typeahead_template.html" %}
@@ -202,7 +203,12 @@
                     </li>
                 </ul>
             </li>
-
+            <li>
+                <a href="/settings/">
+                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                    {{ settings }}
+                </a>
+            </li>
             <li class="divider">
 
             </li>

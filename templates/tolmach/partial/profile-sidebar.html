@@ -2,47 +2,46 @@
 
 {% block personalinfo %}
 <div class="user-sidebar">
-	<div class="user-sidebar__photo">
+    <div class="user-sidebar__photo">
         {% if usermeta.avatar %}
-		    <img class="user-sidebar__img" src="/media/{{ usermeta.avatar }}">
+            <img class="user-sidebar__img" src="/media/{{ usermeta.avatar }}">
         {% else %}
             <img class="user-sidebar__img" src="/media/avatar/default.png">
         {% endif %}
-	</div>
+    </div>
 
-	<div class="user-sidebar__info">
-		<div class="user-sidebar__username">{% if profileType == "organization" %}<i class="fa fa-sitemap" aria-hidden="true"></i>{% endif %} {{ userData_clean.firstName }} {{ userData_clean.lastName }}</div>
-		<div class="user-sidebar__nickname">{{ userData_clean.username }}</div>
-		<!--<div class="user-sidebar__location">-->
-			<!--<i class="fa fa-map-marker"></i>-->
-			<!--Irkutsk, Russia-->
-		<!--</div>-->
-	</div>
+    <div class="user-sidebar__info">
+        <div class="user-sidebar__username">{% if profileType == "organization" %}<i class="fa fa-sitemap" aria-hidden="true"></i>{% endif %} {{ userData_clean.firstName }} {{ userData_clean.lastName }}</div>
+        <div class="user-sidebar__nickname">{{ userData_clean.username }}</div>
+        <!--<div class="user-sidebar__location">-->
+            <!--<i class="fa fa-map-marker"></i>-->
+            <!--Irkutsk, Russia-->
+        <!--</div>-->
+    </div>
 
-	<!--<div class="user-sidebar__socials">-->
-		<!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_vk"></a>-->
-		<!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_gp"></a>-->
-		<!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_tw"></a>-->
-		<!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_fb"></a>-->
-	<!--</div>-->
+    <!--<div class="user-sidebar__socials">-->
+        <!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_vk"></a>-->
+        <!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_gp"></a>-->
+        <!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_tw"></a>-->
+        <!--<a href="#" target="__blank" class="user-sidebar__social-icon user-sidebar__social-icon_fb"></a>-->
+    <!--</div>-->
 
-	<div class="user-sidebar__profile">
-		<div class="user-sidebar__profile-line" ng-if="userData.website">
-			<span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
-			<a class="user-sidebar__profile-line-data" href="" target="__blank">{{ userData_clean.website }}</a>
-		</div>
-		<div class="user-sidebar__profile-line">
-            <a class="user-sidebar__profile-line-title helped-block" href="" target="__blank" help-text="{% trans "Click this button to edit your name and change profile picture" %}"
-               ng-click="editProfile()">
+    <div class="user-sidebar__profile">
+        <div class="user-sidebar__profile-line">
+            <span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
+            <a class="user-sidebar__profile-line-data" href="" target="__blank">{{ userData_clean.website }}</a>
+        </div>
+        <div class="user-sidebar__profile-line">
+            <a class="user-sidebar__profile-line-title helped-block" href="/settings/profile/" help-text="{% trans "Click this button to edit your name and change profile picture" %}">
                 <i class="fa fa-cog"></i> {% trans "Edit Profile" %}
             </a>
         </div>
 
 
 
-		<!--<a class="user-sidebar__profile-line user-sidebar__profile-edit" href="">-->
-			<!--<i class="fa fa-gear">Edit profile</i>-->
-		<!--</a>-->
-	</div>
+        <!--<a class="user-sidebar__profile-line user-sidebar__profile-edit" href="">-->
+            <!--<i class="fa fa-gear">Edit profile</i>-->
+        <!--</a>-->
+    </div>
 </div>
 {% endblock %}

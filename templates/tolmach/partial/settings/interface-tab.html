@@ -1,0 +1,603 @@
+{% extends "tolmach/settings.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+                {% block tab-content %}
+{% trans 'Original' as original_text %}
+{% trans 'Translation' as translated_text %}
+{% trans 'Font size:' as font_size_label %}
+    <style>
+        .text-overview__font-size {
+            display: inline-block;
+            position: relative;
+            top: 7px;
+        }
+
+        /**
+         * Text Slider Directive - CSS
+         **/
+        .text-size-slider {
+            line-height: 100%;
+            font-size: 14px;
+            display: inline-block;
+            width: 240px;
+        }
+        .text-size-title {
+            display: inline-block;
+            font-size: 110%;
+            margin-right: 50px;
+        }
+
+        .text-size-slider .small-letter,.text-size-slider .big-letter
+        {
+          font-weight: bold;
+        }
+
+        .text-size-slider .slider {
+          {#-webkit-appearance: none;#}
+          {#margin: 0 8px;#}
+            display: inline-block;
+            width: 200px;
+        }
+
+        .text-size-slider .slider:focus {
+          outline: none;
+        }
+        .text-overview__night-mode__switch {
+            display: inline-block;
+        }
+    </style>
+    <div class="text-overview__font-size">
+        <div class="text-size-title">
+            <span>{{ font_size_label }}</span>
+        </div>
+        <div class="text-size-slider">
+            <span class="small-letter" ng-style="{ fontSize: minFontSize + 'px' }">A</span>
+            <input type="range"
+                   min="{= minFontSize =}" max="{= maxFontSize =}" step="1"
+                   ng-model="increaseFontSize" ng-change="newFontSize()"
+                   class="slider"
+                   value="0" />
+            <span class="big-letter" ng-style="{ fontSize: maxFontSize + 'px' }">A</span>
+        </div>
+    </div>
+    <div class="workbench-layout" style="height: 500px;">
+
+        <div class="workbench-layout__row row" style="box-shadow: none;">
+            <div class="workbench-layout__col col-sm-6" id="translation-text" style="width: 100%;">
+                <div class="text-overview">
+                    <div class="text-overview__table">
+                        <div class="text-overview__row text-overview__row_thin">
+                            <div class="text-overview__cell">
+                                <div class="text-overview__switcher">
+                                    <link href="{% static 'assets/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.css' %}" rel="stylesheet">
+                                    <style>
+                                        .toggle.android {
+                                            border-radius: 0px;
+                                            border-width: 1px;
+                                            min-width: 115px;
+                                        }
+                                        .toggle .btn-primary {
+                                            background-color: #438EB9 !important;
+                                        }
+                                         .toggle.android .toggle-handle {
+                                             border-radius: 0px;
+                                             border-width: 1px;
+                                        }
+                                        .dict-btn {
+                                          /*border: 0 !important;*/
+                                          color: #777676 !important;
+                                          background-color: #f5f5f5 !important;
+                                          border: none;
+                                          font-size: large;
+                                          line-height: 22px;
+                                        }
+                                        .dict-btn:active {
+                                            top: 0px !important;
+                                            left: 0px !important;
+                                            background-color: #E4E4E4 !important;
+                                            border: none;
+                                            box-shadow: inset 0 0 3px 0px rgba(0, 0, 0, 0.5) !important;
+                                        }
+                                        .dict-btn:hover {
+                                            background-color: #E4E4E4 !important;
+                                            border: none;
+                                        }
+                                    </style>
+                                    <toggle ng-model="textTab" ng-change="changed()"
+                                            on="{{ translated_text }}"
+                                            off="{{ original_text }}"
+                                            size="btn-sm"
+                                            style="android"></toggle>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-overview__row">
+                            <div class="text-overview__cell">
+                                <div class="text-overview__content" id="result-container">
+                                    <span ng-style="{'font-size': increaseFontSize + 'px'}">
+                                        <span id="res-entry-1" class="approved">
+                                            <span
+                                                ng-show="textTab == 0">В начале июля, в чрезвычайно жаркое время, под вечер, один молодой человек вышел из своей каморки, которую нанимал от жильцов в С — м переулке, на улицу и медленно, как бы в нерешимости, отправился к К — ну мосту.</span>
+                                            <span
+                                                ng-show="textTab == 1">在七月初，极热天气、傍晚，一个年轻人来到了他的房间，这是租的租户在s—车道，街道上的和缓慢的，因为如果不确定该怎么做，去到—好的桥梁。</span>
+                                        </span>
+                                    </span>
+                                    <br>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span
+                                        ng-click="focusEntry(2)" id="res-entry-2"
+                                        ng-class="{active: activeEntry.idInText === 2,approved: entriesById[2].approved,disabled: entriesById[2].disabled}"
+                                        class="approved"><span ng-show="textTab == 0">Он благополучно избегнул встречи с своею хозяйкой на лестнице.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">他已经成功地避免了会议，他的房东太太上台阶。</span></span></span>
+                                    <span ng-style="{'font-size': increaseFontSize + 'px'}" ng-class="{active: activeEntry.idInText === 3,approved: entriesById[3].approved,disabled: entriesById[3].disabled}"
+                                                                              class="approved"><span
+                                        ng-show="textTab == 0">Каморка его приходилась под самою кровлей высокого пятиэтажного дома и походила более на шкаф, чем на квартиру.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">Cubby有自己的屋顶下一个较高，五层楼高的房子，并更像一个柜子比一个房间。</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(4)"
+                                                                                id="res-entry-4"
+                                                                                ng-class="{active: activeEntry.idInText === 4,approved: entriesById[4].approved,disabled: entriesById[4].disabled}"
+                                                                                class="approved"><span
+                                            ng-show="textTab == 0">Квартирная же хозяйка его, у которой он нанимал эту каморку с обедом и прислугой, помещалась одною лестницей ниже, в отдельной квартире, и каждый раз, при выходе на улицу, ему непременно надо было проходить мимо хозяйкиной кухни, почти всегда настежь отворенной на лестницу.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">公寓的女主人他是谁，他雇了一个小房间用餐和公务员，放置一下楼梯，在一个单独的公寓，而每一次，当进入大街上，他不得不通他的房东太太的厨房，几乎总是敞开的楼梯上。</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(5)"
+                                                                                id="res-entry-5"
+                                                                                ng-class="{active: activeEntry.idInText === 5,approved: entriesById[5].approved,disabled: entriesById[5].disabled}"
+                                                                                class="approved"><span
+                                            ng-show="textTab == 0">И каждый раз молодой человек, проходя мимо, чувствовал какое-то болезненное и трусливое ощущение, которого стыдился и от которого морщился.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">每一次的年轻人通过，感觉体弱多病和懦弱的感觉是，她感到羞愧，而畏缩。</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(6)"
+                                                                                id="res-entry-6"
+                                                                                ng-class="{active: activeEntry.idInText === 6,approved: entriesById[6].approved,disabled: entriesById[6].disabled}"
+                                                                                class="approved"><span
+                                            ng-show="textTab == 0">Он был должен кругом хозяйке и боялся с нею встретиться.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">他是无可救药的债务给他的房东，并且是害怕会她。</span></span></span><br
+                                        class="ng-scope">
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span
+                                        ng-click="focusEntry(7)" id="res-entry-7"
+                                        ng-class="{active: activeEntry.idInText === 7,approved: entriesById[7].approved,disabled: entriesById[7].disabled}"
+                                        class="approved"><span ng-show="textTab == 0">Не то чтоб он был так труслив и забит, совсем даже напротив; но с некоторого времени он был в раздражительном и напряженном состоянии, похожем на ипохондрию.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">不，他是懦弱和赤贫，恰恰相反；但对于一段时间，他已经在一个暴躁过度紧张状况，近乎疑病症的。</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(8)"
+                                                                                id="res-entry-8"
+                                                                                ng-class="{active: activeEntry.idInText === 8,approved: entriesById[8].approved,disabled: entriesById[8].disabled}"><span
+                                            ng-show="textTab == 0">Он до того углубился в себя и уединился от всех, что боялся даже всякой встречи, не только встречи с хозяйкой.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">Он до того углубился в себя и уединился от всех, что боялся даже всякой встречи, не только встречи с хозяйкой.</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(9)"
+                                                                                id="res-entry-9"
+                                                                                ng-class="{active: activeEntry.idInText === 9,approved: entriesById[9].approved,disabled: entriesById[9].disabled}"><span
+                                            ng-show="textTab == 0">Он был задавлен бедностью; но даже стесненное положение перестало в последнее время тяготить его.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">Он был задавлен бедностью; но даже стесненное положение перестало в последнее время тяготить его.</span></span></span>
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(10)"
+                                                                                 id="res-entry-10"
+                                                                                 ng-class="{active: activeEntry.idInText === 10,approved: entriesById[10].approved,disabled: entriesById[10].disabled}"
+                                                                                 class="approved"><span
+                                            ng-show="textTab == 0">Насущными делами своими он совсем перестал и не хотел заниматься.</span><span
+                                            ng-show="textTab == 1"
+                                            class="ng-binding">按他的事，他停止了，不想做的事。</span></span></span>
+                                    <span
+                                        class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(11)"
+                                                                               id="res-entry-11"
+                                                                               ng-class="{active: activeEntry.idInText === 11,approved: entriesById[11].approved,disabled: entriesById[11].disabled}"
+                                                                               class="approved"><span
+                                        ng-show="textTab == 0">Никакой хозяйки, в сущности, он не боялся, что бы та ни замышляла против него.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">没有女主人，实际上，他并不害怕，她会怎么任何阴谋反对他。</span></span></span>
+                                    <span
+                                        class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span ng-click="focusEntry(12)"
+                                                                               id="res-entry-12"
+                                                                               ng-class="{active: activeEntry.idInText === 12,approved: entriesById[12].approved,disabled: entriesById[12].disabled}"><span
+                                        ng-show="textTab == 0">Но останавливаться на лестнице, слушать всякий вздор про всю эту обыденную дребедень, до которой ему нет никакого дела, все эти приставания о платеже, угрозы, жалобы, и при этом самому изворачиваться, извиняться, лгать, — нет уж, лучше проскользнуть как-нибудь кошкой по лестнице и улизнуть, чтобы никто не видал.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">Но останавливаться на лестнице, слушать всякий вздор про всю эту обыденную дребедень, до которой ему нет никакого дела, все эти приставания о платеже, угрозы, жалобы, и при этом самому изворачиваться, извиняться, лгать, — нет уж, лучше проскользнуть как-нибудь кошкой по лестнице и улизнуть, чтобы никто не видал.</span></span></span><br
+                                        class="ng-scope">
+                                    <span class="ng-scope" ng-style="{'font-size': increaseFontSize + 'px'}"><span
+                                        ng-click="focusEntry(13)" id="res-entry-13"
+                                        ng-class="{active: activeEntry.idInText === 13,approved: entriesById[13].approved,disabled: entriesById[13].disabled}"><span
+                                        ng-show="textTab == 0">Впрочем, на этот раз страх встречи с своею кредиторшей даже его самого поразил по выходе на улицу.</span><span
+                                        ng-show="textTab == 1"
+                                        class="ng-binding">Впрочем, на этот раз страх встречи с своею кредиторшей даже его самого поразил по выходе на улицу.</span></span></span><br
+                                        class="ng-scope">
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="workbench-layout__col col-xs-12 col-sm-6" style="width: 100%; border: 15px solid whitesmoke; margin-bottom: 50px;">
+            <div class="text-pieces" id="translations-container">
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved" id="entry-1">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">在七月初，极热天气、傍晚，一个年轻人来到了他的房间，这是租的租户在s—车道，街道上的和缓慢的，因为如果不确定该怎么做，去到—好的桥梁。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-2">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">他已经成功地避免了会议，他的房东太太上台阶。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-3">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">Cubby有自己的屋顶下一个较高，五层楼高的房子，并更像一个柜子比一个房间。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved text-piece_someone-editing"  id="entry-4">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">公寓的女主人他是谁，他雇了一个小房间用餐和公务员，放置一下楼梯，在一个单独的公寓，而每一次，当进入大街上，他不得不通他的房东太太的厨房，几乎总是敞开的楼梯上。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-5">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">每一次的年轻人通过，感觉体弱多病和懦弱的感觉是，她感到羞愧，而畏缩。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-6">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">他是无可救药的债务给他的房东，并且是害怕会她。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-7">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">不，他是懦弱和赤贫，恰恰相反；但对于一段时间，他已经在一个暴躁过度紧张状况，近乎疑病症的。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_editing"  id="entry-8">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span html-content="entry.body"><span class="ng-scope">Он до того углубился в себя и уединился от всех, что боялся даже всякой встречи, не только встречи с хозяйкой.</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-piece__box">
+                        <div class="text-piece__editor ng-scope">
+                            <div class="translation-editor translation-editor_active">
+                                <div class="translation-editor__input-wrapper">
+                                    <div contenteditable="true" id="entry-suggestion-164882" class="translation-editor__input ng-pristine ng-valid ng-empty ng-touched" placeholder="Добавить свой перевод" data-insert-text="" text-editor=""></div>
+                                </div>
+                                <div class="translation-editor__btns">
+                                    <div class="translation-editor__save-btn">
+                                        <div class="translation-editor__options">
+                                            <div class="translation-editor__options-content">
+                                                Добавлять с помощью:
+                                                <div>
+                                                    <label>
+                                                        <input type="radio" class="ace ng-pristine ng-untouched ng-valid ng-not-empty" name="282">
+                                                        <span class="lbl"> Ctrl-Enter</span>
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <label>
+                                                        <input type="radio" class="ace ng-pristine ng-untouched ng-valid ng-not-empty" name="283">
+                                                        <span class="lbl"> Enter</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="">
+                                            <i class="fa fa-fw fa-floppy-o"></i>
+                                        </a>
+                                    </div>
+                                    <a href="" ng-show="entry.suggestionId" class="ng-hide">
+                                        <i class="fa fa-fw fa-trash-o"></i>
+                                    </a>
+                                    <a href="">
+                                        <i class="fa fa-fw fa-times"></i>
+                                    </a>
+                                </div>
+                                <div class="translation-editor__machine-suggestions">
+                                    <div class="machine-suggestions">
+                                        <h4 class="machine-suggestions__title">Машинные переводы</h4>
+                                        <ul class="machine-suggestions__list">
+                                            <li class="machine-suggestions__item ng-scope">
+                                                <div class="machine-suggestion">
+                                                    <span class="machine-suggestion__text" html-content="machine.text"><span class="ng-scope">他以为他自己和孤立自己从所有他可怕的会议，不仅会与女主人。</span></span>
+                                                    <span class="machine-suggestion__logo"><img src="/static/img/yandex_logo.svg"></span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- end ngIf: ($parent.activeEntry === entry && userMembershipStatus < 2) -->
+
+                            <!---------------------------------
+                                    translation variants
+                            ---------------------------------->
+                            <div class="text-piece__variants ng-scope">
+                                <div class="translation-variant ng-scope">
+                                <div class="translation-variant__text ng-binding">按他的事，他停止了，不想做的事。</div>
+                                <div class="translation-variant__author">
+                                    <a href="" class="ng-binding">heisenberg</a>
+                                </div>
+                                <div class="translation-variant__date ng-binding">
+                                    13.05.18 23:05
+                                </div>
+                                <div class="translation-variant__options">
+                                    <a class="project-list-text__btn dropdown" href="#" data-toggle="dropdown" uib-tooltip="Опции" tooltip-append-to-body="true"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
+                                        <ul class="dropdown-menu dropdown-yellow dropdown-caret">
+                                            <li>
+                                                <a href="">
+                                                    <i class="fa fa-check-circle"></i>
+                                                    &nbsp;Утвердить все переводы пользователя
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="">
+                                                    <i class="fa fa-check-circle"></i>
+                                                    &nbsp;Отклонить все переводы пользователя
+                                                </a>
+                                            </li>
+                                        </ul>
+                                </div>
+                                <div class="translation-variant__icons">
+                                    <!-- ngIf: entry.approved -->
+                                    <div>
+                                        <a  uib-tooltip="Утвердить перевод" tooltip-append-to-body="true" class="">
+                                            <i class="fa fa-check-circle"></i>
+                                        </a>
+                                        <a uib-tooltip="Редактировать перевод" tooltip-append-to-body="true">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed"  id="entry-9">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span html-content="entry.body"><span class="ng-scope">Он был задавлен бедностью; но даже стесненное положение перестало в последнее время тяготить его.</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div><div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-10" ng-click="($parent.activeEntry !== entry) &amp;&amp; !entry.disabled &amp;&amp; toggleEntry(entry, $event)" ng-class="{&#39;text-piece_closed&#39;: $parent.activeEntry !== entry,
+                                &#39;text-piece_editing&#39;: ($parent.activeEntry === entry) &amp;&amp; entry.editing,
+                                &#39;text-piece_approved&#39;: entry.approved,
+                                &#39;text-piece_disabled&#39;: entry.disabled,
+                                &#39;text-piece_translated&#39;: !entry.approved &amp;&amp; !entry.disabled &amp;&amp; (entry.translations.length &gt; 0),
+                                &#39;text-piece_someone-editing&#39;: keyLength(entry.isBeingEdited) &gt; 0}" uib-popover-template="&#39;myPopoverTemplate.html&#39;" popover-is-open="entry.popoverIsOpen" popover-trigger="&#39;none&#39;">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">按他的事，他停止了，不想做的事。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed text-piece_approved"  id="entry-11">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span class="text-piece__body">
+                                    <span html-content="entry.translation"><span class="ng-scope">没有女主人，实际上，他并不害怕，她会怎么任何阴谋反对他。</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                                </span>
+                                <div class="text-piece__icons">
+                                    <a class="active">
+                                        <i class="fa fa-check"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed"  id="entry-12">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span html-content="entry.body"><span class="ng-scope">Но останавливаться на лестнице, слушать всякий вздор про всю эту обыденную дребедень, до которой ему нет никакого дела, все эти приставания о платеже, угрозы, жалобы, и при этом самому изворачиваться, извиняться, лгать, — нет уж, лучше проскользнуть как-нибудь кошкой по лестнице и улизнуть, чтобы никто не видал.</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-style="{'font-size': increaseFontSize + 'px'}" class="text-piece ng-scope text-piece_closed"  id="entry-13">
+                    <!---------------------------------
+                               original text
+                    ---------------------------------->
+                    <div class="text-piece__original">
+                        <div class="ng-scope">
+                            <div class="ng-scope">
+                                <span html-content="entry.body"><span class="ng-scope">Впрочем, на этот раз страх встречи с своею кредиторшей даже его самого поразил по выходе на улицу.</span></span>
+
+<span class="text-piece__now-editing" uib-tooltip="Кто-то работает над этим фрагментом прямо сейчас..." tooltip-placement="bottom" tooltip-append-to-body="true">
+...
+<i class="fa fa-pencil"></i>
+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</div>
+        </div>
+    </div>
+
+
+                {% endblock %}

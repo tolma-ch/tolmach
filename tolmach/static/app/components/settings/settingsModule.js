@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    angular.module('profileModule', [
+    angular.module('settingsModule', [
         'ui.bootstrap',
         'angular-img-cropper',
-        'profileControllers'
+        'settingsControllers'
     ]);
 }());

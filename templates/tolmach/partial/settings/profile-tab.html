@@ -1,0 +1,68 @@
+{% extends "tolmach/settings.html" %}
+{% load i18n %}
+                {% block tab-content %}
+                <div class="profile-settings">
+                    <form>
+                        <input type="file" img-cropper-fileread image="cropper.sourceImage" />
+                        <div>
+                             <canvas width="200"
+                                     height="200"
+                                     id="canvas"
+                                     image-cropper
+                                     image="cropper.sourceImage"
+                                     cropped-image="cropper.croppedImage"
+                                     crop-width="200"
+                                     crop-height="200"
+                                     keep-aspect="true"
+                                     touch-radius="30"
+                                     crop-area-bounds="bounds"></canvas>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label no-padding-right" for="form-field-1"> {% trans "Nickname" %}: </label>
+                            <div class="">
+                                <input type="text"
+                                       id="form-field-1"
+                                       placeholder="{% trans "Nickname" %}"
+                                       class="form-control"
+                                       ng-model="userData.username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label no-padding-right" for="form-field-2"> {% trans "First Name" %}: </label>
+                            <div class="">
+                                <input type="text"
+                                       id="form-field-2"
+                                       placeholder="{% trans "First Name" %}"
+                                       class="form-control"
+                                       ng-model="userData.firstName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label no-padding-right" for="form-field-3"> {% trans "Last Name" %}: </label>
+                            <div class="">
+                                <input type="text"
+                                       id="form-field-3"
+                                       placeholder="{% trans "Last Name" %}"
+                                       class="form-control"
+                                       ng-model="userData.lastName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label no-padding-right" for="form-field-3"> {% trans "Website" %}: </label>
+                            <div class="">
+                                <input type="text"
+                                       id="form-field-3"
+                                       placeholder="{% trans "Website" %}"
+                                       class="form-control"
+                                       ng-model="userData.website">
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="error">
+                            <div class="label label-danger">{= error =}</div>
+                        </div>
+                    </form>
+                    <button class="btn btn-success"
+                    ng-click="saveProfile()"
+                    ng-disabled="busy">{% trans "Save" %}</button>
+                </div>
+                {% endblock %}

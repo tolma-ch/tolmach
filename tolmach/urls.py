@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'password-accept/$', main_views.accept_password, name="accept_password"),
     url(r'^login/', main_views.login_user, name="login_user"),
     url(r'^social-login/', main_views.post_social_auth),
+    url(r'^settings/(?:(?P<sett_type>\w+)/)?$', main_views.settings_page, name="settings_page"),
     url(r'^(?P<invite_type>\w+)/i/(?P<invite_id>\w+)/$', main_views.invite_urls, name='invitation_url'),
     url(r'^(?P<invite_type>\w+)/i/(?P<invite_id>\w+).jpg$', main_views.invite_urls_og_image, name='invitation_url_image'),
 

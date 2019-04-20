@@ -97,6 +97,7 @@
                                     'text-piece_disabled': entry.disabled,
                                     'text-piece_translated': !entry.approved && !entry.disabled && (entry.translations.length > 0),
                                     'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}"
+                         ng-style="{'font-size': customFontSize + 'px'}"
                          uib-popover-template="'myPopoverTemplate.html'"
                          popover-is-open="entry.popoverIsOpen"
                          popover-trigger="'none'">
@@ -461,7 +462,8 @@
                         <div class="text-overview__row">
                             <div class="text-overview__cell">
                                 <div class="text-overview__content" id="result-container"
-                                     ng-show="!busy" dynamic="textBody">
+                                     ng-show="!busy" dynamic="textBody"
+                                    ng-style="{'font-size': customFontSize + 'px'}">
                                 </div>
                             </div>
                         </div>

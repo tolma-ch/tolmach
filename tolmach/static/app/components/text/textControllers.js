@@ -11,6 +11,15 @@
             $scope.currentTextId = window['textId'];
             $scope.currentTargetLang = window['translationTargetLang'];
 
+            $scope.customFontSize = localStorageService.get('customFontSize') || false;
+
+            $scope.minFontSize = 10;
+            $scope.maxFontSize = 26;
+            $scope.increaseFontSize = 15;
+            $scope.getNewFontSize = function () {
+                return 15 + increaseFontSize;
+            };
+
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
             $scope.baseHost = ($scope.isHttps ? 'https' : 'http') + '://' + $scope.getHost;
