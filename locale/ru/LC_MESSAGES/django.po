@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-11 14:24+0300\n"
+"POT-Creation-Date: 2019-04-20 13:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,7 +85,7 @@ msgid "Projects"
 msgstr "Проекты"
 
 #: templates/main/base-logged-in.html:7 translations/decorators.py:66
-#: translations/views.py:71 translations/views.py:72 translations/views.py:417
+#: translations/views.py:37 translations/views.py:38 translations/views.py:383
 msgid "My projects"
 msgstr "Мои проекты"
 
@@ -98,7 +98,7 @@ msgid "Community"
 msgstr "Сообщество"
 
 #: templates/main/base-logged-in.html:10 translations/decorators.py:72
-#: translations/views.py:81 translations/views.py:82 translations/views.py:423
+#: translations/views.py:47 translations/views.py:48 translations/views.py:389
 msgid "Public projects"
 msgstr "Публичные проекты"
 
@@ -120,7 +120,10 @@ msgstr "Поддержка"
 msgid "Blog"
 msgstr "Журнал"
 
-#: templates/main/base-logged-in.html:15 templates/tolmach/organization.html:9
+#: templates/main/base-logged-in.html:15
+#: templates/main/partial/navbar-loggedin.html:6
+#: templates/tolmach/organization.html:9 tolmach/views.py:124
+#: tolmach/views.py:127 tolmach/views.py:129
 msgid "Settings"
 msgstr "Настройки"
 
@@ -186,35 +189,35 @@ msgstr "прогнал вас из проекта"
 msgid "Logout"
 msgstr "Выход"
 
-#: templates/main/partial/navbar-loggedin.html:6
+#: templates/main/partial/navbar-loggedin.html:7
 msgid "See all messages"
 msgstr "Все сообщения"
 
-#: templates/main/partial/navbar-loggedin.html:7
+#: templates/main/partial/navbar-loggedin.html:8
 msgid "Language"
 msgstr "Язык интерфейса"
 
-#: templates/main/partial/navbar-loggedin.html:30
+#: templates/main/partial/navbar-loggedin.html:63
 msgid "Dictionary"
 msgstr "Словарь"
 
-#: templates/main/partial/navbar-loggedin.html:74
+#: templates/main/partial/navbar-loggedin.html:107
 msgid "Fullscreen"
 msgstr "Полный экран"
 
-#: templates/main/partial/navbar-loggedin.html:86
+#: templates/main/partial/navbar-loggedin.html:119
 msgid "Help"
 msgstr "Помощь"
 
-#: templates/main/partial/navbar-loggedin.html:96
+#: templates/main/partial/navbar-loggedin.html:129
 msgid "Chat"
 msgstr "Обсуждение"
 
-#: templates/main/partial/navbar-loggedin.html:125
+#: templates/main/partial/navbar-loggedin.html:158
 msgid "Hi,"
 msgstr "Привет,"
 
-#: templates/main/partial/navbar-loggedin.html:143
+#: templates/main/partial/navbar-loggedin.html:176
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr "Уведомления"
@@ -585,8 +588,8 @@ msgstr "Начать новый"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:219
-#: tolmach/views.py:251
+#: templates/tolmach/organization.html:8 tolmach/views.py:259
+#: tolmach/views.py:291
 msgid "Members"
 msgstr "Участники"
 
@@ -662,31 +665,40 @@ msgid "You were invited to the project"
 msgstr "Вы были приглашены в проект"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
-#: templates/tolmach/partial/profile-sidebar.html:37
+#: templates/tolmach/partial/profile-sidebar.html:36
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
 #: templates/tolmach/partial/edit_profile_modal.html:27
 #: templates/tolmach/partial/edit_profile_modal.html:31
+#: templates/tolmach/partial/settings/profile-tab.html:21
+#: templates/tolmach/partial/settings/profile-tab.html:25
 msgid "Nickname"
 msgstr "Псевдоним"
 
 #: templates/tolmach/partial/edit_profile_modal.html:37
 #: templates/tolmach/partial/edit_profile_modal.html:41
+#: templates/tolmach/partial/settings/profile-tab.html:31
+#: templates/tolmach/partial/settings/profile-tab.html:35
 msgid "First Name"
 msgstr "Имя"
 
 #: templates/tolmach/partial/edit_profile_modal.html:47
 #: templates/tolmach/partial/edit_profile_modal.html:51
+#: templates/tolmach/partial/settings/profile-tab.html:41
+#: templates/tolmach/partial/settings/profile-tab.html:45
 msgid "Last Name"
 msgstr "Фамилия"
 
 #: templates/tolmach/partial/edit_profile_modal.html:57
 #: templates/tolmach/partial/edit_profile_modal.html:61
+#: templates/tolmach/partial/settings/profile-tab.html:51
+#: templates/tolmach/partial/settings/profile-tab.html:55
 msgid "Website"
 msgstr "Адрес сайта"
 
 #: templates/tolmach/partial/edit_profile_modal.html:74
+#: templates/tolmach/partial/settings/profile-tab.html:66
 #: templates/translations/partial/add_glossary_modal.html:89
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:136
@@ -759,12 +771,12 @@ msgstr "Только приглашённые пользователи смог�
 msgid "Create"
 msgstr "Создать"
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:107
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:147
 msgid "owner"
 msgstr "владелец"
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:109
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:149
 msgid "admin"
 msgstr "админ"
 
@@ -888,8 +900,22 @@ msgstr "Да"
 msgid "No"
 msgstr "Нет"
 
+#: templates/tolmach/partial/settings/interface-tab.html:6
+#: templates/translations/view-text.html:19
+msgid "Original"
+msgstr "Оригинал"
+
+#: templates/tolmach/partial/settings/interface-tab.html:7
+#: templates/translations/view-text.html:20
+msgid "Translation"
+msgstr "Перевод"
+
+#: templates/tolmach/partial/settings/interface-tab.html:8
+msgid "Font size:"
+msgstr "Размер шрифта:"
+
 #: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
-#: translations/views.py:271 translations/views.py:292
+#: translations/views.py:237 translations/views.py:258
 msgid "Statistics"
 msgstr "Статистика"
 
@@ -897,9 +923,9 @@ msgstr "Статистика"
 msgid "Total"
 msgstr "Всего"
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:137 tolmach/views.py:139
-#: tolmach/views.py:183 tolmach/views.py:185 tolmach/views.py:219
-#: tolmach/views.py:221 tolmach/views.py:251 tolmach/views.py:253
+#: templates/tolmach/profile.html:8 tolmach/views.py:177 tolmach/views.py:179
+#: tolmach/views.py:223 tolmach/views.py:225 tolmach/views.py:259
+#: tolmach/views.py:261 tolmach/views.py:291 tolmach/views.py:293
 msgid "Organizations"
 msgstr "Организации"
 
@@ -917,6 +943,14 @@ msgid_plural "fragments translated."
 msgstr[0] "фрагмент переведён"
 msgstr[1] "фрагмента переведено"
 msgstr[2] "фрагментов переведено"
+
+#: templates/tolmach/settings.html:5
+msgid "Profile"
+msgstr "Профиль"
+
+#: templates/tolmach/settings.html:6
+msgid "Interface"
+msgstr "Интерфейс"
 
 #: templates/tolmach/view_user.html:9
 #: templates/translations/partial/new_project_modal.html:3
@@ -1068,7 +1102,7 @@ msgstr "Статистика документа"
 #: templates/translations/partial/edit_text_modal.html:45
 #: templates/translations/partial/edit_text_modal.html:116
 #: templates/translations/project_stats.html:85
-#: templates/translations/project_stats.html:153
+#: templates/translations/project_stats.html:150
 msgid "Fragments"
 msgstr "Фрагменты"
 
@@ -1088,36 +1122,32 @@ msgid "approved"
 msgstr "подтверждено"
 
 #: templates/translations/partial/edit_text_modal.html:61
-#: templates/translations/project_stats.html:113
+#: templates/translations/project_stats.html:110
 msgid "Characters in original"
 msgstr "Символов в оригинале"
 
 #: templates/translations/partial/edit_text_modal.html:65
 #: templates/translations/partial/edit_text_modal.html:79
 #: templates/translations/partial/edit_text_modal.html:117
-#: templates/translations/project_stats.html:105
-#: templates/translations/project_stats.html:117
-#: templates/translations/project_stats.html:131
-#: templates/translations/project_stats.html:155
+#: templates/translations/project_stats.html:114
+#: templates/translations/project_stats.html:152
 msgid "with spaces"
 msgstr "с пробелами"
 
 #: templates/translations/partial/edit_text_modal.html:66
 #: templates/translations/partial/edit_text_modal.html:80
 #: templates/translations/partial/edit_text_modal.html:118
-#: templates/translations/project_stats.html:118
-#: templates/translations/project_stats.html:132
-#: templates/translations/project_stats.html:156
+#: templates/translations/project_stats.html:115
+#: templates/translations/project_stats.html:153
 msgid "without spaces"
 msgstr "без пробелов"
 
 #: templates/translations/partial/edit_text_modal.html:75
-#: templates/translations/project_stats.html:127
 msgid "Characters in translation"
 msgstr "Символов в переводе"
 
 #: templates/translations/partial/edit_text_modal.html:90
-#: templates/translations/project_stats.html:143
+#: templates/translations/project_stats.html:140
 msgid "Contribution by members"
 msgstr "Вклад по участникам"
 
@@ -1173,7 +1203,7 @@ msgid "Approved:"
 msgstr "Подтверждено:"
 
 #: templates/translations/project.html:137
-#: templates/translations/view-text.html:348
+#: templates/translations/view-text.html:349
 msgid "Options"
 msgstr "Опции"
 
@@ -1245,11 +1275,11 @@ msgstr "Покинуть проект"
 msgid "Words in original"
 msgstr "Слов в оригинале"
 
-#: templates/translations/project_stats.html:154
+#: templates/translations/project_stats.html:151
 msgid "Words"
 msgstr "Слова"
 
-#: templates/translations/project_stats.html:184
+#: templates/translations/project_stats.html:181
 msgid ""
 "Fragments of original text, that have approved translations made by "
 "participant"
@@ -1257,26 +1287,26 @@ msgstr ""
 "Фрагменты оригинального текста, имеющие утверждённый перевод, сделанный "
 "участником"
 
-#: templates/translations/project_stats.html:187
+#: templates/translations/project_stats.html:184
 msgid "All fragments created by participant"
 msgstr "Все фрагменты, сделанные участником"
 
-#: templates/translations/project_stats.html:192
+#: templates/translations/project_stats.html:189
 msgid ""
 "Words of original text, that have approved translations made by participant"
 msgstr ""
 "Слова оригинального текста, имеющие утверждённый перевод, сделанный "
 "участником"
 
-#: templates/translations/project_stats.html:195
+#: templates/translations/project_stats.html:192
 msgid "Words of translation text made by participant, that have been approved"
 msgstr "Слова утверждённых переводов, сделанных участником"
 
-#: templates/translations/project_stats.html:198
+#: templates/translations/project_stats.html:195
 msgid "Words of all translation text made by participant"
 msgstr "Слова всех переводов, сделанных участником"
 
-#: templates/translations/project_stats.html:203
+#: templates/translations/project_stats.html:200
 msgid ""
 "Characters of original text, that have approved translations made by "
 "participant"
@@ -1284,15 +1314,15 @@ msgstr ""
 "Символы оригинального текста, имеющие утрверждённый перевод, сделанный "
 "участником"
 
-#: templates/translations/project_stats.html:206
+#: templates/translations/project_stats.html:203
 msgid "Characters of translations made by participant, that have been approved"
 msgstr "Символы утверждённых переводов, сделанных участником"
 
-#: templates/translations/project_stats.html:209
+#: templates/translations/project_stats.html:206
 msgid "Characters of all translations made by participant"
 msgstr "Символы всех переводов, сделанных участником"
 
-#: templates/translations/project_stats.html:214
+#: templates/translations/project_stats.html:211
 msgid ""
 "Characters of original text, that have approved translations made by "
 "participant (without spaces)"
@@ -1300,13 +1330,13 @@ msgstr ""
 "Символы оригинального текста, имеющие утверждённый перевод, сделанный "
 "участником (без пробелов)"
 
-#: templates/translations/project_stats.html:217
+#: templates/translations/project_stats.html:214
 msgid ""
 "Characters of translations made by participant, that have been approved "
 "(without spaces)"
 msgstr "Символы утверждённых переводов, сделанных участником (без пробелов)"
 
-#: templates/translations/project_stats.html:220
+#: templates/translations/project_stats.html:217
 msgid "Words of all translated text made by participant (without spaces)"
 msgstr "Символы всех переводов, сделанных участником (без пробелов)"
 
@@ -1358,14 +1388,6 @@ msgstr "Не переводить фрагмент (Alt-S)"
 msgid "Copied!"
 msgstr "Скопировано!"
 
-#: templates/translations/view-text.html:19
-msgid "Original"
-msgstr "Оригинал"
-
-#: templates/translations/view-text.html:20
-msgid "Translation"
-msgstr "Перевод"
-
 #: templates/translations/view-text.html:21
 msgid "Add with"
 msgstr "Добавлять с помощью"
@@ -1374,71 +1396,71 @@ msgstr "Добавлять с помощью"
 msgid "To glossary"
 msgstr "В глоссарий"
 
-#: templates/translations/view-text.html:121
-#: templates/translations/view-text.html:382
+#: templates/translations/view-text.html:122
+#: templates/translations/view-text.html:383
 msgid "Approve translation"
 msgstr "Утвердить перевод"
 
-#: templates/translations/view-text.html:128
-#: templates/translations/view-text.html:389
+#: templates/translations/view-text.html:129
+#: templates/translations/view-text.html:390
 msgid "Edit translation"
 msgstr "Редактировать перевод"
 
-#: templates/translations/view-text.html:146
-#: templates/translations/view-text.html:372
+#: templates/translations/view-text.html:147
+#: templates/translations/view-text.html:373
 msgid "Disapprove translation"
 msgstr "Отклонить перевод"
 
-#: templates/translations/view-text.html:160
+#: templates/translations/view-text.html:161
 msgid "Enable translation"
 msgstr "Переводить фрагмент"
 
-#: templates/translations/view-text.html:192
+#: templates/translations/view-text.html:193
 msgid "singular:"
 msgstr "един.ч.:"
 
-#: templates/translations/view-text.html:193
+#: templates/translations/view-text.html:194
 msgid "plural:"
 msgstr "множ.ч.:"
 
-#: templates/translations/view-text.html:355
+#: templates/translations/view-text.html:356
 msgid "Approve all entries from user"
 msgstr "Утвердить все переводы пользователя"
 
-#: templates/translations/view-text.html:362
+#: templates/translations/view-text.html:363
 msgid "Disapprove all entries from user"
 msgstr "Отклонить все переводы пользователя"
 
-#: templates/translations/view-text.html:477
+#: templates/translations/view-text.html:479
 msgid "Here we can see all the fragments text was splitted to"
 msgstr "Здесь фрагменты для перевода, на которые был разбит текст"
 
-#: templates/translations/view-text.html:478
+#: templates/translations/view-text.html:480
 msgid "Click to expand fragment and begin translation"
 msgstr "Нажмите, чтобы развернуть фрагмент для начала перевода"
 
-#: templates/translations/view-text.html:479
+#: templates/translations/view-text.html:481
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr "Поле ввода, варианты машинного перевода и баз памяти"
 
-#: templates/translations/view-text.html:480
+#: templates/translations/view-text.html:482
 msgid "Click to add new translation"
 msgstr "Нажмите, чтобы добавить перевод"
 
-#: templates/translations/view-text.html:481
+#: templates/translations/view-text.html:483
 msgid "Here we can see the whole text"
 msgstr "Здесь отображается весь текст целиком"
 
-#: templates/translations/view-text.html:482
+#: templates/translations/view-text.html:484
 msgid "Click on the fragment in text to move to its translation form"
 msgstr "Кликните на предложение в тексте, чтобы быстро перейти к его переводу"
 
-#: templates/translations/view-text.html:483
+#: templates/translations/view-text.html:485
 msgid "Source text"
 msgstr "Исходный текст"
 
-#: templates/translations/view-text.html:484
+#: templates/translations/view-text.html:486
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
@@ -1451,24 +1473,24 @@ msgstr "ID организации не указан"
 msgid "Organization not found"
 msgstr "Организация не найдена"
 
-#: tolmach/views.py:111
+#: tolmach/views.py:151
 msgid "member"
 msgstr "участник"
 
-#: tolmach/views.py:153 tolmach/views.py:200 tolmach/views.py:235
-#: translations/decorators.py:63 translations/views.py:132
-#: translations/views.py:309 translations/views.py:311
-#: translations/views.py:325 translations/views.py:327
+#: tolmach/views.py:193 tolmach/views.py:240 tolmach/views.py:275
+#: translations/decorators.py:63 translations/views.py:98
+#: translations/views.py:275 translations/views.py:277
+#: translations/views.py:291 translations/views.py:293
 #: translations/views_ajax.py:66
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: tolmach/views.py:496
+#: tolmach/views.py:536
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:586
+#: tolmach/views.py:626
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
@@ -1519,8 +1541,8 @@ msgstr "Текст не найден"
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
-#: translations/decorators.py:69 translations/views.py:76
-#: translations/views.py:77 translations/views.py:420
+#: translations/decorators.py:69 translations/views.py:42
+#: translations/views.py:43 translations/views.py:386
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
@@ -1541,7 +1563,7 @@ msgstr "Этот язык пока не поддерживается как ис
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
-#: translations/views.py:180
+#: translations/views.py:146
 #, python-format
 msgid "<br>%(number_count)d action done"
 msgid_plural "<br>%(number_count)d actions done"
@@ -1549,24 +1571,24 @@ msgstr[0] "<br>%(number_count)d действие"
 msgstr[1] "<br>%(number_count)d действия"
 msgstr[2] "<br>%(number_count)d действий"
 
-#: translations/views.py:266 translations/views.py:361
+#: translations/views.py:232 translations/views.py:327
 msgid "Editor"
 msgstr "Редактор"
 
-#: translations/views.py:267 translations/views.py:362
+#: translations/views.py:233 translations/views.py:328
 msgid "Translator"
 msgstr "Переводчик"
 
-#: translations/views.py:268 translations/views.py:363
+#: translations/views.py:234 translations/views.py:329
 msgid "Spectator"
 msgstr "Наблюдатель"
 
-#: translations/views.py:399 translations/views.py:401
-#: translations/views.py:490
+#: translations/views.py:365 translations/views.py:367
+#: translations/views.py:456
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:496
+#: translations/views.py:462
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
 

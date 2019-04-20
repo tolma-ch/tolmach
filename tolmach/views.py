@@ -94,6 +94,46 @@ def user_page(request, user_id):
 
 
 @login_required
+def settings_page(request, sett_type):
+    print("SETTINGS:", sett_type)
+    if not sett_type:
+        return HttpResponseRedirect('/settings/profile/')
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+
+    usermeta, p = UserMeta.objects.get_or_create(user=request.user)
+
+    if sett_type == "profile":
+        active_tab = "profile"
+        template = 'tolmach/partial/settings/profile-tab.html'
+        user_data = json.dumps({
+            'firstName': first_name,
+            'lastName': last_name,
+            'username': request.user.username,
+            'website': usermeta.website,
+        })
+
+    elif sett_type == "interface":
+        active_tab = "interface"
+        template = 'tolmach/partial/settings/interface-tab.html'
+        user_data = """{}"""
+    else:
+        return HttpResponseRedirect('/')
+
+    data = {
+        'header': _("Settings"),
+        'userData': user_data,
+        'active_tab': active_tab,
+        'page_title': "%s / Tolma.ch" % _("Settings"),
+        'breadcrumbs': [
+            {'title': _("Settings"), 'url': '', 'type': ''},
+        ],
+    }
+
+    return render(request, template, data)
+
+
+@login_required
 def organizations(request):
     first_name = request.user.first_name
     last_name = request.user.last_name

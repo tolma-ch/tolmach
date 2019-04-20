@@ -8,7 +8,7 @@
         'ui.toggle',
         'ngClickCopy',
         'mainModule',
-        'profileModule',
+        'settingsModule',
         'projectModule',
         'projectsModule',
         'organizationsModule',

@@ -1,0 +1,48 @@
+{% extends "main/base-logged-in.html" %}
+{% load i18n %}
+
+{% block innercontent %}
+{% trans "Profile" as profile_label %}
+{% trans "Interface" as interface_label %}
+    <script>
+    window.userData = {{ userData | safe }};
+    window['active_tab'] = 'dashboard';
+    </script>
+    <div class="profile-container" ng-controller="settingsCtrl">
+        <div class="page-header">
+            <h1>
+                <span>
+                    {{ header }}
+                </span>
+            </h1>
+        </div>
+        <aside class="profile-sidebar">
+            <div class="tabbable section-tabs">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li class="{% if active_tab == 'profile' %}active{% endif %}">
+                        <a href="/settings/profile/">
+                            <i class="fa fa-compass" aria-hidden="true"></i>
+                            {{ profile_label }}
+                        </a>
+                    </li>
+
+                    <li class="{% if active_tab == 'interface' %}active{% endif %}">
+                        <a href="/settings/interface/">
+                            <i class="fa fa-tasks" aria-hidden="true"></i>
+                            {{ interface_label }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <section class="profile-content">
+            <div class="tab-content" style="border: none;">
+                {% block tab-content %}
+
+                {% endblock %}
+            </div>
+            </div>
+        </section>
+    </div>
+
+{% endblock %}
