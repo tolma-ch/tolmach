@@ -867,18 +867,6 @@ def entry_ajax(request, action, text):
         entries_per_page = int(request.GET.get('entries_per_page', 100))
         offset = page_num * entries_per_page
 
-        # Делим текст для правой колонки
-        tail_cut = '<span data-entry="%d">' % (offset + entries_per_page + 1)
-        cut_tail = text.body.split(tail_cut, 1)[0]
-
-        beginning_cut = '<span data-entry="%d">' % (offset + 1)
-        cut_beginning = cut_tail.split(beginning_cut, 1)
-
-        if len(cut_beginning) > 1:
-            text_body = beginning_cut + cut_beginning[1]
-        else:
-            text_body = cut_beginning[0]
-
         entries = []
         import math
         total_pages = int(
@@ -895,6 +883,7 @@ def entry_ajax(request, action, text):
                                                        translation=text_translation,
                                                        parent_entry__id_in_text__range=(base_entries_ids_int_text[0], base_entries_ids_int_text[-1]))
 
+        text_body = ""
         # Если глоссарии привязаны к тексту, то
         if project_translation.glossaries_list:
             pre_glossary_text = [entry.body for entry in base_entries]
@@ -907,6 +896,13 @@ def entry_ajax(request, action, text):
                 clean.glossary_body = post
 
         for entry in base_entries:
+            entry_to_body = '<span data-entry="%d">%s</span>' % (entry.id_in_text, entry.body)
+
+            # добавляем в текст энтрик
+            text_body += entry_to_body + " "
+            # добавляем переносы
+            text_body += '\n' * entry.new_lines_after
+
             if not project_translation.glossaries_list:
                 entry.glossary_body = entry.body
             entry_translations = []

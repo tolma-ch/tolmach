@@ -430,6 +430,7 @@ class TextEntry(models.Model):
     parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)
     text = models.ForeignKey('translations.Text', related_name='text_entries', on_delete=models.deletion.CASCADE)
     id_in_text = models.IntegerField(default=0)
+    new_lines_after = models.IntegerField(default=0)
     translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     meta_data = models.TextField(default="")
