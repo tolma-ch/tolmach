@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-20 13:10+0300\n"
+"POT-Creation-Date: 2019-04-25 09:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -624,7 +624,7 @@ msgid "You were invited to the project"
 msgstr "该用户不是项目成员"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
-#: templates/tolmach/partial/profile-sidebar.html:36
+#: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Edit Profile"
 msgstr "个人信息设置"
 
@@ -768,11 +768,15 @@ msgstr "点击此按钮创建新项目"
 msgid "API-key:"
 msgstr ""
 
-#: templates/tolmach/partial/profile-sidebar.html:35
+#: templates/tolmach/partial/profile-sidebar.html:36
 #, fuzzy
 #| msgid "Click this button to create new project"
 msgid "Click this button to edit your name and change profile picture"
 msgstr "点击此按钮创建新项目"
+
+#: templates/tolmach/partial/profile-sidebar.html:50
+msgid "Got questions?"
+msgstr ""
 
 #: templates/tolmach/partial/register_modal.html:14
 msgid "One-click sign up and login:"
@@ -1565,9 +1569,9 @@ msgstr "该用户不是项目成员"
 
 #: tolmach/views_ajax.py:121 translations/decorators.py:23
 #: translations/views_ajax.py:373 translations/views_ajax.py:621
-#: translations/views_ajax.py:761 translations/views_ajax.py:970
-#: translations/views_ajax.py:1015 translations/views_ajax.py:1024
-#: translations/views_ajax.py:1115
+#: translations/views_ajax.py:761 translations/views_ajax.py:966
+#: translations/views_ajax.py:1011 translations/views_ajax.py:1020
+#: translations/views_ajax.py:1111
 msgid "Not allowed"
 msgstr "不允许"
 
@@ -1596,7 +1600,7 @@ msgid "File is too big"
 msgstr "文件太大"
 
 #: translations/utils.py:135 translations/utils.py:137
-#: translations/views_ajax.py:1381
+#: translations/views_ajax.py:1377
 msgid "Something went wrong"
 msgstr ""
 
@@ -1640,9 +1644,9 @@ msgstr ""
 #: translations/views_ajax.py:229 translations/views_ajax.py:317
 #: translations/views_ajax.py:423 translations/views_ajax.py:528
 #: translations/views_ajax.py:641 translations/views_ajax.py:782
-#: translations/views_ajax.py:1185 translations/views_ajax.py:1227
-#: translations/views_ajax.py:1249 translations/views_ajax.py:1288
-#: translations/views_ajax.py:1309 translations/views_ajax.py:1342
+#: translations/views_ajax.py:1181 translations/views_ajax.py:1223
+#: translations/views_ajax.py:1245 translations/views_ajax.py:1284
+#: translations/views_ajax.py:1305 translations/views_ajax.py:1338
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be a manager of project"
@@ -1776,43 +1780,43 @@ msgstr "TMX未找到"
 msgid "It's not your TMX"
 msgstr "该词汇库不属于你"
 
-#: translations/views_ajax.py:992 translations/views_ajax.py:1153
-#: translations/views_ajax.py:1195 translations/views_ajax.py:1238
-#: translations/views_ajax.py:1298 translations/views_ajax.py:1399
+#: translations/views_ajax.py:988 translations/views_ajax.py:1149
+#: translations/views_ajax.py:1191 translations/views_ajax.py:1234
+#: translations/views_ajax.py:1294 translations/views_ajax.py:1395
 msgid "Id is not set"
 msgstr "ID未设置"
 
-#: translations/views_ajax.py:997 translations/views_ajax.py:1022
-#: translations/views_ajax.py:1108 translations/views_ajax.py:1125
-#: translations/views_ajax.py:1303 translations/views_ajax.py:1404
+#: translations/views_ajax.py:993 translations/views_ajax.py:1018
+#: translations/views_ajax.py:1104 translations/views_ajax.py:1121
+#: translations/views_ajax.py:1299 translations/views_ajax.py:1400
 msgid "Not found"
 msgstr "未找到"
 
-#: translations/views_ajax.py:1005
+#: translations/views_ajax.py:1001
 msgid "Language not found"
 msgstr "语言未找到"
 
-#: translations/views_ajax.py:1012
+#: translations/views_ajax.py:1008
 msgid "Translation not found"
 msgstr "未找到翻译"
 
-#: translations/views_ajax.py:1040
+#: translations/views_ajax.py:1036
 msgid "Entry translation text is not set"
 msgstr ""
 
-#: translations/views_ajax.py:1103
+#: translations/views_ajax.py:1099
 #, fuzzy
 #| msgid "text id is not set"
 msgid "entry is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1118
+#: translations/views_ajax.py:1114
 #, fuzzy
 #| msgid "text id is not set"
 msgid "translation is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1434
+#: translations/views_ajax.py:1430
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 

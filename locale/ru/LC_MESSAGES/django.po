@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-20 13:10+0300\n"
+"POT-Creation-Date: 2019-04-25 09:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -665,7 +665,7 @@ msgid "You were invited to the project"
 msgstr "Вы были приглашены в проект"
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
-#: templates/tolmach/partial/profile-sidebar.html:36
+#: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
@@ -793,9 +793,13 @@ msgstr "Нажмите, чтобы пригласить пользователе
 msgid "API-key:"
 msgstr "API-ключ:"
 
-#: templates/tolmach/partial/profile-sidebar.html:35
+#: templates/tolmach/partial/profile-sidebar.html:36
 msgid "Click this button to edit your name and change profile picture"
 msgstr "Нажмите эту кнопку, чтобы сменить имя или фото"
+
+#: templates/tolmach/partial/profile-sidebar.html:50
+msgid "Got questions?"
+msgstr "Есть вопросы?"
 
 #: templates/tolmach/partial/register_modal.html:14
 msgid "One-click sign up and login:"
@@ -1522,9 +1526,9 @@ msgstr "Пользователь уже является участником п
 
 #: tolmach/views_ajax.py:121 translations/decorators.py:23
 #: translations/views_ajax.py:373 translations/views_ajax.py:621
-#: translations/views_ajax.py:761 translations/views_ajax.py:970
-#: translations/views_ajax.py:1015 translations/views_ajax.py:1024
-#: translations/views_ajax.py:1115
+#: translations/views_ajax.py:761 translations/views_ajax.py:966
+#: translations/views_ajax.py:1011 translations/views_ajax.py:1020
+#: translations/views_ajax.py:1111
 msgid "Not allowed"
 msgstr "Нет доступа"
 
@@ -1551,7 +1555,7 @@ msgid "File is too big"
 msgstr "Файл слишком большой"
 
 #: translations/utils.py:135 translations/utils.py:137
-#: translations/views_ajax.py:1381
+#: translations/views_ajax.py:1377
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
@@ -1596,9 +1600,9 @@ msgstr "Простите, указанная страница не найден�
 #: translations/views_ajax.py:229 translations/views_ajax.py:317
 #: translations/views_ajax.py:423 translations/views_ajax.py:528
 #: translations/views_ajax.py:641 translations/views_ajax.py:782
-#: translations/views_ajax.py:1185 translations/views_ajax.py:1227
-#: translations/views_ajax.py:1249 translations/views_ajax.py:1288
-#: translations/views_ajax.py:1309 translations/views_ajax.py:1342
+#: translations/views_ajax.py:1181 translations/views_ajax.py:1223
+#: translations/views_ajax.py:1245 translations/views_ajax.py:1284
+#: translations/views_ajax.py:1305 translations/views_ajax.py:1338
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
@@ -1706,39 +1710,39 @@ msgstr "База памяти не найдена"
 msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
-#: translations/views_ajax.py:992 translations/views_ajax.py:1153
-#: translations/views_ajax.py:1195 translations/views_ajax.py:1238
-#: translations/views_ajax.py:1298 translations/views_ajax.py:1399
+#: translations/views_ajax.py:988 translations/views_ajax.py:1149
+#: translations/views_ajax.py:1191 translations/views_ajax.py:1234
+#: translations/views_ajax.py:1294 translations/views_ajax.py:1395
 msgid "Id is not set"
 msgstr "Номер не указан"
 
-#: translations/views_ajax.py:997 translations/views_ajax.py:1022
-#: translations/views_ajax.py:1108 translations/views_ajax.py:1125
-#: translations/views_ajax.py:1303 translations/views_ajax.py:1404
+#: translations/views_ajax.py:993 translations/views_ajax.py:1018
+#: translations/views_ajax.py:1104 translations/views_ajax.py:1121
+#: translations/views_ajax.py:1299 translations/views_ajax.py:1400
 msgid "Not found"
 msgstr "Не найдено"
 
-#: translations/views_ajax.py:1005
+#: translations/views_ajax.py:1001
 msgid "Language not found"
 msgstr "Язык не найден"
 
-#: translations/views_ajax.py:1012
+#: translations/views_ajax.py:1008
 msgid "Translation not found"
 msgstr "Перевод не найден"
 
-#: translations/views_ajax.py:1040
+#: translations/views_ajax.py:1036
 msgid "Entry translation text is not set"
 msgstr "Перевод фрагмента не указан"
 
-#: translations/views_ajax.py:1103
+#: translations/views_ajax.py:1099
 msgid "entry is not set"
 msgstr "Номер фрагмента не указан"
 
-#: translations/views_ajax.py:1118
+#: translations/views_ajax.py:1114
 msgid "translation is not set"
 msgstr "Преевод не указан"
 
-#: translations/views_ajax.py:1434
+#: translations/views_ajax.py:1430
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 

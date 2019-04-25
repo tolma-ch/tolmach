@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load staticfiles %}
 
 {% block personalinfo %}
 <div class="user-sidebar">
@@ -43,5 +44,26 @@
             <!--<i class="fa fa-gear">Edit profile</i>-->
         <!--</a>-->
     </div>
+    <a href="https://t.me/tolma_ch">
+        <div class="user-sidebar__questions">
+            <img src="{% static 'img/profile-sidebar/telegram-questions.svg' %}">
+            {% trans "Got questions?" %}
+        </div>
+    </a>
 </div>
+    <style>
+    .user-sidebar__questions {
+        height: 50px;
+        line-height: 40px;
+        background-color: #179cde;
+        color: white;
+        font-size: 16px;
+        margin-top: 20px;
+        padding: 4px 4px 4px 4px;
+    }
+    .user-sidebar__questions img {
+        max-width: 34px;
+        margin-left: 15%;
+    }
+    </style>
 {% endblock %}
