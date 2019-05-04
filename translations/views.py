@@ -447,6 +447,46 @@ def view_translation(request, text_id, target_lang):
     return render(request, template, data)
 
 
+def fragment_preview(request, text_id, target_lang, preview_code):
+    entry = get_object_or_404(TextEntry, preview_code=preview_code, text_id=text_id)
+    ua = request.META.get('HTTP_USER_AGENT', "")
+
+    fb = "facebookexternalhit"
+    tg = "TelegramBot (like TwitterBot)"
+    vk = "vkShare"
+    slack = "Slackbot"
+    discord = "Discordbot"
+
+    ua_list = [fb, tg, vk, slack, discord]
+
+    social_preview = False
+
+    if any(string in ua for string in ua_list):
+        social_preview = True
+
+    if not social_preview:
+        page = int(entry.id_in_text/100) + 1
+        return HttpResponseRedirect(f'/text/{text_id}/{target_lang}/#?page={page}&fragment={entry.id_in_text}')
+
+    fragment_original_text = entry.body
+    fragment_translations = ""
+
+    translations = TextEntry.objects.filter(parent_entry=entry)
+    for i in translations:
+        test = i.author.username
+        if i.is_approved:
+            fragment_translations += "✅ "
+        fragment_translations += f"{i.author.username}: {i.body}\n"
+
+    data = {
+        'fragment_original_text': fragment_original_text,
+        'fragment_translations': fragment_translations
+    }
+
+    template = 'translations/fragment_social_preview.html'
+    return render(request, template, data)
+
+
 @login_required
 def export_translation(request, text_id, target_lang, extra=None):
     import os

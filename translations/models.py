@@ -17,6 +17,9 @@ def random_string(length=30):
 def random_invite_code():
     return random_string(15)
 
+def random_fragment_preview_code():
+    return random_string(10)
+
 
 class Glossary(models.Model):
     name = models.CharField(max_length=256)
@@ -434,6 +437,7 @@ class TextEntry(models.Model):
     translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     meta_data = models.TextField(default="")
+    preview_code = models.CharField(default = random_fragment_preview_code, null = True, max_length=10)
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
     is_approved = models.BooleanField(default=False)
@@ -447,6 +451,9 @@ class TextEntry(models.Model):
     def is_voted(self, user):
         voters = self.voters.split(',') if self.voters else []
         return str(user.id) in voters
+
+    class Meta:
+        unique_together = ("preview_code", "text")
 
     def save(self, *args, **kwargs):
         ''' On save, update timestamps '''
