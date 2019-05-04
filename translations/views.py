@@ -460,6 +460,19 @@ def fragment_preview(request, text_id, target_lang, preview_code):
 
     ua_list = [fb, tg, tw, vk, slack, discord]
 
+    emoji_numbers = {
+        1: "1️⃣",
+        2: "2️⃣",
+        3: "3️⃣",
+        4: "4️⃣",
+        5: "5️⃣",
+        6: "6️⃣",
+        7: "7️⃣",
+        8: "8️⃣",
+        9: "9️⃣",
+        10: "🔟"
+    }
+
     social_preview = False
 
     if any(string in ua for string in ua_list):
@@ -473,11 +486,12 @@ def fragment_preview(request, text_id, target_lang, preview_code):
     fragment_translations = ""
 
     translations = TextEntry.objects.filter(parent_entry=entry)
-    for i in translations:
+    for idx, i in enumerate(translations):
         status = ""
+        number = emoji_numbers.get(idx, "")
         if i.is_approved:
             status = "✅ "
-        fragment_translations += f"> {i.author.username}: {status}{i.body}\n"
+        fragment_translations += f"{number}{i.author.username}: {status}{i.body}\n"
 
     data = {
         'fragment_original_text': fragment_original_text,
