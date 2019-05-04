@@ -453,11 +453,12 @@ def fragment_preview(request, text_id, target_lang, preview_code):
 
     fb = "facebookexternalhit"
     tg = "TelegramBot (like TwitterBot)"
+    tw = "Twitterbot"
     vk = "vkShare"
     slack = "Slackbot"
     discord = "Discordbot"
 
-    ua_list = [fb, tg, vk, slack, discord]
+    ua_list = [fb, tg, tw, vk, slack, discord]
 
     social_preview = False
 
@@ -476,7 +477,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         status = ""
         if i.is_approved:
             status = "✅ "
-        fragment_translations += f"{i.author.username}: {status}{i.body}\n"
+        fragment_translations += f"> {i.author.username}: {status}{i.body}\n"
 
     data = {
         'fragment_original_text': fragment_original_text,
