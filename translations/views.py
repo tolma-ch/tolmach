@@ -468,15 +468,15 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         page = int(entry.id_in_text/100) + 1
         return HttpResponseRedirect(f'/text/{text_id}/{target_lang}/#?page={page}&fragment={entry.id_in_text}')
 
-    fragment_original_text = entry.body
+    fragment_original_text = "🌐🌐🌐ℹ️ " + entry.body
     fragment_translations = ""
 
     translations = TextEntry.objects.filter(parent_entry=entry)
     for i in translations:
-        test = i.author.username
+        status = ""
         if i.is_approved:
-            fragment_translations += "✅ "
-        fragment_translations += f"{i.author.username}: {i.body}\n"
+            status = "✅ "
+        fragment_translations += f"{i.author.username}: {status}{i.body}\n"
 
     data = {
         'fragment_original_text': fragment_original_text,
