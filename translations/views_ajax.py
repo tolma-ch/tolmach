@@ -940,7 +940,8 @@ def entry_ajax(request, action, text):
                 'approved': approved,
                 'disabled': entry.is_disabled,
                 'translation': entry_translation,
-                'isBeingEdited': {}
+                'isBeingEdited': {},
+                'previewCode': entry.preview_code
             })
         result = {
             'lang_pair': text.source_lang.code + "-" + text_translation.target_lang.code,

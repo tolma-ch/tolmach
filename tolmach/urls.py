@@ -53,6 +53,10 @@ urlpatterns = [
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/$', trans_views.export_translation, name='export_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
+    url(r'^text/(?P<text_id>\d+)/(?P<target_lang>\w+)/f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
+
+    # short link for fragment with social preview
+    # url(r'^f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
 
     # ajax
     url(r'^ajax/search/$', main_ajax.global_search_ajax, name='global_search_ajax'),
