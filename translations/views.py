@@ -468,7 +468,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         page = int(entry.id_in_text/100) + 1
         return HttpResponseRedirect(f'/text/{text_id}/{target_lang}/#?page={page}&fragment={entry.id_in_text}')
 
-    fragment_original_text = "🌐🌐🌐ℹ️ " + entry.body
+    fragment_original_text = "ℹ️ " + entry.body
     fragment_translations = ""
 
     translations = TextEntry.objects.filter(parent_entry=entry)
