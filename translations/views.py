@@ -486,7 +486,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
     fragment_translations = ""
 
     translations = TextEntry.objects.filter(parent_entry=entry)
-    for idx, i in enumerate(translations):
+    for idx, i in enumerate(translations, start=1):
         status = ""
         number = emoji_numbers.get(idx, "")
         if i.is_approved:
