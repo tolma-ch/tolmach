@@ -436,7 +436,7 @@ class TextEntry(models.Model):
     new_lines_after = models.IntegerField(default=0)
     translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
-    meta_data = models.TextField(default="")
+    meta_data = models.TextField(default="{}")
     preview_code = models.CharField(default = random_fragment_preview_code, null = True, max_length=10)
     vote = models.IntegerField(default=0)
     voters = models.TextField(default="")
