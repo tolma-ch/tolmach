@@ -12,17 +12,20 @@
                 {% trans "Invite users from all over the world via link:" %}
             </span>
             <div class="input-group">
-{#                <span class="input-group-addon"#}
-{#                      uib-tooltip="{% trans 'Re-create' %}"#}
-{#                      tooltip-append-to-body="true">#}
-{#                    <i class="fa fa-recycle" aria-hidden="true"></i>#}
-{#                </span>#}
-                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/org/i/{{ organization.invite_link_code }}/">
-                <span class="input-group-addon"
-                      ng-click-copy="{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}/org/i/{{ organization.invite_link_code }}/"
-                      uib-tooltip="{% trans 'Copy' %}"
-                      tooltip-append-to-body="true">
-                    <i class="fa fa-clipboard" aria-hidden="true"></i>
+                <span class="input-group-btn">
+                    <button class="btn btn-sm btn-default"
+                            type="button"
+                            ng-click="updateInviteCode()">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
+                </span>
+                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/org/i/{= orgInviteCode =}/">
+                <span class="input-group-btn">
+                    <button class="btn btn-sm btn-default"
+                            type="button"
+                            ng-click-copy="{{ base_domain }}/org/i/{= orgInviteCode =}/">
+                        <i class="fa fa-clipboard" aria-hidden="true"></i>
+                    </button>
                 </span>
             </div>
         </div>
