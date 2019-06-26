@@ -37,11 +37,18 @@
                 {% trans "Invite users from all over the world via link:" %}
             </span>
             <div class="input-group">
-                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/project/i/{{ project.invite_link_code }}/">
                 <span class="input-group-btn">
                     <button class="btn btn-sm btn-default"
                             type="button"
-                            ng-click-copy="{{ base_domain }}/project/i/{{ project.invite_link_code }}/">
+                            ng-click="updateInviteCode()">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </button>
+                </span>
+                <input class="form-control" type="text" id="form-field-mask-3" readonly="true" value="{{ base_domain }}/project/i/{= projectInviteCode =}/">
+                <span class="input-group-btn">
+                    <button class="btn btn-sm btn-default"
+                            type="button"
+                            ng-click-copy="{{ base_domain }}/project/i/{= projectInviteCode =}/">
                         <i class="fa fa-clipboard" aria-hidden="true"></i>
                     </button>
                 </span>

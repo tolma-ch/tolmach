@@ -298,6 +298,26 @@ def get_users_ajax(request):
 
 @accept_project
 @login_required
+def project_invite_code(request, project):
+    if not project.is_user_manager(request.user) and not request.user.is_staff:
+        return HttpResponse(json.dumps(_('You have to be a manager of the project')),
+                            content_type="application/json",
+                            status=400)
+    if request.method == "GET":
+        return HttpResponse(json.dumps({"project_invite_link_code": project.invite_link_code}),
+                            content_type="application/json",
+                            status=200)
+    elif request.method == "POST":
+        from translations.utils import random_string
+        project.invite_link_code = random_string(15)
+        project.save()
+
+        return HttpResponse(json.dumps({"project_invite_link_code": project.invite_link_code}),
+                            content_type="application/json",
+                            status=200)
+
+@accept_project
+@login_required
 def participant_ajax(request, project):
     if project.is_private:
         if not project.is_user_a_member(request.user) and not project.is_user_manager(request.user) and not request.user.is_staff:

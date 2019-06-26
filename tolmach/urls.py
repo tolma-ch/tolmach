@@ -62,10 +62,13 @@ urlpatterns = [
     url(r'^ajax/search/$', main_ajax.global_search_ajax, name='global_search_ajax'),
     url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
     url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),
+
     url(r'^ajax/projects/(?P<proj_type>\w+)/(?:(?P<object_id>[\w-]+)/)?$', trans_ajax.projects_ajax),
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
+    url(r'^ajax/project/invite-code/$', trans_ajax.project_invite_code, name='project_invite_code_ajax'),
     url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),
     url(r'^ajax/project/$', trans_ajax.project_ajax, name='project_ajax'),
+
     url(r'^ajax/entry/(?:(?P<action>\w+)/)?$', trans_ajax.entry_ajax, name='entry_action_ajax'),
     url(r'^ajax/entry-disable/$', trans_ajax.disable_entry_ajax, name='entry_disable_ajax'),
     url(r'^ajax/entry-enable/$', trans_ajax.enable_entry_ajax, name='entry_enable_ajax'),
