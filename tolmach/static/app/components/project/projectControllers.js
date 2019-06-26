@@ -322,6 +322,27 @@
     module.controller('AddParticipantModalCtrl', ['$scope', '$uibModalInstance', '$http', 'projectId', 'managerId',
         function ($scope, $uibModalInstance, $http, projectId, managerId) {
             $scope.participants = [];
+            $scope.projectInviteCode = "";
+            $http.get('/ajax/project/invite-code/', {params: {project: projectId}})
+                .then(function (response) {
+                    $scope.projectInviteCode = response.data.project_invite_link_code;
+                });
+            $scope.updateInviteCode = function () {
+                var data = {
+                    'project': projectId
+                };
+                // $scope.busy = true;
+                $http.post('/ajax/project/invite-code/', data)
+                    .success(function (response) {
+                        console.log(response.project_invite_link_code);
+                        $scope.projectInviteCode = response.project_invite_link_code;
+                        // $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        // $scope.busy = false;
+                    });
+            };
             $http.get('/ajax/participant', {params: {project: projectId}})
                 .then(function (response) {
                     $scope.participants = response.data;

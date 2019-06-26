@@ -96,6 +96,12 @@ def get_plural_examples(p):
     return num_dict
 
 
+def random_string(length=30):
+    import random, string
+
+    return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
+
+
 def upload_file(file_object, max_size):
     import os
     from tolmach.utils import random_string
