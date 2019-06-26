@@ -128,6 +128,23 @@
                         return response.data;
                     });
             };
+            $scope.orgInviteCode = "";
+            $http.get('/ajax/orgs/invite-code/', {params: {'organization': window.userData['orgId']}})
+                .then(function (response) {
+                    $scope.orgInviteCode = response.data.org_invite_link_code;
+                });
+            $scope.updateInviteCode = function () {
+                var data = {
+                    'organization': window.userData['orgId']
+                };
+                $http.post('/ajax/orgs/invite-code/', data)
+                    .success(function (response) {
+                        $scope.orgInviteCode = response.org_invite_link_code;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                    });
+            };
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {

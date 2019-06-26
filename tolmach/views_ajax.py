@@ -142,6 +142,28 @@ def organization_members_ajax(request, org):
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
+
+@login_required
+@accept_organization
+def organization_invite_code_ajax(request, org):
+    if not org.is_user_owner(request.user) and not request.user.is_staff:
+        return HttpResponse(json.dumps(_('You have to be a manager of the organization')),
+                            content_type="application/json",
+                            status=400)
+    if request.method == "GET":
+        return HttpResponse(json.dumps({"org_invite_link_code": org.invite_link_code}),
+                            content_type="application/json",
+                            status=200)
+    elif request.method == "POST":
+        from translations.utils import random_string
+        org.invite_link_code = random_string(15)
+        org.save()
+
+        return HttpResponse(json.dumps({"org_invite_link_code": org.invite_link_code}),
+                            content_type="application/json",
+                            status=200)
+
+
 @login_required
 def global_search_ajax(request):
     import math

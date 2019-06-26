@@ -551,6 +551,27 @@
                         return response.data;
                     });
             };
+            $scope.orgInviteCode = "";
+            $http.get('/ajax/orgs/invite-code/', {params: {'organization': window.userData['orgId']}})
+                .then(function (response) {
+                    $scope.orgInviteCode = response.data.org_invite_link_code;
+                });
+            $scope.updateInviteCode = function () {
+                var data = {
+                    'organization': window.userData['orgId']
+                };
+                // $scope.busy = true;
+                $http.post('/ajax/orgs/invite-code/', data)
+                    .success(function (response) {
+                        console.log(response.org_invite_link_code);
+                        $scope.orgInviteCode = response.org_invite_link_code;
+                        // $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        // $scope.busy = false;
+                    });
+            };
             $scope.ok = function () {
                 $scope.error = '';
                 var data = {
@@ -906,9 +927,6 @@
         function ($scope, $uibModalInstance, $http, projectId, managerId) {
             $scope.participants = [];
             $scope.projectInviteCode = "";
-            $scope.getInviteCode = function () {
-                return $scope.projectInviteCode;
-            };
             $http.get('/ajax/project/invite-code/', {params: {project: projectId}})
                 .then(function (response) {
                     $scope.projectInviteCode = response.data.project_invite_link_code;
