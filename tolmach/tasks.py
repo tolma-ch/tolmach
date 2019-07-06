@@ -95,7 +95,7 @@ def update_projects_progress(arguments):
             entries_translated += TextEntry.objects.filter(id__in=translated_ids_list, is_disabled=False).count()
         entries_approved = TextEntry.objects.filter(text__project=project, is_approved=True).count()
 
-        if not entries_total == 0:
+        if not entries_total == 0 and entries_enabled > 0:
             percent_translated = int(math.ceil(entries_translated / (entries_enabled / 100.0))) if (
                         entries_translated < entries_enabled) else 100
             percent_approved = int(math.ceil(entries_approved / (entries_enabled / 100.0)))
