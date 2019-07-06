@@ -59,10 +59,10 @@ def update_projects_progress(arguments):
     from translations.models import Project, ProjectTranslation, Text, TextTranslation, TextEntry
 
     time_threshold = datetime.now() - timedelta(minutes=15)
-    if not arguments.get('full_update', False):
-        results = Project.objects.filter(last_modified__gt=time_threshold)
-    else:
-        results = Project.objects.all()
+    # if not arguments.get('full_update', False):
+    results = Project.objects.filter(last_modified__gt=time_threshold)
+    # else:
+    #     results = Project.objects.all()
 
     for project in results:
         # translated_progress = 0
