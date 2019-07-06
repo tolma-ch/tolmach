@@ -114,9 +114,6 @@ def projects_ajax(request, proj_type, object_id=""):
 
         return obj_to_return
 
-    print(page_to_json(result_proj_list))
-    print(vars(result_proj_list.paginator))
-
     return HttpResponse(json.dumps(page_to_json(result_proj_list)), content_type="application/json")
 
 
@@ -633,7 +630,6 @@ def glossary_ajax(request, project):
                         entry.source_entry,
                         entry.target_entry,
                     ])
-            print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
@@ -773,7 +769,6 @@ def tmx_ajax(request, project):
                         entry.source_entry,
                         entry.target_entry,
                     ])
-            print(result)
             return HttpResponse(json.dumps(result, ensure_ascii=False).encode('utf8'), content_type="application/json")
         else:
             if project.is_private:
@@ -1410,7 +1405,6 @@ def yandex_translate_ajax(request):
 def tmdb_search(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        print("Test data:", post)
 
         if 'entry_id' not in post:
             return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
@@ -1437,7 +1431,6 @@ def tmdb_search(request):
             entry_body_clean = re.sub("</?tag( i='.*?')?>", "", entry.body)
 
             for tmx_id in translation_tmx_list:
-                print("TMDB IS: %s" % tmx_id)
                 try:
                     res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                 'query': {
@@ -1468,7 +1461,6 @@ def tmdb_search(request):
                             body=doc
                         )
 
-                        print("ELASTICSEARCH: ", res['created'])
                     res = es.search(index=tmx_id, size=5, body={'fields': [entry_source_lang.code, entry_target_lang.code],
                                                                 'query': {
                                                                     'match':
@@ -1499,7 +1491,6 @@ def tmdb_search(request):
                               }
                         if not obj in search_results:
                             search_results.append(obj)
-                            print("%d - %s" % (int(seq.ratio()*100), item['fields'][entry_target_lang.code][0]))
             return HttpResponse(json.dumps(search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
