@@ -560,16 +560,12 @@
                 var data = {
                     'organization': window.userData['orgId']
                 };
-                // $scope.busy = true;
                 $http.post('/ajax/orgs/invite-code/', data)
                     .success(function (response) {
-                        console.log(response.org_invite_link_code);
                         $scope.orgInviteCode = response.org_invite_link_code;
-                        // $scope.busy = false;
                     })
                     .error(function (data) {
                         $scope.error = data;
-                        // $scope.busy = false;
                     });
             };
             $scope.ok = function () {
@@ -1607,6 +1603,13 @@
                 return 15 + increaseFontSize;
             };
 
+            $rootScope.entriesFilter = {
+                not_translated: true,
+                translated: true,
+                approved: true,
+                disabled: true
+            };
+
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
             $scope.baseHost = ($scope.isHttps ? 'https' : 'http') + '://' + $scope.getHost;
@@ -2053,6 +2056,9 @@
             $scope.$on('GlobalClick', function (e, event) {
                 if ($(event.target).parents('.text-overview__paginator').length === 0) {
                     $rootScope.editPage = false;
+                }
+                if ($(event.target).parents('.text-overview__filter').length === 0) {
+                    $rootScope.editFilter = false;
                 }
             });
             $rootScope.paginatorKeypress = function (event) {
@@ -3624,9 +3630,10 @@
             $scope.$on('GlobalKeydown', function (e, event) {
                 console.log($scope.lastKeysPressed);
                 var code = event.keyCode ? event.keyCode : event.which;
-                $scope.lastKeysPressed.push(code);
+                $scope.lastKeysPressed.push({"time": Date.now(), "code": code});
                 $scope.lastKeysPressed = $scope.lastKeysPressed.slice(-2);
-                if ($scope.lastKeysPressed[0] === 16 && $scope.lastKeysPressed[1] === 16) { // Double-shift press
+                if ( ($scope.lastKeysPressed[0].code === 16 && $scope.lastKeysPressed[1].code === 16) &&
+                   ($scope.lastKeysPressed[1].time - $scope.lastKeysPressed[0].time < 1000) ) { // Double-shift press
                     $scope.lastKeysPressed = [];
                     $scope.showSearch = true;
                     setTimeout(function () {

@@ -227,9 +227,10 @@
             $scope.$on('GlobalKeydown', function (e, event) {
                 console.log($scope.lastKeysPressed);
                 var code = event.keyCode ? event.keyCode : event.which;
-                $scope.lastKeysPressed.push(code);
+                $scope.lastKeysPressed.push({"time": Date.now(), "code": code});
                 $scope.lastKeysPressed = $scope.lastKeysPressed.slice(-2);
-                if ($scope.lastKeysPressed[0] === 16 && $scope.lastKeysPressed[1] === 16) { // Double-shift press
+                if ( ($scope.lastKeysPressed[0].code === 16 && $scope.lastKeysPressed[1].code === 16) &&
+                   ($scope.lastKeysPressed[1].time - $scope.lastKeysPressed[0].time < 1000) ) { // Double-shift press
                     $scope.lastKeysPressed = [];
                     $scope.showSearch = true;
                     setTimeout(function () {
