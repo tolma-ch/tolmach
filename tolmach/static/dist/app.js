@@ -3611,6 +3611,9 @@
             $scope.globalKeydown = function (event) {
                 $scope.$broadcast('GlobalKeydown', event);
             };
+            $scope.globalKeyup = function (event) {
+                $scope.$broadcast('GlobalKeyup', event);
+            };
             $scope.bodyClick = function (event) {
                 $scope.$broadcast('GlobalClick', event);
             };
@@ -3627,13 +3630,13 @@
             };
 
             $scope.lastKeysPressed = [];
-            $scope.$on('GlobalKeydown', function (e, event) {
+            $scope.$on('GlobalKeyup', function (e, event) {
                 console.log($scope.lastKeysPressed);
                 var code = event.keyCode ? event.keyCode : event.which;
                 $scope.lastKeysPressed.push({"time": Date.now(), "code": code});
                 $scope.lastKeysPressed = $scope.lastKeysPressed.slice(-2);
                 if ( ($scope.lastKeysPressed[0].code === 16 && $scope.lastKeysPressed[1].code === 16) &&
-                   ($scope.lastKeysPressed[1].time - $scope.lastKeysPressed[0].time < 1000) ) { // Double-shift press
+                   ($scope.lastKeysPressed[1].time - $scope.lastKeysPressed[0].time < 300) ) { // Double-shift press
                     $scope.lastKeysPressed = [];
                     $scope.showSearch = true;
                     setTimeout(function () {
