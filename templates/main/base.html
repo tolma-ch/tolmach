@@ -12,7 +12,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#3B8DB6" />
 
-        {% with front_version="1.10.70" %}
+        {% with front_version="1.10.71" %}
 
 
         <link href="{% static 'img/favicon.ico' %}?v={{ front_version }}" rel="shortcut icon">
@@ -99,7 +99,7 @@
         <!--inline styles related to this page-->
 	</head>
 
-	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-click="bodyClick($event)" ng-mouseup="mouseup($event)">
+	<body ng-controller="mainCtrl" ng-keydown="globalKeydown($event, entry)" ng-keyup="globalKeyup($event, entry)" ng-click="bodyClick($event)" ng-mouseup="mouseup($event)">
         <div class="main{% if user.is_authenticated %} auth{% endif %}" resize="globalResize">
             {% include "main/partial/navbar.html" %}
 
