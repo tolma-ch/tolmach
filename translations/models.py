@@ -455,9 +455,24 @@ class TextEntry(models.Model):
     class Meta:
         unique_together = ("preview_code", "text")
 
-    def save(self, *args, **kwargs):
+    def save(self, skip_last_modified=False, *args, **kwargs):
         ''' On save, update timestamps '''
         if not self.id:
             self.time_created = timezone.now()
-        self.last_modified = timezone.now()
+        if not skip_last_modified:
+            self.last_modified = timezone.now()
         super(TextEntry, self).save(*args, **kwargs)
+
+
+class PreexportEntry(models.Model):
+    body = models.TextField(default="")
+    parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)
+    text = models.ForeignKey('translations.Text', related_name='text_preexport_entries', on_delete=models.deletion.CASCADE)
+    id_in_text = models.IntegerField(default=0)
+    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_preexport_entries', default=None,
+                                    null=True, on_delete=models.deletion.CASCADE)
+    time_created = models.DateTimeField(default=timezone.now)
+    last_modified = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ("parent_entry", "translation")

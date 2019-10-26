@@ -526,6 +526,9 @@ def text_ajax(request, project):
 
             if the_page["Error"] == 0:
                 text = Text.objects.get(id=the_page["Text"])
+                if file_type == "text/plain":
+                    from tolmach import tasks
+                    tasks.generate_preexport_entries_for_new_document(text_id = str(text.id))
             else:
                 if file_path:
                     os.remove(file_path)
