@@ -146,6 +146,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -167,6 +168,7 @@ INSTALLED_APPS = (
     'channels',
     'social_auth_widget',
     'social_django',
+    'simple_history',
     'django_uwsgi',
     'django.contrib.auth',
     'django.contrib.contenttypes',

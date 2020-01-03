@@ -2772,7 +2772,7 @@
                         var sel = window.getSelection(),
                             range = sel.rangeCount ? sel.getRangeAt(0) : false,
                             rect = range ? range.getClientRects()[0] : false;
-                        if (!target || target.contains(sel.baseNode)) {
+                        if (!target || !target.contains(sel.baseNode)) {
                             if (rect) {
                                 y = rect.bottom;
                                 x = rect.left;
@@ -2817,14 +2817,15 @@
             $scope.selectedEntryText = "";
             $scope.togglePopover = function(entryId, close){
                 $scope.entries.forEach(function (item, i, arr) {
-                    // console.log(entryId + " " + item.idInText);
                     if (item.idInText == entryId) {
+                        // console.log(entryId + " " + item.idInText);
+                        console.log(item.body);
                         if (typeof close !== 'undefined') {
                             console.log("close set");
                             item.popoverIsOpen = false;
                         } else {
                             console.log("close NOT set");
-                            item.popoverIsOpen = !item.popoverIsOpen;
+                            item.popoverIsOpen = true;
                         }
                     } else {
                         item.popoverIsOpen = false;
@@ -2833,6 +2834,7 @@
             };
             $scope.mouseup = function ($event) {
                 var selection = getSelectionText($event.target)[0];
+                console.log(selection);
                 if (selection !== "") {
                     var entryId = $event.currentTarget.parentElement.id.split('-')[1];
                     $scope.selectedEntryText = selection.trim().toLowerCase();
@@ -2851,6 +2853,24 @@
                     resolve: {
                         selectedText: function () {
                             return $scope.selectedEntryText;
+                        }
+                    }
+                });
+                modalInstance.result.then(function (result) {
+                    $scope.entryToFocus = $scope.activeEntry.idInText;
+                    updateEntries()
+                }, function () {
+                });
+            };
+            $scope.viewEntryHistory = function (entry) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'viewEntryHistoryModal.html',
+                    controller: 'ViewEntryHistoryModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        entry: function () {
+                            return entry;
                         }
                     }
                 });
@@ -2943,6 +2963,47 @@
         function ($scope, $uibModalInstance, $http, selectedText) {
             $scope.glossary = {
                     rows: [[selectedText, '']]
+                };
+            $scope.ok = function () {
+                $scope.error = '';
+                $scope.busy = true;
+                var data = $scope.glossary;
+                data['text'] = window['textId'];
+                data['target_lang'] = window['translationTargetLang'];
+                $http.post('/ajax/glossary/', data)
+                    .success(function (glossary) {
+                        $uibModalInstance.close(glossary);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+
+    module.controller('ViewEntryHistoryModalCtrl', ['$scope', '$uibModalInstance', '$http', 'entry',
+        function ($scope, $uibModalInstance, $http, entry) {
+            $scope.entry = entry;
+            $http.get('/ajax/entry-history/', {
+                        params: {
+                            entry_id: entry.id
+                        }
+            })
+                .success(function (data) {
+                    $scope.history_records = data;
+                })
+                .error(function (data) {
+                    $scope.error = data;
+                    $scope.busy = false;
+                });
+            $scope.glossary = {
+                    rows: [[entry, '']]
                 };
             $scope.ok = function () {
                 $scope.error = '';

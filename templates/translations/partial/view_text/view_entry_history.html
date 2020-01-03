@@ -1,0 +1,54 @@
+{% load i18n %}
+<script type="text/ng-template" id="viewEntryHistoryModal.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <span class="input-icon input-icon-right pull-right"
+              style="margin-right: 10px;"
+              ng-show="glossary.id">
+            <input type="text" id="form-field-icon-2"
+                   ng-model="searchText">
+            <i class="fa fa-search"></i>
+        </span>
+        <h3 class="modal-title">{= entry.body =}</h3>
+    </div>
+    <style>
+        .entry-history-record {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .entry-history-record__body {
+            font-size: 16px;
+            word-break: break-word;
+            margin-right: 55px;
+        }
+        .entry-history-record__icon {
+            display: block;
+            float: right;
+            height: 25px;
+            font-size: 25px;
+            position: relative;
+            right: 15px;
+            {#bottom: 50%;#}
+        }
+    </style>
+    <div class="modal-body">
+        <div class="entry-history-record" ng-repeat="record in history_records">
+            <div class="entry-history-record__body">
+                {= record.body =}
+            </div>
+            <div class="entry-history-record__icon">
+                <i class="fa"
+                   ng-class="{
+                            'fa-check': record.historyType === 'approved',
+                            'fa-pencil': record.historyType === 'body_changed',
+                            'fa-close': record.historyType === 'disapproved',
+                            }"></i>
+            </div>
+            <div class="entry-history-record__autor">
+                {= record.author.name =} {= record.lastModified | date:'short' =}
+            </div>
+        </div>
+    </div>
+</script>

@@ -1267,6 +1267,24 @@
                 }, function () {
                 });
             };
+            $scope.viewEntryHistory = function (entry) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'viewEntryHistoryModal.html',
+                    controller: 'ViewEntryHistoryModalCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        entry: function () {
+                            return entry;
+                        }
+                    }
+                });
+                modalInstance.result.then(function (result) {
+                    $scope.entryToFocus = $scope.activeEntry.idInText;
+                    updateEntries()
+                }, function () {
+                });
+            };
             $scope.$on('tagClick', function (event, index) {
                 if (!$scope.activeEntry) {
                     return;
@@ -1350,6 +1368,47 @@
         function ($scope, $uibModalInstance, $http, selectedText) {
             $scope.glossary = {
                     rows: [[selectedText, '']]
+                };
+            $scope.ok = function () {
+                $scope.error = '';
+                $scope.busy = true;
+                var data = $scope.glossary;
+                data['text'] = window['textId'];
+                data['target_lang'] = window['translationTargetLang'];
+                $http.post('/ajax/glossary/', data)
+                    .success(function (glossary) {
+                        $uibModalInstance.close(glossary);
+                        $scope.busy = false;
+                    })
+                    .error(function (data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                    });
+            };
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+
+    module.controller('ViewEntryHistoryModalCtrl', ['$scope', '$uibModalInstance', '$http', 'entry',
+        function ($scope, $uibModalInstance, $http, entry) {
+            $scope.entry = entry;
+            $http.get('/ajax/entry-history/', {
+                        params: {
+                            entry_id: entry.id
+                        }
+            })
+                .success(function (data) {
+                    $scope.history_records = data;
+                })
+                .error(function (data) {
+                    $scope.error = data;
+                    $scope.busy = false;
+                });
+            $scope.glossary = {
+                    rows: [[entry, '']]
                 };
             $scope.ok = function () {
                 $scope.error = '';

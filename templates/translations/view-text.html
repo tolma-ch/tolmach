@@ -339,7 +339,10 @@
                                     <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                                 </div>
                                 <div class="translation-variant__date">
-                                    {= translation.lastModified | date:'short' =}
+                                    <span ng-click="viewEntryHistory(translation)" ng-if="translation.historyCount > 0" title="{= translation.historyCount =} правки, последняя от {= translation.lastModifiedAuthor.name =}">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i> {= translation.lastModified | date:'short' =}
+                                    </span>
+                                    <span ng-if="translation.historyCount == 0">{= translation.lastModified | date:'short' =}</span>
                                 </div>
                                 <div class="translation-variant__options"
                                      ng-show="(userIsManager || userMembershipStatus == 0)">
@@ -473,6 +476,7 @@
         </div>
         {% include "translations/partial/dictionary_modal.html" %}
         {% include "translations/partial/view_text/to_glossary_modal.html" %}
+        {% include "translations/partial/view_text/view_entry_history.html" %}
     </div>
     <script>
         var helpTexts = {

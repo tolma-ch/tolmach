@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.db.models import Q
 from django.db import models
 import math, json
+from simple_history.models import HistoricalRecords
 
 from channels import Group
 
@@ -444,6 +445,7 @@ class TextEntry(models.Model):
     is_disabled = models.BooleanField(default=False)
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.body

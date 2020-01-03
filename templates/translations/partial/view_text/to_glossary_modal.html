@@ -4,13 +4,6 @@
         <button type="button"
                 class="bootbox-close-button close"
                 ng-click="cancel()">×</button>
-        <span class="input-icon input-icon-right pull-right"
-              style="margin-right: 10px;"
-              ng-show="glossary.id">
-            <input type="text" id="form-field-icon-2"
-                   ng-model="searchText">
-            <i class="fa fa-search"></i>
-        </span>
         <h3 class="modal-title"
             ng-show="!glossary.id">{% trans "Add glossary" %}</h3>
         <h3 class="modal-title"
