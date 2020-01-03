@@ -25,6 +25,32 @@ def translation_to_json(translation):
     }
 
 
+def entry_history_to_json(history_entry):
+    if history_entry.history_type == "+":
+        history_type = "original"
+    elif history_entry.history_type == "~":
+        if history_entry.is_approved != history_entry.prev_record.is_approved:
+            if history_entry.is_approved > history_entry.prev_record.is_approved:
+                history_type = "approved"
+            else:
+                history_type = "disapproved"
+        else:
+            history_type = "body_changed"
+
+    return {
+        'id': history_entry.id,
+        'body': history_entry.body,
+        'parentId': history_entry.parent_entry.id,
+        'author': {
+            'id': history_entry.history_user.id if history_entry.history_user else history_entry.author.id,
+            'name': history_entry.history_user.username if history_entry.history_user else history_entry.author.username
+        },
+        'isApproved': history_entry.is_approved,
+        'lastModified': history_entry.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000"),
+        'historyType': history_type
+    }
+
+
 def user_to_json(user, project=None):
     username = '%s %s (%s)' % (user.first_name, user.last_name, user.username)
     user_meta = UserMeta.objects.get(user=user)

@@ -23,7 +23,7 @@ from stats.models import PairStats, EntryStats
 from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, Text, TextTranslation, TextTranslationMeta
 import json, os, shutil, re
-from translations.utils_ajax import translation_to_json, user_to_json, text_to_json
+from translations.utils_ajax import translation_to_json, user_to_json, text_to_json, entry_history_to_json
 from translations.utils import approve_entry, disapprove_entry, ws_send_entry_status
 
 @login_required
@@ -936,6 +936,8 @@ def entry_ajax(request, action, text):
                     translation_array = translation_to_json(entry_translation)
                     translation_array['isVoted'] = entry_translation.is_voted(request.user)
                     translation_array['lastModified'] = entry_translation.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000")
+                    translation_array['historyCount'] = entry_translation.history.filter(history_type="~").count()
+                    translation_array['lastModifiedAuthor'] = user_to_json(entry_translation.history.most_recent().author)
                     entry_translations.append(translation_array)
                     if entry_translation.is_approved:
                         approved_text = entry_translation.body
@@ -996,6 +998,25 @@ def entry_ajax(request, action, text):
                 entry.save()
 
     return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
+
+
+@login_required
+def entry_history_ajax(request):
+    try:
+        entry_id = request.GET['entry_id']
+    except:
+        return HttpResponse(json.dumps(_('Entry id is not set')), content_type="application/json", status=400)
+
+    entry = get_object_or_404(TextEntry, id=entry_id)
+
+    entry_history_data = entry.history.filter(history_type__in=["+", "~"])
+
+    return_data = []
+
+    for i in entry_history_data:
+        return_data.append(entry_history_to_json(i))
+
+    return HttpResponse(json.dumps(return_data, ensure_ascii=False), content_type="application/json")
 
 
 @login_required
