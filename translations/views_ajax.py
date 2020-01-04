@@ -1011,10 +1011,13 @@ def entry_history_ajax(request):
 
     entry_history_data = entry.history.filter(history_type__in=["+", "~"])
 
-    return_data = []
+    return_data = {
+        'originalEntry': translation_to_json(entry.parent_entry),
+        'historyData': []
+    }
 
     for i in entry_history_data:
-        return_data.append(entry_history_to_json(i))
+        return_data['historyData'].append(entry_history_to_json(i))
 
     return HttpResponse(json.dumps(return_data, ensure_ascii=False), content_type="application/json")
 
