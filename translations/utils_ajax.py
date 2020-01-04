@@ -14,7 +14,7 @@ def translation_to_json(translation):
     return {
         'id': translation.id,
         'body': translation.body,
-        'parentId': translation.parent_entry.id,
+        'parentId': translation.parent_entry.id if translation.parent_entry else 0,
         'author': {
             'id': translation.author.id,
             'name': translation.author.username
@@ -27,7 +27,7 @@ def translation_to_json(translation):
 
 def entry_history_to_json(history_entry):
     if history_entry.history_type == "+":
-        history_type = "original"
+        history_type = "created"
     elif history_entry.history_type == "~":
         if history_entry.is_approved != history_entry.prev_record.is_approved:
             if history_entry.is_approved > history_entry.prev_record.is_approved:

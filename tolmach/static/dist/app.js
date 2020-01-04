@@ -2996,7 +2996,8 @@
                         }
             })
                 .success(function (data) {
-                    $scope.history_records = data;
+                    $scope.originalEntry = data.originalEntry;
+                    $scope.historyRecords = data.historyData;
                 })
                 .error(function (data) {
                     $scope.error = data;

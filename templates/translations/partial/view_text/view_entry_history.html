@@ -11,42 +11,47 @@
                    ng-model="searchText">
             <i class="fa fa-search"></i>
         </span>
-        <h3 class="modal-title">{= entry.body =}</h3>
+        <h3 class="modal-title">{= originalEntry.body =}</h3>
     </div>
     <style>
         .entry-history-record {
             border-bottom: 1px solid #ddd;
             padding: 10px 0;
+            display: table;
         }
         .entry-history-record__body {
             font-size: 16px;
             word-break: break-word;
-            margin-right: 55px;
+            margin-left: 15px;
+        }
+        .entry-history-record__author {
+            margin-left: 15px;
+            color: #9aaab4;
         }
         .entry-history-record__icon {
-            display: block;
-            float: right;
-            height: 25px;
-            font-size: 25px;
+            display: table-cell;
+            vertical-align: middle;
+            height: 20px;
+            font-size: 20px;
             position: relative;
-            right: 15px;
-            {#bottom: 50%;#}
+            color: #11111140;
         }
     </style>
     <div class="modal-body">
-        <div class="entry-history-record" ng-repeat="record in history_records">
-            <div class="entry-history-record__body">
-                {= record.body =}
-            </div>
+        <div class="entry-history-record" ng-repeat="record in historyRecords">
             <div class="entry-history-record__icon">
                 <i class="fa"
                    ng-class="{
                             'fa-check': record.historyType === 'approved',
                             'fa-pencil': record.historyType === 'body_changed',
                             'fa-close': record.historyType === 'disapproved',
+                            'fa-plus': record.historyType === 'created',
                             }"></i>
             </div>
-            <div class="entry-history-record__autor">
+            <div class="entry-history-record__body">
+                {= record.body =}
+            </div>
+            <div class="entry-history-record__author">
                 {= record.author.name =} {= record.lastModified | date:'short' =}
             </div>
         </div>
