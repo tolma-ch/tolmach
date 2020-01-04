@@ -314,3 +314,9 @@ try:
     from tolmach.local_settings import *
 except ImportError:
     pass
+
+MIDDLEWARE_CLASSES += (
+    'social_django.middleware.SocialAuthExceptionMiddleware',
+)
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
