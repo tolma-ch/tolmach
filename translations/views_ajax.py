@@ -1144,14 +1144,11 @@ def remove_entry_ajax(request):
     try:
         entry = TextEntry.objects.get(id=entry_id)
     except TextEntry.DoesNotExist:
-        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=404)
 
     text = entry.text
     project = text.project
     curr_user = request.user
-
-    if not project.is_user_manager(curr_user) and not project.is_user_editor(curr_user) and not entry.author == curr_user:
-        return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
 
     if 'translation' not in post:
         return HttpResponse(json.dumps(_('translation is not set')), content_type="application/json", status=400)
@@ -1161,7 +1158,12 @@ def remove_entry_ajax(request):
     try:
         entry_translation = TextEntry.objects.get(id=translation_id)
     except TextEntry.DoesNotExist:
-        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
+        return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=404)
+
+    if (not project.is_user_manager(curr_user)) and \
+            (not project.is_user_editor(curr_user)) and \
+            (not entry_translation.author == curr_user):
+        return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=403)
 
     entry_translation_to_delete = {
         'id': entry.id,
