@@ -19,6 +19,8 @@ def translation_to_json(translation):
             'id': translation.author.id,
             'name': translation.author.username
         },
+        'historyCount': translation.history.filter(history_type="~").count(),
+        'lastModifiedAuthor': None if translation.history.count() < 2 else translation.history.latest().history_user.username,
         'isApproved': translation.is_approved,
         'vote': translation.vote,
         'lastModified': translation.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000")
