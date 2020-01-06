@@ -23,6 +23,7 @@
         }
         .msg-text {
             display: block;
+            margin-left: 51px;
         }
         .msg-time {
             float: right;
@@ -56,8 +57,14 @@
                 <span class="msg-body">
                     <span class="msg-title">
                         <span class="blue">{= message.originator =}:</span>
-                        <span class="msg-text" ng-if="message.type == 'uninvite'">{% trans "You were removed from the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project_name =}</a>"</span>
-                        <span class="msg-text" ng-if="message.type == 'invite'">{% trans "You were invited to the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project_name =}</a>"</span>
+                        <span class="msg-text" ng-if="message.type == 'uninvite'">{% trans "You were removed from the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project =}</a>"</span>
+                        <span class="msg-text" ng-if="message.type == 'invite'">{% trans "You were invited to the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project =}</a>"</span>
+                        <span class="msg-text" ng-if="message.type == 'edit'">{% trans "Your translation was edited. Original text:" %}<br>
+                        <code>{= message.original_text =}</code><br>
+                        {% trans "New text:" %}<br>
+                        <code>{= message.new_text =}</code>
+                        <br><br>
+                        <a href="{= message.fragment_url =}">{% trans "Go to fragment" %}</a></span>
                     </span>
                 </span>
             </li>

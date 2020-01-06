@@ -449,6 +449,8 @@ def view_translation(request, text_id, target_lang):
 
 def fragment_preview(request, text_id, target_lang, preview_code):
     entry = get_object_or_404(TextEntry, preview_code=preview_code, text_id=text_id)
+    if entry.parent_entry:
+        entry = entry.parent_entry
     ua = request.META.get('HTTP_USER_AGENT', "")
 
     fb = "facebookexternalhit"
