@@ -1,7 +1,15 @@
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
-from translations.models import TextEntry, PreexportEntry, TextTranslation, Text
+from translations.models import TextEntry, PreexportEntry, TextTranslation
+from tolmach.models import Messages
+
+from simple_history.signals import (
+    pre_create_historical_record,
+    post_create_historical_record
+)
+
+import json
 
 
 @receiver(post_save, sender=TextEntry)
@@ -44,3 +52,28 @@ def update_preexport_entry_on_delete(sender, instance, **kwargs):
         if not instance.parent_entry == None:
             instance.is_approved = False
             instance.save()
+
+
+
+@receiver(post_create_historical_record)
+def post_create_historical_record_callback(sender, history_instance, history_user, **kwargs):
+    if history_instance.history_type == "~" and not history_user == history_instance.author:
+        if history_instance.body != history_instance.prev_record.body:
+            message = json.dumps(
+                {
+                    "type": "edit",
+                    "original_text": history_instance.prev_record.body,
+                    "new_text": history_instance.body,
+                    "fragment_url": "/text/" + str(history_instance.text.id) + "/" + \
+                                    history_instance.translation.target_lang.code + "/f/" + \
+                                    history_instance.preview_code + "/"
+                }
+            )
+
+            new_message = Messages(
+                message_type='A',
+                addressee=history_instance.author,
+                originator=history_user,
+                message=message
+            )
+            new_message.save()

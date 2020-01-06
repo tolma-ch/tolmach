@@ -352,7 +352,13 @@ def participant_ajax(request, project):
             new_proj_user = ProjectMember(user=user, project=project)
             new_proj_user.save()
 
-            message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
+            message = json.dumps(
+                {
+                    "type": "invite",
+                    "project": project.name,
+                    "project_id": project.id
+                }
+            )
 
             new_message = Messages(
                 message_type='A',
@@ -1134,6 +1140,8 @@ def translate_entry_ajax(request):
         translation_array['isVoted'] = entry_translation.is_voted(request.user)
         return HttpResponse(json.dumps(translation_array), content_type="application/json")
 
+
+@login_required
 def remove_entry_ajax(request):
     if not request.method == 'POST':
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -1606,17 +1614,13 @@ def message_ajax(request, all):
         for message in messages:
             sender_meta = UserMeta.objects.get(user=message.originator)
             data = json.loads(message.message)
-            result.append({
-                'id': message.id,
-                'message': message.message,
-                'originator': message.originator.username,
-                'sender_ava': "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png",
-                'project_id': data['project_id'],
-                'project_name': data['project'],
-                'type': data['type'],
-                'was_read': message.was_read,
-                'time_created': message.time_created.strftime('%Y-%m-%dT%H:%M:%S+0000')
-            })
+            data['id'] = message.id
+            data['message'] = message.message
+            data['originator'] = message.originator.username
+            data['sender_ava'] = "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png"
+            data['was_read'] = message.was_read
+            data['time_created'] = message.time_created.strftime('%Y-%m-%dT%H:%M:%S+0000')
+            result.append(data)
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
