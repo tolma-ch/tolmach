@@ -2247,6 +2247,8 @@
                             if (translation.id == suggestionId) {
                                 translation.body = data.body.replace(/\n/g, "<br>");
                                 translation.isApproved = data.isApproved;
+                                translation.historyCount = data.historyCount;
+                                translation.lastModifiedAuthor = data.lastModifiedAuthor;
 
                                 break;
                             }

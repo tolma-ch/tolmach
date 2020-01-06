@@ -937,7 +937,7 @@ def entry_ajax(request, action, text):
                     translation_array['isVoted'] = entry_translation.is_voted(request.user)
                     translation_array['lastModified'] = entry_translation.last_modified.strftime("%Y-%m-%dT%H:%M:%S+0000")
                     translation_array['historyCount'] = entry_translation.history.filter(history_type="~").count()
-                    translation_array['lastModifiedAuthor'] = user_to_json(entry_translation.history.most_recent().author)
+                    translation_array['lastModifiedAuthor'] = None if translation_array['historyCount'] < 2 else entry_translation.history.latest().history_user.username
                     entry_translations.append(translation_array)
                     if entry_translation.is_approved:
                         approved_text = entry_translation.body

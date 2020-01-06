@@ -339,7 +339,8 @@
                                     <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
                                 </div>
                                 <div class="translation-variant__date">
-                                    <span ng-click="viewEntryHistory(translation)" ng-if="translation.historyCount > 0" title="{= translation.historyCount =} правки, последняя от {= translation.lastModifiedAuthor.name =}">
+                                    <!-- TODO: сделать красивый плюрал -->
+                                    <span ng-click="viewEntryHistory(translation)" ng-if="translation.historyCount > 0" title="Правок: {= translation.historyCount =}, последняя от {= translation.lastModifiedAuthor =}" style="cursor: pointer">
                                         <i class="fa fa-pencil" aria-hidden="true"></i> {= translation.lastModified | date:'short' =}
                                     </span>
                                     <span ng-if="translation.historyCount == 0">{= translation.lastModified | date:'short' =}</span>
