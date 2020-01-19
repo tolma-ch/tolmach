@@ -384,6 +384,18 @@
   }
   &_approved {
     background: #cbf0cf;
+    @media (prefers-color-scheme: dark) {
+      background: #099c5a;
+      > .translation-variant {
+        &__text,
+        &__date {
+          color: @navbar-bg-dark;
+        }
+      }
+      .fa-pencil {
+        color: @navbar-bg-dark;
+      }
+    }
   }
 }
 
