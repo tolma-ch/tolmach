@@ -268,12 +268,18 @@
     box-shadow: #00000047 0px 5px 17px 0px;
     max-height: 309px;
     overflow-y: auto;
+    @media (prefers-color-scheme: dark) {
+      background: @grayBg-dark !important;
+      color: @grayBg !important;
+      border: none !important;
+    }
   }
   &__dropitem {
     padding: 5px 0;
     cursor: pointer;
     &:hover {
-      background-color: #FEE188 !important;
+      background-color: @yellow-main !important;
+      color: @grayBg-dark !important;
     }
   }
 }
