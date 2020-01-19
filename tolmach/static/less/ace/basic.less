@@ -136,11 +136,19 @@ blockquote{
  border-top-color: @modal-footer-border;
  .box-shadow(none);
  background-color: @modal-footer-bg;
+  @media (prefers-color-scheme: dark) {
+    background-color: @body-bg-dark;
+    border: none;
+  }
 }
 .modal-header{
   padding: 10px 20px;
   background: rgb(67, 142, 185);
   color: white;
+  @media (prefers-color-scheme: dark) {
+    background-color: @navbar-bg-dark;
+    border: none;
+  }
   .close {
     font-size: 30px;
     color: white;

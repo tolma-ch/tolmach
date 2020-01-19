@@ -139,3 +139,17 @@
   background-color: #f3f3f3;
   color: #6d6d6d;
 }
+
+@media (prefers-color-scheme: dark) {
+  .dictionary {
+    box-shadow: @navbar-bg-dark 0 0 20px 0;
+    background: @grayBg-dark;
+    border-color: lighten(@grayBg-dark, 10%);
+    &__title {
+      border-color: lighten(@grayBg-dark, 10%);
+    }
+  }
+  .dict-button-group > select {
+    background-color: @grayBg-dark;
+  }
+}

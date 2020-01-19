@@ -199,7 +199,7 @@
                         border-top: none !important;
                         border-left: none !important;
                         border-right: none !important;
-                        background-color: transparent;
+                        background-color: transparent !important;
                     }
                     .project-page-tabs li a {
                         text-transform: uppercase;
@@ -208,11 +208,15 @@
                         background: none;
                     }
                     @media (prefers-color-scheme: dark) {
+                        .project-page-tabs li.active a {
+                            color: #fff !important;
+                        }
                         .project-page-tabs li a:hover {
-                            background-color: #3b3f42;
+                            background-color: transparent !important;
+                            color: #FEE188 !important;
                         }
                         .project-page-tabs li.active a:hover {
-                            background-color: #3b3f42;
+                            color: #fff !important;
                         }
                         .project-page-tabs-content {
                             border-top: 1px solid #525252;

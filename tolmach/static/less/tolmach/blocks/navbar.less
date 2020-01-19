@@ -405,6 +405,10 @@ li.active {
     i {
       color: #ffffff !important;
       border: 1px dotted #ffffff;
+      @media (prefers-color-scheme: dark) {
+        color: @grayBg-dark !important;
+        border-color: @grayBg-dark !important;
+      }
     }
   }
 }
