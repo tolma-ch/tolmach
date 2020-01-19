@@ -199,6 +199,7 @@
                         border-top: none !important;
                         border-left: none !important;
                         border-right: none !important;
+                        background-color: transparent;
                     }
                     .project-page-tabs li a {
                         text-transform: uppercase;
@@ -206,6 +207,18 @@
                         box-shadow: none !important;
                         background: none;
                     }
+                    @media (prefers-color-scheme: dark) {
+                        .project-page-tabs li a:hover {
+                            background-color: #3b3f42;
+                        }
+                        .project-page-tabs li.active a:hover {
+                            background-color: #3b3f42;
+                        }
+                        .project-page-tabs-content {
+                            border-top: 1px solid #525252;
+                        }
+                    }
+
                 </style>
                 <div id="exTab2" class="">
                     <ul class="nav nav-tabs project-page-tabs">

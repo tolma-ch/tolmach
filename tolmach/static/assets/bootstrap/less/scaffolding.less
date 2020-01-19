@@ -48,10 +48,13 @@ textarea {
 a {
   color: @link-color;
   text-decoration: none;
+  @media (prefers-color-scheme: dark) {
+    color: #FEE188;
+  }
 
   &:hover,
   &:focus {
-    color: @link-hover-color;
+    //color: @link-hover-color;
     text-decoration: @link-hover-decoration;
   }
 

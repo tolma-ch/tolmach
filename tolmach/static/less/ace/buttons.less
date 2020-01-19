@@ -98,6 +98,9 @@ button.btn:active  {
 
 .btn , .btn-default {
 	.btn-color(~"default");
+	@media (prefers-color-scheme: dark) {
+		.btn-color(~"default-dark")
+	}
 }
 .btn-primary {
 	.btn-color(~"primary");
