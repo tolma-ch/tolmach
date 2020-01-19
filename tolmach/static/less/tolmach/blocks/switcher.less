@@ -11,6 +11,9 @@
     text-decoration: none;
     cursor: pointer;
     border: none;
+    @media (prefers-color-scheme: dark) {
+      color: @yellow-main;
+    }
     &:hover {
       text-decoration: none;
     }
@@ -18,13 +21,19 @@
       border-bottom: 1px dashed @mainBlue;
       display: inline-block;
       line-height: 17px;
+      @media (prefers-color-scheme: dark) {
+        border-color: @yellow-main;
+      }
     }
     &_active {
       background: @mainBlue;
       color: #fff;
       cursor: default;
+      @media (prefers-color-scheme: dark) {
+        color: @grayBg-dark;
+        background: @yellow-main;
+      }
       &:hover {
-        color: #fff;
         text-decoration: none;
       }
       span {

@@ -405,6 +405,8 @@
 	cursor pointer
 	min-height 40px
 	margin-bottom 8px
+	@media (prefers-color-scheme: dark)
+		color $yellowMain
 
 	&__ava
 		border-radius 50%
@@ -451,6 +453,8 @@
 		margin-right 10px
 		color #555
 		font-size 16px
+		@media (prefers-color-scheme: dark)
+			color $yellowMain
 	&__menu
 		display none
 		position absolute
@@ -460,6 +464,8 @@
 		height 40px
 		background #F7F7F7
 		cursor pointer
+		@media (prefers-color-scheme: dark)
+			background none
 	&__add
 		float left
 		height 40px
@@ -571,6 +577,8 @@
 	color #4C8FBD
 	cursor pointer
 	min-height 40px
+	@media (prefers-color-scheme: dark)
+		color $yellowMain
 
 	&__name
 		margin 0 0 4px 0
@@ -585,10 +593,14 @@
 		padding-top 10px
 		height 40px
 		background #F7F7F7
+		@media (prefers-color-scheme: dark)
+			background none
 	&__btn
 		margin-left 10px
 		color #555
 		font-size 16px
+		@media (prefers-color-scheme: dark)
+			color $yellowMain
 	&:hover &__btns
 		display block
 
@@ -664,11 +676,13 @@
 		@media (prefers-color-scheme: dark)
 			background-color #303335 !important
 			border 1px solid #303335 !important
+			color #FEE188 !important
 		&:hover
 			padding 0px 5px !important
 			background-color #eaeaea !important
 			@media (prefers-color-scheme: dark)
 				background-color $grayBorderDark !important
+				color #FEE188 !important
 	&__menu
 		li a
 			line-height 34px

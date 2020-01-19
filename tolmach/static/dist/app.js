@@ -1603,13 +1603,6 @@
                 return 15 + increaseFontSize;
             };
 
-            $rootScope.entriesFilter = {
-                not_translated: true,
-                translated: true,
-                approved: true,
-                disabled: true
-            };
-
             $scope.getHost = window['getHost'];
             $scope.isHttps = window['isHttps'];
             $scope.baseHost = ($scope.isHttps ? 'https' : 'http') + '://' + $scope.getHost;
@@ -2056,9 +2049,6 @@
             $scope.$on('GlobalClick', function (e, event) {
                 if ($(event.target).parents('.text-overview__paginator').length === 0) {
                     $rootScope.editPage = false;
-                }
-                if ($(event.target).parents('.text-overview__filter').length === 0) {
-                    $rootScope.editFilter = false;
                 }
             });
             $rootScope.paginatorKeypress = function (event) {
@@ -2774,7 +2764,7 @@
                         var sel = window.getSelection(),
                             range = sel.rangeCount ? sel.getRangeAt(0) : false,
                             rect = range ? range.getClientRects()[0] : false;
-                        if (!target || !target.contains(sel.baseNode)) {
+                        if (!target || target.contains(sel.baseNode)) {
                             if (rect) {
                                 y = rect.bottom;
                                 x = rect.left;
@@ -2819,15 +2809,14 @@
             $scope.selectedEntryText = "";
             $scope.togglePopover = function(entryId, close){
                 $scope.entries.forEach(function (item, i, arr) {
+                    // console.log(entryId + " " + item.idInText);
                     if (item.idInText == entryId) {
-                        // console.log(entryId + " " + item.idInText);
-                        console.log(item.body);
                         if (typeof close !== 'undefined') {
                             console.log("close set");
                             item.popoverIsOpen = false;
                         } else {
                             console.log("close NOT set");
-                            item.popoverIsOpen = true;
+                            item.popoverIsOpen = !item.popoverIsOpen;
                         }
                     } else {
                         item.popoverIsOpen = false;
@@ -2836,7 +2825,6 @@
             };
             $scope.mouseup = function ($event) {
                 var selection = getSelectionText($event.target)[0];
-                console.log(selection);
                 if (selection !== "") {
                     var entryId = $event.currentTarget.parentElement.id.split('-')[1];
                     $scope.selectedEntryText = selection.trim().toLowerCase();

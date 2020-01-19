@@ -127,6 +127,12 @@ input[type="color"] {
  color:@input-color;
  background-color:@input-bg;
  border:1px solid @input-border;
+
+  @media (prefers-color-scheme: dark) {
+    color: lighten(@input-bg-dark, 50%) !important;
+	background-color: @input-bg-dark !important;
+	border-color: @navbar-bg-dark !important;
+  }
  
  padding:5px 4px;
  line-height:1.2;
@@ -249,6 +255,9 @@ input[readonly] {
   color:@input-readonly-color;
   background:@input-readonly-bg !important;
   cursor:default;
+	@media (prefers-color-scheme: dark) {
+		background-color: lighten(@input-bg-dark, 10%) !important;
+	}
 
   &:hover {
 	border-color:lighten(@input-readonly-focus-border , 10%);

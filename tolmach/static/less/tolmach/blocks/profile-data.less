@@ -140,6 +140,16 @@
     box-shadow: none;
     text-transform: uppercase;
   }
+
+    @media (prefers-color-scheme: dark) {
+      .nav-tabs li.active a,
+      .nav-tabs li.active a:hover {
+        color: #fff;
+      }
+      .nav-tabs li a:hover {
+        color: @yellow-main;
+      }
+    }
   .nav-tabs li.active {
     border-bottom: 5px solid #02C14F;
   }
@@ -162,6 +172,9 @@
       top: 15px;
       right: 75%;
       background: #ffffff;
+      @media (prefers-color-scheme: dark) {
+        background: @grayBg-dark;
+      }
     }
   }
 
@@ -325,12 +338,23 @@
       &:hover {
         color: #337AB7;
         background-color: #F5F5F5;
+        @media (prefers-color-scheme: dark) {
+          color: @grayBg-dark;
+          background-color: @yellow-main;
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        background-color: @grayBg-dark;
       }
     }
     &.active {
       a {
         color: white;
         background-color: #438EB9;
+        @media (prefers-color-scheme: dark) {
+          color: @grayBg-dark;
+          background-color: @yellow-main;
+        }
       }
     }
   }
@@ -339,20 +363,37 @@
 .projects-paginator {
   li.active a {
     background-color: #438EB9 !important;
+    color: @grayBg-dark !important;
     &:hover {
       background-color: #438EB9 !important;
+      @media (prefers-color-scheme: dark) {
+        background-color: @yellow-main !important;
+        color: @grayBg-dark;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      background-color: @yellow-main !important;
+      color: @grayBg-dark;
     }
   }
   li.disabled a {
     color: #707070 !important;
     background-color: #F9F9F9 !important;
+    @media (prefers-color-scheme: dark) {
+      background-color: @navbar-bg-dark !important;
+    }
   }
   li a {
     background: none !important;
     border: none !important;
+    color: @yellow-main !important;
     &:hover {
       background: #F5F5F5 !important;
       border: none !important;
+      @media (prefers-color-scheme: dark) {
+        background: @yellow-main !important;
+        color: @grayBg-dark !important;
+      }
     }
   }
 }

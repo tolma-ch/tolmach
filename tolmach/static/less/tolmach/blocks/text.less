@@ -5,6 +5,9 @@
   &__row {
     height: 100%;
     box-shadow: 0px 0px 35px 0px rgba(167, 167, 167, 0.75);
+    @media (prefers-color-scheme: dark) {
+      box-shadow: 0 0 35px 0 rgb(23, 23, 23);
+    }
   }
   &__col {
     height: 100%;
@@ -64,10 +67,16 @@
       vertical-align: middle;
       &:hover {
         background-color: #E4E4E4;
+        @media (prefers-color-scheme: dark) {
+          background-color: #585B5B !important;
+        }
       }
       &:active {
         background-color: #E4E4E4;
         box-shadow: inset 0 0 3px 0px rgba(0,0,0,0.5);
+        @media (prefers-color-scheme: dark) {
+          background-color: #585B5B !important;
+        }
       }
     }
     input {
@@ -78,6 +87,9 @@
       padding: 6px 5px 9px 5px;
       &:hover {
         background: #E4E4E4;
+        @media (prefers-color-scheme: dark) {
+          background-color: #585B5B !important;
+        }
       }
     }
     &__mobile {
@@ -164,6 +176,9 @@
   @media (max-width: 767px) {
     font-size: 14px;
   }
+  @media (prefers-color-scheme: dark) {
+    background: #232427;
+  }
 
   &__original {
     position: relative;
@@ -181,6 +196,9 @@
       right: -5px;
       bottom: 0;
       box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.5);
+    }
+    @media (prefers-color-scheme: dark) {
+      background: #232427;
     }
   }
   &__editor {
@@ -201,6 +219,9 @@
       color: fadeout(#000000, 70%);
       margin: -5px 0;
       display: inline-block;
+      @media (prefers-color-scheme: dark) {
+        color: #9c9b9b;
+      }
       &:hover {
         color: #02c14f;
       }
@@ -428,6 +449,10 @@
       display: block;
       opacity: .7;
     }
+    @media (prefers-color-scheme: dark) {
+      background: #35393B !important;
+      border: none;
+    }
   }
   &__machine-suggestions {
     display: none;
@@ -544,6 +569,11 @@
 .glossary-word {
   background: #e1ffa2;
   cursor: pointer;
+  @media (prefers-color-scheme: dark) {
+    background: none;
+    text-decoration: underline overline;
+    color: @yellow-main;
+  }
 }
 
 [contenteditable] {
