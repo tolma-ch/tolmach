@@ -35,6 +35,7 @@ module.exports = function (grunt) {
                     compress: true
                 },
                 files: {
+                    "tolmach/static/assets/bootstrap/dist/css/bootstrap.css": "tolmach/static/assets/bootstrap/less/bootstrap.less",
                     "tolmach/static/dist/ace.css": "tolmach/static/less/ace.less",
                     "tolmach/static/dist/landing.css": "tolmach/static/less/landing.less",
                     "tmp/tolmach.css": "tolmach/static/less/tolmach.less"
