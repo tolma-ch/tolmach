@@ -11,20 +11,6 @@
 {% trans 'Only invited users can see your project' as private_checkbox_description %}
 {% trans 'Create' as add_button %}
 
-<style>
-    .modal-header {
-        padding: 10px 20px;
-        background: #ffffff;
-        color: #5a5a5a;
-    }
-    .modal-header .close {
-        color: #5a5a5a;
-    }
-    .ololo {
-        margin-top: -10px;
-    }
-</style>
-
 <script type="text/ng-template" id="newOrganizationModal.html">
     <div class="modal-header">
         <button type="button"
@@ -45,42 +31,6 @@
                            autofocus>
                 </div>
             </div>
-{#            <a class="btn btn-link" ng-click="(createOrgAdvancedOptions = !createOrgAdvancedOptions) && createOrgAdvancedOptions">{{ advanced_options_label }}</a>#}
-{#            <div class="new-project__advanced-options"#}
-{#                 ng-show="createOrgAdvancedOptions">#}
-{#                <div class="form-group">#}
-{#                    <label class="control-label no-padding-right" for="form-field-2"> {{ short_description_name }}: </label>#}
-{#                    <div class="">#}
-{#                        <textarea class="form-control"#}
-{#                                  placeholder=""#}
-{#                                  id="form-field-2"#}
-{#                                  msd-elastic="\n"#}
-{#                                  ng-model="description"#}
-{#                                  value=" "></textarea>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="form-group">#}
-{#                    <label>#}
-{#                        <input name="form-field-radio" type="radio" class="ace"#}
-{#                               value="public"#}
-{#                               ng-model="type">#}
-{#                        <span class="lbl ololo">#}
-{#                            {{ public_checkbox }}#}
-{#                            <p>{{ public_checkbox_description }}</p>#}
-{#                        </span>#}
-{##}
-{#                    </label>#}
-{#                </div>#}
-{#                <div class="form-group">#}
-{#                    <label>#}
-{#                        <input name="form-field-radio" type="radio" class="ace"#}
-{#                               value="private"#}
-{#                               ng-model="type">#}
-{#                        <span class="lbl"> {{ private_checkbox }}</span>#}
-{#                        <p>{{ private_checkbox_description }}</p>#}
-{#                    </label>#}
-{#                </div>#}
-{#            </div>#}
             <div class="form-group" ng-show="error">
                 <div class="label label-danger">{= error =}</div>
             </div>
