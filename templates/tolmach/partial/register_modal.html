@@ -9,7 +9,7 @@
                                         <h4 class="modal-title" id="myModalLabel">{% trans "Sign up and login" %}</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <div class="socila-sign-block">
+                                        <div class="social-sign-block">
                                             <p class="center">
                                                 {% trans "One-click sign up and login:" %}
                                             </p>
@@ -45,7 +45,7 @@
                                                    value="{{ myvalue }}">
                                             {% endfor %}
                                             <div class="form-group">
-                                                <div class="pull-right">
+                                                <div class="auth-links-block">
                                                     <p>
                                                         <a href="" class="reset-password-link">{% trans "Forgot your password?" %}</a>
                                                     </p>
@@ -53,7 +53,7 @@
                                                         <a href="" class="register-link">{% trans "Sign up" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Log in" %}</button>
+                                                <button class="btn btn-success pull-right" type="submit">{% trans "Log in" %}</button>
                                             </div>
                                         </form>
                                         <form action="" id="register-form" style="display: none;">
@@ -97,7 +97,7 @@
                                                    value="{{ myvalue }}">
                                             {% endfor %}
                                             <div class="form-group">
-                                                <div class="pull-right">
+                                                <div class="auth-links-block">
                                                     <p>
                                                         <a href="" class="reset-password-link">{% trans "Forgot your password?" %}</a>
                                                     </p>
@@ -105,7 +105,7 @@
                                                         <a href="" class="login-link">{% trans "Authorization" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Sign up" %}</button>
+                                                <button class="btn btn-success pull-right" type="submit">{% trans "Sign up" %}</button>
                                             </div>
                                         </form>
                                         <form action="" id="reset-form" style="display: none;">
@@ -121,7 +121,7 @@
                                                        placeholder="{% trans "username" %}">
                                             </div>
                                             <div class="form-group">
-                                                <div class="pull-right">
+                                                <div class="auth-links-block">
                                                     <p>
                                                         <a href="" class="login-link">{% trans "Authorization" %}</a>
                                                     </p>
@@ -129,7 +129,7 @@
                                                         <a href="" class="register-link">{% trans "Registration" %}</a>
                                                     </p>
                                                 </div>
-                                                <button class="btn btn-info" type="submit">{% trans "Reset password" %}</button>
+                                                <button class="btn btn-warning pull-right" type="submit">{% trans "Reset password" %}</button>
                                             </div>
                                         </form>
                                         <form action="/" id="new-pass-form" style="display: none;">
