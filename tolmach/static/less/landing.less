@@ -199,14 +199,23 @@ h2 {
   	border: 1px solid #b5c2ce;
   	height: auto;
 }
+.form-group p {
+	margin-bottom: 0.4em;
+}
+.auth-links-block {
+	display: inline-block;
+}
+form > p {
+		@media (prefers-color-scheme: dark) {
+			color: #868686;
+		}
+	}
 .btn {
-  	font-size: 1.25em;
+  	font-size: 1.1em;
 	font-weight: lighter;
   	padding: .75em .85em;
 	border-radius: 0;
 	border: none;
-	color: white;
-	background: #02c14f;
 	width: auto;
 	&:active {
 		color: white;
@@ -256,6 +265,11 @@ footer {
 	display: inline-block;
 	text-align: center;
 	margin: 0 .1em;
+	@media (prefers-color-scheme: dark) {
+		background: #313335;
+		color: #FAE194;
+		border-color: #FAE194;
+	}
 }
 .languages-poster {
 	margin: -190px auto -190px;
@@ -480,10 +494,25 @@ footer {
     position: relative;
     height: 1em;
     text-align: center;
+	overflow: unset;
+    font-size: 16px;
+    border-top: none;
 	span {
 		background: white;
 		padding: .1em .2em;
 		position: relative;
 		display: inline-block;
+	}
+	@media (prefers-color-scheme: dark) {
+		border-bottom: 1px solid #868686;
+		span {
+			background: #313335;
+		}
+	}
+}
+
+.social-sign-block {
+	@media (prefers-color-scheme: dark) {
+		color: #868686;
 	}
 }
