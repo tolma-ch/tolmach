@@ -62,6 +62,11 @@
         &__value {
           color: #fff;
           line-height: 18px;
+          //text-shadow:
+          //  -1px -1px 1px #4D5154,
+          //  1px -1px 1px #4D5154,
+          //  -1px 1px 1px #4D5154,
+          //  1px 1px 1px #4D5154;
         }
       }
     }
@@ -363,7 +368,7 @@
 .projects-paginator {
   li.active a {
     background-color: #438EB9 !important;
-    color: @grayBg-dark !important;
+    color: @grayBg !important;
     &:hover {
       background-color: #438EB9 !important;
       @media (prefers-color-scheme: dark) {
@@ -373,7 +378,7 @@
     }
     @media (prefers-color-scheme: dark) {
       background-color: @yellow-main !important;
-      color: @grayBg-dark;
+      color: @grayBg-dark !important;
     }
   }
   li.disabled a {
@@ -386,7 +391,10 @@
   li a {
     background: none !important;
     border: none !important;
-    color: @yellow-main !important;
+    color: @mainBlue !important;
+    @media (prefers-color-scheme: dark) {
+      color: @yellow-main !important;
+    }
     &:hover {
       background: #F5F5F5 !important;
       border: none !important;

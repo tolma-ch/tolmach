@@ -73,7 +73,7 @@
           }
           background: #3B8DB7;
           &:hover {
-            background: lighten(#3B8DB7, 40%);
+            background: darken(#3B8DB7, 10%);
             @media (prefers-color-scheme: dark) {
               background: lighten(@navbar-bg-dark, 20%);
             }
@@ -220,14 +220,20 @@
       color: #ffffff;
       margin-top: -6px;
       &:hover {
-        background-color: #367798;
+        background: darken(#3B8DB7, 10%);
         color: #5DBE3E;
+        @media (prefers-color-scheme: dark) {
+          background: lighten(@navbar-bg-dark, 20%);
+        }
       }
     }
     &-text {
       &:hover {
-        background: #367798;
+        background: darken(#3B8DB7, 10%);
         color: #5DBE3E;
+        @media (prefers-color-scheme: dark) {
+          background: lighten(@navbar-bg-dark, 20%);
+        }
       }
       i {
         font-size: 19px;

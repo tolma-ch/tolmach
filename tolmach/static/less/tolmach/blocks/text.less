@@ -276,7 +276,6 @@
     @media (prefers-color-scheme: dark) {
       background: @grayBg-dark;
       color: #F0FFC0;
-      font-weight: bolder;
     }
   }
   &_closed&_approved {
@@ -447,6 +446,10 @@
     padding: 10px 15px;
     width: 130px;
     font-size: 14px;
+    @media (prefers-color-scheme: dark) {
+      background: #232427;
+      border-color: lighten(@navbar-bg-dark, 20%);
+    }
   }
   &__input-wrapper {
 
