@@ -14,22 +14,63 @@ angular.module('ngClickCopy', [])
 		body.append(textarea);
 		textarea[0].select();
 
+		var succeed = false;
+
 		try {
 			var successful = document.execCommand('copy');
 			if (!successful) throw successful;
+			succeed = true;
 		} catch (err) {
 			window.prompt("Copy to clipboard: Ctrl+C, Enter", toCopy);
 		}
 
 		textarea.remove();
+
+		return succeed;
 	}
 }])
 .directive('ngClickCopy', ['ngCopy', function (ngCopy) {
 	return {
 		restrict: 'A',
 		link: function (scope, element, attrs) {
-			element.bind('click', function (e) {
-				ngCopy(attrs.ngClickCopy);
+			element.bind('mousedown', function (e) {
+				if (e.which != 1)
+				{
+					return;
+				}
+				e.originalEvent.preventDefault();
+				var prevFocus = document.activeElement;
+				if (ngCopy(attrs.ngClickCopy))
+				{
+					if (attrs.ngClickCopyMessage)
+					{
+						var tooltip = angular.element('<div>'+attrs.ngClickCopyMessage+'</div>');
+						tooltip.css({
+							position: 'absolute',
+							top: '0',
+							right: '0',
+							color: '#337ab7',
+							fontSize: '.8em',
+							transition: 'all .5s ease-in-out',
+							pointerEvents: 'none',
+							textShadow: '0 0 1px rgba(0, 0, 0, .16)',
+							userSelect: 'none'
+						});
+						angular.element(e.currentTarget.parentElement).after(tooltip);
+						setTimeout(() => {
+							tooltip.css({
+								marginTop: '-25px',
+								opacity: '0'
+							});
+						}, 10);
+						setTimeout(() => {
+							tooltip.remove();
+						}, 510);
+					}
+				}
+				if (prevFocus) {
+					prevFocus.focus();
+				}
 			});
 		}
 	}
