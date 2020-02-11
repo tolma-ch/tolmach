@@ -1,4 +1,5 @@
 {% load i18n %}
+{% trans "Copied!" as fragment_link %}
 <style>
     .project-participants {
         padding: 12px;
@@ -67,7 +68,8 @@
                 <span class="input-group-btn">
                     <button class="btn btn-sm btn-default"
                             type="button"
-                            ng-click-copy="{{ base_domain }}/project/i/{= projectInviteCode =}/">
+                            ng-click-copy="{{ base_domain }}/project/i/{= projectInviteCode =}/"
+                            ng-click-copy-message="{{ fragment_link }}">
                         <i class="fa fa-clipboard" aria-hidden="true"></i>
                     </button>
                 </span>
