@@ -44,17 +44,15 @@ angular.module('ngClickCopy', [])
 				{
 					if (attrs.ngClickCopyMessage)
 					{
-						var tooltip = angular.element('<div>'+attrs.ngClickCopyMessage+'</div>');
+						var tooltip = angular.element('<div class="copied-tooltip">'+attrs.ngClickCopyMessage+'</div>');
 						tooltip.css({
 							position: 'absolute',
 							top: '0',
 							right: '0',
-							color: '#337ab7',
-							fontSize: '.8em',
-							transition: 'all .5s ease-in-out',
+							marginTop: '0',
 							pointerEvents: 'none',
-							textShadow: '0 0 1px rgba(0, 0, 0, .16)',
-							userSelect: 'none'
+							userSelect: 'none',
+							opacity: 1
 						});
 						angular.element(e.currentTarget.parentElement).after(tooltip);
 						setTimeout(() => {
