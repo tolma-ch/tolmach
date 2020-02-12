@@ -166,6 +166,7 @@ INSTALLED_APPS = (
     'chat',
     'stats',
     'channels',
+    'loginas',
     'social_auth_widget',
     'social_django',
     'simple_history',
@@ -309,6 +310,9 @@ CHANNEL_LAYERS = {
 }
 
 WS_HOST = "wss://tolma.ch"
+
+from django.core.urlresolvers import reverse_lazy
+LOGOUT_URL = reverse_lazy('loginas-logout')
 
 try:
     from tolmach.local_settings import *

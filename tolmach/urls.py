@@ -97,6 +97,8 @@ urlpatterns = [
     # temporarily added urls for developing purpuses
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+urlpatterns += url("admin/", include('loginas.urls')),
+
 try:
     debug_toolbar_enable = settings.DEBUG_TOOLBAR
 except:
