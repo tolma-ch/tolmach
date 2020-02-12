@@ -57,7 +57,7 @@ angular.module('ngClickCopy', [])
 						angular.element(e.currentTarget.parentElement).after(tooltip);
 						setTimeout(() => {
 							tooltip.css({
-								marginTop: '-25px',
+								marginTop: '-35px',
 								opacity: '0'
 							});
 						}, 10);
