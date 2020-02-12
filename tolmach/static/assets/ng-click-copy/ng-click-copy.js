@@ -50,9 +50,11 @@ angular.module('ngClickCopy', [])
 							top: '0',
 							right: '0',
 							marginTop: '0',
+							opacity: 1,
 							pointerEvents: 'none',
 							userSelect: 'none',
-							opacity: 1
+							textShadow: '0 0 1px rgba(0, 0, 0, .16)',
+							userSelect: 'none'
 						});
 						angular.element(e.currentTarget.parentElement).after(tooltip);
 						setTimeout(() => {
