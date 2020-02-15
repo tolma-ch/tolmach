@@ -401,8 +401,8 @@ def view_translation(request, text_id, target_lang):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
-    lang = Language.objects.get(code=target_lang)
-    translation = TextTranslation.objects.get(text=text, target_lang=lang)
+    lang = get_object_or_404(Language, code=target_lang)
+    translation = get_object_or_404(TextTranslation, text=text, target_lang=lang)
     translation_counts, translation_progress = translation.get_progress()
 
     try:
