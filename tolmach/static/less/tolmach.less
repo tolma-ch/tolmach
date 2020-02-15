@@ -123,15 +123,18 @@
 //
 
 .copied-tooltip {
-    position: absolute;
-    top: 0;
-    right: 0;
-    opacity: 1;
-    color: #337ab7;
-    font-size: .8em;
-    transition: all .5s ease-in-out;
-    text-shadow: 0 0 1px rgba(0, 0, 0, .16);
-    pointer-events: none;
-    user-select: none;
-    z-index: 999;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 1;
+  color: #337ab7;
+  font-size: .8em;
+  transition: all .5s ease-in-out;
+  text-shadow: 0 0 1px rgba(0, 0, 0, .16);
+  pointer-events: none;
+  user-select: none;
+  z-index: 999;
+  @media (prefers-color-scheme: dark) {
+    color: @yellow-main;
+  }
 }
