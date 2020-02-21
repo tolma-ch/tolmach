@@ -99,12 +99,13 @@
                                     'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}"
                          ng-style="{'font-size': customFontSize + 'px'}"
                          uib-popover-template="'myPopoverTemplate.html'"
+                         popover-placement="top-left"
                          popover-is-open="entry.popoverIsOpen"
                          popover-trigger="'none'">
                         <!---------------------------------
                                    original text
                         ---------------------------------->
-                        <div class="text-piece__original" ng-mouseup="mouseup($event)">
+                        <div class="text-piece__original" ng-mouseup="hidePopover()">
                             <div ng-if="$parent.activeEntry !== entry">
                                 <div ng-if="!entry.approved && (entry.translations.length == 0)">
                                     <span html-content="entry.body"></span>
@@ -167,7 +168,7 @@
                             </div>
                             <div ng-if="$parent.activeEntry === entry">
                                 <div ng-if="!entry.meta.msgid_plural">
-                                    <span style="padding-right: 25px; display: block;">
+                                    <span style="padding-right: 25px; display: block;" ng-mouseup="$parent.mouseup($event, entry)">
                                         <span html-content="entry.body"></span>
                                         {% include "translations/partial/text-page-now-editing-icon.html" %}
                                         <div class="text-piece__icons">
