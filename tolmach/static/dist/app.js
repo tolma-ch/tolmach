@@ -2772,6 +2772,10 @@
                             }
                             text = sel.toString();
                         }
+                        else
+                        {
+                            text = sel.toString();
+                        }
                     } else if (document.selection && document.selection.type != "Control") {
                         var range = sel.createRange();
                         range.collapse(true);
@@ -2823,14 +2827,28 @@
                     }
                 });
             };
-            $scope.mouseup = function ($event) {
+            $scope.mouseup = function ($event, entry) {
                 var selection = getSelectionText($event.target)[0];
                 if (selection !== "") {
-                    var entryId = $event.currentTarget.parentElement.id.split('-')[1];
                     $scope.selectedEntryText = selection.trim().toLowerCase();
-                    $scope.togglePopover(entryId);
+                    $timeout(function() {
+                        entry.popoverIsOpen = true;
+                        $timeout(function() {
+                            var el = angular.element('#entry-'+entry.idInText+' + .popover')[0];
+                            angular.element(el).css({marginLeft: $event.clientX});
+                        }, 10);
+                    }, 100);
+                } else {
+                    $timeout(function() {
+                        entry.popoverIsOpen = false;
+                    }, 100);
                 }
             };
+            $scope.hidePopover = function() {
+                $scope.entries.forEach(function (item, i) {
+                    item.popoverIsOpen = false;
+                });
+            }
             $scope.translatePhrase = function () {
                 translate($scope.selectedEntryText);
             };
