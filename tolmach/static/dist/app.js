@@ -2848,6 +2848,7 @@
                 }
             };
             $scope.hidePopover = function() {
+                $scope.selectedEntryText = "";
                 $scope.entries.forEach(function (item, i) {
                     item.popoverIsOpen = false;
                 });
@@ -3441,6 +3442,18 @@
         }
       };
     });
+    module.directive('ngScroll', [function() {
+      return {
+        link: function(scope, element, attrs) {
+          element.bind('mousewheel wheel DOMMouseScroll', function(ev) {
+            console.log(ev);
+              scope.$apply(function() {
+                scope.$eval(attrs.ngScroll);
+              });
+          });
+        }
+      };
+    }]);
 }());;(function () {
     'use strict';
 

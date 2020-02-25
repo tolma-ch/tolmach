@@ -83,7 +83,7 @@
               <button type="button" class="btn btn-default" ng-click="translatePhrase()">{{ make_translation }}</button>
             </div>
         </script>
-        <div class="workbench-layout__row row" ng-cloak>
+        <div class="workbench-layout__row row" ng-cloak ng-scroll="hidePopover()">
             <div class="workbench-layout__col col-xs-12 col-sm-6">
                 <div class="text-pieces" id="translations-container"
                      ng-show="!busy">
