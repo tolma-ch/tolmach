@@ -2834,7 +2834,7 @@
                     $timeout(function() {
                         entry.popoverIsOpen = true;
                         $timeout(function() {
-                            var el = angular.element('#entry-'+entry.idInText+' + .popover')[0];
+                            var el = angular.element('.active-entry-popover')[0];
                             angular.element(el).css({
                                 marginLeft: $event.offsetX,
                                 marginTop: $event.offsetY - 16,

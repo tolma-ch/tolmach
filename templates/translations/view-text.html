@@ -99,6 +99,8 @@
                                     'text-piece_someone-editing': keyLength(entry.isBeingEdited) > 0}"
                          ng-style="{'font-size': customFontSize + 'px'}"
                          uib-popover-template="'myPopoverTemplate.html'"
+                         popover-append-to-body="true"
+                         popover-class="active-entry-popover"
                          popover-placement="top-left"
                          popover-is-open="entry.popoverIsOpen"
                          popover-trigger="'none'">
