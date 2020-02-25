@@ -1252,7 +1252,10 @@
                         entry.popoverIsOpen = true;
                         $timeout(function() {
                             var el = angular.element('#entry-'+entry.idInText+' + .popover')[0];
-                            angular.element(el).css({marginLeft: $event.clientX});
+                            angular.element(el).css({
+                                marginLeft: $event.offsetX,
+                                marginTop: $event.offsetY - 16,
+                            });
                         }, 10);
                     }, 100);
                 } else {
