@@ -404,7 +404,6 @@
       return {
         link: function(scope, element, attrs) {
           element.bind('mousewheel wheel DOMMouseScroll', function(ev) {
-            console.log(ev);
               scope.$apply(function() {
                 scope.$eval(attrs.ngScroll);
               });
