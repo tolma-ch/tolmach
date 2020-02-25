@@ -400,4 +400,15 @@
         }
       };
     });
+    module.directive('ngScroll', [function() {
+      return {
+        link: function(scope, element, attrs) {
+          element.bind('mousewheel wheel DOMMouseScroll', function(ev) {
+              scope.$apply(function() {
+                scope.$eval(attrs.ngScroll);
+              });
+          });
+        }
+      };
+    }]);
 }());

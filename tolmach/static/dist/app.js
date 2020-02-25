@@ -2834,7 +2834,7 @@
                     $timeout(function() {
                         entry.popoverIsOpen = true;
                         $timeout(function() {
-                            var el = angular.element('#entry-'+entry.idInText+' + .popover')[0];
+                            var el = angular.element('.active-entry-popover')[0];
                             angular.element(el).css({
                                 marginLeft: $event.offsetX,
                                 marginTop: $event.offsetY - 16,
@@ -2848,6 +2848,7 @@
                 }
             };
             $scope.hidePopover = function() {
+                $scope.selectedEntryText = "";
                 $scope.entries.forEach(function (item, i) {
                     item.popoverIsOpen = false;
                 });
@@ -3441,6 +3442,17 @@
         }
       };
     });
+    module.directive('ngScroll', [function() {
+      return {
+        link: function(scope, element, attrs) {
+          element.bind('mousewheel wheel DOMMouseScroll', function(ev) {
+              scope.$apply(function() {
+                scope.$eval(attrs.ngScroll);
+              });
+          });
+        }
+      };
+    }]);
 }());;(function () {
     'use strict';
 
