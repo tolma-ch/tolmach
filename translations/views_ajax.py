@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db import transaction, IntegrityError
 from django.db.models import Q, F
@@ -1664,3 +1665,36 @@ def user_ajax(request):
                 }
             return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json")
+
+
+# @login_required
+@csrf_exempt
+def languagetool_ajax(request):
+    if request.method == 'POST':
+        try:
+            post = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponse(json.dumps({'Error': 500, "Text": _("Request should contain JSON-formatted data")}),
+                                content_type="application/json")
+
+        from urllib.parse import urlencode
+        from urllib.request import urlopen, Request
+        from urllib.error import HTTPError, URLError
+
+        url = "http://127.0.0.1:8081/v2/check"
+
+        data = urlencode(post).encode('ascii')
+        req = Request(url, data)
+
+        try:
+            response = urlopen(req)
+        except HTTPError as e:
+            return HttpResponse(json.dumps({'Error': e.code,
+                                            "Text": _("Something went wrong with the Languagetool server")}),
+                                content_type="application/json")
+        except URLError:
+            return HttpResponse(json.dumps({'Error': 500,
+                                            "Text": _("Something went wrong with the Languagetool server")}),
+                                content_type="application/json")
+
+        return HttpResponse(response.read(), content_type="application/json")

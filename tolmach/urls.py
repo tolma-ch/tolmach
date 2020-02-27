@@ -91,6 +91,7 @@ urlpatterns = [
     url(r'^ajax/dict-search/$', dict_views.dict_search, name='dict_search'),
     url(r'^ajax/message/(?:(?P<all>\w+)/)?$', trans_ajax.message_ajax, name='message_ajax'),
     url(r'^ajax/user/$', trans_ajax.user_ajax, name='user_ajax'),
+    url(r'^ajax/languagetool/$', trans_ajax.languagetool_ajax, name='languagetool_ajax'),
 
     url('', include('chat.urls')),
 
