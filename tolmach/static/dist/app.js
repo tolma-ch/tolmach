@@ -2848,15 +2848,16 @@
                 }
             };
             $scope.hidePopover = function() {
-                $scope.selectedEntryText = "";
                 $scope.entries.forEach(function (item, i) {
                     item.popoverIsOpen = false;
                 });
-            }
+            };
             $scope.translatePhrase = function () {
+                console.log($scope.selectedEntryText);
                 translate($scope.selectedEntryText);
             };
             $scope.toGlossary = function () {
+                console.log($scope.selectedEntryText);
                 var modalInstance = $uibModal.open({
                     templateUrl: 'toGlossaryModal.html',
                     controller: 'ToGlossaryModalCtrl',

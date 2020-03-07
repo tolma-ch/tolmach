@@ -1265,11 +1265,10 @@
                 }
             };
             $scope.hidePopover = function() {
-                $scope.selectedEntryText = "";
                 $scope.entries.forEach(function (item, i) {
                     item.popoverIsOpen = false;
                 });
-            }
+            };
             $scope.translatePhrase = function () {
                 translate($scope.selectedEntryText);
             };

@@ -105,6 +105,23 @@ module.exports = function (grunt) {
                     'templates/main/partial/include-js.html': 'templates/main/partial/include-js-template.html'
                 }
             }
+        },
+
+        'string-replace': {
+            inline: {
+                files: {
+                  'templates/main/': 'templates/main/base.html',
+                },
+                options: {
+                    replacements: [
+                        {
+                            pattern: /with front_version=".+"/ig,
+                            // pattern: "front_version",
+                            replacement: 'with front_version="'+ Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + '"'
+                        }
+                    ]
+                }
+            }
         }
 
     });
@@ -117,6 +134,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-include-source');
+    grunt.loadNpmTasks('grunt-string-replace');
 
     grunt.registerTask('dev', [
         'includeSource'
@@ -135,7 +153,8 @@ module.exports = function (grunt) {
     grunt.registerTask('package', [
         'clean:dist',
         'css',
-        'js'
+        'js',
+        'string-replace'
     ]);
     grunt.registerTask('default', ['package']);
 };
