@@ -7,7 +7,7 @@ pipelines:
             - pip install ansible==2.6
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
-            - ansible-playbook -i inventory/hosts -i hosts/staging site.yml --tags="deploy" --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i inventory/hosts -i hosts/staging site.yml --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
 definitions:
