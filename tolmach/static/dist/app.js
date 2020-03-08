@@ -3118,12 +3118,19 @@
             }
         };
     }]);
-    module.directive('htmlContent', ['$compile', '$parse', function ($compile, $parse) {
+    module.directive('htmlContent', ['$compile', '$parse', '$timeout', function ($compile, $parse, $timeout) {
         return {
             link: function (scope, element, attr) {
-                var content = attr['htmlContent'];
-                element.html($parse(content)(scope));
-                $compile(element.contents())(scope);
+                function updateHtml() {
+                    var content = attr['htmlContent'];
+                    element.html($parse(content)(scope));
+                    $compile(element.contents())(scope);
+                };
+                // -- watcher
+                // updateHtml();
+                // scope.$watch(attr['htmlContent'], updateHtml);
+                // -- or timeout
+                $timeout(updateHtml, 100);
             }
         }
     }]);
