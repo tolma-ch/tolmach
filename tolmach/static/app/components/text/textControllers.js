@@ -374,6 +374,18 @@
                         //console.error(a);
                     });
                 },
+                getGlossaryInfo = function (entry) {
+                    $http.post('/ajax/entry-glossary-filter/', {
+                        entry_body: entry['body'],
+                        target_lang: window['translationTargetLang'],
+                        text_id: textId,
+                    }).success(function (data) {
+                        entry.body = data['entry_body'];
+                        // TODO: добавить ручное обновление htmlContent
+                    }).error(function (a) {
+                        console.error(a);
+                    });
+                },
                 updateEntries = function () {
                     $scope.busy = true;
                     $http.get('/ajax/entry/', {
@@ -732,10 +744,11 @@
                         entry.pluralVariants = [];
                     }
                     entry.editing = true;
+                    getGlossaryInfo(entry);
                     if ((useMachine) && (typeof entry['machines'] === 'undefined')) {
                         getYaMachines(entry);
-                        getTmdbVariants(entry);
                     }
+                    getTmdbVariants(entry);
                 }
             };
             $scope.cancelEditing = function (entry) {
