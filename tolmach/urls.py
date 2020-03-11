@@ -79,6 +79,7 @@ urlpatterns = [
     url(r'^ajax/entry-disapprove-by-user/$', trans_ajax.disapprove_all_entries_by_user_ajax, name='disapprove_all_entries_by_user_ajax'),
     url(r'^ajax/entry-disapprove/$', trans_ajax.disapprove_entry_ajax, name='entry_approve_ajax'),
     url(r'^ajax/entry-translate/$', trans_ajax.translate_entry_ajax, name='translate_entry_ajax'),
+    url(r'^ajax/entry-glossary-filter/$', trans_ajax.glossary_filter_entry_ajax, name='glossary_filter_entry_ajax'),
     url(r'^ajax/remove-translate/$', trans_ajax.remove_entry_ajax, name='remove_entry_ajax'),
     url(r'^ajax/get-translation-progress/$', trans_ajax.get_translation_progress, name='get_translation_progress'),
     url(r'^ajax/get-users/$', trans_ajax.get_users_ajax, name='get_users_ajax'),
