@@ -1388,18 +1388,13 @@ def disapprove_all_entries_by_user_ajax(request, text):
 @login_required()
 def glossary_filter_entry_ajax(request):
     if request.method == 'POST':
-        from time import sleep
         post = json.loads(request.body)
         lang = Language.objects.get(code=post['target_lang'])
         text = Text.objects.get(id=post['text_id'])
-        text_translation = TextTranslation.objects.get(text=text,
-                                                       target_lang=lang,
-                                                       )
         project_translation = ProjectTranslation.objects.get(project=text.project,
                                                              target_lang=lang,
                                                              )
-        post['entry_body'] = utils.glossary_to_entry(post['entry_body'], project_translation.glossaries_list.all())
-        sleep(2)
+        post['entry_body'] = utils.glossary_to_entry(post['entry_body'], project_translation.glossaries_list.all(), lang)
 
         return HttpResponse(json.dumps(post), content_type="application/json")
 

@@ -279,6 +279,7 @@
                     }
                     entrySetEditingStatus(entry, 'start');
                     scrollToEntry(entry);
+                    getGlossaryInfo(entry);
                     var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
                     entry.suggestion = localStorageService.get('sug-' + textAreaId, entry.suggestion) || "";
                 };
@@ -744,7 +745,6 @@
                         entry.pluralVariants = [];
                     }
                     entry.editing = true;
-                    getGlossaryInfo(entry);
                     if ((useMachine) && (typeof entry['machines'] === 'undefined')) {
                         getYaMachines(entry);
                     }
