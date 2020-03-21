@@ -12,6 +12,9 @@ class Language(models.Model):
     def __str__(self):
         return self.name
 
+    def is_cjk(self):
+        return True if self.code in ['zh', 'ja', 'ko'] else False
+
 class Subject(models.Model):
     name = models.CharField(max_length=128)
 

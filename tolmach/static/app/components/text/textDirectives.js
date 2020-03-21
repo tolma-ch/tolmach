@@ -84,10 +84,10 @@
                     $compile(element.contents())(scope);
                 };
                 // -- watcher
-                // updateHtml();
-                // scope.$watch(attr['htmlContent'], updateHtml);
+                updateHtml();
+                scope.$watch(attr['htmlContent'], updateHtml);
                 // -- or timeout
-                $timeout(updateHtml, 100);
+                // $timeout(updateHtml, 100);
             }
         }
     }]);

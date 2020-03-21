@@ -211,19 +211,63 @@ def parse_glossary_text(text, filetype):
 
 
 # выделяем слова, из глоссария в активном entry на странице перевода текста
-def glossary_to_entry(entry_body, glossary_list):
+def glossary_to_entry(entry_body, glossary_list, language):
+    from nltk.stem.snowball import SnowballStemmer
+    from nltk.tokenize import word_tokenize
+
     def highlight_word(target_word):
         def repl_in_text(matchobj):
             return "<span data-glossary-word=\"%s\">" % target_word + matchobj.group(0) + "</span>"
         return repl_in_text
-    body_to_return = entry_body
 
-    # TODO: сделать так, чтобы он перестал находить слово sci в слове lasciavano
-    for glos in glossary_list:
-        gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
-        for pair in gloss_entries:
-            body_to_return = re.sub(escape_brackets(pair.source_entry),
-                                    highlight_word(pair.target_entry),
+    def cleanse_glossary_entries(glossary_list):
+        """
+        Убираем потенциальные дубли из списка глоссариев, результат кешим
+        """
+        return_data = {}
+        for glos in glossary_list:
+            gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
+            for pair in gloss_entries:
+                if pair.source_entry not in return_data:
+                    return_data[pair.source_entry] = pair.target_entry
+        return return_data
+
+    body_to_return = entry_body
+    if not language.is_cjk():
+        """
+        Если язык не азиатский, то можно пользоваться стеммером для более лучшего поиска
+        """
+        stemmer = SnowballStemmer(language.name.lower())
+        tokenized_body = word_tokenize(entry_body)
+        for source_entry, target_entry in cleanse_glossary_entries(glossary_list).items():
+            if len(source_entry.split()) == 1:
+                for word in tokenized_body:
+                    """
+                    Но только если исходный термин состоит из одного слова
+                    """
+                    entry_word_to_compare = stemmer.stem(word)
+                    glossary_term_to_compare = stemmer.stem(source_entry)
+                    if entry_word_to_compare == glossary_term_to_compare:
+                        body_to_return = re.sub(escape_brackets(source_entry),
+                                                highlight_word(target_entry),
+                                                body_to_return,
+                                                flags=re.IGNORECASE)
+            else:
+                """
+                Если же надо искать словосочетание, то соре, ищем как есть, буква в букву
+                """
+                body_to_return = re.sub(escape_brackets(source_entry),
+                                        highlight_word(target_entry),
+                                        body_to_return,
+                                        flags=re.IGNORECASE)
+    else:
+        """
+        Если же язык азиатский, то мы там всё равно отдельные слова выделить не можем достаточно точно.
+        Так что будем искать регуляркой полное соответствие
+        """
+        for source_entry, target_entry in cleanse_glossary_entries(glossary_list).items():
+            body_to_return = re.sub(escape_brackets(source_entry),
+                                    highlight_word(target_entry),
                                     body_to_return,
                                     flags=re.IGNORECASE)
 

@@ -1862,6 +1862,7 @@
                     }
                     entrySetEditingStatus(entry, 'start');
                     scrollToEntry(entry);
+                    getGlossaryInfo(entry);
                     var textAreaId = (entry.suggestionId) ? entry.suggestionId : entry.id;
                     entry.suggestion = localStorageService.get('sug-' + textAreaId, entry.suggestion) || "";
                 };
@@ -1955,6 +1956,18 @@
                         entry.tmdbVariants = data;
                     }).error(function (a) {
                         //console.error(a);
+                    });
+                },
+                getGlossaryInfo = function (entry) {
+                    $http.post('/ajax/entry-glossary-filter/', {
+                        entry_body: entry['body'],
+                        target_lang: window['translationTargetLang'],
+                        text_id: textId,
+                    }).success(function (data) {
+                        entry.body = data['entry_body'];
+                        // TODO: добавить ручное обновление htmlContent
+                    }).error(function (a) {
+                        console.error(a);
                     });
                 },
                 updateEntries = function () {
@@ -2317,8 +2330,8 @@
                     entry.editing = true;
                     if ((useMachine) && (typeof entry['machines'] === 'undefined')) {
                         getYaMachines(entry);
-                        getTmdbVariants(entry);
                     }
+                    getTmdbVariants(entry);
                 }
             };
             $scope.cancelEditing = function (entry) {
@@ -2853,11 +2866,9 @@
                 });
             };
             $scope.translatePhrase = function () {
-                console.log($scope.selectedEntryText);
                 translate($scope.selectedEntryText);
             };
             $scope.toGlossary = function () {
-                console.log($scope.selectedEntryText);
                 var modalInstance = $uibModal.open({
                     templateUrl: 'toGlossaryModal.html',
                     controller: 'ToGlossaryModalCtrl',
@@ -3127,10 +3138,10 @@
                     $compile(element.contents())(scope);
                 };
                 // -- watcher
-                // updateHtml();
-                // scope.$watch(attr['htmlContent'], updateHtml);
+                updateHtml();
+                scope.$watch(attr['htmlContent'], updateHtml);
                 // -- or timeout
-                $timeout(updateHtml, 100);
+                // $timeout(updateHtml, 100);
             }
         }
     }]);
