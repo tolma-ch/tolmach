@@ -909,16 +909,6 @@ def entry_ajax(request, action, text):
                                                        parent_entry__id_in_text__range=(base_entries_ids_int_text[0], base_entries_ids_int_text[-1]))
 
         text_body = ""
-        # Если глоссарии привязаны к тексту, то
-        if project_translation.glossaries_list:
-            pre_glossary_text = [entry.body for entry in base_entries]
-
-            # выбираем текстовые данные энтрисов и, собрав их в один текст, отправляем на обмазывание глоссариями
-            post_glossary_entries = utils.glossary_to_entry(' † '.join(pre_glossary_text), project_translation.glossaries_list.all()).split(' † ')
-
-            # после чего снова разделяем общий текст на отдельные энтрисы и вливаем в основной массив данных
-            for post, clean in zip(post_glossary_entries, base_entries):
-                clean.glossary_body = post
 
         for entry in base_entries:
             entry_to_body = '<span data-entry="%d">%s</span>' % (entry.id_in_text, entry.body)
@@ -961,7 +951,8 @@ def entry_ajax(request, action, text):
                 'id': entry.id,
                 'idInText': entry.id_in_text,
                 'rawBody': entry.body,
-                'body': entry.glossary_body,
+                # 'body': entry.glossary_body,
+                'body': entry.body,
                 'meta': entry_meta,
                 'translations': entry_translations,
                 'approved': approved,
@@ -1392,6 +1383,20 @@ def disapprove_all_entries_by_user_ajax(request, text):
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
+
+
+@login_required()
+def glossary_filter_entry_ajax(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+        lang = Language.objects.get(code=post['target_lang'])
+        text = Text.objects.get(id=post['text_id'])
+        project_translation = ProjectTranslation.objects.get(project=text.project,
+                                                             target_lang=lang,
+                                                             )
+        post['entry_body'] = utils.glossary_to_entry(post['entry_body'], project_translation.glossaries_list.all(), lang)
+
+        return HttpResponse(json.dumps(post), content_type="application/json")
 
 
 @login_required
