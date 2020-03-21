@@ -12,7 +12,7 @@ def generate_preexport_entries_for_new_document(arguments):
     from translations.models import TextEntry, Text
 
     text = Text.objects.get(id=arguments['text_id'])
-    all_new_entries = TextEntry.objects.filter(text=text)
+    all_new_entries = TextEntry.objects.filter(text=text).iterator()
     for i in all_new_entries:
         signals.update_preexport_entry_on_save(sender=None, instance=i, created=True)
 

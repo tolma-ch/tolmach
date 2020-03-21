@@ -24,3 +24,5 @@ chardet
 raven
 django-simple-history
 django-loginas
+nltk
+progress

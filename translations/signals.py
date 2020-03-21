@@ -12,6 +12,16 @@ from simple_history.signals import (
 import json
 
 
+def unescape_html(s, with_backslashes=False):
+    s = s.replace("&lt;", "<")
+    s = s.replace("&gt;", ">")
+    if with_backslashes:
+        s = s.replace("&#92;n", "\n")
+    # this has to be last:
+    s = s.replace("&amp;", "&")
+    return s
+
+
 @receiver(post_save, sender=TextEntry)
 def update_preexport_entry_on_save(sender, instance, created, **kwargs):
     if instance.text.document_format == "text/plain":
@@ -37,11 +47,10 @@ def update_preexport_entry_on_save(sender, instance, created, **kwargs):
 
         for translation in all_translations:
             object, created = PreexportEntry.objects.get_or_create(parent_entry=new_parent,
-                                                 text=instance.text,
-                                                 translation=translation)
+                                                                   text=instance.text,
+                                                                   translation=translation)
 
-
-            object.body = new_body
+            object.body = unescape_html(new_body)
             object.id_in_text = new_id_in_text
             object.save()
 
