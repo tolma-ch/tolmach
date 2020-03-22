@@ -1,5 +1,25 @@
 image: python:2.7.13
 pipelines:
+  custom:
+    deploy-prod-quick:
+      - step:
+          - pip install ansible==2.6
+          - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
+          - cd tolmach-ansible
+          - cp vars/local_vars.yml.example vars/local_vars.yml
+          - ansible-playbook -i hosts/production --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+          caches:
+            - pip
+    deploy-prod-full:
+      - step:
+          - pip install ansible==2.6
+          - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
+          - cd tolmach-ansible
+          - cp vars/local_vars.yml.example vars/local_vars.yml
+          - ansible-playbook -i hosts/production --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+          caches:
+            - pip
+
   branches:
     dev:
       - step:
@@ -8,7 +28,7 @@ pipelines:
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/staging site.yml --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
 definitions:
