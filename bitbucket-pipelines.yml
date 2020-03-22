@@ -3,34 +3,36 @@ pipelines:
   custom:
     deploy-prod-quick:
       - step:
+        script:
           - pip install ansible==2.6
           - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
           - cd tolmach-ansible
           - cp vars/local_vars.yml.example vars/local_vars.yml
           - ansible-playbook -i hosts/production --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
-          caches:
-            - pip
+        caches:
+          - pip
     deploy-prod-full:
       - step:
+        script:
           - pip install ansible==2.6
           - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
           - cd tolmach-ansible
           - cp vars/local_vars.yml.example vars/local_vars.yml
           - ansible-playbook -i hosts/production --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
-          caches:
-            - pip
+        caches:
+          - pip
 
   branches:
     dev:
       - step:
-          script:
-            - pip install ansible==2.6
-            - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
-            - cd tolmach-ansible
-            - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
-          caches:
-            - pip
+        script:
+          - pip install ansible==2.6
+          - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
+          - cd tolmach-ansible
+          - cp vars/local_vars.yml.example vars/local_vars.yml
+          - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+        caches:
+          - pip
 definitions:
   caches:
     pip: ~/.cache/pip
