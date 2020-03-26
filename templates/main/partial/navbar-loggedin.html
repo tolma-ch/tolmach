@@ -145,8 +145,8 @@
 
     <li class="navbar-nav__button button_blue navbar-nav__user">
         <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-            <i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.length}"
-               ng-show="messages.length"
+            <i class="fa fa-bell-o" ng-class="{'fa-animated-bell': messages.messages_count}"
+               ng-show="messages.messages_count"
                ng-cloak
                style="color: white;
                     position: absolute;
@@ -173,15 +173,15 @@
         <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
             <li>
                 <a href="#" ng-click="showAllMessages()">
-                    <span class="badge badge-success" ng-show="messages.length"
+                    <span class="badge badge-success" ng-show="messages.messages_count"
                           style="
                               font-size: 10px;
                               padding-top: 3px;
                               border-radius: 5px;
                               ">
-                        {= messages.length =}
+                        {= messages.messages_count =}
                     </span>
-                    <i class="fa fa-bell-o" aria-hidden="true" ng-show="!messages.length"></i>
+                    <i class="fa fa-bell-o" aria-hidden="true" ng-show="!messages.messages_count"></i>
                     {% trans 'Notifications' %}
                 </a>
             </li>
