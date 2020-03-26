@@ -1614,19 +1614,21 @@ def message_ajax(request, all):
 
         if all:
             messages = Messages.objects.filter(addressee=request.user).order_by('-time_created')
+            result = []
+            for message in messages:
+                sender_meta = UserMeta.objects.get(user=message.originator)
+                data = json.loads(message.message)
+                data['id'] = message.id
+                data['message'] = message.message
+                data['originator'] = message.originator.username
+                data['sender_ava'] = "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png"
+                data['was_read'] = message.was_read
+                data['time_created'] = message.time_created.strftime('%Y-%m-%dT%H:%M:%S+0000')
+                result.append(data)
         else:
-            messages = Messages.objects.filter(addressee=request.user, was_read=False).order_by('-time_created')
-        result = []
-        for message in messages:
-            sender_meta = UserMeta.objects.get(user=message.originator)
-            data = json.loads(message.message)
-            data['id'] = message.id
-            data['message'] = message.message
-            data['originator'] = message.originator.username
-            data['sender_ava'] = "%s" % sender_meta.avatar if sender_meta.avatar else "avatar/default.png"
-            data['was_read'] = message.was_read
-            data['time_created'] = message.time_created.strftime('%Y-%m-%dT%H:%M:%S+0000')
-            result.append(data)
+            messages = Messages.objects.filter(addressee=request.user, was_read=False).order_by('-time_created').count()
+            result = {"messages_count": messages}
+
         return HttpResponse(json.dumps(result), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
