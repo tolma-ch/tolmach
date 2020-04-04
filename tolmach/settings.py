@@ -249,6 +249,16 @@ RAVEN_CONFIG = {
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -259,14 +269,36 @@ LOGGING = {
             'level': 'ERROR',
             # 'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'formatter': 'verbose',
+            'class': 'logging.StreamHandler',
+        },
+        'app': {
+            'formatter': 'verbose',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/tolma.ch/app.log',
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
     },
     'loggers': {
+        'django.server': {
+            'handlers': ['null'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'django.request': {
             'handlers': ['mail_admins',],
             'level': 'ERROR',
             'propagate': True,
         },
+        'translations': {
+            'level': 'INFO',
+            'handlers': ['app'],
+            'propagate': False,
+        }
     }
 }
 
