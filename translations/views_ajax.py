@@ -27,23 +27,35 @@ import json, os, shutil, re
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json, entry_history_to_json
 from translations.utils import approve_entry, disapprove_entry, ws_send_entry_status
 
+import logging
+logger = logging.getLogger(__name__)
+
+
+def log_prefix(request):
+    return f"user:{request.user.id} {request.method} '{request.get_full_path()}' "
+
+
 @login_required
 def projects_ajax(request, proj_type, object_id=""):
     user = User.objects.get(username=request.user)
 
     user_projects_list = []
     if proj_type == 'my':
+        logger.info(log_prefix(request))
         user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'thirdparty':
+        logger.info(log_prefix(request))
         user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
     elif proj_type == 'public':
+        logger.info(log_prefix(request))
         if not request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
         else:
             user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'dashboard':
+        logger.info(log_prefix(request))
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
         recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
         recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
@@ -54,7 +66,9 @@ def projects_ajax(request, proj_type, object_id=""):
         try:
             target_user_id = int(object_id)
         except:
+            logger.info(log_prefix(request))
             raise Http404("Poll does not exist")
+        logger.info(log_prefix(request))
         target_user = get_object_or_404(User, id=target_user_id)
         if request.user == user or request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(manager=target_user).order_by('-last_modified')
@@ -65,6 +79,7 @@ def projects_ajax(request, proj_type, object_id=""):
             org = Organization.objects.get(slug=object_id)
         except Organization.DoesNotExist:
             raise Http404(_('Sorry, no such project here!'))
+        logger.info(log_prefix(request))
         user_projects_list = Project.objects.filter(organization=org).order_by('-last_modified')
     else:
         raise Http404("Poll does not exist")
@@ -127,9 +142,11 @@ def project_ajax(request):
             try:
                 project = Project.objects.get(id=post['id'])
             except Project.DoesNotExist:
+                logger.error(log_prefix(request) + f"updating details on not existing project:{post['id']}")
                 return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
 
             if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+                logger.error(log_prefix(request) + f"updating details on project error: not_allowed")
                 return HttpResponse(json.dumps(_('You have to be a manager of project')),
                                     content_type="application/json",
                                     status=400)
@@ -137,46 +154,57 @@ def project_ajax(request):
                 project.name = post['name']
             if 'description' in post:
                 project.description = post['description']
+            logger.info(log_prefix(request) + f"updating details on project:{post['id']}")
             project.save()
             return HttpResponse(json.dumps(project.id), content_type="application/json")
         else:
             pass  # TODO move creation of project here
     if request.method == 'DELETE':
         if 'id' not in request.GET:
+            logger.error(log_prefix(request) + f"deleting not existing project:None")
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         try:
             project = Project.objects.get(id=request.GET['id'])
         except Project.DoesNotExist:
+            logger.error(log_prefix(request) + f"deleting not existing project:{request.GET['id']}")
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         if not project.is_user_manager(request.user):
+            logger.error(log_prefix(request) + f"deleting not allowed project:{request.GET['id']}")
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
 
+        logger.info(log_prefix(request) + f"deleting project:{request.GET['id']}")
         project.delete()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
+
 
 @login_required
 def create_project_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'name' not in post or not post['name']:
+            logger.error(log_prefix(request) + f"creating project error: empty_name")
             return HttpResponse(json.dumps(_('Project name cannot be empty')),
                                 content_type="application/json",
                                 status=400)
         name = post['name']
         if 'description' not in post or not post['description']:
+            logger.error(log_prefix(request) + f"creating project error: empty_description")
             return HttpResponse(json.dumps(_('Project description cannot be empty')),
                                 content_type="application/json",
                                 status=400)
         description = post['description']
         if 'type' not in post:
+            logger.error(log_prefix(request) + f"creating project error: empty_type")
             return HttpResponse(json.dumps(_('Project type is not set')), content_type="application/json", status=400)
         access = post['type']
         if 'source_lang' not in post:
+            logger.error(log_prefix(request) + f"creating project error: empty_sourcelang")
             return HttpResponse(json.dumps(_('Source language is not set')), content_type="application/json", status=400)
         source_lang_id = post['source_lang']
         if 'target_lang' not in post:
+            logger.error(log_prefix(request) + f"creating project error: empty_targetlang")
             return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
         target_lang_id = post['target_lang']
         with transaction.atomic():
@@ -192,13 +220,17 @@ def create_project_ajax(request):
                         project.organization = project_org
                         project.manager = project_org.owner
                     else:
+                        logger.error(log_prefix(request) + f"creating project error: not_allowed_org")
                         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
                 except:
+                    logger.error(log_prefix(request) + f"creating project error: org_not_found")
                     pass
             project.save()
+            logger.info(log_prefix(request) + f"creating project success: {project.id}")
             project_translation = ProjectTranslation(project=project,
                                                      target_lang=Language.objects.get(id=target_lang_id))
             project_translation.save()
+            logger.info(log_prefix(request) + f"creating project translations success")
             if project.organization:
                 org_members = OrganizationMember.objects.filter(organization=project.organization)
                 for mem in org_members:
@@ -1589,7 +1621,7 @@ def dict_search(request):
 
 
 @login_required
-def message_ajax(request, all):
+def message_ajax(request, all=False):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
         if 'id' not in post:
@@ -1603,6 +1635,7 @@ def message_ajax(request, all):
         return HttpResponse(json.dumps(True), content_type="application/json")
 
     if request.method == 'GET':
+        logger.info(log_prefix(request))
         ########
         #
         #  Updating user online status
