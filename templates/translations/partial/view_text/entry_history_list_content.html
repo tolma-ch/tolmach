@@ -1,0 +1,42 @@
+{% load i18n %}
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title"></h3>
+    </div>
+    <style>
+
+    </style>
+    <div class="modal-body">
+        <div class="entry-history-record__original">
+            {= originalEntry.body =}
+        </div>
+        <div class="entry-history-record" ng-repeat="record in historyRecords">
+            <div class="entry-history-record__icon" ng-click="restoreDeletedTranslation(record.id)"
+                    ng-init="title = (
+                            record.historyType === 'approved' ? '{% trans "Approved" %}' :
+                            record.historyType === 'body_changed' ? '{% trans "Edited" %}' :
+                            record.historyType === 'disapproved' ? '{% trans "Disapproved" %}' :
+                            record.historyType === 'created' ? '{% trans "Created" %}' :
+                            record.historyType === 'deleted' ? '{% trans "Deleted" %}' :
+                            null
+                            )"
+                    title="{= title =}">
+                <i class="fa"
+                   ng-class="{
+                            'fa-check': record.historyType === 'approved',
+                            'fa-pencil': record.historyType === 'body_changed',
+                            'fa-close': record.historyType === 'disapproved',
+                            'fa-plus': record.historyType === 'created',
+                            'fa-trash': record.historyType === 'deleted',
+                            }"></i>
+            </div>
+            <div class="entry-history-record__body">
+                {= record.body =}
+            </div>
+            <div class="entry-history-record__author">
+                {= record.author.name =} {= record.lastModified | date:'short' =}
+            </div>
+        </div>
+    </div>

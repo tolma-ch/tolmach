@@ -2898,6 +2898,19 @@
                         }
                     }
                 });
+            };
+            $scope.viewEntryDeletedTranslations = function (entry) {
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'viewEntryDeletedTranslations.html',
+                    controller: 'ViewEntryDeletedTranslationsCtrl',
+                    size: 'md',
+                    backdrop: 'true',
+                    resolve: {
+                        entry: function () {
+                            return entry;
+                        }
+                    }
+                });
                 modalInstance.result.then(function (result) {
                     $scope.entryToFocus = $scope.activeEntry.idInText;
                     updateEntries()
@@ -3027,25 +3040,34 @@
                     $scope.error = data;
                     $scope.busy = false;
                 });
-            $scope.glossary = {
-                    rows: [[entry, '']]
-                };
-            $scope.ok = function () {
-                $scope.error = '';
-                $scope.busy = true;
-                var data = $scope.glossary;
-                data['text'] = window['textId'];
-                data['target_lang'] = window['translationTargetLang'];
-                $http.post('/ajax/glossary/', data)
-                    .success(function (glossary) {
-                        $uibModalInstance.close(glossary);
-                        $scope.busy = false;
-                    })
-                    .error(function (data) {
-                        $scope.error = data;
-                        $scope.busy = false;
-                    });
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
             };
+        }
+    ]);
+    module.controller('ViewEntryDeletedTranslationsCtrl', ['$scope', '$uibModalInstance', '$http', 'entry',
+        function ($scope, $uibModalInstance, $http, entry) {
+            $scope.entry = entry;
+            $scope.restoreDeletedTranslation = function (translation_id) {
+                $http.post('/ajax/entry-deleted/', {id: translation_id}).success(function () {
+                    // $scope.activeEntry = null;
+                    $uibModalInstance.close('ok');
+                })
+            };
+            $http.get('/ajax/entry-deleted/', {
+                        params: {
+                            entry_id: entry.id
+                        }
+            })
+                .success(function (data) {
+                    $scope.originalEntry = data.originalEntry;
+                    $scope.historyRecords = data.historyData;
+                })
+                .error(function (data) {
+                    $scope.error = data;
+                    $scope.busy = false;
+                });
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss('cancel');
