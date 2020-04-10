@@ -72,6 +72,7 @@ urlpatterns = [
 
     url(r'^ajax/entry/(?:(?P<action>\w+)/)?$', trans_ajax.entry_ajax, name='entry_action_ajax'),
     url(r'^ajax/entry-history/$', trans_ajax.entry_history_ajax, name='entry_history_ajax'),
+    url(r'^ajax/entry-deleted/$', trans_ajax.entry_deleted_ajax, name='entry_deleted_ajax'),
     url(r'^ajax/entry-disable/$', trans_ajax.disable_entry_ajax, name='entry_disable_ajax'),
     url(r'^ajax/entry-enable/$', trans_ajax.enable_entry_ajax, name='entry_enable_ajax'),
     url(r'^ajax/entry-approve/$', trans_ajax.approve_entry_ajax, name='entry_approve_ajax'),

@@ -181,14 +181,14 @@
                               ">
                         {= messages.messages_count =}
                     </span>
-                    <i class="fa fa-bell-o" aria-hidden="true" ng-show="!messages.messages_count"></i>
+                    <i class="fa fa-fw fa-bell-o" aria-hidden="true" ng-show="!messages.messages_count"></i>
                     {% trans 'Notifications' %}
                 </a>
             </li>
 
             <li class="dropdown-hover dropleft">
                 <a href="#" tabindex="-1">
-                    <i class="fa fa-globe" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-globe" aria-hidden="true"></i>
                     {{ language }}
                 </a>
 
@@ -214,7 +214,7 @@
             </li>
             <li>
                 <a href="/settings/">
-                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-cogs" aria-hidden="true"></i>
                     {{ settings }}
                 </a>
             </li>
@@ -224,7 +224,7 @@
 
             <li>
                 <a href="/logout">
-                    <i class="fa fa-sign-out" aria-hidden="true"></i>
+                    <i class="fa fa-fw fa-sign-out" aria-hidden="true"></i>
                     {{ logout }}
                 </a>
             </li>
