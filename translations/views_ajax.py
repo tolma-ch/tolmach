@@ -1039,7 +1039,7 @@ def entry_history_ajax(request):
 
     entry = get_object_or_404(TextEntry, id=entry_id)
 
-    entry_history_data = entry.history.filter(history_type__in=["+", "~"])
+    entry_history_data = entry.history.filter(history_type__in=["+", "~", "-"])
 
     return_data = {
         'originalEntry': translation_to_json(entry.parent_entry),
@@ -1050,6 +1050,53 @@ def entry_history_ajax(request):
         return_data['historyData'].append(entry_history_to_json(i))
 
     return HttpResponse(json.dumps(return_data, ensure_ascii=False), content_type="application/json")
+
+
+@login_required
+def entry_deleted_ajax(request):
+    if request.method == "GET":
+        try:
+            entry_id = request.GET['entry_id']
+        except:
+            return HttpResponse(json.dumps(_('Entry id is not set')), content_type="application/json", status=400)
+
+        entry = get_object_or_404(TextEntry, id=entry_id)
+
+        # получить список дочерних объектов, по которым ведётся история
+        all_history_objects_ids = list(set(TextEntry.history.filter(parent_entry_id=entry_id).values_list('id', flat=True)))
+        # найти те, у которых самым свежим вариантом является удаление
+        all_deleted_history_objects = []
+        for i in all_history_objects_ids:
+            hist_obj = TextEntry.history.filter(id=i).first()
+            if hist_obj.history_type == "-":
+                all_deleted_history_objects.append(entry_history_to_json(hist_obj))
+        # вернуть списочком
+        return_data = {
+            'originalEntry': translation_to_json(entry),
+            'historyData': all_deleted_history_objects
+        }
+
+        return HttpResponse(json.dumps(return_data, ensure_ascii=False), content_type="application/json")
+    elif request.method == "POST":
+        post = json.loads(request.body)
+        if 'id' not in post:
+            return HttpResponse(json.dumps(_('Id is not set')), content_type="application/json", status=400)
+
+
+        # получаем айдишник удалённой записи
+        test = TextEntry.history.filter(id=post['id']).first()
+        # и если эта запись действительно удалена
+        if test.history_type == "-":
+            # восстанавливаем её:
+            test.instance.save()
+            # получаем новый айдишник:
+            new_segment_id = test.id
+            # переписываем старую историю к новому энтрику:
+            TextEntry.history.filter(id=post['id']).update(id=test.id)
+
+            return HttpResponse(json.dumps(f"It's okay, id is: {post['id']}"))
+        else:
+            return HttpResponse(json.dumps("Sorry, this translation is not deleted"))
 
 
 @login_required

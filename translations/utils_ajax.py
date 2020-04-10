@@ -38,6 +38,8 @@ def entry_history_to_json(history_entry):
                 history_type = "disapproved"
         else:
             history_type = "body_changed"
+    elif history_entry.history_type == "-":
+        history_type = "deleted"
 
     return {
         'id': history_entry.id,

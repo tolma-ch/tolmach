@@ -26,3 +26,4 @@ django-simple-history
 django-loginas
 nltk
 progress
+elastic-apm
