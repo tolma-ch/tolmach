@@ -8,7 +8,7 @@ pipelines:
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/production --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i hosts/production --tags="deploy" --skip-tags="dbcreate,initial_setup,deploy_key_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
     deploy-prod-full:
@@ -18,7 +18,7 @@ pipelines:
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/production --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i hosts/production --skip-tags="dbcreate,deploy_key_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
     deploy-dev-full:
@@ -28,7 +28,7 @@ pipelines:
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,deploy_key_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
 
@@ -40,7 +40,7 @@ pipelines:
             - git clone git@bitbucket.org:megavenik/tolmach-ansible.git
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
-            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,initial_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
+            - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate,initial_setup,deploy_key_setup" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
           caches:
             - pip
 definitions:
