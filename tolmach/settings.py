@@ -170,7 +170,6 @@ INSTALLED_APPS = (
     'social_auth_widget',
     'social_django',
     'simple_history',
-    'django_uwsgi',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
