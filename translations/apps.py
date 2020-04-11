@@ -12,6 +12,6 @@ class TranslationsConfig(AppConfig):
         try:
             from background_task.models import Task
             Task.objects.filter(task_name="tolmach.tasks.update_projects_progress").delete()
+            tasks.update_projects_progress(repeat=60 * 10)
         except ProgrammingError:
             pass
-        tasks.update_projects_progress(repeat=60*10)
