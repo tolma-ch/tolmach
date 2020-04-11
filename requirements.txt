@@ -9,7 +9,7 @@ python-openid==2.2.5
 social-auth-app-django==1.1.0
 social-auth-core==1.7.0
 uWSGI==1.9.17.1
-django_uwsgi
+django-background-tasks==1.2.5
 asgi_redis
 diff_match_patch
 yandex.translate
