@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 
 def log_prefix(request):
-    return f"user:{request.user.id} {request.method} '{request.get_full_path()}' "
+    return f"user:{request.user.id} - {request.method} - '{request.get_full_path()}' "
 
 
 @login_required
@@ -567,7 +567,7 @@ def text_ajax(request, project):
                 text = Text.objects.get(id=the_page["Text"])
                 if file_type == "text/plain":
                     from tolmach import tasks
-                    tasks.generate_preexport_entries_for_new_document(text_id = str(text.id))
+                    tasks.generate_preexport_entries_for_new_document(str(text.id))
             else:
                 if file_path:
                     os.remove(file_path)
