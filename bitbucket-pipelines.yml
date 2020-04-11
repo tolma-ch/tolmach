@@ -29,8 +29,8 @@ pipelines:
             - cd tolmach-ansible
             - cp vars/local_vars.yml.example vars/local_vars.yml
             - ansible-playbook -i hosts/staging --tags="deploy" --skip-tags="dbcreate" --private-key /opt/atlassian/pipelines/agent/data/id_rsa site.yml
-            caches:
-              - pip
+          caches:
+            - pip
 
   branches:
     dev:
