@@ -1,26 +1,43 @@
 # -*- coding: utf-8 -*-
 
-import json
-from django.utils import translation
-from django_uwsgi.decorators import spool, cron
+import json, sys
+from background_task import background
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(name)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
-
-@spool
-def generate_preexport_entries_for_new_document(arguments):
+@background
+def generate_preexport_entries_for_new_document(text_id):
+    import MySQLdb
     from translations import signals
     from translations.models import TextEntry, Text
 
-    text = Text.objects.get(id=arguments['text_id'])
-    all_new_entries = TextEntry.objects.filter(text=text).iterator()
-    for i in all_new_entries:
-        signals.update_preexport_entry_on_save(sender=None, instance=i, created=True)
+    logger.info(f"started generating preexport entries for document:{text_id}")
+    try:
+        text = Text.objects.get(id=text_id)
+        all_new_entries = TextEntry.objects.filter(text=text).iterator()
+        for i in all_new_entries:
+            signals.update_preexport_entry_on_save(sender=None, instance=i, created=True)
+    except MySQLdb.OperationalError as error:
+        logger.error(f"failed generating preexport entries for document:{text_id} [{error}]")
+        from django.db import connection
+        connection.close()
+        raise Exception('rerunning task')
 
+    logger.info(f"finished generating preexport entries for document:{text_id}")
     return True
 
 
-@spool
-def email_send(arguments):
+@background
+def email_send(message_type, dynamic_data_dict, user_email, template):
     from django.template import loader
     from django.core.mail import EmailMessage
 
@@ -32,10 +49,10 @@ def email_send(arguments):
     emailtemplates = json.loads(emailtemplates_template.render(c))
     emailtemplatesbodies = json.loads(emailtemplatesbodies_template.render(c))
 
-    message_type = arguments['message_type']
-    dynamic_data_dict = json.loads(arguments['dynamic_data_dict'])
-    user_email = arguments['user_email']
-    template = arguments['template']
+    message_type = message_type
+    dynamic_data_dict = json.loads(dynamic_data_dict)
+    user_email = user_email
+    template = template
 
     message_localized_data_dict = emailtemplatesbodies[message_type]['body']
     message_template_body = emailtemplates[message_type]['body']
@@ -65,37 +82,18 @@ def email_send(arguments):
 
     return True
 
-@cron(-10, -1, -1, -1, -1, target="worker")
-def update_projects_progress(arguments):
+
+@background
+def update_projects_progress():
     import math
     from datetime import datetime, timedelta
     from django.db.models import Q
-    from translations.models import Project, ProjectTranslation, Text, TextTranslation, TextEntry
+    from translations.models import Project, ProjectTranslation, TextTranslation, TextEntry
 
     time_threshold = datetime.now() - timedelta(minutes=15)
-    # if not arguments.get('full_update', False):
     results = Project.objects.filter(last_modified__gt=time_threshold)
-    # else:
-    #     results = Project.objects.all()
 
     for project in results:
-        # translated_progress = 0
-        # approved_progress = 0
-        # translations_num = 0
-        # texts = Text.objects.filter(project=project)
-        # for text in texts:
-        #     translations = TextTranslation.objects.filter(text=text)
-        #     for translation in translations:
-        #         translations_num += 1
-        #         translated_progress += translation.get_progress()[1][0]
-        #         approved_progress += translation.get_progress()[1][1]
-
-        # if not texts.count() == 0:
-        #     project_progress = [int(approved_progress / translations_num),
-        #                         int(translated_progress / translations_num) - int(approved_progress / translations_num)]
-        # else:
-        #     project_progress = [0, 0]
-
         project_translations = ProjectTranslation.objects.filter(project=project).count()
         entries_total = TextEntry.objects.filter(text__project=project, parent_entry=None).count() * project_translations
         entries_disabled = TextEntry.objects.filter(text__project=project, parent_entry=None, is_disabled=True).count() * project_translations
@@ -113,14 +111,6 @@ def update_projects_progress(arguments):
             percent_translated = int(math.ceil(entries_translated / (entries_enabled / 100.0))) if (
                         entries_translated < entries_enabled) else 100
             percent_approved = int(math.ceil(entries_approved / (entries_enabled / 100.0)))
-
-            # if project.id == 796:
-            #     print("PROJECT:", )
-            #     print("ENTRIES total:", entries_total)
-            #     print("ENTRIES disabled:", entries_disabled)
-            #     print("ENTRIES enabled:", entries_enabled)
-            #     print("ENTRIES translated:", entries_translated)
-            #     print("ENTRIES approved:", entries_approved)
 
             project_progress = [percent_approved, percent_translated-percent_approved]
         else:
