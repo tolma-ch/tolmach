@@ -177,6 +177,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'background_task',
+    'ddtrace.contrib.django',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -346,14 +347,6 @@ WS_HOST = "wss://tolma.ch"
 from django.core.urlresolvers import reverse_lazy
 LOGOUT_URL = reverse_lazy('loginas-logout')
 
-# Add the agent to the installed apps
-INSTALLED_APPS += (
-  'elasticapm.contrib.django',
-)
-# To send performance metrics, add our tracing middleware:
-MIDDLEWARE_CLASSES += (
-  'elasticapm.contrib.django.middleware.TracingMiddleware',
-)
 
 try:
     from tolmach.local_settings import *
