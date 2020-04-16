@@ -26,4 +26,5 @@ django-simple-history
 django-loginas
 nltk
 progress
+ddtrace
 elastic-apm
