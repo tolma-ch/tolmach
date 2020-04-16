@@ -26,5 +26,6 @@ django-simple-history
 django-loginas
 nltk
 progress
+cython
 ddtrace
 elastic-apm
