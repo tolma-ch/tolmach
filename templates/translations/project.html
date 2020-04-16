@@ -425,7 +425,6 @@
                                       ng-show="!editingDescription"
                                       ng-click="editDescription()"><i class="fa fa-pencil"></i></a>
                             {% endif %}
-                            {% if is_user_manager == 'true' %}
                             <div>
                                 <a href="/project/{{ project.id }}/stats/"
                                    class="btn btn-sm btn-info">
@@ -433,6 +432,7 @@
                                     {% trans "Project statistics" %}
                                 </a>
                             </div>
+                            {% if is_user_manager == 'true' %}
                             <div class="project-list-glossary-header">
                                 {% trans 'Attention!' %}
                             </div>

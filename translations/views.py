@@ -284,9 +284,10 @@ def project(request, proj_id=0):
 @login_required
 @define_project_breadcrumbs
 def project_by_translation(request, pr, projects_text, projects_url, projects_type, target_lang):
+    project_lang = get_object_or_404(Language, code=target_lang)
     try:
         project_translation = ProjectTranslation.objects.get(project=pr,
-                                                         target_lang=Language.objects.get(code=target_lang))
+                                                         target_lang=project_lang)
     except ProjectTranslation.DoesNotExist:
         raise Http404(_('Sorry, no such project here!'))
     if not pr.is_user_allowed(request.user):

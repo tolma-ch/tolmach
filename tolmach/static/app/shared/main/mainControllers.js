@@ -26,7 +26,7 @@
                 }, function () {
                 });
             };
-            $interval($rootScope.updateMessages, 5000);
+            $interval($rootScope.updateMessages, 15000);
 
             $scope.showSearch = false;
             $scope.globalSearch = function (query) {
