@@ -1140,13 +1140,37 @@ def translate_entry_ajax(request):
                 return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             # strip is for elimination garbage newlines from wild browsers
             entry_translation.body = post['text'].strip()
+            set_approved = entry_translation.is_approved
+            if not project.is_user_editor(request.user) and not project.is_user_manager(request.user):
+                set_approved = False
+
+                editors = project.get_editors() + [project.manager]
+
+                message = json.dumps(
+                    {
+                        "type": "approved-edited-by-translator",
+                        "new_text": entry_translation.body,
+                        "fragment_url": "/text/" + str(text.id) + "/" +
+                                        text_translation.target_lang.code + "/f/" +
+                                        entry_translation.preview_code + "/"
+                    }
+                )
+
+                for editor in editors:
+                    new_message = Messages(
+                        message_type='A',
+                        addressee=editor,
+                        originator=request.user,
+                        message=message
+                    )
+                    new_message.save()
         else:
             action_type = "add"
             set_approved = False
             if not project.users.count():
                 approved_translation = TextEntry.objects.filter(parent_entry=entry,
                                                                 translation=entry.translation,
-                                                                 is_approved=True).count()
+                                                                is_approved=True).count()
                 if not approved_translation:
                     set_approved = True
 
@@ -1167,8 +1191,7 @@ def translate_entry_ajax(request):
                                           parent_entry=entry,
                                           text=text,
                                           author=request.user,
-                                          translation=text_translation,
-                                          is_approved=set_approved)
+                                          translation=text_translation)
 
             # Инкрементим стату по указанной языковой паре
             pair_stats, created = PairStats.objects.get_or_create(user=request.user,
@@ -1178,6 +1201,7 @@ def translate_entry_ajax(request):
             pair_stats.save()
 
         with transaction.atomic():
+            entry_translation.is_approved = set_approved
             entry_translation.save()
             counter, created = EntryStats.objects.get_or_create(user=request.user,
                                                                 date=timezone.now().strftime("%Y%m%d"),
@@ -1185,7 +1209,10 @@ def translate_entry_ajax(request):
                                                                 action_type=action_type)
 
             counter.action_count = counter.action_count + 1
-            counter.characters_count = counter.characters_count + len(re.sub(r"<hr [rl].*?>", "", entry_translation.body)) if action_type == "add" else counter.characters_count
+            counter.characters_count = counter.characters_count +\
+                                       len(re.sub(r"<hr [rl].*?>", "", entry_translation.body))\
+                                       if action_type == "add"\
+                                       else counter.characters_count
             counter.save()
 
             project.last_modified = timezone.now()

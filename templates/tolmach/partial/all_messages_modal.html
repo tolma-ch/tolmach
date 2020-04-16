@@ -60,11 +60,19 @@
                         <span class="msg-text" ng-if="message.type == 'uninvite'">{% trans "You were removed from the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project =}</a>"</span>
                         <span class="msg-text" ng-if="message.type == 'invite'">{% trans "You were invited to the project" %} "<a href="/project/{= message.project_id =}/"">{= message.project =}</a>"</span>
                         <span class="msg-text" ng-if="message.type == 'edit'">{% trans "Your translation was edited. Original text:" %}<br>
-                        <code>{= message.original_text =}</code><br>
-                        {% trans "New text:" %}<br>
-                        <code>{= message.new_text =}</code>
-                        <br><br>
-                        <a href="{= message.fragment_url =}">{% trans "Go to fragment" %}</a></span>
+                            <code>{= message.original_text =}</code><br>
+                            {% trans "New text:" %}<br>
+                            <code>{= message.new_text =}</code>
+                            <br><br>
+                            <a href="{= message.fragment_url =}">{% trans "Go to fragment" %}</a>
+                        </span>
+                        <span class="msg-text" ng-if="message.type == 'approved-edited-by-translator'">
+                            {% trans "Translator edited one of his already approved translations. It was disapproved now." %}<br>
+                            {% trans "New text:" %}<br>
+                            <code>{= message.new_text =}</code>
+                            <br>
+                            <a href="{= message.fragment_url =}">{% trans "Go to fragment" %}</a>
+                        </span>
                     </span>
                 </span>
             </li>

@@ -63,7 +63,6 @@ def update_preexport_entry_on_delete(sender, instance, **kwargs):
             instance.save()
 
 
-
 @receiver(post_create_historical_record)
 def post_create_historical_record_callback(sender, history_instance, history_user, **kwargs):
     if history_instance.history_type == "~" and not history_user == history_instance.author:

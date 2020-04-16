@@ -128,6 +128,12 @@ class Project(models.Model):
         """
         return self.manager == user
 
+    def get_editors(self):
+        """
+        Return list of project editors users
+        """
+        return [x for x in self.users.all() if self.is_user_editor(x)]
+
     def is_user_allowed(self, user):
         """
         Check whether provided user is allowed to act within the current project and return Boolean
