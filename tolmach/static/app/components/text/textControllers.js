@@ -378,7 +378,7 @@
                 getGlossaryInfo = function (entry) {
                     $http.post('/ajax/entry-glossary-filter/', {
                         entry_body: entry['body'],
-                        target_lang: window['translationTargetLang'],
+                        source_lang: window['translationSourceLang'],
                         text_id: textId,
                     }).success(function (data) {
                         entry.body = data['entry_body'];

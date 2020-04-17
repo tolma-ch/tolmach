@@ -1495,7 +1495,7 @@ def disapprove_all_entries_by_user_ajax(request, text):
 def glossary_filter_entry_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        lang = Language.objects.get(code=post['target_lang'])
+        lang = Language.objects.get(code=post['source_lang'])
         text = Text.objects.get(id=post['text_id'])
         project_translation = ProjectTranslation.objects.get(project=text.project,
                                                              target_lang=lang,
