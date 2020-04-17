@@ -379,6 +379,7 @@
                     $http.post('/ajax/entry-glossary-filter/', {
                         entry_body: entry['body'],
                         source_lang: window['translationSourceLang'],
+                        target_lang: window['translationTargetLang'],
                         text_id: textId,
                     }).success(function (data) {
                         entry.body = data['entry_body'];
