@@ -309,8 +309,13 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                         source_lang = fix_lang(tuv[0].attrib[lang_14])
                         target_lang = fix_lang(tuv[1].attrib[lang_14])
                     except KeyError:
-                        source_lang = fix_lang(tuv[0].attrib[lang_11])
-                        target_lang = fix_lang(tuv[1].attrib[lang_11])
+                        try:
+                            source_lang = fix_lang(tuv[0].attrib[lang_11])
+                            target_lang = fix_lang(tuv[1].attrib[lang_11])
+                        except IndexError:
+                            continue
+                    except IndexError:
+                        continue
 
                     # TODO: Обрабатывать обратные пары как прямые
                     # между названиями языков используется EM DASH - длинное тире
@@ -412,8 +417,13 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     source_lang = fix_lang(tuv[0].attrib[lang_14])
                     target_lang = fix_lang(tuv[1].attrib[lang_14])
                 except KeyError:
-                    source_lang = fix_lang(tuv[0].attrib[lang_11])
-                    target_lang = fix_lang(tuv[1].attrib[lang_11])
+                    try:
+                        source_lang = fix_lang(tuv[0].attrib[lang_11])
+                        target_lang = fix_lang(tuv[1].attrib[lang_11])
+                    except IndexError:
+                        continue
+                except IndexError:
+                    continue
 
                 lang_pair = "%s—%s" % (source_lang, target_lang)
 
@@ -447,9 +457,9 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                 if not target_text == "":
                     new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
                                                      orig_lang=source_lang,
-                                                     orig_text=source_text,
+                                                     orig_text=source_text[:1024],
                                                      target_lang=target_lang,
-                                                     target_text=target_text,
+                                                     target_text=target_text[:1024],
                                                      target_author=target_author,
                                                      target_created=target_created,
                                                      target_editor=target_editor,
