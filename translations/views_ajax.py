@@ -1628,7 +1628,7 @@ def tmdb_search(request):
 
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=utils.unescape_html(entry_body_clean).lower(), b=item['fields'][entry_source_lang.code][0].lower())
-                    if seq.ratio() > 0.5:
+                    if seq.ratio() > 0.6:
                         diffs = dmp.diff_main(item['fields'][entry_source_lang.code][0], utils.unescape_html(entry_body_clean))
                         dmp.diff_cleanupSemantic(diffs)
                         tmx_diff =  dmp.diff_prettyHtml(diffs)
@@ -1641,7 +1641,8 @@ def tmdb_search(request):
                               }
                         if not obj in search_results:
                             search_results.append(obj)
-            return HttpResponse(json.dumps(search_results))
+                sorted_search_results = sorted(search_results, key=lambda k: k['percent'], reverse=True)
+            return HttpResponse(json.dumps(sorted_search_results))
 
         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
