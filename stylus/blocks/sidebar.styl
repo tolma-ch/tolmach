@@ -68,8 +68,23 @@
 			&:hover
 				background-position -72px -24px
 
+	&__questions
+		height 50px
+		line-height 40px
+		background-color #179cde
+		color white
+		font-size 16px
+		margin-top 20px
+		padding 4px 4px 4px 4px
+		@media (prefers-color-scheme: dark)
+			background-color #818c92
+
+		img
+			max-width 34px
+			margin-left 15%
+
 	&__profile
-		margin-top -4px
+		margin-top 15px
 
 		&-edit
 			color $grayText
@@ -84,9 +99,9 @@
 					text-decoration none
 
 		&-line
-			font-size 16px
+			font-size 14px
 			font-weight 300
-			line-height 22px
+			line-height 18px
 
 			&-title
 				color $grayText
