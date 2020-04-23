@@ -29,8 +29,9 @@
 
     <div class="user-sidebar__profile">
         <div class="user-sidebar__profile-line">
-            <span class="user-sidebar__profile-line-title"><i class="fa fa-globe"></i></span>
-            <a class="user-sidebar__profile-line-data" href="" target="__blank">{{ userData_clean.website }}</a>
+            <a class="user-sidebar__profile-line-title" href="" target="__blank">
+                <i class="fa fa-globe"></i> {{ userData_clean.website }}
+            </a>
         </div>
         <div class="user-sidebar__profile-line">
             <a class="user-sidebar__profile-line-title helped-block" href="/settings/profile/" help-text="{% trans "Click this button to edit your name and change profile picture" %}">
@@ -51,19 +52,4 @@
         </div>
     </a>
 </div>
-    <style>
-    .user-sidebar__questions {
-        height: 50px;
-        line-height: 40px;
-        background-color: #179cde;
-        color: white;
-        font-size: 16px;
-        margin-top: 20px;
-        padding: 4px 4px 4px 4px;
-    }
-    .user-sidebar__questions img {
-        max-width: 34px;
-        margin-left: 15%;
-    }
-    </style>
 {% endblock %}
