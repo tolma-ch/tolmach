@@ -19,7 +19,7 @@ class CreateProjectTest(TestCase):
         request.user = self.user
         response = views_ajax.create_project_ajax(request)
 
-        all_user_projects = Project.objects.filter(manager=self.user)
+        all_user_projects = Project.objects.filter(manager=self.user, status=Project.READY)
 
         self.assertEqual(len(all_user_projects), 1)
         self.assertEqual(response.status_code, 200)

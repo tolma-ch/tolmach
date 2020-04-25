@@ -173,7 +173,7 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
     pr_translation_progress['words_total'] = len(" ".join([x.body for x in TextEntry.objects.filter(text__project=pr, parent_entry=None)])
         .split(" "))
 
-    all_pr_texts = Text.objects.filter(project=pr)
+    all_pr_texts = Text.objects.filter(project=pr, status=Text.READY)
     for text in all_pr_texts:
         clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
         pr_translation_progress['original_chars'] += len(clean_text)

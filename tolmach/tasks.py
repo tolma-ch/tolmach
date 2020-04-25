@@ -88,18 +88,23 @@ def update_projects_progress():
     import math
     from datetime import datetime, timedelta
     from django.db.models import Q
-    from translations.models import Project, ProjectTranslation, TextTranslation, TextEntry
+    from translations.models import Project, ProjectTranslation, TextTranslation, TextEntry, Text
 
     time_threshold = datetime.now() - timedelta(minutes=15)
-    results = Project.objects.filter(last_modified__gt=time_threshold)
+    results = Project.objects.filter(last_modified__gt=time_threshold, status=Project.READY)
 
     for project in results:
         project_translations = ProjectTranslation.objects.filter(project=project).count()
-        entries_total = TextEntry.objects.filter(text__project=project, parent_entry=None).count() * project_translations
-        entries_disabled = TextEntry.objects.filter(text__project=project, parent_entry=None, is_disabled=True).count() * project_translations
+        entries_total = TextEntry.objects.filter(text__project=project,
+                                                 parent_entry=None,
+                                                 text__status=Text.READY).count() * project_translations
+        entries_disabled = TextEntry.objects.filter(text__project=project,
+                                                    parent_entry=None,
+                                                    text__status=Text.READY,
+                                                    is_disabled=True).count() * project_translations
         entries_enabled = entries_total - entries_disabled
         entries_translated = 0
-        for trans in TextTranslation.objects.filter(project_translation__project=project):
+        for trans in TextTranslation.objects.filter(project_translation__project=project, text__status=Text.READY):
             translated_entries_list = TextEntry.objects.filter(~Q(parent_entry=None),
                                                                translation=trans).values('parent_entry').distinct()
             translated_ids_list = [i['parent_entry'] for i in translated_entries_list]

@@ -42,26 +42,34 @@ def projects_ajax(request, proj_type, object_id=""):
     user_projects_list = []
     if proj_type == 'my':
         logger.info(log_prefix(request))
-        user_projects_list = Project.objects.filter(manager=user).prefetch_related('organization').order_by('-last_modified')
+        user_projects_list = Project.objects.filter(manager=user, status=Project.READY).prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'thirdparty':
         logger.info(log_prefix(request))
         user_memberships = ProjectMember.objects.filter(user=user)
-        user_projects_list = [x.project for x in user_memberships]
+        user_projects_list = [x.project for x in user_memberships if x.project.status == Project.READY]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
     elif proj_type == 'public':
         logger.info(log_prefix(request))
         if not request.user.is_staff == 1:
-            user_projects_list = Project.objects.filter(is_private=False).prefetch_related('organization').order_by('-last_modified')
+            user_projects_list = Project.objects.filter(is_private=False, status=Project.READY).prefetch_related('organization').order_by('-last_modified')
         else:
-            user_projects_list = Project.objects.filter().prefetch_related('organization').order_by('-last_modified')
+            user_projects_list = Project.objects.filter(status=Project.READY).prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'dashboard':
         logger.info(log_prefix(request))
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
-        recent_project_ids = list(Text.objects.values_list('project_id', flat=True).filter(id__in=recent_text_ids).distinct())
-        recent_user_project_ids = list(Project.objects.values_list('id', flat=True).filter(manager=request.user).distinct())
-        recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True).filter(users__in=[request.user]).distinct())
+        recent_project_ids = list(Text.objects.values_list('project_id', flat=True)
+                                  .filter(id__in=recent_text_ids,
+                                          status=Text.READY).distinct())
+        recent_user_project_ids = list(Project.objects.values_list('id', flat=True)
+                                       .filter(manager=request.user,
+                                               status=Project.READY).distinct())
+        recent_user_participation_project_ids = list(Project.objects.values_list('id', flat=True)
+                                                     .filter(users__in=[request.user],
+                                                             status=Project.READY).distinct())
         all_project_ids = set(recent_project_ids + recent_user_project_ids + recent_user_participation_project_ids)
-        user_projects_list = [x for x in Project.objects.filter(id__in=all_project_ids).order_by('-last_modified')[:10] if x.is_user_allowed(request.user)]
+        user_projects_list = [x for x in Project.objects.filter(id__in=all_project_ids,
+                                                                status=Project.READY).order_by('-last_modified')[:10]
+                              if x.is_user_allowed(request.user)]
     elif proj_type == 'user':
         try:
             target_user_id = int(object_id)
@@ -71,16 +79,19 @@ def projects_ajax(request, proj_type, object_id=""):
         logger.info(log_prefix(request))
         target_user = get_object_or_404(User, id=target_user_id)
         if request.user == user or request.user.is_staff == 1:
-            user_projects_list = Project.objects.filter(manager=target_user).order_by('-last_modified')
+            user_projects_list = Project.objects.filter(manager=target_user,
+                                                        status=Project.READY).order_by('-last_modified')
         else:
-            user_projects_list = Project.objects.filter(manager=target_user, is_private=False).order_by('-last_modified')
+            user_projects_list = Project.objects.filter(manager=target_user,
+                                                        is_private=False,
+                                                        status=Project.READY).order_by('-last_modified')
     elif proj_type == 'organization':
         try:
             org = Organization.objects.get(slug=object_id)
         except Organization.DoesNotExist:
             raise Http404(_('Sorry, no such project here!'))
         logger.info(log_prefix(request))
-        user_projects_list = Project.objects.filter(organization=org).order_by('-last_modified')
+        user_projects_list = Project.objects.filter(organization=org, status=Project.READY).order_by('-last_modified')
     else:
         raise Http404("Poll does not exist")
 
@@ -174,7 +185,15 @@ def project_ajax(request):
                                 status=400)
 
         logger.info(log_prefix(request) + f"deleting project:{request.GET['id']}")
-        project.delete()
+
+        # Помечаем все тексты внутри проекта на будущее фоновое удаление
+        for text in Text.objects.filter(project=project):
+            text.status = Text.DELETED
+            text.save()
+
+        # А потом и сам проект
+        project.status = Project.DELETED
+        project.save()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -271,7 +290,7 @@ def add_project_translation(request):
                                                      target_lang=Language.objects.get(id=target_lang_id))
             project_translation.save()
 
-            all_project_texts = Text.objects.filter(project=project)
+            all_project_texts = Text.objects.filter(project=project, status=Text.READY)
 
             for project_text in all_project_texts:
                 # translation_meta = {}
@@ -465,7 +484,7 @@ def participant_ajax(request, project):
 def text_ajax(request, project):
     if request.method == 'GET':
         params = request.GET
-        texts = Text.objects.filter(project=project)
+        texts = Text.objects.filter(project=project, status=Text.READY)
         translations = TextTranslation.objects.filter(text__in=texts, target_lang=Language.objects.get(code=params['project_target_lang']))
         text_dict = {}
         for i in translations:
@@ -586,7 +605,10 @@ def text_ajax(request, project):
         if not project.is_user_manager(request.user):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        text.delete()
+
+        # Помечаем текст на будущее фоновое удаление
+        text.status = Text.DELETED
+        text.save()
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
