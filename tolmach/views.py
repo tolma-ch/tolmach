@@ -195,10 +195,6 @@ def organization_page(request, slug=""):
     if not org.is_user_member(request.user):
         return HttpResponseRedirect('/')
 
-    # projects = Project.objects.filter(organization=org).order_by('-last_modified')
-    # for proj in projects:
-    #     proj.progress = proj.get_progress()
-
     lang_list = []
     # Получаем список названий языков для текущей локали
     from babel import Locale
