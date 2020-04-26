@@ -17,7 +17,6 @@ PATH = getattr(settings, 'URL_PATH', '')
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^admin/uwsgi/', include('django_uwsgi.urls')),
     url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
