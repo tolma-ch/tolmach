@@ -8,15 +8,17 @@ from simple_history.models import HistoricalRecords
 from channels import Group
 
 from entries.models import Subject, Language
-# from tolmach.models import Organization
+
 
 def random_string(length=30):
     import random, string
 
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
 
+
 def random_invite_code():
     return random_string(15)
+
 
 def random_fragment_preview_code():
     return random_string(10)
@@ -32,7 +34,9 @@ class Glossary(models.Model):
 
 
 class GlossaryEntry(models.Model):
-    glossary = models.ForeignKey('translations.Glossary', related_name='glossary_entries', on_delete=models.deletion.CASCADE)
+    glossary = models.ForeignKey('translations.Glossary',
+                                 related_name='glossary_entries',
+                                 on_delete=models.deletion.CASCADE)
     source_entry = models.CharField(max_length=256)
     target_entry = models.CharField(max_length=256)
 
@@ -41,8 +45,12 @@ class TMDatabase(models.Model):
     name = models.CharField(max_length=256)
     owner = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_private = models.BooleanField(default=True)
-    source_lang = models.ForeignKey('entries.Language', related_name='tmdb_source_lang', on_delete=models.deletion.CASCADE)
-    target_lang = models.ForeignKey('entries.Language', related_name='tmdb_target_lang', on_delete=models.deletion.CASCADE)
+    source_lang = models.ForeignKey('entries.Language',
+                                    related_name='tmdb_source_lang',
+                                    on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language',
+                                    related_name='tmdb_target_lang',
+                                    on_delete=models.deletion.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -61,7 +69,9 @@ class TMDatabaseEntry(models.Model):
 
 
 class ProjectMember(models.Model):
-    project = models.ForeignKey('translations.Project', related_name='project_members', on_delete=models.deletion.CASCADE)
+    project = models.ForeignKey('translations.Project',
+                                related_name='project_members',
+                                on_delete=models.deletion.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     EDITOR = 0
     TRANSLATOR = 1
@@ -92,24 +102,35 @@ class Project(models.Model):
     """
     name = models.CharField(max_length=256)
     description = models.TextField(default="")
-    source_lang = models.ForeignKey('entries.Language', related_name='project_source_lang', on_delete=models.deletion.CASCADE)
+    source_lang = models.ForeignKey('entries.Language',
+                                    related_name='project_source_lang',
+                                    on_delete=models.deletion.CASCADE)
     manager = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     is_private = models.BooleanField(default=True)
-    members = models.TextField(default="")
-    users_invited = models.TextField(default="")
-    users_requested = models.TextField(default="")
+    members = models.TextField(default="", blank=True)
+    users_invited = models.TextField(default="", blank=True)
+    users_requested = models.TextField(default="", blank=True)
     users = models.ManyToManyField('auth.User', through=ProjectMember, related_name='project_members')
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
     progress_data = models.CharField(max_length=15, default="[0, 0]")
-    glossaries_list = models.ManyToManyField(Glossary)
-    tmdatabases_list = models.ManyToManyField(TMDatabase)
+    glossaries_list = models.ManyToManyField(Glossary, blank=True)
+    tmdatabases_list = models.ManyToManyField(TMDatabase, blank=True)
     organization = models.ForeignKey('tolmach.Organization',
                                      blank=True,
                                      null=True,
                                      related_name='project_organization',
                                      on_delete=models.deletion.SET_NULL)
     invite_link_code = models.CharField(default = random_invite_code, null = True, unique=True, max_length=15)
+    PROCESSING = 0
+    READY = 1
+    DELETED = 2
+    STATUS_TYPES = (
+        (PROCESSING, 'Processing'),
+        (READY, 'Ready'),
+        (DELETED, 'Deleted')
+    )
+    status = models.IntegerField(default=READY, choices=STATUS_TYPES)
 
     def __str__(self):
         return self.name
@@ -181,27 +202,6 @@ class Project(models.Model):
         Get progress percentage of the current project and return Int from 0 to 100
         """
         return json.loads(self.progress_data)
-        # project_progress = cache.get("%d_project_progress" % self.id)
-        #
-        # if not project_progress:
-        #     translated_progress = 0
-        #     approved_progress = 0
-        #     translations_num = 0
-        #     texts = Text.objects.filter(project=self)
-        #     for text in texts:
-        #         translations = TextTranslation.objects.filter(text=text)
-        #         for translation in translations:
-        #             translations_num += 1
-        #             translated_progress += translation.get_progress()[1][0]
-        #             approved_progress += translation.get_progress()[1][1]
-        #
-        #     if not texts.count() == 0:
-        #         project_progress = [int(approved_progress / translations_num),
-        #                             int(translated_progress / translations_num) - int(approved_progress / translations_num)]
-        #     else:
-        #         project_progress = [0, 0]
-        #     cache.set("%d_project_progress" % self.id, project_progress, 60*20)
-        # return project_progress
 
     def invite_user(self, user):
         new_proj_user, created = ProjectMember.objects.get_or_create(user=user, project=self)
@@ -211,14 +211,17 @@ class Project(models.Model):
 
 
 class ProjectTranslation(models.Model):
-    project = models.ForeignKey('translations.Project', related_name='project_translations', on_delete=models.deletion.CASCADE)
-    target_lang = models.ForeignKey('entries.Language', related_name='project_translations_target_lang', on_delete=models.deletion.CASCADE)
+    project = models.ForeignKey('translations.Project',
+                                related_name='project_translations',
+                                on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language',
+                                    related_name='project_translations_target_lang',
+                                    on_delete=models.deletion.CASCADE)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
     def __str__(self):
         return "%s - %s" % (self.project, self.target_lang)
-
 
 
 class Text(models.Model):
@@ -233,6 +236,15 @@ class Text(models.Model):
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)
     options = models.TextField(default="{}")
+    PROCESSING = 0
+    READY = 1
+    DELETED = 2
+    STATUS_TYPES = (
+        (PROCESSING, 'Processing'),
+        (READY, 'Ready'),
+        (DELETED, 'Deleted')
+    )
+    status = models.IntegerField(default=READY, choices=STATUS_TYPES)
 
     def __str__(self):
         return self.title
@@ -295,9 +307,13 @@ class TextMeta(models.Model):
 
 
 class TextTranslation(models.Model):
-    project_translation = models.ForeignKey('translations.ProjectTranslation', related_name="project_translation_relation", on_delete=models.deletion.CASCADE)
+    project_translation = models.ForeignKey('translations.ProjectTranslation',
+                                            related_name="project_translation_relation",
+                                            on_delete=models.deletion.CASCADE)
     text = models.ForeignKey('translations.Text', related_name='text_translations', on_delete=models.deletion.CASCADE)
-    target_lang = models.ForeignKey('entries.Language', related_name='translations_target_lang', on_delete=models.deletion.CASCADE)
+    target_lang = models.ForeignKey('entries.Language',
+                                    related_name='translations_target_lang',
+                                    on_delete=models.deletion.CASCADE)
     glossaries_list = models.ManyToManyField(Glossary)
     tmdatabases_list = models.ManyToManyField(TMDatabase)
 
@@ -324,19 +340,28 @@ class TextTranslation(models.Model):
                 entries_total = TextEntry.objects.filter(text=self.text, parent_entry=None).count()
                 entries_disabled = TextEntry.objects.filter(text=self.text, parent_entry=None, is_disabled=True).count()
                 entries_enabled = entries_total - entries_disabled
-                translated_entries_list = TextEntry.objects.filter(~Q(parent_entry=None), text=self.text, translation=self).values('parent_entry').distinct()
+                translated_entries_list = TextEntry.objects.filter(~Q(parent_entry=None),
+                                                                   text=self.text,
+                                                                   translation=self).values('parent_entry').distinct()
                 translated_ids_list = [i['parent_entry'] for i in translated_entries_list]
 
                 entries_translated = TextEntry.objects.filter(id__in=translated_ids_list, is_disabled=False).count()
 
                 entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
-                cache.set('%d_translation_progress' % self.id, [entries_total, entries_translated, entries_approved, entries_disabled], 60*10)
+                cache.set('%d_translation_progress' % self.id, [entries_total,
+                                                                entries_translated,
+                                                                entries_approved,
+                                                                entries_disabled], 60*10)
 
             if not entries_total == 0 and not entries_enabled == 0:
-                percent_translated = int(math.ceil(entries_translated/( entries_enabled /100.0))) if (entries_translated < entries_enabled) else 100
-                percent_approved = int(math.ceil(entries_approved/( entries_enabled /100.0)))
+                percent_translated = int(math.ceil(entries_translated/( entries_enabled / 100.0)))\
+                    if (entries_translated < entries_enabled) else 100
+                percent_approved = int(math.ceil(entries_approved/( entries_enabled / 100.0)))
 
-                return [int(entries_total), int(entries_translated), int(entries_approved)], [percent_translated, percent_approved]
+                return [int(entries_total),
+                        int(entries_translated),
+                        int(entries_approved)],\
+                       [percent_translated, percent_approved]
             else:
                 return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]
         elif detalization == "full":
@@ -421,13 +446,15 @@ class TextTranslation(models.Model):
 
 
 class TextTranslationMeta(models.Model):
-    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_meta', on_delete=models.deletion.CASCADE)
+    translation = models.ForeignKey('translations.TextTranslation',
+                                    related_name='text_translation_meta', on_delete=models.deletion.CASCADE)
     meta_type = models.CharField(max_length=256, default=None, null=True)
     meta_data = models.TextField()
 
 
 class TextTranslationUserPosition(models.Model):
-    translation = models.ForeignKey('translations.TextTranslation', related_name='text_translation_user_position', on_delete=models.deletion.CASCADE)
+    translation = models.ForeignKey('translations.TextTranslation',
+                                    related_name='text_translation_user_position', on_delete=models.deletion.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     page = models.IntegerField(default=0)
     fragment = models.IntegerField(default=0)
@@ -435,13 +462,17 @@ class TextTranslationUserPosition(models.Model):
     class Meta:
         unique_together = ("translation", "user")
 
+
 class TextEntry(models.Model):
     body = models.TextField(default="")
-    parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)
+    parent_entry = models.ForeignKey('translations.TextEntry',
+                                     default=None, null=True, on_delete=models.deletion.CASCADE)
     text = models.ForeignKey('translations.Text', related_name='text_entries', on_delete=models.deletion.CASCADE)
     id_in_text = models.IntegerField(default=0)
     new_lines_after = models.IntegerField(default=0)
-    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_entries', default=None, null=True, on_delete=models.deletion.CASCADE)
+    translation = models.ForeignKey('translations.TextTranslation',
+                                    related_name='translation_entries',
+                                    default=None, null=True, on_delete=models.deletion.CASCADE)
     author = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)
     meta_data = models.TextField(default="{}")
     preview_code = models.CharField(default = random_fragment_preview_code, null = True, max_length=10)
@@ -474,10 +505,13 @@ class TextEntry(models.Model):
 
 class PreexportEntry(models.Model):
     body = models.TextField(default="")
-    parent_entry = models.ForeignKey('translations.TextEntry', default=None, null=True, on_delete=models.deletion.CASCADE)
-    text = models.ForeignKey('translations.Text', related_name='text_preexport_entries', on_delete=models.deletion.CASCADE)
+    parent_entry = models.ForeignKey('translations.TextEntry',
+                                     default=None, null=True, on_delete=models.deletion.CASCADE)
+    text = models.ForeignKey('translations.Text',
+                             related_name='text_preexport_entries', on_delete=models.deletion.CASCADE)
     id_in_text = models.IntegerField(default=0)
-    translation = models.ForeignKey('translations.TextTranslation', related_name='translation_preexport_entries', default=None,
+    translation = models.ForeignKey('translations.TextTranslation',
+                                    related_name='translation_preexport_entries', default=None,
                                     null=True, on_delete=models.deletion.CASCADE)
     time_created = models.DateTimeField(default=timezone.now)
     last_modified = models.DateTimeField(default=timezone.now)

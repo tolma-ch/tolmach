@@ -2,13 +2,16 @@ from django.db import models, transaction
 from django.utils import timezone
 from autoslug import AutoSlugField
 
+
 def random_string(length=30):
     import random, string
 
     return ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length))
 
+
 def random_invite_code():
     return random_string(15)
+
 
 class UserMeta(models.Model):
     """
@@ -124,7 +127,7 @@ class Organization(models.Model):
         new_org_user = OrganizationMember(user=user, organization=self)
         new_org_user.save()
 
-        org_projects = Project.objects.filter(organization=self)
+        org_projects = Project.objects.filter(organization=self, status=Project.READY)
         for pr in org_projects:
             pr.invite_user(user)
 
@@ -133,6 +136,6 @@ class Organization(models.Model):
         from translations.models import Project
         OrganizationMember.objects.filter(user=user, organization=self).delete()
 
-        org_projects = Project.objects.filter(organization=self)
+        org_projects = Project.objects.filter(organization=self, status=Project.READY)
         for pr in org_projects:
             pr.remove_user(user)

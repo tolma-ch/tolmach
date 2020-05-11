@@ -1,0 +1,42 @@
+.msg-list {
+  list-style: none;
+  margin: 0;
+}
+.msg-item {
+  min-height: 70px;
+  padding: 10px 10px 20px;
+  border-bottom: 1px solid #0000001a;
+  &:hover {
+    background: #ffffc6;
+    @media (prefers-color-scheme: dark) {
+      background: #444444;
+    }
+  }
+}
+.msg-text {
+  display: block;
+  margin-left: 51px;
+
+  code {
+    @media (prefers-color-scheme: dark) {
+      color: #848484;
+      background-color: #191919;
+    }
+  }
+}
+.msg-time {
+  float: right;
+  position: relative;
+  font-size: 11px;
+  color: grey;
+}
+.unread {
+  background-color: #eee;
+  @media (prefers-color-scheme: dark) {
+    background-color: #252525;
+  }
+}
+.msg-avatar {
+  float: left;
+  margin-right: 10px;
+}

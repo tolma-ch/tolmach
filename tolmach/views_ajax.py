@@ -187,7 +187,7 @@ def global_search_ajax(request):
             Q(translation=text_tr) | Q(parent_entry=None)
         )[:10]
         project = Text.objects.get(id=text_id).project
-        all_other_project_texts_ids = [x.id for x in Text.objects.filter(project=project) if x.id != text_id]
+        all_other_project_texts_ids = [x.id for x in Text.objects.filter(project=project, status=Text.READY) if x.id != text_id]
         proj_tr = ProjectTranslation.objects.get(project=project, target_lang__code=request.GET['targetLang'])
         all_other_text_translation_ids = [
             x.id for x in TextTranslation.objects.filter(
