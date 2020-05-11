@@ -61,7 +61,7 @@
             window['baseDomain'] = "{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}";
         </script>
 
-        {% if prod == 'true' %}
+        {% if base_domain == 'https://tolma.ch' %}
         <!-- Yandex.Metrika counter -->
         <script type="text/javascript">
             (function (d, w, c) {
