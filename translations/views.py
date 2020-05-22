@@ -53,12 +53,13 @@ def projects(request, proj_type):
 
     lang_list = []
     # Получаем список названий языков для текущей локали
-    from babel import Locale
+    from entries.views import get_language_name
     for lang in Language.objects.all():
-        lang_name = Locale(lang.code)
         localized_lang = lang
-        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        localized_lang.localized_name = get_language_name(lang.code_region)
         lang_list.append(localized_lang)
+
+    lang_list.sort(key=lambda x: x.localized_name)
 
     user_data = {
                 'firstName': first_name,
@@ -100,12 +101,13 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
 
     lang_list = []
     # Получаем список названий языков для текущей локали
-    from babel import Locale
+    from entries.views import get_language_name
     for lang in Language.objects.all():
-        lang_name = Locale(lang.code)
         localized_lang = lang
-        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
+        localized_lang.localized_name = get_language_name(lang.code_region)
         lang_list.append(localized_lang)
+
+    lang_list.sort(key=lambda x: x.localized_name)
 
     # pr.current_translation = project_translation
     # pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
@@ -278,13 +280,17 @@ def project(request, proj_id=0):
         return HttpResponseRedirect('/')
 
     project_default_translation = ProjectTranslation.objects.filter(project=pr)[0]
-    return HttpResponseRedirect('/project/%s/%s/' % (proj_id, project_default_translation.target_lang.code))
+    return HttpResponseRedirect('/project/%s/%s/' % (proj_id, project_default_translation.target_lang.code_tmx))
 
 
 @login_required
 @define_project_breadcrumbs
 def project_by_translation(request, pr, projects_text, projects_url, projects_type, target_lang):
-    project_lang = get_object_or_404(Language, code=target_lang)
+    if len(target_lang) == 5:
+        project_lang = get_object_or_404(Language, code_tmx=target_lang)
+    else:
+        project_lang = Language.objects.filter(code_tmx__startswith=target_lang)[0]
+        return HttpResponseRedirect(f"/project/{pr.id}/{project_lang.code_tmx}/")
     try:
         project_translation = ProjectTranslation.objects.get(project=pr,
                                                          target_lang=project_lang)
@@ -294,22 +300,16 @@ def project_by_translation(request, pr, projects_text, projects_url, projects_ty
         messages.add_message(request, messages.ERROR, _('Sorry, no such project here!'))
         return HttpResponseRedirect('/')
 
-    lang_list = []
     # Получаем список названий языков для текущей локали
-    from babel import Locale
-    for lang in Language.objects.all():
-        lang_name = Locale(lang.code)
-        localized_lang = lang
-        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
-        lang_list.append(localized_lang)
+    from entries.views import get_localized_langs_list, get_language_name
+    lang_list = get_localized_langs_list()
 
     pr.current_translation = project_translation
-    pr.current_translation.target_lang_local = Locale(pr.current_translation.target_lang.code).get_language_name(request.LANGUAGE_CODE)
+    pr.current_translation.target_lang_local = get_language_name(pr.current_translation.target_lang.code_region)
 
-    pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=Language.objects.get(code=target_lang))
+    pr.translations = ProjectTranslation.objects.filter(project=pr).exclude(target_lang=project_lang)
     for pr_translation in pr.translations:
-        lang_name = Locale(pr_translation.target_lang.code)
-        pr_translation.target_lang_local = lang_name.get_language_name(request.LANGUAGE_CODE)
+        pr_translation.target_lang_local = get_language_name(pr_translation.target_lang.code_region)
 
     try:
         membership_status = ProjectMember.objects.get(project=pr,
@@ -402,7 +402,11 @@ def view_translation(request, text_id, target_lang):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
-    lang = get_object_or_404(Language, code=target_lang)
+    if len(target_lang) == 5:
+        lang = get_object_or_404(Language, code_tmx=target_lang)
+    else:
+        lang = Language.objects.filter(code_tmx__startswith=target_lang)[0]
+        return HttpResponseRedirect(f"/text/{text.id}/{lang.code_tmx}/")
     translation = get_object_or_404(TextTranslation, text=text, target_lang=lang)
     translation_counts, translation_progress = translation.get_progress()
 
@@ -428,19 +432,19 @@ def view_translation(request, text_id, target_lang):
             'user_membership_status': membership_status,
             'breadcrumbs': [
                 {'title': projects_text, 'url': projects_url, 'type': projects_type},
-                {'title': text.project.name, 'url': '/project/%d/%s/' % (text.project.id, translation.target_lang.code), 'type': ''},
+                {'title': text.project.name, 'url': '/project/%d/%s/' % (text.project.id, translation.target_lang.code_tmx), 'type': ''},
                 {'title': text.title, 'url': '', 'type': ''},
             ],
             'text': text,
             'use_machine': int(machine_trans_enabled),
-            'source_lang': text.source_lang.code,
+            'source_lang': text.source_lang.code_tmx,
             'target_lang': target_lang,
             'page_title': "%s [%s-%s] / %s / Tolma.ch" % (text.title[:30], text.source_lang.code.upper(), target_lang.upper(), pr.name[:30]),
             'translation_progress': translation_progress,
             'translation_counts': translation_counts,
             # 'ws_connect_host': "wss://tolma.ch" if settings.PROD == True else "ws://dev.tolma.ch:4567",
             'ws_connect_host': settings.WS_HOST,
-            'language_codes': [x.code for x in Language.objects.all()],
+            'language_codes': list(set([x.code for x in Language.objects.all()])),
             'total_pages': total_pages,
             'saved_position': saved_position
             }

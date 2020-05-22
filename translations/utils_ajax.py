@@ -79,19 +79,18 @@ def user_to_json(user, project=None):
     }
 
 
-def text_to_json(text, text_translation, locale):
-    from babel import Locale
+def text_to_json(text, text_translation):
+    from entries.views import get_language_name
     import re
 
-    lang_name = Locale(text_translation.target_lang.code)
     translation_counts, translation_progress = text_translation.get_progress()
     translation = {
         'targetLangId': text_translation.target_lang.id,
-        'lang': text_translation.target_lang.code,
+        'lang': text_translation.target_lang.code_tmx,
         'langFull': str(text_translation.target_lang),
         'progress': translation_progress,
         'counts': translation_counts,
-        'langLocal': lang_name.get_language_name(locale),
+        'langLocal': get_language_name(text_translation.target_lang.code_region),
         'glossaries': [int(x.id) for x in filter(None, text_translation.glossaries_list.all())] if text_translation.glossaries_list.all() else [],
         'tmxes': [int(x.id) for x in filter(None, text_translation.tmdatabases_list.all())] if text_translation.tmdatabases_list.all() else [],
         }
