@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-16 22:39+0300\n"
+"POT-Creation-Date: 2020-05-14 21:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,9 +19,9 @@ msgid "Project not set"
 msgstr "Номер проекта не указан"
 
 #: chat/views.py:21 chat/views.py:38 translations/decorators.py:49
-#: translations/views_ajax.py:146 translations/views_ajax.py:165
-#: translations/views_ajax.py:170 translations/views_ajax.py:254
-#: translations/views_ajax.py:837
+#: translations/views_ajax.py:157 translations/views_ajax.py:176
+#: translations/views_ajax.py:181 translations/views_ajax.py:273
+#: translations/views_ajax.py:859
 msgid "Project not found"
 msgstr "Проект не найден"
 
@@ -37,6 +37,94 @@ msgstr "Обсуждение не найдено"
 #: chat/views.py:48
 msgid "Text is empty"
 msgstr "Текст не указан"
+
+#: entries/views.py:7
+msgid "Russian"
+msgstr "русский"
+
+#: entries/views.py:9
+msgid "English"
+msgstr "английский"
+
+#: entries/views.py:10
+msgid "English (Great Britain)"
+msgstr "английский (Великобритания)"
+
+#: entries/views.py:12
+msgid "Spanish"
+msgstr "испанский"
+
+#: entries/views.py:13
+msgid "Spanish (Mexico)"
+msgstr "испанский (Мексика)"
+
+#: entries/views.py:14
+msgid "Spanish (Chile)"
+msgstr "испанский (Чили)"
+
+#: entries/views.py:16
+msgid "German"
+msgstr "немецкий"
+
+#: entries/views.py:17
+msgid "German (Austria)"
+msgstr "немецкий (Австрия)"
+
+#: entries/views.py:18
+msgid "German (Switzerland)"
+msgstr "немецкий (Швейцария)"
+
+#: entries/views.py:20
+msgid "French"
+msgstr "французский"
+
+#: entries/views.py:21
+msgid "French (Canada)"
+msgstr "французский (Канада)"
+
+#: entries/views.py:22
+msgid "French (Belgium)"
+msgstr "французский (Бельгия)"
+
+#: entries/views.py:23
+msgid "French (Switzerland)"
+msgstr "французский (Швейцария)"
+
+#: entries/views.py:25
+msgid "Italian"
+msgstr "итальянский"
+
+#: entries/views.py:26
+msgid "Italian (Switzerland)"
+msgstr "итальянский (Швейцария)"
+
+#: entries/views.py:28
+msgid "Korean"
+msgstr "корейский"
+
+#: entries/views.py:30
+msgid "Japanese"
+msgstr "японский"
+
+#: entries/views.py:32
+msgid "Chinese (simplified, China)"
+msgstr "китайский (упрощённый, Китай)"
+
+#: entries/views.py:33
+msgid "Chinese (simplified, Singapore)"
+msgstr "китайский (упрощённый, Сингапур)"
+
+#: entries/views.py:34
+msgid "Chinese (traditional, Taiwan)"
+msgstr "китайский (традиционный, Тайвань)"
+
+#: entries/views.py:35
+msgid "Chinese (traditional, Hong Hong SAR China)"
+msgstr "китайский (традиционный, Гонконг [САР])"
+
+#: entries/views.py:36
+msgid "Chinese (traditional, Macao SAR China"
+msgstr "китайский (традиционный, Макао [САР])"
 
 #: templates/email/emailtemplatesbodies.json:5
 msgid "Welcome to Tolma.ch!"
@@ -588,8 +676,8 @@ msgstr "Начать новый"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:259
-#: tolmach/views.py:291
+#: templates/tolmach/organization.html:8 tolmach/views.py:255
+#: tolmach/views.py:287
 msgid "Members"
 msgstr "Участники"
 
@@ -671,11 +759,12 @@ msgid "Your translation was edited. Original text:"
 msgstr "Ваш перевод был отредактирован. Оригинальный текст:"
 
 #: templates/tolmach/partial/all_messages_modal.html:65
+#: templates/tolmach/partial/all_messages_modal.html:72
 msgid "New text:"
 msgstr "Новый текст:"
 
 #: templates/tolmach/partial/all_messages_modal.html:68
-#: templates/tolmach/partial/all_messages_modal.html:72
+#: templates/tolmach/partial/all_messages_modal.html:75
 msgid "Go to fragment"
 msgstr "Перейти к фрагменту"
 
@@ -683,8 +772,9 @@ msgstr "Перейти к фрагменту"
 msgid ""
 "Translator edited one of his already approved translations. It was "
 "disapproved now."
-msgstr "Переводчик отредактировал один из своих уже утверждённых переводов. "
-"Теперь этот перевод нужно утвердить заново."
+msgstr ""
+"Переводчик отредактировал один из своих уже утверждённых переводов. Теперь "
+"этот перевод нужно утвердить заново."
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
 #: templates/tolmach/partial/profile-sidebar.html:37
@@ -950,8 +1040,8 @@ msgid "Total"
 msgstr "Всего"
 
 #: templates/tolmach/profile.html:8 tolmach/views.py:177 tolmach/views.py:179
-#: tolmach/views.py:223 tolmach/views.py:225 tolmach/views.py:259
-#: tolmach/views.py:261 tolmach/views.py:291 tolmach/views.py:293
+#: tolmach/views.py:219 tolmach/views.py:221 tolmach/views.py:255
+#: tolmach/views.py:257 tolmach/views.py:287 tolmach/views.py:289
 msgid "Organizations"
 msgstr "Организации"
 
@@ -1539,20 +1629,20 @@ msgstr "Организация не найдена"
 msgid "member"
 msgstr "участник"
 
-#: tolmach/views.py:193 tolmach/views.py:240 tolmach/views.py:275
+#: tolmach/views.py:193 tolmach/views.py:236 tolmach/views.py:271
 #: translations/decorators.py:63 translations/views.py:98
 #: translations/views.py:275 translations/views.py:277
 #: translations/views.py:292 translations/views.py:294
-#: translations/views_ajax.py:81
+#: translations/views_ajax.py:92
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: tolmach/views.py:536
+#: tolmach/views.py:532
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:626
+#: tolmach/views.py:622
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
@@ -1560,17 +1650,17 @@ msgstr "Новый пароль сохранён. Пожалуйста, ожид
 msgid "You have to be an owner of organization"
 msgstr "Вы должны быть владельцем организации"
 
-#: tolmach/views_ajax.py:38 translations/views_ajax.py:188
+#: tolmach/views_ajax.py:38 translations/views_ajax.py:207
 msgid "Project name cannot be empty"
 msgstr "Название проекта не может быть пустым"
 
 #: tolmach/views_ajax.py:79 tolmach/views_ajax.py:115
-#: translations/views_ajax.py:371 translations/views_ajax.py:420
+#: translations/views_ajax.py:390 translations/views_ajax.py:439
 msgid "User id is not set"
 msgstr "Номер пользователя не указан"
 
 #: tolmach/views_ajax.py:83 tolmach/views_ajax.py:119
-#: translations/views_ajax.py:375 translations/views_ajax.py:424
+#: translations/views_ajax.py:394 translations/views_ajax.py:443
 msgid "User not found"
 msgstr "Пользователь не найден"
 
@@ -1578,15 +1668,15 @@ msgstr "Пользователь не найден"
 msgid "This user is an owner of organization"
 msgstr "Указанный пользователь - владелец организации"
 
-#: tolmach/views_ajax.py:107 translations/views_ajax.py:412
+#: tolmach/views_ajax.py:107 translations/views_ajax.py:431
 msgid "User is already a member of project"
 msgstr "Пользователь уже является участником проекта"
 
 #: tolmach/views_ajax.py:121 translations/decorators.py:23
-#: translations/views_ajax.py:429 translations/views_ajax.py:679
-#: translations/views_ajax.py:818 translations/views_ajax.py:1017
-#: translations/views_ajax.py:1131 translations/views_ajax.py:1140
-#: translations/views_ajax.py:1271
+#: translations/views_ajax.py:448 translations/views_ajax.py:701
+#: translations/views_ajax.py:840 translations/views_ajax.py:1039
+#: translations/views_ajax.py:1153 translations/views_ajax.py:1162
+#: translations/views_ajax.py:1294
 msgid "Not allowed"
 msgstr "Нет доступа"
 
@@ -1603,11 +1693,11 @@ msgid "text id is not set"
 msgstr "Номер текста не указан"
 
 #: translations/decorators.py:21 translations/decorators.py:41
-#: translations/views_ajax.py:491 translations/views_ajax.py:585
+#: translations/views_ajax.py:510 translations/views_ajax.py:604
 msgid "Text not found"
 msgstr "Текст не найден"
 
-#: translations/decorators.py:43 translations/views_ajax.py:833
+#: translations/decorators.py:43 translations/views_ajax.py:855
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
@@ -1621,15 +1711,15 @@ msgid "File is too big"
 msgstr "Файл слишком большой"
 
 #: translations/utils.py:141 translations/utils.py:143
-#: translations/views_ajax.py:1541
+#: translations/views_ajax.py:1565
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-#: translations/utils.py:345 translations/utils.py:378
+#: translations/utils.py:350 translations/utils.py:383
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:353 translations/utils.py:386
+#: translations/utils.py:358 translations/utils.py:391
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
@@ -1662,170 +1752,170 @@ msgstr "Простите, указанный текст не найден"
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
 
-#: translations/views_ajax.py:150 translations/views_ajax.py:173
-#: translations/views_ajax.py:259 translations/views_ajax.py:367
-#: translations/views_ajax.py:479 translations/views_ajax.py:587
-#: translations/views_ajax.py:699 translations/views_ajax.py:839
-#: translations/views_ajax.py:1331 translations/views_ajax.py:1373
-#: translations/views_ajax.py:1395 translations/views_ajax.py:1434
-#: translations/views_ajax.py:1455 translations/views_ajax.py:1488
+#: translations/views_ajax.py:161 translations/views_ajax.py:184
+#: translations/views_ajax.py:278 translations/views_ajax.py:386
+#: translations/views_ajax.py:498 translations/views_ajax.py:606
+#: translations/views_ajax.py:721 translations/views_ajax.py:861
+#: translations/views_ajax.py:1354 translations/views_ajax.py:1396
+#: translations/views_ajax.py:1418 translations/views_ajax.py:1457
+#: translations/views_ajax.py:1478 translations/views_ajax.py:1511
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
-#: translations/views_ajax.py:194
+#: translations/views_ajax.py:213
 msgid "Project description cannot be empty"
 msgstr "Описание проекта не может быть пустым"
 
-#: translations/views_ajax.py:200
+#: translations/views_ajax.py:219
 msgid "Project type is not set"
 msgstr "Тип проекта не указан"
 
-#: translations/views_ajax.py:204
+#: translations/views_ajax.py:223
 msgid "Source language is not set"
 msgstr "Язык оригинала не указан"
 
-#: translations/views_ajax.py:208 translations/views_ajax.py:256
-#: translations/views_ajax.py:907
+#: translations/views_ajax.py:227 translations/views_ajax.py:275
+#: translations/views_ajax.py:929
 msgid "Target language is not set"
 msgstr "Язык перевода не указан"
 
-#: translations/views_ajax.py:247
+#: translations/views_ajax.py:266
 msgid "Project is not set"
 msgstr "Проект не указан"
 
-#: translations/views_ajax.py:267
+#: translations/views_ajax.py:286
 msgid "There is already such project translation"
 msgstr "У проекта уже есть такой перевод"
 
-#: translations/views_ajax.py:333
+#: translations/views_ajax.py:352
 msgid "You have to be a manager of the project"
 msgstr "Вы должны быть менеджером проекта"
 
-#: translations/views_ajax.py:354
+#: translations/views_ajax.py:373
 msgid "You have to be a member of the project"
 msgstr "Вы должны быть участником проекта"
 
-#: translations/views_ajax.py:377 translations/views_ajax.py:431
+#: translations/views_ajax.py:396 translations/views_ajax.py:450
 msgid "This user is a manager of project"
 msgstr "Указанный пользователь - менеджер проекта"
 
-#: translations/views_ajax.py:409
+#: translations/views_ajax.py:428
 msgid "Wrong membership status, sorry"
 msgstr "Некорректный статус участника, извините"
 
-#: translations/views_ajax.py:439
+#: translations/views_ajax.py:458
 msgid "User is not a member of project"
 msgstr "Пользователь не является участником проекта"
 
-#: translations/views_ajax.py:530 translations/views_ajax.py:714
-#: translations/views_ajax.py:863
+#: translations/views_ajax.py:549 translations/views_ajax.py:736
+#: translations/views_ajax.py:885
 msgid "Wrong file type"
 msgstr "Некорректный формат файла"
 
-#: translations/views_ajax.py:581
+#: translations/views_ajax.py:600
 msgid "Text id is not set"
 msgstr "Номер текста не указан"
 
-#: translations/views_ajax.py:657 translations/views_ajax.py:728
-#: translations/views_ajax.py:779
+#: translations/views_ajax.py:679 translations/views_ajax.py:750
+#: translations/views_ajax.py:801
 msgid "Glossary not found"
 msgstr "Глоссарий не найден"
 
-#: translations/views_ajax.py:686 translations/views_ajax.py:741
-#: translations/views_ajax.py:754
+#: translations/views_ajax.py:708 translations/views_ajax.py:763
+#: translations/views_ajax.py:776
 msgid "Project translation not found"
 msgstr "Перевод проекта не найден"
 
-#: translations/views_ajax.py:702
+#: translations/views_ajax.py:724
 msgid "Glossary name is not set"
 msgstr "Название глоссария не указано"
 
-#: translations/views_ajax.py:720
+#: translations/views_ajax.py:742
 msgid "Please, send file or input data manually"
 msgstr "Пожалуйста, загрузите файл или введите данные вручную"
 
-#: translations/views_ajax.py:775
+#: translations/views_ajax.py:797
 msgid "Glossary id is not set"
 msgstr "Номер глоссария не указан"
 
-#: translations/views_ajax.py:781
+#: translations/views_ajax.py:803
 msgid "It's not your glossary"
 msgstr "Это не ваш глоссарий"
 
-#: translations/views_ajax.py:796
+#: translations/views_ajax.py:818
 msgid "TMDatabase not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:843
+#: translations/views_ajax.py:865
 msgid "TMX name is not set"
 msgstr "Название базы памяти не указано"
 
-#: translations/views_ajax.py:849
+#: translations/views_ajax.py:871
 msgid "Target lang is not specified"
 msgstr "Язык перевода не указан"
 
-#: translations/views_ajax.py:853
+#: translations/views_ajax.py:875
 msgid "TMX file is not passed"
 msgstr "Формат базы памяти некорректный"
 
-#: translations/views_ajax.py:879
+#: translations/views_ajax.py:901
 msgid "TMX id is not set"
 msgstr "Номер базы памяти не указан"
 
-#: translations/views_ajax.py:883
+#: translations/views_ajax.py:905
 msgid "TMX not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:885
+#: translations/views_ajax.py:907
 msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
-#: translations/views_ajax.py:1038 translations/views_ajax.py:1061
+#: translations/views_ajax.py:1060 translations/views_ajax.py:1083
 msgid "Entry id is not set"
 msgstr "Номер фрагмента не указан"
 
-#: translations/views_ajax.py:1083 translations/views_ajax.py:1108
-#: translations/views_ajax.py:1299 translations/views_ajax.py:1341
-#: translations/views_ajax.py:1384 translations/views_ajax.py:1444
-#: translations/views_ajax.py:1558
+#: translations/views_ajax.py:1105 translations/views_ajax.py:1130
+#: translations/views_ajax.py:1322 translations/views_ajax.py:1364
+#: translations/views_ajax.py:1407 translations/views_ajax.py:1467
+#: translations/views_ajax.py:1582
 msgid "Id is not set"
 msgstr "Номер не указан"
 
-#: translations/views_ajax.py:1113 translations/views_ajax.py:1138
-#: translations/views_ajax.py:1252 translations/views_ajax.py:1266
-#: translations/views_ajax.py:1449 translations/views_ajax.py:1563
+#: translations/views_ajax.py:1135 translations/views_ajax.py:1160
+#: translations/views_ajax.py:1275 translations/views_ajax.py:1289
+#: translations/views_ajax.py:1472 translations/views_ajax.py:1587
 msgid "Not found"
 msgstr "Не найдено"
 
-#: translations/views_ajax.py:1121
+#: translations/views_ajax.py:1143
 msgid "Language not found"
 msgstr "Язык не найден"
 
-#: translations/views_ajax.py:1128
+#: translations/views_ajax.py:1150
 msgid "Translation not found"
 msgstr "Перевод не найден"
 
-#: translations/views_ajax.py:1179
+#: translations/views_ajax.py:1202
 msgid "Entry translation text is not set"
 msgstr "Перевод фрагмента не указан"
 
-#: translations/views_ajax.py:1247
+#: translations/views_ajax.py:1270
 msgid "entry is not set"
 msgstr "Номер фрагмента не указан"
 
-#: translations/views_ajax.py:1259
+#: translations/views_ajax.py:1282
 msgid "translation is not set"
 msgstr "Преевод не указан"
 
-#: translations/views_ajax.py:1592
+#: translations/views_ajax.py:1616
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 
-#: translations/views_ajax.py:1790
+#: translations/views_ajax.py:1815
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:1806 translations/views_ajax.py:1810
+#: translations/views_ajax.py:1831 translations/views_ajax.py:1835
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
 

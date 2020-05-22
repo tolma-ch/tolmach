@@ -237,7 +237,7 @@ def glossary_to_entry(entry_body, glossary_list, language):
         """
         Если язык не азиатский, то можно пользоваться стеммером для более лучшего поиска
         """
-        stemmer = SnowballStemmer(language.name.lower())
+        stemmer = SnowballStemmer(language.name.lower().split(" ")[0])
         tokenized_body = word_tokenize(entry_body)
         for source_entry, target_entry in cleanse_glossary_entries(glossary_list).items():
             if len(source_entry.split()) == 1:
@@ -285,7 +285,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
         else:
             return lang.lower()
 
-    target_translation = ProjectTranslation.objects.get(target_lang__code=target_lang, project=project)
+    target_translation = ProjectTranslation.objects.get(target_lang__code_tmx=target_lang, project=project)
     # учитываем различия в аттрибутах языка в разных версиях спеки TMX
     lang_11 = "lang"
     lang_14 = "{http://www.w3.org/XML/1998/namespace}lang"
