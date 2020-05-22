@@ -1515,13 +1515,14 @@ def disapprove_all_entries_by_user_ajax(request, text):
 def glossary_filter_entry_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        target_lang = Language.objects.get(code_tmx=post['target_lang'])
-        source_lang = Language.objects.get(code_tmx=post['source_lang'])
+        target_lang = get_object_or_404(Language, code_tmx=post['target_lang'])
+        source_lang = get_object_or_404(Language, code_tmx=post['source_lang'])
         text = Text.objects.get(id=post['text_id'])
-        project_translation = ProjectTranslation.objects.get(project=text.project,
-                                                             target_lang=target_lang,
-                                                             )
-        post['entry_body'] = utils.glossary_to_entry(post['entry_body'], project_translation.glossaries_list.all(), source_lang)
+        project_translation = get_object_or_404(ProjectTranslation, project=text.project, target_lang=target_lang)
+
+        post['entry_body'] = utils.glossary_to_entry(post['entry_body'],
+                                                     project_translation.glossaries_list.all(),
+                                                     source_lang)
 
         return HttpResponse(json.dumps(post), content_type="application/json")
 
