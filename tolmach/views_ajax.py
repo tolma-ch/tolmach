@@ -169,7 +169,7 @@ def global_search_ajax(request):
     import math
     import textwrap
 
-    from translations.models import Text, TextTranslation, TextEntry, Project, ProjectTranslation
+    from translations.models import Text, TextTranslation, TextEntry, ProjectTranslation
     text_id = int(request.GET.get('textId', 0))
     if text_id == 0:
         return HttpResponse(json.dumps([]), content_type="application/json")
@@ -179,7 +179,7 @@ def global_search_ajax(request):
     r = request.GET.get('q', False)
 
     # Searching through the current document
-    text_tr = TextTranslation.objects.get(target_lang__code=request.GET['targetLang'], text__id=text_id)
+    text_tr = TextTranslation.objects.get(target_lang__code_tmx=request.GET['targetLang'], text__id=text_id)
     if r:
         document_entries = TextEntry.objects.filter(
             Q(body__icontains=r),
@@ -188,7 +188,7 @@ def global_search_ajax(request):
         )[:10]
         project = Text.objects.get(id=text_id).project
         all_other_project_texts_ids = [x.id for x in Text.objects.filter(project=project, status=Text.READY) if x.id != text_id]
-        proj_tr = ProjectTranslation.objects.get(project=project, target_lang__code=request.GET['targetLang'])
+        proj_tr = ProjectTranslation.objects.get(project=project, target_lang__code_tmx=request.GET['targetLang'])
         all_other_text_translation_ids = [
             x.id for x in TextTranslation.objects.filter(
                 project_translation=proj_tr,

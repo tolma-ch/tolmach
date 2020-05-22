@@ -22,7 +22,7 @@ def ws_text_translation_connect(message, text_id, target_lang):
         message.reply_channel.send({"close": True})
     if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
         message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code=target_lang)
+    lang = Language.objects.get(code_tmx=target_lang)
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
 
     translation.websocket_group.add(message.reply_channel)
@@ -35,7 +35,7 @@ def ws_text_translation_message(message, text_id, target_lang):
         message.reply_channel.send({"close": True})
     if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
         message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code=target_lang)
+    lang = Language.objects.get(code_tmx=target_lang)
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
     if 'current_edit_start' in message.content['text'] or 'current_edit_stop' in message.content['text']:
         translation.websocket_group.send({'text': json.dumps(
@@ -61,7 +61,7 @@ def ws_text_translation_disconnect(message, text_id, target_lang):
         message.reply_channel.send({"close": True})
     if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
         message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code=target_lang)
+    lang = Language.objects.get(code_tmx=target_lang)
     translation = TextTranslation.objects.get(text=text, target_lang=lang)
 
     translation.websocket_group.send({'text': json.dumps(
