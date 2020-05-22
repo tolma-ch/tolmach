@@ -26,14 +26,9 @@ def index(request):
         usermeta, p = UserMeta.objects.get_or_create(user=request.user)
         ordered_stat, total_translated = tolmach_utils.get_user_stat(request.user)
 
-        lang_list = []
         # Получаем список названий языков для текущей локали
-        from babel import Locale
-        for lang in Language.objects.all():
-            lang_name = Locale(lang.code)
-            localized_lang = lang
-            localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
-            lang_list.append(localized_lang)
+        from entries.views import get_localized_langs_list
+        lang_list = get_localized_langs_list()
 
         user_data = {
                 'firstName': first_name,
@@ -195,14 +190,9 @@ def organization_page(request, slug=""):
     if not org.is_user_member(request.user):
         return HttpResponseRedirect('/')
 
-    lang_list = []
     # Получаем список названий языков для текущей локали
-    from babel import Locale
-    for lang in Language.objects.all():
-        lang_name = Locale(lang.code)
-        localized_lang = lang
-        localized_lang.localized_name = lang_name.get_language_name(request.LANGUAGE_CODE)
-        lang_list.append(localized_lang)
+    from entries.views import get_localized_langs_list
+    lang_list = get_localized_langs_list()
 
     data = {
         'active_tab': 'main',

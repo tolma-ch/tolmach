@@ -94,8 +94,8 @@ def dict_search(request):
 
         counter, created = DictStats.objects.get_or_create(user=request.user,
                                                            date=timezone.now().strftime("%Y%m%d"),
-                                                           source_lang=Language.objects.get(code=source_lang),
-                                                           target_lang=Language.objects.get(code=target_lang))
+                                                           source_lang=Language.objects.filter(code=source_lang)[0],
+                                                           target_lang=Language.objects.filter(code=target_lang)[0])
 
         counter.action_count = counter.action_count + 1
         counter.save()
