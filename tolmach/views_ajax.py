@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from tolmach.models import Organization, OrganizationMember
+from entries.models import Language
 from tolmach.decorators import accept_organization
 from tolmach.utils import org_user_to_json
+from django.shortcuts import get_object_or_404
 
 import json
 
@@ -178,8 +180,10 @@ def global_search_ajax(request):
     # r = request.GET['q'] if 'q' in request.GET else False
     r = request.GET.get('q', False)
 
+    target_lang = get_object_or_404(Language, code_tmx=request.GET['targetLang'])
+
     # Searching through the current document
-    text_tr = TextTranslation.objects.get(target_lang__code_tmx=request.GET['targetLang'], text__id=text_id)
+    text_tr = TextTranslation.objects.get(target_lang=target_lang, text__id=text_id)
     if r:
         document_entries = TextEntry.objects.filter(
             Q(body__icontains=r),
@@ -188,7 +192,7 @@ def global_search_ajax(request):
         )[:10]
         project = Text.objects.get(id=text_id).project
         all_other_project_texts_ids = [x.id for x in Text.objects.filter(project=project, status=Text.READY) if x.id != text_id]
-        proj_tr = ProjectTranslation.objects.get(project=project, target_lang__code_tmx=request.GET['targetLang'])
+        proj_tr = ProjectTranslation.objects.get(project=project, target_lang=target_lang)
         all_other_text_translation_ids = [
             x.id for x in TextTranslation.objects.filter(
                 project_translation=proj_tr,
@@ -214,7 +218,7 @@ def global_search_ajax(request):
             'searched_text': textwrap.shorten(text=searched_text, width=100),
             'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=50),
             'type': "fragment",
-            'link': "/text/%d/ru/#?page=%d&fragment=%d" % (text_id, page, fragment),
+            'link': f"/text/{text_id}/{target_lang.code_tmx}/#?page={page}&fragment={fragment}",
             'additional_data': {'page': page, 'fragment': fragment},
             'block': 'document'
         })
@@ -227,7 +231,7 @@ def global_search_ajax(request):
             'searched_text': textwrap.shorten(text=searched_text, width=100),
             'parent_text': "" if ent.id_in_text > 0 else textwrap.shorten(text=ent.parent_entry.body, width=50),
             'type': "fragment",
-            'link': "/text/%d/ru/#?page=%d&fragment=%d" % (ent.text.id, page, fragment),
+            'link': f"/text/{ent.text.id}/{target_lang.code_tmx}/#?page={page}&fragment={fragment}",
             'additional_data': {'page': page, 'fragment': fragment, 'document_name': ent.text.title},
             'block': 'project'
         })
