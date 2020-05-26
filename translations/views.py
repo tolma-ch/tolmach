@@ -563,3 +563,30 @@ def export_translation(request, text_id, target_lang, extra=None):
         response['Content-Disposition'] = u"attachment; filename*=\"UTF-8' '%s.%s\"" % (iri_to_uri(title), doc_ext)
 
     return response
+
+
+@login_required
+def export_tmx(request, tmx_id):
+    from translations.models import TMDatabase, TMDatabaseEntry
+    from translate.storage.tmx import tmxfile
+
+    tmdb = get_object_or_404(TMDatabase, id=tmx_id)
+
+    if not request.user == tmdb.owner and not request.user.is_superuser:
+        raise Http404(_('Sorry, no such TM database here!'))
+
+    tmxfile = tmxfile(sourcelanguage=tmdb.source_lang.code_tmx, targetlanguage=tmdb.target_lang.code_tmx)
+    for pair in TMDatabaseEntry.objects.filter(tmx=tmdb).iterator():
+        tmxfile.addtranslation(pair.orig_text, tmdb.source_lang.code_tmx, pair.target_text, tmdb.target_lang.code_tmx)
+
+    xmltext = bytes(tmxfile).decode('utf-8')
+    response = HttpResponse(xmltext, content_type="text/xml")
+
+    from django.utils.encoding import iri_to_uri
+    if "Chrome" in request.META['HTTP_USER_AGENT']:
+        response['Content-Disposition'] = f"attachment; filename=\"{iri_to_uri(tmdb.name)}.tmx\""
+    else:
+        response['Content-Disposition'] = f"attachment; filename*=\"UTF-8' '{iri_to_uri(tmdb.name)}.tmx\""
+
+    return response
+
