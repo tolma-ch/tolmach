@@ -343,16 +343,16 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     source_lang_name = pair.split("—")[0]
                     target_lang_name = pair.split("—")[1]
                     try:
-                        source_lang_obj = Language.objects.get(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))
-                    except Language.DoesNotExist:
+                        source_lang_obj = Language.objects.filter(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))[0]
+                    except IndexError:
                         print('This source language is not supported yet')
                         error_code = 400
                         error_message = _('This source language is not supported yet')
                         return {'error': error_code, 'message': error_message}
 
                     try:
-                        target_lang_obj = Language.objects.get(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))
-                    except Language.DoesNotExist:
+                        target_lang_obj = Language.objects.filter(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))[0]
+                    except IndexError:
                         print('This target language is not supported yet')
                         error_code = 400
                         error_message = _('This target language is not supported yet')
@@ -377,15 +377,15 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                 source_lang_name = lang_pairs[0].split("—")[0]
                 target_lang_name = lang_pairs[0].split("—")[1]
                 try:
-                    source_lang_obj = Language.objects.get(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))
-                except Language.DoesNotExist:
+                    source_lang_obj = Language.objects.filter(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))[0]
+                except IndexError:
                     error_code = 400
                     error_message = _('This source language is not supported yet')
                     return {'error': error_code, 'message': error_message}
 
                 try:
-                    target_lang_obj = Language.objects.get(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))
-                except Language.DoesNotExist:
+                    target_lang_obj = Language.objects.filter(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))[0]
+                except IndexError:
                     print('This target language is not supported yet')
                     error_code = 400
                     error_message = _('This target language is not supported yet')
