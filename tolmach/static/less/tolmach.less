@@ -148,3 +148,51 @@
     color: @yellow-main;
   }
 }
+
+//
+// LanguageTool
+//
+
+.lt-error {
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  background: #FEE188;
+  padding: 5px 5px 5px;
+  border-radius: 3px;
+  margin-left: -3px;
+  margin-right: -3px;
+}
+
+.ctx-menu {
+  background: #fff;
+  padding: 5px 0;
+  border: solid 1px black;
+  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0,0,0,.15);
+  max-width: 160px;
+
+  .ctx-item-message,
+  .ctx-item {
+    padding-left: 11px;
+    padding-right: 11px;
+    margin-bottom: 1px;
+    margin-top: 1px;
+  }
+  .ctx-item-message {
+    font-weight: bold;
+    background: #eee;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: -5px;
+  }
+  .ctx-item {
+    font-size: 13px;
+    cursor: pointer;
+    &:hover {
+      background: #FEE188;
+      color: #444444;
+    }
+  }
+}
