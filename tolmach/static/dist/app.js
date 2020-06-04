@@ -89,8 +89,8 @@
                 $scope.word = word;
                 $scope.searchWord();
             };
-            $scope.dictSourceLang = window['translationSourceLang'];
-            $scope.dictTargetLang = window['translationTargetLang'];
+            $scope.dictSourceLang = window['translationSourceLang'].split("-")[0];
+            $scope.dictTargetLang = window['translationTargetLang'].split("-")[0];
             $scope.style = {};
             $scope.$on('GlobalResize', function (e, w) {
                 var height = w.h,
@@ -1951,7 +1951,8 @@
                 getTmdbVariants = function (entry) {
                     $http.post('/ajax/tmdb-search/', {
                         entry_id: entry['id'],
-                        lang_pair: $scope.langPair
+                        source_lang: window['translationSourceLang'],
+                        target_lang: window['translationTargetLang']
                     }).success(function (data) {
                         entry.tmdbVariants = data;
                     }).error(function (a) {

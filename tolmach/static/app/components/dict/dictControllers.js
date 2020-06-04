@@ -11,8 +11,8 @@
                 $scope.word = word;
                 $scope.searchWord();
             };
-            $scope.dictSourceLang = window['translationSourceLang'];
-            $scope.dictTargetLang = window['translationTargetLang'];
+            $scope.dictSourceLang = window['translationSourceLang'].split("-")[0];
+            $scope.dictTargetLang = window['translationTargetLang'].split("-")[0];
             $scope.style = {};
             $scope.$on('GlobalResize', function (e, w) {
                 var height = w.h,
