@@ -3507,14 +3507,14 @@
                             item.on('mousedown', function() {
                                 $(t).replaceWith(item.text());
                                 element.html(p.html());
-                                isInternalChanged = true;
+                                // isInternalChanged = true;
                                 element.focus();
                                 element.blur();
                                 scope.$apply();
                                 hideCtx();
-                                isInternalChanged = false;
-                                ltMatches.splice(matchOffset, 1);
-                                highlightMatches(ltMatches);
+                                // isInternalChanged = false;
+                                // ltMatches.splice(matchOffset, 1);
+                                // highlightMatches(ltMatches);
                             });
                         })();
                     }
