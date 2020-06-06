@@ -2444,87 +2444,6 @@
                 localStorageService.set('sug-' + textAreaId, entry.suggestion);
             };
 
-            $scope.textareaBlur = function (event, entry) {
-                $scope.requestLangtool(entry, window['translationTargetLang']);
-            };
-
-            var ltLastEntry;
-            $scope.requestLangtool = function(entry, lang)
-            {
-                entry.suggestion = entry.suggestion.replace(/<\/?span.*?>/g, '');
-                $http.post('/ajax/languagetool/', {
-                    language: lang, 
-                    text: entry.suggestion
-                }).then(function(response) {
-                    ltLastEntry = entry;
-                    console.log('resp', response);
-                    window.ltMatches = [];
-                    if (response.data && response.data.matches) {
-                        var offset = 0;
-                        var i = 0;
-                        angular.forEach(response.data.matches, function(match) {
-                            if (match.offset) {
-                                window.ltMatches.push(match);
-                                var regex = new RegExp("(.{"+(match.offset+offset)+"})(.{"+match.length+"})");
-                                entry.suggestion = entry.suggestion.replace(regex, "$1<span class='lt-error' data-match='"+i+"'>$2</span>");
-                                offset += 45;
-                                i++;
-                            }
-                        });
-                    }
-                });
-            }
-
-            $('body').on('mousedown', '.translation-editor__input-wrapper .lt-error', function(event) {
-                event.preventDefault();
-                var t = event.currentTarget || event.target;
-                var p = $(t).parent();
-                var matchOffset = $(t).data('match');
-                var match = window.ltMatches[matchOffset];
-
-                var hideCtx = function() {
-                    $('.ctx-menu').remove();
-                    $('body').off('mouseup scroll touchmove', hideCtx);
-                }
-
-                $('body').off('mouseup scroll touchmove', hideCtx);
-
-                $('.ctx-menu').remove();
-
-                var ctxMenu = $('<div class="ctx-menu"></div>')
-                ctxMenu.css({
-                    position: 'fixed',
-                    top: event.clientY,
-                    left: event.clientX
-                });
-                var item = $('<div class="ctx-item-message">'+match.shortMessage+'</div>');
-                ctxMenu.append(item);
-                for (var i in match.replacements)
-                {
-                    (function() {
-                        var repl = match.replacements[i];
-                        console.log('repl', repl);
-                        var item = $('<div class="ctx-item">'+repl.value+'</div>');
-                        ctxMenu.append(item);
-                        item.on('mousedown', function() {
-                            $(t).replaceWith(item.text());
-                            ltLastEntry.suggestion = p.html();
-                            $scope.textareaAutoSave(null, ltLastEntry);
-                            $scope.$apply();
-                            hideCtx();
-                        });
-                    })();
-                }
-                $('body').append(ctxMenu);
-
-                setTimeout(function() {
-                    $('body').on('mouseup scroll touchmove', hideCtx);
-                }, 1000);
-
-                return false;
-            });
-
-
             $scope.showEntryCommentsModal = false;
             $scope.currentActiveCommentEntry = '';
             $scope.entryCommentsOpener = function ($event, commentEntryId, entryText) {
@@ -3535,6 +3454,95 @@
                 });
             }
         };
+    }]);
+
+    module.directive('langtoolChecker', ['$http', function ($http) {
+        var ltLastEntry, ltMatches;
+
+        return {
+            link: function (scope, element) {
+
+                var lang = window.translationTargetLang;
+
+                element.on('blur', function (event) {
+                    requestLangtool(element.html(), lang);
+                });
+
+                var ltErrorClickHandler = function(event) {
+                    event.preventDefault();
+                    var t = event.currentTarget || event.target;
+                    var p = $(t).parent();
+                    var matchOffset = $(t).data('match');
+                    var match = ltMatches[matchOffset];
+
+                    var hideCtx = function() {
+                        $('.ctx-menu').remove();
+                        $('body').off('mouseup scroll touchmove', hideCtx);
+                    }
+
+                    $('body').off('mouseup scroll touchmove', hideCtx);
+
+                    $('.ctx-menu').remove();
+
+                    var ctxMenu = $('<div class="ctx-menu"></div>')
+                    ctxMenu.css({
+                        position: 'fixed',
+                        top: event.clientY,
+                        left: event.clientX
+                    });
+                    var item = $('<div class="ctx-item-message">'+match.shortMessage+'</div>');
+                    ctxMenu.append(item);
+                    for (var i in match.replacements)
+                    {
+                        (function() {
+                            var repl = match.replacements[i];
+                            console.log('repl', repl);
+                            var item = $('<div class="ctx-item">'+repl.value+'</div>');
+                            ctxMenu.append(item);
+                            item.on('mousedown', function() {
+                                $(t).replaceWith(item.text());
+                                element.html(p.html());
+                                element.focus();
+                                // element.blur();
+                                scope.$apply();
+                                hideCtx();
+                            });
+                        })();
+                    }
+                    $('body').append(ctxMenu);
+
+                    setTimeout(function() {
+                        $('body').on('mouseup scroll touchmove', hideCtx);
+                    }, 1000);
+
+                    return false;
+                };
+
+                var requestLangtool = function(text, lang)
+                {
+                    text = text.replace(/<\/?span.*?>/g, '');
+                    $http.post('/ajax/languagetool/', {
+                        language: lang, 
+                        text: text
+                    }).then(function(response) {
+                        console.log('resp', response);
+                        ltMatches = [];
+                        if (response.data && response.data.matches) {
+                            angular.forEach(response.data.matches.reverse(), function(match, i) {
+                                if (match.hasOwnProperty('offset')) {
+                                    ltMatches.push(match);
+                                    var regex = new RegExp("(.{"+(match.offset)+"})(.{"+match.length+"})");
+                                    element.html(element.html().replace(regex, "$1<span class='lt-error lt-error-"+i+"' data-match='"+i+"'>$2</span>"));
+                                    element.on('mousedown', '.lt-error-'+i, ltErrorClickHandler);
+                                }
+                            });
+                        }
+                    });
+                };
+
+            }
+        };
+
     }]);
 
     module.directive('focusMe', ['$timeout', function($timeout) {
