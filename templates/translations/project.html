@@ -67,15 +67,15 @@
                         {= project.name =}
                     </span>
                     <div class="project-language-pair">
-                        <i class="flag flag-{{ project.source_lang }}"></i>
+                        <i class="flag flag-{{ project.source_lang.code_tmx }}"></i>
                         <i class="fa fa-chevron-right"></i>
                         <div class="dropdown project-select-translation">
                           <button class="btn dropdown-toggle project-select-translation__button" type="button" data-toggle="dropdown">
-                              <i class="flag flag-{{ project.current_translation.target_lang }}"></i> {{ project.current_translation.target_lang_local }}
+                              <i class="flag flag-{{ project.current_translation.target_lang.code_tmx }}"></i> {{ project.current_translation.target_lang_local }}
                           <span class="caret"></span></button>
                           <ul class="dropdown-menu project-select-translation__menu">
                               {% for pr_translation in project.translations %}
-                            <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code }}/"><i class="flag flag-{{ pr_translation.target_lang }}"></i>{{ pr_translation.target_lang_local }}</a></li>
+                            <li><a href="/project/{{ project.id }}/{{ pr_translation.target_lang.code_tmx }}/"><i class="flag flag-{{ pr_translation.target_lang.code_tmx }}"></i>{{ pr_translation.target_lang_local }}</a></li>
                               {% endfor %}
                             <li><a ng-if="(isUserManager || (userMembershipStatus == 0))" href="#" ng-click="addProjectTranslation()"><i class="fa fa-plus"></i>{% trans 'Add new translation language' %}</a></li>
                           </ul>
@@ -368,6 +368,9 @@
                                         {=:: tmx.name =}
                                     </div>
                                     <div class="project-list-glossary__btns">
+                                        <a class="project-list-glossary__btn" href="/tmx/{=:: tmx.id =}/export/"
+                                           ng-show="(isUserManager || (userMembershipStatus == 0))"
+                                           class="btn btn-default"><i class="fa fa-download"></i></a>
                                         <a class="project-list-glossary__btn" href=""
                                            ng-show="(isUserManager || (userMembershipStatus == 0))"
                                            uib-popover-template="'tmxRemovePopover.html'"
