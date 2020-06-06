@@ -3464,9 +3464,13 @@
             link: function (scope, element) {
 
                 var lang = window.translationTargetLang;
+                var isInternalChanged = false;
 
                 element.on('blur', function (event) {
-                    requestLangtool(element.html(), lang);
+                    if (!isInternalChanged)
+                    {
+                        requestLangtool(element.html(), lang);
+                    }
                 });
 
                 var ltErrorClickHandler = function(event) {
@@ -3491,7 +3495,7 @@
                         top: event.clientY,
                         left: event.clientX
                     });
-                    var item = $('<div class="ctx-item-message">'+match.shortMessage+'</div>');
+                    var item = $('<div class="ctx-item-message">'+(match.shortMessage || match.message)+'</div>');
                     ctxMenu.append(item);
                     for (var i in match.replacements)
                     {
@@ -3503,10 +3507,14 @@
                             item.on('mousedown', function() {
                                 $(t).replaceWith(item.text());
                                 element.html(p.html());
+                                isInternalChanged = true;
                                 element.focus();
-                                // element.blur();
+                                element.blur();
                                 scope.$apply();
                                 hideCtx();
+                                isInternalChanged = false;
+                                ltMatches.splice(matchOffset, 1);
+                                highlightMatches(ltMatches);
                             });
                         })();
                     }
@@ -3529,17 +3537,22 @@
                         console.log('resp', response);
                         ltMatches = [];
                         if (response.data && response.data.matches) {
-                            angular.forEach(response.data.matches.reverse(), function(match, i) {
-                                if (match.hasOwnProperty('offset')) {
-                                    ltMatches.push(match);
-                                    var regex = new RegExp("(.{"+(match.offset)+"})(.{"+match.length+"})");
-                                    element.html(element.html().replace(regex, "$1<span class='lt-error lt-error-"+i+"' data-match='"+i+"'>$2</span>"));
-                                    element.on('mousedown', '.lt-error-'+i, ltErrorClickHandler);
-                                }
-                            });
+                            highlightMatches(response.data.matches.reverse());
                         }
                     });
                 };
+
+                var highlightMatches = function(matches) {
+                    ltMatches = [];
+                    angular.forEach(matches, function(match, i) {
+                        if (match.hasOwnProperty('offset')) {
+                            ltMatches.push(match);
+                            var regex = new RegExp("(.{"+(match.offset)+"})(.{"+match.length+"})");
+                            element.html(element.html().replace(regex, "$1<span class='lt-error lt-error-"+i+"' data-match='"+i+"'>$2</span>"));
+                            element.on('mousedown', '.lt-error-'+i, ltErrorClickHandler);
+                        }
+                    });
+                }
 
             }
         };
