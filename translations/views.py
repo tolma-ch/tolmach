@@ -453,6 +453,8 @@ def view_translation(request, text_id, target_lang):
 
 
 def fragment_preview(request, text_id, target_lang, preview_code):
+    import re
+
     entry = get_object_or_404(TextEntry, preview_code=preview_code, text_id=text_id)
     if entry.parent_entry:
         entry = entry.parent_entry
@@ -489,7 +491,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         page = int(entry.id_in_text/100) + 1
         return HttpResponseRedirect(f'/text/{text_id}/{target_lang}/#?page={page}&fragment={entry.id_in_text}')
 
-    fragment_original_text = "ℹ️ " + entry.body
+    fragment_original_text = "ℹ️ " + re.sub("</?tag( i='.*?')?>", "", entry.body)
     fragment_translations = ""
 
     translations = TextEntry.objects.filter(parent_entry=entry)
@@ -498,7 +500,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         number = emoji_numbers.get(idx, "")
         if i.is_approved:
             status = "✅ "
-        fragment_translations += f"{number}{i.author.username}: {status}{i.body}\n"
+        fragment_translations += f"""{number}{i.author.username}: {status}{re.sub("</?tag( i='.*?')?>", "", i.body)}\n"""
 
     data = {
         'fragment_original_text': fragment_original_text,
