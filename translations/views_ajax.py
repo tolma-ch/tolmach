@@ -966,13 +966,13 @@ def entry_ajax(request, action, text):
             entry_to_body = '<span data-entry="%d">%s</span>' % (entry.id_in_text, entry.body)
 
             # TODO удалить после переезда на Xliff парсер
-            from datetime import date, datetime
-            now = datetime.today()
-            if request.user.id == 7 and now.date() < date(now.year, 7, 1) and \
-                    text.document_format in [utils.FORMATS["docx"],
-                                             utils.FORMATS["doc"],
-                                             utils.FORMATS["rtf"]]:
-                entry.body = re.sub("</?tag( i='.*?')?>", "", entry.body)
+            # from datetime import date, datetime
+            # now = datetime.today()
+            # if request.user.id == 7 and now.date() < date(now.year, 7, 1) and \
+            #         text.document_format in [utils.FORMATS["docx"],
+            #                                  utils.FORMATS["doc"],
+            #                                  utils.FORMATS["rtf"]]:
+            #     entry.body = re.sub("</?tag( i='.*?')?>", "", entry.body)
 
             # добавляем в текст энтрик
             text_body += entry_to_body + " "
