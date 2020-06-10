@@ -250,7 +250,7 @@ def glossary_to_entry(entry_body, glossary_list, language):
                     if entry_word_to_compare == glossary_term_to_compare:
                         # исключаем из поиска уже помеченные слова, чтобы не сломать верстку при нахождении во
                         # фрагменте нескольких одинаковых глосс
-                        word_to_look_for = f'(?!data-glossary-word=".*?">){escape_brackets(source_entry)}(?!<\/span>)'
+                        word_to_look_for = f'(?!data-glossary-word=".*?">){escape_brackets(word)}(?!<\/span>)'
                         body_to_return = re.sub(word_to_look_for,
                                                 highlight_word(target_entry),
                                                 body_to_return,
