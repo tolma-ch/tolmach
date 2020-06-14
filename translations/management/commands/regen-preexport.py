@@ -16,6 +16,12 @@ class Command(BaseCommand):
             help='Regenerate preexport entries for all possible documents',
         )
 
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Force regenerate preexport entries',
+        )
+
     def handle(self, *args, **options):
         from translations import signals
         from progress.bar import ChargingBar
@@ -24,7 +30,7 @@ class Command(BaseCommand):
             for trans in TextTranslation.objects.filter(text=document):
                 num_of_entries = TextEntry.objects.filter(parent_entry=None, text=trans.text).count()
                 num_of_preexport_entries = PreexportEntry.objects.filter(translation=trans).count()
-                if num_of_entries != num_of_preexport_entries:
+                if num_of_entries != num_of_preexport_entries or options['force']:
                     title = '{} / {} / {} [{}>{}]:'.format(
                         document.project.manager.username,
                         document.project.name,
