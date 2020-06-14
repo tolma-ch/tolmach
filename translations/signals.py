@@ -19,6 +19,7 @@ def unescape_html(s, with_backslashes=False):
         s = s.replace("&#92;n", "\n")
     # this has to be last:
     s = s.replace("&amp;", "&")
+    s = s.replace("&nbsp;", " ")
     return s
 
 
@@ -37,11 +38,17 @@ def update_preexport_entry_on_save(sender, instance, created, **kwargs):
         else:
             new_parent = instance.parent_entry
             new_id_in_text = instance.parent_entry.id_in_text
-            body_ending = "\n" * instance.parent_entry.new_lines_after if instance.parent_entry.new_lines_after > 0 else " "
+            body_ending = "\n" * instance.parent_entry.new_lines_after \
+                if instance.parent_entry.new_lines_after > 0 else " "
             if instance.is_approved:
                 new_body = instance.body + body_ending
             else:
-                new_body = instance.parent_entry.body + body_ending
+                already_approved_translaions = TextEntry.objects.filter(parent_entry=instance.parent_entry,
+                                                                        is_approved=True).count()
+                if already_approved_translaions == 0:
+                    new_body = instance.parent_entry.body + body_ending
+                else:
+                    return True
 
             all_translations = [instance.translation]
 
