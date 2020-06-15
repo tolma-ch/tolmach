@@ -361,7 +361,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                         error_message = _('This target language is not supported yet')
                         return {'error': error_code, 'message': error_message}
 
-                    new_tmdb = TMDatabase(name="%s [%s]" % (tmdb_name, pair),
+                    new_tmdb = TMDatabase(name=f"{tmdb_name} [{source_lang_obj.code_tmx}>{target_lang_obj.code_tmx}]",
                                           owner=request.user,
                                           source_lang=source_lang_obj,
                                           target_lang=target_lang_obj
@@ -513,7 +513,7 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
     tmdbs = list(filter(None, tmdb_to_write.meta_data.split(",")))
 
     if not tmdbs:
-        pair = "%s-%s" % (source_lang.code, target_lang.code)
+        pair = "%s>%s" % (source_lang.code_tmx, target_lang.code_tmx)
         new_tmdb = TMDatabase(name="%s [%s]" % (text.title[:30], pair),
                       owner=request.user,
                       source_lang=source_lang,
@@ -561,8 +561,8 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
 
         doc = {
             'db_id': new_tmdb_entry.id,
-            source_lang.code: clean_source_text,
-            target_lang.code: clean_target_text,
+            source_lang.code_tmx: clean_source_text,
+            target_lang.code_tmx: clean_target_text,
         }
 
         try:
