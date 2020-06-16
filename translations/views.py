@@ -454,6 +454,7 @@ def view_translation(request, text_id, target_lang):
 
 def fragment_preview(request, text_id, target_lang, preview_code):
     import re
+    import math
 
     entry = get_object_or_404(TextEntry, preview_code=preview_code, text_id=text_id)
     if entry.parent_entry:
@@ -488,7 +489,7 @@ def fragment_preview(request, text_id, target_lang, preview_code):
         social_preview = True
 
     if not social_preview:
-        page = int(entry.id_in_text/100) + 1
+        page = math.ceil(entry.id_in_text/100)
         return HttpResponseRedirect(f'/text/{text_id}/{target_lang}/#?page={page}&fragment={entry.id_in_text}')
 
     fragment_original_text = "ℹ️ " + re.sub("</?tag( i='.*?')?>", "", entry.body)
