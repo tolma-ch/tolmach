@@ -37,7 +37,7 @@ def log_prefix(request):
 
 @login_required
 def projects_ajax(request, proj_type, object_id=""):
-    user = User.objects.get(username=request.user)
+    user = User.objects.get(id=request.user.id)
 
     user_projects_list = []
     if proj_type == 'my':
