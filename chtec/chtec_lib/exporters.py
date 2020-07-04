@@ -12,14 +12,14 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tolmach.settings")
 from django.conf import settings
 django.setup()
 from entries.models import Language
-from translations.models import Text, TextMeta, TextEntry, TextTranslation, TextTranslationMeta, PreexportEntry
+from translations.models import Text, TextMeta, TextEntry, TextTranslation, PreexportEntry
 
 from . import parsers
-from local_settings import *
 from . import utils
 import formats
 import logging
 
+FILES_DIR = os.environ.get("FILES_DIR", "/var/www/tolmach_documents")
 EXPORT_DIR = FILES_DIR + "/exports/"
 
 def unescape_html(s, with_backslashes=False):

@@ -10,9 +10,10 @@ import subprocess
 
 BaseRequest.MEMFILE_MAX = 102400000
 
-FILES_DIR = "/root/unocon/"
+FILES_DIR = os.environ.get("FILES_DIR", "/var/www/tolmach_documents")
+WORKER_TIMEOUT = os.environ.get("WORKER_TIMEOUT", 3600)
+LIBREOFFICE_BIN = os.environ.get("LIBREOFFICE_BIN", "/usr/bin/libreoffice --headless")
 HOST = "127.0.0.1"
-from local_settings import *
 import formats
 from chtec_lib import parsers
 from chtec_lib import utils
@@ -71,7 +72,6 @@ def convert():
     data = {}
 
     if file_type == formats.FORMATS['txt']:
-        data_to_parse = ""
         if not request.forms.text_body == "":
             data_to_parse = request.forms.text_body
         else:
