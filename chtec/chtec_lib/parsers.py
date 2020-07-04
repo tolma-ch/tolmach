@@ -5,9 +5,9 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from . import utils
-from local_settings import *
 
-import os, sys, subprocess, json
+import os, subprocess, json
+LIBREOFFICE_BIN = os.environ.get("LIBREOFFICE_BIN", "/usr/bin/libreoffice --headless")
 
 def to_x(target_path, file_path, output_format):
     # converting files to docx, xlsx, pptx
