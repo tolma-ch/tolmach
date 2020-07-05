@@ -1456,9 +1456,10 @@ def approve_all_entries_by_user_ajax(request, text):
         )
         user_entries = list(TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
                                                 translation=text_translation, author=user, is_approved=False))
-        TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
-                                 translation=text_translation, author=user, is_approved=False).update(is_approved=True)
-        ws_send_entry_status("approve", user_entries, None)
+        if user_entries:
+            TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
+                                     translation=text_translation, author=user, is_approved=False).update(is_approved=True)
+            ws_send_entry_status("approve", user_entries, None)
         return HttpResponse(json.dumps(True), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
@@ -1511,8 +1512,9 @@ def disapprove_all_entries_by_user_ajax(request, text):
 
     if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
         user_entries = list(TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True))
-        TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True).update(is_approved=False)
-        ws_send_entry_status("disapprove", user_entries, None)
+        if user_entries:
+            TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True).update(is_approved=False)
+            ws_send_entry_status("disapprove", user_entries, None)
         return HttpResponse(json.dumps(True), content_type="application/json")
     else:
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
