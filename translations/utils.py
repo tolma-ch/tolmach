@@ -457,7 +457,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     target_edited = None
                     target_editor = None
 
-                if target_text:
+                if target_text and source_text:
                     new_tmdb_entry = TMDatabaseEntry(tmx=TMDatabase.objects.get(id=tmdb_names[lang_pair]),
                                                      orig_lang=source_lang,
                                                      orig_text=source_text[:1024],
