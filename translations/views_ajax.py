@@ -782,8 +782,8 @@ def glossary_ajax(request, project):
             if test == '' or test1 == '':
                 continue
             glossary_entry = GlossaryEntry(glossary=glossary,
-                                           source_entry=pair[0],
-                                           target_entry=pair[1])
+                                           source_entry=pair[0][:256],
+                                           target_entry=pair[1][:256])
             glossary_entry.save()
         result = {
             'id': glossary.id,
