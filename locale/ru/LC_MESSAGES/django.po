@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-14 21:15+0300\n"
+"POT-Creation-Date: 2020-07-31 10:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr "Номер проекта не указан"
 #: chat/views.py:21 chat/views.py:38 translations/decorators.py:49
 #: translations/views_ajax.py:157 translations/views_ajax.py:176
 #: translations/views_ajax.py:181 translations/views_ajax.py:273
-#: translations/views_ajax.py:859
+#: translations/views_ajax.py:857
 msgid "Project not found"
 msgstr "Проект не найден"
 
@@ -38,130 +38,93 @@ msgstr "Обсуждение не найдено"
 msgid "Text is empty"
 msgstr "Текст не указан"
 
-#: entries/views.py:7
+#: entries/views.py:8
 msgid "Russian"
 msgstr "русский"
 
-#: entries/views.py:9
+#: entries/views.py:10
 msgid "English"
 msgstr "английский"
 
-#: entries/views.py:10
+#: entries/views.py:11
 msgid "English (Great Britain)"
 msgstr "английский (Великобритания)"
 
-#: entries/views.py:12
+#: entries/views.py:13
 msgid "Spanish"
 msgstr "испанский"
 
-#: entries/views.py:13
+#: entries/views.py:14
 msgid "Spanish (Mexico)"
 msgstr "испанский (Мексика)"
 
-#: entries/views.py:14
+#: entries/views.py:15
 msgid "Spanish (Chile)"
 msgstr "испанский (Чили)"
 
-#: entries/views.py:16
+#: entries/views.py:17
 msgid "German"
 msgstr "немецкий"
 
-#: entries/views.py:17
+#: entries/views.py:18
 msgid "German (Austria)"
 msgstr "немецкий (Австрия)"
 
-#: entries/views.py:18
+#: entries/views.py:19
 msgid "German (Switzerland)"
 msgstr "немецкий (Швейцария)"
 
-#: entries/views.py:20
+#: entries/views.py:21
 msgid "French"
 msgstr "французский"
 
-#: entries/views.py:21
+#: entries/views.py:22
 msgid "French (Canada)"
 msgstr "французский (Канада)"
 
-#: entries/views.py:22
+#: entries/views.py:23
 msgid "French (Belgium)"
 msgstr "французский (Бельгия)"
 
-#: entries/views.py:23
+#: entries/views.py:24
 msgid "French (Switzerland)"
 msgstr "французский (Швейцария)"
 
-#: entries/views.py:25
+#: entries/views.py:26
 msgid "Italian"
 msgstr "итальянский"
 
-#: entries/views.py:26
+#: entries/views.py:27
 msgid "Italian (Switzerland)"
 msgstr "итальянский (Швейцария)"
 
-#: entries/views.py:28
+#: entries/views.py:29
 msgid "Korean"
 msgstr "корейский"
 
-#: entries/views.py:30
+#: entries/views.py:31
 msgid "Japanese"
 msgstr "японский"
 
-#: entries/views.py:32
+#: entries/views.py:33
 msgid "Chinese (simplified, China)"
 msgstr "китайский (упрощённый, Китай)"
 
-#: entries/views.py:33
+#: entries/views.py:34
 msgid "Chinese (simplified, Singapore)"
 msgstr "китайский (упрощённый, Сингапур)"
 
-#: entries/views.py:34
+#: entries/views.py:35
 msgid "Chinese (traditional, Taiwan)"
 msgstr "китайский (традиционный, Тайвань)"
 
-#: entries/views.py:35
+#: entries/views.py:36
 msgid "Chinese (traditional, Hong Hong SAR China)"
 msgstr "китайский (традиционный, Гонконг [САР])"
 
-#: entries/views.py:36
+#: entries/views.py:37
 msgid "Chinese (traditional, Macao SAR China"
 msgstr "китайский (традиционный, Макао [САР])"
-
-#: templates/email/emailtemplatesbodies.json:5
-msgid "Welcome to Tolma.ch!"
-msgstr "Добро пожаловать в Tolma.ch!"
-
-#: templates/email/emailtemplatesbodies.json:7
-msgid "Start Translating in Minutes"
-msgstr "Приступаем к переводу"
-
-#: templates/email/emailtemplatesbodies.json:8
-#: templates/email/emailtemplatesbodies.json:17
-msgid "Hello, <b><username></b>!"
-msgstr "Привет, <b><username></b>!"
-
-#: templates/email/emailtemplatesbodies.json:9
-msgid ""
-"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-"excited to have you on-board."
-msgstr ""
-"Благодарим за то, что вы присоединились к сообществу <span>Tolma‌</span>‌.‌"
-"<span>‌ch</span>! Мы очень рады, что вы теперь с нами."
-
-#: templates/email/emailtemplatesbodies.json:14
-#: templates/email/emailtemplatesbodies.json:16
-msgid "Password reset approval"
-msgstr "Подтверждение сброса пароля"
-
-#: templates/email/emailtemplatesbodies.json:18
-msgid ""
-"You have asked for a new password. Here is the URL to reset the password:"
-"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
-"not asked for new password, just ignore this messsage."
-msgstr ""
-"Кажется, кто-то запросил сброс пароля для вашего аккаунта. Если это были вы, "
-"то пройдите по данной ссылке, чтобы сбросить пароль:<br><br> https://tolma."
-"ch/password-reset/<reset_token>/ <br><br>Если же вы не запрашивали сброс "
-"пароля, то просто игнорируйте данное сообщение."
 
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
@@ -210,8 +173,8 @@ msgstr "Журнал"
 
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
-#: templates/tolmach/organization.html:9 tolmach/views.py:124
-#: tolmach/views.py:127 tolmach/views.py:129
+#: templates/tolmach/organization.html:9 tolmach/views.py:119
+#: tolmach/views.py:122 tolmach/views.py:124
 msgid "Settings"
 msgstr "Настройки"
 
@@ -676,8 +639,8 @@ msgstr "Начать новый"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:255
-#: tolmach/views.py:287
+#: templates/tolmach/organization.html:8 tolmach/views.py:245
+#: tolmach/views.py:277
 msgid "Members"
 msgstr "Участники"
 
@@ -746,29 +709,29 @@ msgstr "Введите имя или ник"
 msgid "Invite"
 msgstr "Пригласить"
 
-#: templates/tolmach/partial/all_messages_modal.html:61
+#: templates/tolmach/partial/all_messages_modal.html:28
 msgid "You were removed from the project"
 msgstr "Вы были исключены из проекта"
 
-#: templates/tolmach/partial/all_messages_modal.html:62
+#: templates/tolmach/partial/all_messages_modal.html:29
 msgid "You were invited to the project"
 msgstr "Вы были приглашены в проект"
 
-#: templates/tolmach/partial/all_messages_modal.html:63
+#: templates/tolmach/partial/all_messages_modal.html:30
 msgid "Your translation was edited. Original text:"
 msgstr "Ваш перевод был отредактирован. Оригинальный текст:"
 
-#: templates/tolmach/partial/all_messages_modal.html:65
-#: templates/tolmach/partial/all_messages_modal.html:72
+#: templates/tolmach/partial/all_messages_modal.html:32
+#: templates/tolmach/partial/all_messages_modal.html:39
 msgid "New text:"
 msgstr "Новый текст:"
 
-#: templates/tolmach/partial/all_messages_modal.html:68
-#: templates/tolmach/partial/all_messages_modal.html:75
+#: templates/tolmach/partial/all_messages_modal.html:35
+#: templates/tolmach/partial/all_messages_modal.html:42
 msgid "Go to fragment"
 msgstr "Перейти к фрагменту"
 
-#: templates/tolmach/partial/all_messages_modal.html:71
+#: templates/tolmach/partial/all_messages_modal.html:38
 msgid ""
 "Translator edited one of his already approved translations. It was "
 "disapproved now."
@@ -777,7 +740,7 @@ msgstr ""
 "этот перевод нужно утвердить заново."
 
 #: templates/tolmach/partial/edit_profile_modal.html:8
-#: templates/tolmach/partial/profile-sidebar.html:37
+#: templates/tolmach/partial/profile-sidebar.html:38
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
@@ -883,12 +846,12 @@ msgstr "Только приглашённые пользователи смог�
 msgid "Create"
 msgstr "Создать"
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:147
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:142
 msgid "owner"
 msgstr "владелец"
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:149
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:144
 msgid "admin"
 msgstr "админ"
 
@@ -905,11 +868,11 @@ msgstr "Нажмите, чтобы пригласить пользователе
 msgid "API-key:"
 msgstr "API-ключ:"
 
-#: templates/tolmach/partial/profile-sidebar.html:36
+#: templates/tolmach/partial/profile-sidebar.html:37
 msgid "Click this button to edit your name and change profile picture"
 msgstr "Нажмите эту кнопку, чтобы сменить имя или фото"
 
-#: templates/tolmach/partial/profile-sidebar.html:50
+#: templates/tolmach/partial/profile-sidebar.html:51
 msgid "Got questions?"
 msgstr "Есть вопросы?"
 
@@ -1031,7 +994,7 @@ msgid "Font size:"
 msgstr "Размер шрифта:"
 
 #: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
-#: translations/views.py:237 translations/views.py:258
+#: translations/views.py:239 translations/views.py:260
 msgid "Statistics"
 msgstr "Статистика"
 
@@ -1039,9 +1002,9 @@ msgstr "Статистика"
 msgid "Total"
 msgstr "Всего"
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:177 tolmach/views.py:179
-#: tolmach/views.py:219 tolmach/views.py:221 tolmach/views.py:255
-#: tolmach/views.py:257 tolmach/views.py:287 tolmach/views.py:289
+#: templates/tolmach/profile.html:8 tolmach/views.py:172 tolmach/views.py:174
+#: tolmach/views.py:209 tolmach/views.py:211 tolmach/views.py:245
+#: tolmach/views.py:247 tolmach/views.py:277 tolmach/views.py:279
 msgid "Organizations"
 msgstr "Организации"
 
@@ -1299,28 +1262,20 @@ msgid "Approved"
 msgstr "Подтверждено"
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:19
-#, fuzzy
-#| msgid "Editor"
 msgid "Edited"
-msgstr "Редактор"
+msgstr "Исправлено"
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:20
-#, fuzzy
-#| msgid "approved"
 msgid "Disapproved"
-msgstr "подтверждено"
+msgstr "Подтверждение снято"
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:21
-#, fuzzy
-#| msgid "Create"
 msgid "Created"
-msgstr "Создать"
+msgstr "Создано"
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:22
-#, fuzzy
-#| msgid "Delete text"
 msgid "Deleted"
-msgstr "Удалить текст"
+msgstr "Удалено"
 
 #: templates/translations/project.html:80
 msgid "Add new translation language"
@@ -1391,27 +1346,27 @@ msgstr "Нажмите, чтобы добавить глоссарий или б
 msgid "Glossary"
 msgstr "Глоссарий"
 
-#: templates/translations/project.html:383
+#: templates/translations/project.html:386
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/project.html:408
+#: templates/translations/project.html:411
 msgid "Description"
 msgstr "Описание"
 
-#: templates/translations/project.html:432
+#: templates/translations/project.html:435
 msgid "Project statistics"
 msgstr "Статистика проекта"
 
-#: templates/translations/project.html:437
+#: templates/translations/project.html:440
 msgid "Attention!"
 msgstr "Внимание!"
 
-#: templates/translations/project.html:445
+#: templates/translations/project.html:448
 msgid "Remove Project"
 msgstr "Удалить проект"
 
-#: templates/translations/project.html:455
+#: templates/translations/project.html:458
 msgid "Leave Project"
 msgstr "Покинуть проект"
 
@@ -1556,16 +1511,12 @@ msgid "Enable translation"
 msgstr "Переводить фрагмент"
 
 #: templates/translations/view-text.html:174
-#, fuzzy
-#| msgid "Go to fragment"
 msgid "Copy fragment link"
-msgstr "Перейти к фрагменту"
+msgstr "Скопировать ссылку на фрагмент"
 
 #: templates/translations/view-text.html:196
-#, fuzzy
-#| msgid "Collective translations"
 msgid "Restore deleted translation"
-msgstr "Коллективные переводы"
+msgstr "Восстановить удалённый перевод"
 
 #: templates/translations/view-text.html:206
 msgid "singular:"
@@ -1616,71 +1567,79 @@ msgstr "Исходный текст"
 msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
+#: tolmach/context_processors.py:48
+#, python-brace-format
+msgid "Tolma.ch is {years_count} year old today!"
+msgid_plural "Tolma.ch is {years_count} years old today!"
+msgstr[0] "Толмачу сегодня один год!"
+msgstr[1] "Толмачу сегодня {years_count} года!"
+msgstr[2] "Толмачу сегодня {years_count} лет!"
+
 #: tolmach/decorators.py:15
 msgid "Organization id is not set"
 msgstr "ID организации не указан"
 
-#: tolmach/decorators.py:20 tolmach/views_ajax.py:23 tolmach/views_ajax.py:48
-#: tolmach/views_ajax.py:52
+#: tolmach/decorators.py:20 tolmach/views_ajax.py:25 tolmach/views_ajax.py:50
+#: tolmach/views_ajax.py:54
 msgid "Organization not found"
 msgstr "Организация не найдена"
 
-#: tolmach/views.py:151
+#: tolmach/views.py:146
 msgid "member"
 msgstr "участник"
 
-#: tolmach/views.py:193 tolmach/views.py:236 tolmach/views.py:271
-#: translations/decorators.py:63 translations/views.py:98
-#: translations/views.py:275 translations/views.py:277
-#: translations/views.py:292 translations/views.py:294
+#: tolmach/views.py:188 tolmach/views.py:226 tolmach/views.py:261
+#: translations/decorators.py:63 translations/views.py:99
+#: translations/views.py:277 translations/views.py:279
+#: translations/views.py:298 translations/views.py:300
 #: translations/views_ajax.py:92
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: tolmach/views.py:532
+#: tolmach/views.py:522
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:622
+#: tolmach/views.py:612
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
-#: tolmach/views_ajax.py:26 tolmach/views_ajax.py:54 tolmach/views_ajax.py:75
+#: tolmach/views_ajax.py:28 tolmach/views_ajax.py:56 tolmach/views_ajax.py:77
 msgid "You have to be an owner of organization"
 msgstr "Вы должны быть владельцем организации"
 
-#: tolmach/views_ajax.py:38 translations/views_ajax.py:207
+#: tolmach/views_ajax.py:40 translations/views_ajax.py:207
 msgid "Project name cannot be empty"
 msgstr "Название проекта не может быть пустым"
 
-#: tolmach/views_ajax.py:79 tolmach/views_ajax.py:115
+#: tolmach/views_ajax.py:81 tolmach/views_ajax.py:117
 #: translations/views_ajax.py:390 translations/views_ajax.py:439
 msgid "User id is not set"
 msgstr "Номер пользователя не указан"
 
-#: tolmach/views_ajax.py:83 tolmach/views_ajax.py:119
+#: tolmach/views_ajax.py:85 tolmach/views_ajax.py:121
 #: translations/views_ajax.py:394 translations/views_ajax.py:443
 msgid "User not found"
 msgstr "Пользователь не найден"
 
-#: tolmach/views_ajax.py:85 tolmach/views_ajax.py:123
+#: tolmach/views_ajax.py:87 tolmach/views_ajax.py:125
 msgid "This user is an owner of organization"
 msgstr "Указанный пользователь - владелец организации"
 
-#: tolmach/views_ajax.py:107 translations/views_ajax.py:431
+#: tolmach/views_ajax.py:109 translations/views_ajax.py:431
 msgid "User is already a member of project"
 msgstr "Пользователь уже является участником проекта"
 
-#: tolmach/views_ajax.py:121 translations/decorators.py:23
-#: translations/views_ajax.py:448 translations/views_ajax.py:701
-#: translations/views_ajax.py:840 translations/views_ajax.py:1039
-#: translations/views_ajax.py:1153 translations/views_ajax.py:1162
-#: translations/views_ajax.py:1294
+#: tolmach/views_ajax.py:123 translations/decorators.py:23
+#: translations/views_ajax.py:448 translations/views_ajax.py:702
+#: translations/views_ajax.py:838 translations/views_ajax.py:1046
+#: translations/views_ajax.py:1160 translations/views_ajax.py:1169
+#: translations/views_ajax.py:1301
 msgid "Not allowed"
 msgstr "Нет доступа"
 
-#: tolmach/views_ajax.py:150
+#: tolmach/views_ajax.py:152
 msgid "You have to be a manager of the organization"
 msgstr "Вы должны быть владельцем организации"
 
@@ -1693,11 +1652,11 @@ msgid "text id is not set"
 msgstr "Номер текста не указан"
 
 #: translations/decorators.py:21 translations/decorators.py:41
-#: translations/views_ajax.py:510 translations/views_ajax.py:604
+#: translations/views_ajax.py:511 translations/views_ajax.py:605
 msgid "Text not found"
 msgstr "Текст не найден"
 
-#: translations/decorators.py:43 translations/views_ajax.py:855
+#: translations/decorators.py:43 translations/views_ajax.py:853
 msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
@@ -1711,19 +1670,19 @@ msgid "File is too big"
 msgstr "Файл слишком большой"
 
 #: translations/utils.py:141 translations/utils.py:143
-#: translations/views_ajax.py:1565
+#: translations/views_ajax.py:1575
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-#: translations/utils.py:350 translations/utils.py:383
+#: translations/utils.py:353 translations/utils.py:386
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:358 translations/utils.py:391
+#: translations/utils.py:361 translations/utils.py:394
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
-#: translations/views.py:146
+#: translations/views.py:148
 #, python-format
 msgid "<br>%(number_count)d action done"
 msgid_plural "<br>%(number_count)d actions done"
@@ -1731,34 +1690,38 @@ msgstr[0] "<br>%(number_count)d действие"
 msgstr[1] "<br>%(number_count)d действия"
 msgstr[2] "<br>%(number_count)d действий"
 
-#: translations/views.py:232 translations/views.py:328
+#: translations/views.py:234 translations/views.py:328
 msgid "Editor"
 msgstr "Редактор"
 
-#: translations/views.py:233 translations/views.py:329
+#: translations/views.py:235 translations/views.py:329
 msgid "Translator"
 msgstr "Переводчик"
 
-#: translations/views.py:234 translations/views.py:330
+#: translations/views.py:236 translations/views.py:330
 msgid "Spectator"
 msgstr "Наблюдатель"
 
 #: translations/views.py:366 translations/views.py:368
-#: translations/views.py:514
+#: translations/views.py:521
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:520
+#: translations/views.py:527
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
 
+#: translations/views.py:579
+msgid "Sorry, no such TM database here!"
+msgstr "Простите, указанная база памяти не найдена"
+
 #: translations/views_ajax.py:161 translations/views_ajax.py:184
 #: translations/views_ajax.py:278 translations/views_ajax.py:386
-#: translations/views_ajax.py:498 translations/views_ajax.py:606
-#: translations/views_ajax.py:721 translations/views_ajax.py:861
-#: translations/views_ajax.py:1354 translations/views_ajax.py:1396
-#: translations/views_ajax.py:1418 translations/views_ajax.py:1457
-#: translations/views_ajax.py:1478 translations/views_ajax.py:1511
+#: translations/views_ajax.py:499 translations/views_ajax.py:607
+#: translations/views_ajax.py:719 translations/views_ajax.py:859
+#: translations/views_ajax.py:1361 translations/views_ajax.py:1403
+#: translations/views_ajax.py:1425 translations/views_ajax.py:1465
+#: translations/views_ajax.py:1486 translations/views_ajax.py:1520
 msgid "You have to be a manager of project"
 msgstr "Вы должны быть менеджером проекта"
 
@@ -1775,7 +1738,7 @@ msgid "Source language is not set"
 msgstr "Язык оригинала не указан"
 
 #: translations/views_ajax.py:227 translations/views_ajax.py:275
-#: translations/views_ajax.py:929
+#: translations/views_ajax.py:927
 msgid "Target language is not set"
 msgstr "Язык перевода не указан"
 
@@ -1807,117 +1770,145 @@ msgstr "Некорректный статус участника, извинит
 msgid "User is not a member of project"
 msgstr "Пользователь не является участником проекта"
 
-#: translations/views_ajax.py:549 translations/views_ajax.py:736
-#: translations/views_ajax.py:885
+#: translations/views_ajax.py:550 translations/views_ajax.py:734
+#: translations/views_ajax.py:883
 msgid "Wrong file type"
 msgstr "Некорректный формат файла"
 
-#: translations/views_ajax.py:600
+#: translations/views_ajax.py:601
 msgid "Text id is not set"
 msgstr "Номер текста не указан"
 
-#: translations/views_ajax.py:679 translations/views_ajax.py:750
-#: translations/views_ajax.py:801
+#: translations/views_ajax.py:680 translations/views_ajax.py:748
+#: translations/views_ajax.py:799
 msgid "Glossary not found"
 msgstr "Глоссарий не найден"
 
-#: translations/views_ajax.py:708 translations/views_ajax.py:763
-#: translations/views_ajax.py:776
-msgid "Project translation not found"
-msgstr "Перевод проекта не найден"
-
-#: translations/views_ajax.py:724
+#: translations/views_ajax.py:722
 msgid "Glossary name is not set"
 msgstr "Название глоссария не указано"
 
-#: translations/views_ajax.py:742
+#: translations/views_ajax.py:740
 msgid "Please, send file or input data manually"
 msgstr "Пожалуйста, загрузите файл или введите данные вручную"
 
-#: translations/views_ajax.py:797
+#: translations/views_ajax.py:761 translations/views_ajax.py:774
+msgid "Project translation not found"
+msgstr "Перевод проекта не найден"
+
+#: translations/views_ajax.py:795
 msgid "Glossary id is not set"
 msgstr "Номер глоссария не указан"
 
-#: translations/views_ajax.py:803
+#: translations/views_ajax.py:801
 msgid "It's not your glossary"
 msgstr "Это не ваш глоссарий"
 
-#: translations/views_ajax.py:818
+#: translations/views_ajax.py:816
 msgid "TMDatabase not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:865
+#: translations/views_ajax.py:863
 msgid "TMX name is not set"
 msgstr "Название базы памяти не указано"
 
-#: translations/views_ajax.py:871
+#: translations/views_ajax.py:869
 msgid "Target lang is not specified"
 msgstr "Язык перевода не указан"
 
-#: translations/views_ajax.py:875
+#: translations/views_ajax.py:873
 msgid "TMX file is not passed"
 msgstr "Формат базы памяти некорректный"
 
-#: translations/views_ajax.py:901
+#: translations/views_ajax.py:899
 msgid "TMX id is not set"
 msgstr "Номер базы памяти не указан"
 
-#: translations/views_ajax.py:905
+#: translations/views_ajax.py:903
 msgid "TMX not found"
 msgstr "База памяти не найдена"
 
-#: translations/views_ajax.py:907
+#: translations/views_ajax.py:905
 msgid "It's not your TMX"
 msgstr "Это не ваша база памяти"
 
-#: translations/views_ajax.py:1060 translations/views_ajax.py:1083
+#: translations/views_ajax.py:1067 translations/views_ajax.py:1090
 msgid "Entry id is not set"
 msgstr "Номер фрагмента не указан"
 
-#: translations/views_ajax.py:1105 translations/views_ajax.py:1130
-#: translations/views_ajax.py:1322 translations/views_ajax.py:1364
-#: translations/views_ajax.py:1407 translations/views_ajax.py:1467
-#: translations/views_ajax.py:1582
+#: translations/views_ajax.py:1112 translations/views_ajax.py:1137
+#: translations/views_ajax.py:1329 translations/views_ajax.py:1371
+#: translations/views_ajax.py:1414 translations/views_ajax.py:1475
+#: translations/views_ajax.py:1592
 msgid "Id is not set"
 msgstr "Номер не указан"
 
-#: translations/views_ajax.py:1135 translations/views_ajax.py:1160
-#: translations/views_ajax.py:1275 translations/views_ajax.py:1289
-#: translations/views_ajax.py:1472 translations/views_ajax.py:1587
+#: translations/views_ajax.py:1142 translations/views_ajax.py:1167
+#: translations/views_ajax.py:1282 translations/views_ajax.py:1296
+#: translations/views_ajax.py:1480 translations/views_ajax.py:1597
 msgid "Not found"
 msgstr "Не найдено"
 
-#: translations/views_ajax.py:1143
+#: translations/views_ajax.py:1150
 msgid "Language not found"
 msgstr "Язык не найден"
 
-#: translations/views_ajax.py:1150
+#: translations/views_ajax.py:1157
 msgid "Translation not found"
 msgstr "Перевод не найден"
 
-#: translations/views_ajax.py:1202
+#: translations/views_ajax.py:1209
 msgid "Entry translation text is not set"
 msgstr "Перевод фрагмента не указан"
 
-#: translations/views_ajax.py:1270
+#: translations/views_ajax.py:1277
 msgid "entry is not set"
 msgstr "Номер фрагмента не указан"
 
-#: translations/views_ajax.py:1282
+#: translations/views_ajax.py:1289
 msgid "translation is not set"
 msgstr "Преевод не указан"
 
-#: translations/views_ajax.py:1616
+#: translations/views_ajax.py:1625
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 
-#: translations/views_ajax.py:1815
+#: translations/views_ajax.py:1824
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:1831 translations/views_ajax.py:1835
+#: translations/views_ajax.py:1840 translations/views_ajax.py:1844
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
+
+#~ msgid "Welcome to Tolma.ch!"
+#~ msgstr "Добро пожаловать в Tolma.ch!"
+
+#~ msgid "Start Translating in Minutes"
+#~ msgstr "Приступаем к переводу"
+
+#~ msgid "Hello, <b><username></b>!"
+#~ msgstr "Привет, <b><username></b>!"
+
+#~ msgid ""
+#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+#~ "excited to have you on-board."
+#~ msgstr ""
+#~ "Благодарим за то, что вы присоединились к сообществу <span>Tolma‌</span>‌.‌"
+#~ "<span>‌ch</span>! Мы очень рады, что вы теперь с нами."
+
+#~ msgid "Password reset approval"
+#~ msgstr "Подтверждение сброса пароля"
+
+#~ msgid ""
+#~ "You have asked for a new password. Here is the URL to reset the password:"
+#~ "<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you "
+#~ "have not asked for new password, just ignore this messsage."
+#~ msgstr ""
+#~ "Кажется, кто-то запросил сброс пароля для вашего аккаунта. Если это были "
+#~ "вы, то пройдите по данной ссылке, чтобы сбросить пароль:<br><br> https://"
+#~ "tolma.ch/password-reset/<reset_token>/ <br><br>Если же вы не запрашивали "
+#~ "сброс пароля, то просто игнорируйте данное сообщение."
 
 #~ msgid "Not translated"
 #~ msgstr "Не переведено"
