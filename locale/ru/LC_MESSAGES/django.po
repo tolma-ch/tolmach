@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-31 10:56+0300\n"
+"POT-Creation-Date: 2020-07-31 12:47+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1568,12 +1568,12 @@ msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
 #: tolmach/context_processors.py:48
-#, python-brace-format
-msgid "Tolma.ch is {years_count} year old today!"
-msgid_plural "Tolma.ch is {years_count} years old today!"
+#, python-format
+msgid "Tolma.ch is %(years_count)d year old today!"
+msgid_plural "Tolma.ch is %(years_count)d years old today!"
 msgstr[0] "Толмачу сегодня один год!"
-msgstr[1] "Толмачу сегодня {years_count} года!"
-msgstr[2] "Толмачу сегодня {years_count} лет!"
+msgstr[1] "Толмачу сегодня %(years_count)d года!"
+msgstr[2] "Толмачу сегодня %(years_count)d лет!"
 
 #: tolmach/decorators.py:15
 msgid "Organization id is not set"

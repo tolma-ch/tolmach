@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.utils.translation import ngettext, ugettext as _
+from django.utils.translation import ungettext
 
 
 def ya_metrika(request):
@@ -43,10 +43,10 @@ def logo_special(request):
 
     # Tolma.ch birthday
     elif now.date() == date(now.year, 7, 31):
-        years_count = now.year - date(2015, 7, 31).year
-        title_text = ngettext(
-            f'Tolma.ch is {years_count} year old today!',
-            f'Tolma.ch is {years_count} years old today!',
+        years_count = now.year - 2015
+        title_text = ungettext(
+            'Tolma.ch is %(years_count)d year old today!',
+            'Tolma.ch is %(years_count)d years old today!',
             years_count) % {
             'years_count': years_count,
         }
