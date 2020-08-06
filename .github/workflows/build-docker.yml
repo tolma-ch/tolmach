@@ -7,6 +7,8 @@ name: Build prod container
 on:
   push:
     branches: [ master ]
+    tags:
+      - '*'
   pull_request:
     branches: [ master ]
   workflow_dispatch

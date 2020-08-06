@@ -1,11 +1,10 @@
 FROM centos/python-36-centos7:20200624-7b63bb4
 
 USER root
-RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor && \
+RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor nodejs npm && \
     yum clean all && \
     rm -rf /var/cache/yum
-RUN yum -y install nodejs npm && \
-    npm install -g inherits coffee-script grunt grunt-cli
+RUN npm install -g inherits coffee-script grunt grunt-cli
 RUN useradd -b /var -d /var/www -ms /bin/bash www && \
     mkdir /var/log/tolma.ch && chown -R www: /var/log/tolma.ch
 
