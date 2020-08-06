@@ -5,6 +5,7 @@ RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-w
     yum clean all && \
     rm -rf /var/cache/yum
 RUN npm install -g inherits coffee-script grunt grunt-cli
+
 RUN useradd -b /var -d /var/www -ms /bin/bash www && \
     mkdir /var/log/tolma.ch && chown -R www: /var/log/tolma.ch
 
