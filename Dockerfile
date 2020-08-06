@@ -4,9 +4,7 @@ USER root
 RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor && \
     yum clean all && \
     rm -rf /var/cache/yum
-RUN wget https://nodejs.org/dist/latest-v12.x/node-v12.18.2-linux-x64.tar.gz && \
-    tar --strip-components 1 -xzvf node-v* -C /usr/local && \
-    rm -f node-v12.18.2-linux-x64.tar.gz && \
+RUN yum -y install nodejs npm && \
     npm install -g inherits coffee-script grunt grunt-cli
 RUN useradd -b /var -d /var/www -ms /bin/bash www && \
     mkdir /var/log/tolma.ch && chown -R www: /var/log/tolma.ch
