@@ -27,6 +27,6 @@ jobs:
         username: nologin
         password: ${{ secrets.SCALEWAY_REGISTRY_TOKEN }}
         repository: tolmach-web/tolmach
-        registry: rg.fr-par.scw.cloud
+        registry: rg.fr-par.scw.cloud/tolmach-web
         tag_with_ref: true
         cache_froms: centos/python-36-centos7:20200624-7b63bb4
