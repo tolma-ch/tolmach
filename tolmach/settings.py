@@ -23,28 +23,34 @@ except NameError:
 
 ADMINS = (
     ('Dmitry Chumak', 'mega.venik@gmail.com'),
-    # ('Your Name', 'your_email@example.com'),
 )
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+SPARKPOST_API_KEY = os.environ.get("SPARKPOST_API_KEY", "")
+if SPARKPOST_API_KEY:
+    EMAIL_BACKEND = 'sparkpost.django.email_backend.SparkPostEmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        #'NAME': '/home/olorin/src/django/tolmach/tolmach.db',  # Or path to database file if using sqlite3.
-        'NAME': '',  # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '3306',                      # Set to empty string for default.
+        'NAME': os.environ.get('MYSQL_DATABASE', 'tolmach'),  # Or path to database file if using sqlite3.
+        'USER': os.environ.get('MYSQL_USER', 'tolmach'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
+        'HOST': os.environ.get('MYSQL_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 
+PORT = int(os.environ.get("PORT", 0))
+DOMAIN = os.environ.get("DOMAIN", "tolma.ch")
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [DOMAIN]
+WS_HOST = "wss" if PORT == 443 else "ws" + f"://{DOMAIN}"
+SERVER_EMAIL = f'noreply@email.{DOMAIN}'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -114,12 +120,14 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            "/var/www/tolma.ch/templates",
+        ],
         'OPTIONS': {
             'loaders': ['django.template.loaders.filesystem.Loader',
                         'django.template.loaders.app_directories.Loader',
@@ -127,14 +135,13 @@ TEMPLATES = [
             'context_processors': ['django.contrib.auth.context_processors.auth',
                                     'social_django.context_processors.backends',
                                     'social_django.context_processors.login_redirect',
-                                    'django.core.context_processors.request',
+                                    'django.template.context_processors.request',
                                     'django.contrib.messages.context_processors.messages',
-                                    'django.core.context_processors.i18n',
+                                    'django.template.context_processors.i18n',
                                     'tolmach.context_processors.ya_metrika',
                                     'tolmach.context_processors.less_debug',
                                     'tolmach.context_processors.base_domain',
-                                    'tolmach.context_processors.logo_special',],
-            'debug': DEBUG,
+                                    'tolmach.context_processors.logo_special',]
         }
     },
 ]
@@ -313,7 +320,7 @@ GLOSSARY_FILE_SIZE = 1048576
 TM_FILE_SIZE = 104857600
 DOCUMENT_FILE_SIZE = 104857600
 
-GLOBAL_DOCUMENTS_DIR = ""
+GLOBAL_DOCUMENTS_DIR = "/var/www/tolmach_documents"
 GLOBAL_DOCUMENTS_TMP_DIR = "/tmp"
 
 ELASTIC_LIST = [
@@ -342,11 +349,12 @@ CHANNEL_LAYERS = {
     },
 }
 
-WS_HOST = "wss://tolma.ch"
 
 from django.core.urlresolvers import reverse_lazy
 LOGOUT_URL = reverse_lazy('loginas-logout')
 
+DEBUG = os.environ.get("DEBUG", False)
+PROD = os.environ.get("PROD", False)
 
 try:
     from tolmach.local_settings import *
