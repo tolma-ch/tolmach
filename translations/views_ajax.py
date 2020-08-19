@@ -1768,7 +1768,7 @@ def message_ajax(request, all=False):
         user_meta.save()
 
         if all:
-            messages = Messages.objects.filter(addressee=request.user).order_by('-time_created')
+            messages = Messages.objects.filter(addressee=request.user).order_by('was_read','-time_created')
             result = []
             for message in messages:
                 sender_meta = UserMeta.objects.get(user=message.originator)
