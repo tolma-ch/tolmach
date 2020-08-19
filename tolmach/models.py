@@ -13,6 +13,11 @@ def random_invite_code():
     return random_string(15)
 
 
+class SystemSetting(models.Model):
+    name = models.CharField(max_length=128)
+    value = models.TextField(default="")
+
+
 class UserMeta(models.Model):
     """
     Model containing all the additional meta-information to describe user.

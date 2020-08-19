@@ -15,7 +15,7 @@ uWSGI
 django-background-tasks==1.2.5
 asgi_redis
 diff_match_patch
-yandex.translate
+requests
 lxml
 elasticsearch
 babel

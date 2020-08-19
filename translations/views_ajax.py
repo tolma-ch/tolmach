@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-from __future__ import print_function
 from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -19,7 +17,7 @@ from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
-from tolmach.models import UserMeta, Messages, Organization, OrganizationMember
+from tolmach.models import UserMeta, Messages, Organization, OrganizationMember, SystemSetting
 from stats.models import PairStats, EntryStats
 from translations.models import Project, ProjectTranslation, ProjectMember, Glossary, GlossaryEntry, TMDatabase, TMDatabaseEntry
 from translations.models import TextEntry, Text, TextTranslation, TextTranslationMeta
@@ -1542,7 +1540,11 @@ def glossary_filter_entry_ajax(request):
 def yandex_translate_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
-        from yandex_translate import YandexTranslate, YandexTranslateException
+        try:
+            api_key = SystemSetting.objects.get(name="YA_TRANSLATE_API_KEY").value
+        except SystemSetting.DoesNotExist:
+            return HttpResponse(json.dumps("YaTranslate API key was not provided"), content_type="application/json", status=400)
+        import requests
 
         string1 = post['entry_body']
 
@@ -1567,14 +1569,27 @@ def yandex_translate_ajax(request):
             match_dict[num_in_text] = i[0]
             num_in_text += 1
 
+        data = json.dumps({
+            "sourceLanguageCode": post['lang_pair'].split("-")[0],
+            "targetLanguageCode": post['lang_pair'].split("-")[1],
+            "texts": [
+                string1
+            ],
+        })
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Api-Key {api_key}',
+        }
+        print(headers)
+        response = requests.post('https://translate.api.cloud.yandex.net/translate/v2/translate', headers=headers,
+                                 data=data)
 
-        translate = YandexTranslate(settings.YANDEX_TRANSLATE_KEY)
-        try:
-            translated_body = translate.translate(string1, post['lang_pair'])
-        except YandexTranslateException:
-            return HttpResponse(json.dumps(_('Something went wrong')), content_type="application/json", status=400)
+        if response.status_code == 200:
+            translated_body = response.json()['translations'][0]['text']
+        else:
+            return HttpResponse(json.dumps(response.text), content_type="application/json", status=response.status_code)
 
-        str_to_return = translated_body['text'][0]
+        str_to_return = translated_body
 
         for key, value in match_dict.items():
             str_to_return = re.sub(' ?ᐛ%s ?' % key, value, str_to_return)
