@@ -44,6 +44,8 @@ DATABASES = {
     }
 }
 
+ES_HOST = os.environ.get('ES_HOST', '127.0.0.1')
+ES_PORT = int(os.environ.get('ES_PORT', 9200))
 PORT = int(os.environ.get("PORT", 0))
 DOMAIN = os.environ.get("DOMAIN", "tolma.ch")
 # Hosts/domain names that are valid for this site; required if DEBUG is False

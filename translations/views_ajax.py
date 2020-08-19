@@ -1622,7 +1622,7 @@ def tmdb_search(request):
         if translation_tmx_list:
             from elasticsearch import Elasticsearch
             from elasticsearch import exceptions as es_exept
-            es = Elasticsearch(settings.ELASTIC_LIST)
+            es = Elasticsearch(settings.ES_HOST, port=settings.ES_PORT)
 
             entry_body_clean = re.sub("</?tag( i='.*?')?>", "", entry.body)
 
