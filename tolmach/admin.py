@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from tolmach.models import EmailTemplate, EmailTemplateBody, Organization, OrganizationMember
+from tolmach.models import EmailTemplate, EmailTemplateBody, Organization, OrganizationMember, SystemSetting
 from stats.models import PairStats
+
+
+class SystemSettingAdmin(admin.ModelAdmin):
+    list_display = ('name', 'value')
 
 
 class PairStatsAdmin(admin.ModelAdmin):
@@ -30,6 +34,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     inlines = [OrganizationMemberInLine]
 
 admin.site.register(PairStats, PairStatsAdmin)
+admin.site.register(SystemSetting, SystemSettingAdmin)
 admin.site.register(EmailTemplate, EmailTemplateAdmin)
 admin.site.register(EmailTemplateBody)
 admin.site.register(Organization, OrganizationAdmin)
