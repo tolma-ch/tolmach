@@ -6,8 +6,7 @@ RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-w
     rm -rf /var/cache/yum
 RUN npm install -g inherits coffee-script grunt grunt-cli
 
-RUN useradd -b /var -d /var/www -ms /bin/bash www && \
-    mkdir /var/log/tolma.ch && chown -R www: /var/log/tolma.ch
+RUN mkdir /var/www /var/log/tolma.ch
 
 COPY .build/supervisord.conf /etc/supervisord.conf
 COPY .build/tolmach.ini /etc/tolmach.ini
@@ -15,14 +14,10 @@ COPY ./requirements.txt /requirements.txt
 RUN pip3 install --no-cache-dir -r /requirements.txt && python -m nltk.downloader -d /usr/share/nltk_data punkt
 
 COPY . /var/www/tolma.ch
-RUN chown -R www: /var/www/tolma.ch
 
-USER www
 ENV HOME=/var/www
 WORKDIR /var/www/tolma.ch
 RUN npm install && grunt
-
-USER root
 
 EXPOSE 7000
 EXPOSE 8000
