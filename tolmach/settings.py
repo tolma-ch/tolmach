@@ -51,7 +51,7 @@ DOMAIN = os.environ.get("DOMAIN", "tolma.ch")
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [DOMAIN]
-WS_HOST = "wss" if PORT == 443 else "ws" + f"://{DOMAIN}"
+WS_HOST = ("wss" if PORT == 443 else "ws") + f"://{DOMAIN}"
 SERVER_EMAIL = f'noreply@email.{DOMAIN}'
 
 # Local time zone for this installation. Choices can be found here:
