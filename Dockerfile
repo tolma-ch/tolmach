@@ -3,7 +3,8 @@ FROM centos/python-36-centos7:20200624-7b63bb4
 USER root
 RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor nodejs npm && \
     yum clean all && \
-    rm -rf /var/cache/yum
+    rm -rf /var/cache/yum && \
+    wget -O /usr/bin/sdcv megavenik.ru/sdcv && chmod +x /usr/bin/sdcv
 RUN npm install -g inherits coffee-script grunt grunt-cli
 
 RUN mkdir /var/www /var/log/tolma.ch
@@ -18,6 +19,7 @@ COPY . /var/www/tolma.ch
 ENV HOME=/var/www
 WORKDIR /var/www/tolma.ch
 RUN npm install && grunt
+RUN python manage.py compilemessages
 
 EXPOSE 7000
 EXPOSE 8000
