@@ -19,7 +19,7 @@ COPY . /var/www/tolma.ch
 ENV HOME=/var/www
 WORKDIR /var/www/tolma.ch
 RUN npm install && grunt
-RUN python manage.py compilemessages
+RUN django-admin compilemessages
 
 EXPOSE 7000
 EXPOSE 8000
