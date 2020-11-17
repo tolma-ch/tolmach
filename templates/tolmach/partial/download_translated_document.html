@@ -1,5 +1,25 @@
 {% load i18n %}
 {% load static %}
+<style>
+    .download-document__donations__form__payment-button, .download-document__donations__form__payment-button:hover {
+        background-color: transparent !important;
+        border: 2px solid transparent;
+
+    }
+    .download-document__donations__form__payment-button.active, .download-document__donations__form__payment-button.active:hover {
+        border-color: transparent transparent #568DB7 !important;
+        border: 2px solid;
+        background-color: transparent !important;
+    }
+    .download-document__donations__form__payment-button.active:after {
+        border: none;
+    }
+    @media (prefers-color-scheme: dark) {
+        .download-document__donations__form__payment-button.active, .download-document__donations__form__payment-button.active:hover {
+            border-color: transparent transparent #FAE28F !important;
+        }
+    }
+</style>
 
 <script type="text/ng-template" id="downloadTranslatedDocument.html">
     <div class="modal-header">
@@ -25,18 +45,18 @@
                     <input type="hidden" name="need-email" value="false">
                     <input type="hidden" name="need-phone" value="false">
                     <input type="hidden" name="need-address" value="false">
-                    <input type="hidden" name="successURL" value="">
+                    <input type="hidden" name="successURL" value="{{ request.build_absolute_uri }}">
                     <div class="input-group" style="width: 100%">
                         <span class="input-group-addon">₽</span>
                         <input type="number" class="form-control" aria-label="..." name="sum" value="255" data-type="number">
                         <div class="input-group-btn" style="width: 98px; padding-left: 10px">
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-secondary active download-document__donations__form__cc-button" title="{% trans "Credit card" %}">
+                                <label class="btn btn-secondary active download-document__donations__form__payment-button" title="{% trans "Credit card" %}">
                                     <input type="radio" name="paymentType" id="option2" autocomplete="off" checked value="AC">
                                     <img src="{% static 'img/credit-card.svg' %}">
 {#                                    <i class="fa fa-credit-card" aria-hidden="true"></i>#}
                                 </label>
-                                <label class="btn btn-secondary download-document__donations__form__io-button" title="{% trans "ЮMoney" %}">
+                                <label class="btn btn-secondary download-document__donations__form__payment-button" title="{% trans "ЮMoney" %}">
                                     <input type="radio" name="paymentType" id="option1" autocomplete="off" value="PC">
                                     <img src="{% static 'img/io.svg' %}">
 {#                                    <i class="fa fa-y-combinator" aria-hidden="true"></i>#}

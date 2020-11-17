@@ -12,7 +12,6 @@
         targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
         userMembershipStatus = {{ user_membership_status }};
-        window['username']="{{ username }}";
     </script>
     <style>
         .page-header {
@@ -140,7 +139,7 @@
                                         <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                                             <li>
                                                 <a href=""
-                                                   ng-click="downloadTranslatedDocument(text)">
+                                                   ng-click="downloadTranslatedDocument({'id': text.id, 'username': '{{ username }}', 'translation': text.translation})">
                                                     <i class="fa fa-download"></i>
                                                    &nbsp{% trans "Download" %}
                                                 </a>

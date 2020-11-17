@@ -27,7 +27,6 @@
                 });
             };
             $scope.downloadTranslatedDocument = function (text) {
-                text.username = window['username'];
                 var modalInstance = $uibModal.open({
                     templateUrl: 'downloadTranslatedDocument.html',
                     controller: 'DownloadTranslatedDocument',
