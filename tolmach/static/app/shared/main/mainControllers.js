@@ -26,6 +26,24 @@
                 }, function () {
                 });
             };
+            $scope.downloadTranslatedDocument = function (text) {
+                text.username = window['username'];
+                var modalInstance = $uibModal.open({
+                    templateUrl: 'downloadTranslatedDocument.html',
+                    controller: 'DownloadTranslatedDocument',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        text: function () {
+                            return text;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
             $interval($rootScope.updateMessages, 15000);
 
             $scope.showSearch = false;
@@ -283,6 +301,22 @@
                     })
                 }
             };
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+        }
+    ]);
+
+    module.controller('DownloadTranslatedDocument', ['$scope', '$uibModalInstance', '$http', '$rootScope', 'text',
+        function ($scope, $uibModalInstance, $http, $rootScope, text) {
+            $scope.error = '';
+            $scope.text = text;
+            console.log(text);
+            $http.get('/ajax/message/all').success(function (data) {
+                $scope.messages = data;
+            }).error(function (data) {
+            });
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss('cancel');

@@ -37,7 +37,9 @@
                         <span style="display: inline-block;
                                         overflow: hidden;">
                             <a class="breadcrumbs2__btn"
-                               href="/text/{{ text.id }}/{{ target_lang }}/export/"
+                               ng-click="downloadTranslatedDocument({'id': {{ text.id }}, 'username': '{{ username }}', 'translation': {'lang': '{{ target_lang }}'}})"
+{#                               href="/text/{{ text.id }}/{{ target_lang }}/export/"#}
+                               href=""
                                uib-tooltip="{% trans 'Export translation' %}"
                                tooltip-placement="bottom"
                                tooltip-append-to-body="true"><i class="fa fa-download"></i></a>
