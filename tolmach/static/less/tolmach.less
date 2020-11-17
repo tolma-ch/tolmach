@@ -127,6 +127,29 @@
     100% { transform: rotate(-360deg) translateX(@animationRadius); }
 }
 
+.download-document {
+  &__donations {
+    &__form {
+      width: 300px;
+      margin: 10px auto 0 auto;
+      button {
+        width: 100%;
+        margin-top: 10px;
+      }
+      &__io-button, &__cc-button {
+        line-height: 1;
+        padding: 3px;
+        width: 42px;
+        img {
+          height: 20px;
+        }
+      }
+      &__comment {
+        margin-top: 10px;
+      }
+    }
+  }
+}
 
 //
 // Copied tooltip

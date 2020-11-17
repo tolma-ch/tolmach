@@ -12,6 +12,7 @@
         targetLang = '{{ target_lang }}';
         languages = {{ languagesData | safe }};
         userMembershipStatus = {{ user_membership_status }};
+        window['username']="{{ username }}";
     </script>
     <style>
         .page-header {
@@ -138,21 +139,10 @@
                                            tooltip-append-to-body="true"><i class="fa fa-chevron-down"></i></a>
                                         <ul class="pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
                                             <li>
-                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/">
+                                                <a href=""
+                                                   ng-click="downloadTranslatedDocument(text)">
                                                     <i class="fa fa-download"></i>
-                                                    &nbsp{% trans 'Download translated document' %}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/pairs/">
-                                                    <i class="fa fa-download"></i>
-                                                    &nbsp{% trans 'Download bilingual XLSX' %}
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/po/">
-                                                    <i class="fa fa-download"></i>
-                                                    &nbsp{% trans 'Download as PO-file' %}
+                                                   &nbsp{% trans "Download" %}
                                                 </a>
                                             </li>
                                             <li class="divider"

@@ -1,0 +1,88 @@
+{% load i18n %}
+{% load static %}
+
+<script type="text/ng-template" id="downloadTranslatedDocument.html">
+    <div class="modal-header">
+        <button type="button"
+                class="bootbox-close-button close"
+                ng-click="cancel()">×</button>
+        <h3 class="modal-title">{% trans "Download translated document" %}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="download-document__donations">
+            <div class="download-document__donations__text project-list-text__title">
+                {% trans "Hi! Tolma.ch is a non-commercial project, so if it was useful for you and you liked it, you can thank us with a donation:" %}
+            </div>
+            <div class="download-document__donations__form">
+                <form method="POST" action="https://yoomoney.ru/quickpay/confirm.xml">
+                    <input type="hidden" name="receiver" value="410012046254790">
+                    <input type="hidden" name="formcomment" value="Tolma.ch - пожертвование">
+                    <input type="hidden" name="short-dest" value="Tolma.ch - пожертвование">
+                    <input type="hidden" name="quickpay-form" value="donate">
+                    <input type="hidden" name="targets" value="Tolma.ch - пожертвование от {=:: text.username =}">
+    {#                <input name="sum" value="4568.25" data-type="number">#}
+                    <input type="hidden" name="need-fio" value="false">
+                    <input type="hidden" name="need-email" value="false">
+                    <input type="hidden" name="need-phone" value="false">
+                    <input type="hidden" name="need-address" value="false">
+                    <input type="hidden" name="successURL" value="">
+                    <div class="input-group" style="width: 100%">
+                        <span class="input-group-addon">₽</span>
+                        <input type="number" class="form-control" aria-label="..." name="sum" value="255" data-type="number">
+                        <div class="input-group-btn" style="width: 98px; padding-left: 10px">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-secondary active download-document__donations__form__cc-button" title="{% trans "Credit card" %}">
+                                    <input type="radio" name="paymentType" id="option2" autocomplete="off" checked value="AC">
+                                    <img src="{% static 'img/credit-card.svg' %}">
+{#                                    <i class="fa fa-credit-card" aria-hidden="true"></i>#}
+                                </label>
+                                <label class="btn btn-secondary download-document__donations__form__io-button" title="{% trans "ЮMoney" %}">
+                                    <input type="radio" name="paymentType" id="option1" autocomplete="off" value="PC">
+                                    <img src="{% static 'img/io.svg' %}">
+{#                                    <i class="fa fa-y-combinator" aria-hidden="true"></i>#}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" class="form-control download-document__donations__form__comment" name="comment" placeholder="{% trans "Message (optional)" %}">
+
+    {#                <label><input type="radio" name="paymentType" value="PC">ЮMoney</label>#}
+    {#                <label><input type="radio" name="paymentType" value="AC">Банковской картой</label>#}
+    {#                <input type="submit" value="Перевести">#}
+                    <button type="submit"
+                            class="btn btn-primary">
+                        {% trans "Donate" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="dropdown" style="text-align: center">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                {% trans "Download variants" %}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="left: 40%;">
+                <li>
+                    <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/">
+                        <i class="fa fa-download"></i>
+                        &nbsp{% trans 'Download translated document' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/pairs/">
+                        <i class="fa fa-download"></i>
+                        &nbsp{% trans 'Download bilingual XLSX' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="/text/{=:: text.id =}/{=:: text.translation.lang =}/export/po/">
+                        <i class="fa fa-download"></i>
+                        &nbsp{% trans 'Download as PO-file' %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</script>

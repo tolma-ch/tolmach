@@ -84,6 +84,13 @@
   background-color: @input-group-addon-bg;
   border: 1px solid @input-group-addon-border-color;
   border-radius: @input-border-radius;
+  @media (prefers-color-scheme: dark) {
+    //** Background color for textual input addons
+    background-color:           #262727;
+    //** Border color for textual input addons
+    border: 1px solid #262727;
+    color:            #b4b9bb;
+  }
 
   // Sizing
   &.input-sm {
