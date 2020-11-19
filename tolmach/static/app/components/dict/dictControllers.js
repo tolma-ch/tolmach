@@ -51,7 +51,8 @@
                         params: {
                             from: $scope.dictSourceLang,
                             dest: $scope.dictTargetLang,
-                            phrase: $scope.word
+                            phrase: $scope.word,
+                            text: window['textId'],
                         }
                     }).success(function (res) {
                         var results = [];

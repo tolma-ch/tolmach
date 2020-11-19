@@ -210,6 +210,19 @@ def parse_glossary_text(text, filetype):
     return array
 
 
+def cleanse_glossary_entries(glossary_list):
+    """
+    Убираем потенциальные дубли из списка глоссариев, результат кешим
+    """
+    return_data = {}
+    for glos in glossary_list:
+        gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
+        for pair in gloss_entries:
+            if pair.source_entry not in return_data:
+                return_data[pair.source_entry] = pair.target_entry
+    return return_data
+
+
 # выделяем слова, из глоссария в активном entry на странице перевода текста
 def glossary_to_entry(entry_body, glossary_list, language):
     from nltk.stem.snowball import SnowballStemmer
@@ -219,18 +232,6 @@ def glossary_to_entry(entry_body, glossary_list, language):
         def repl_in_text(matchobj):
             return "<span data-glossary-word=\"%s\">" % target_word + matchobj.group(0) + "</span>"
         return repl_in_text
-
-    def cleanse_glossary_entries(glossary_list):
-        """
-        Убираем потенциальные дубли из списка глоссариев, результат кешим
-        """
-        return_data = {}
-        for glos in glossary_list:
-            gloss_entries = GlossaryEntry.objects.filter(glossary=glos)
-            for pair in gloss_entries:
-                if pair.source_entry not in return_data:
-                    return_data[pair.source_entry] = pair.target_entry
-        return return_data
 
     body_to_return = entry_body
     if not language.is_cjk():

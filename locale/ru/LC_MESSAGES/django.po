@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-17 11:22+0000\n"
+"POT-Creation-Date: 2020-11-19 16:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,6 +37,10 @@ msgstr "Обсуждение не найдено"
 #: chat/views.py:48
 msgid "Text is empty"
 msgstr "Текст не указан"
+
+#: dicts/views.py:144
+msgid "Project glossaries"
+msgstr "Глоссарии проекта"
 
 #: entries/views.py:8
 msgid "Russian"
@@ -173,7 +177,7 @@ msgid "Projects"
 msgstr "Проекты"
 
 #: templates/main/base-logged-in.html:7 translations/decorators.py:66
-#: translations/views.py:37 translations/views.py:38 translations/views.py:384
+#: translations/views.py:37 translations/views.py:38 translations/views.py:385
 msgid "My projects"
 msgstr "Мои проекты"
 
@@ -186,7 +190,7 @@ msgid "Community"
 msgstr "Сообщество"
 
 #: templates/main/base-logged-in.html:10 translations/decorators.py:72
-#: translations/views.py:47 translations/views.py:48 translations/views.py:390
+#: translations/views.py:47 translations/views.py:48 translations/views.py:391
 msgid "Public projects"
 msgstr "Публичные проекты"
 
@@ -195,8 +199,8 @@ msgid "People"
 msgstr "Люди"
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:342
-#: templates/translations/project.html:370
+#: templates/translations/project.html:324
+#: templates/translations/project.html:352
 msgid "TM Databases"
 msgstr "Памяти перевода (TM)"
 
@@ -310,15 +314,15 @@ msgstr "Привет,"
 msgid "Notifications"
 msgstr "Уведомления"
 
-#: templates/main/partial/navbar.html:41
+#: templates/main/partial/navbar.html:43
 msgid "Export translation"
 msgstr "Выгрузить перевод"
 
-#: templates/main/partial/navbar.html:62
+#: templates/main/partial/navbar.html:64
 msgid "Fragments approved:"
 msgstr "Фрагментов подтверждено:"
 
-#: templates/main/partial/navbar.html:63
+#: templates/main/partial/navbar.html:65
 msgid "Fragments translated:"
 msgstr "Фрагментов переведено:"
 
@@ -776,13 +780,12 @@ msgstr ""
 "Переводчик отредактировал один из своих уже утверждённых переводов. Теперь "
 "этот перевод нужно утвердить заново."
 
-#: templates/tolmach/partial/download_translated_document.html:9
-#: templates/tolmach/partial/download_translated_document.html:70
-#: templates/translations/project.html:143
+#: templates/tolmach/partial/download_translated_document.html:29
+#: templates/tolmach/partial/download_translated_document.html:90
 msgid "Download translated document"
 msgstr "Скачать переведённый документ"
 
-#: templates/tolmach/partial/download_translated_document.html:14
+#: templates/tolmach/partial/download_translated_document.html:34
 msgid ""
 "Hi! Tolma.ch is a non-commercial project, so if it was useful for you and "
 "you liked it, you can thank us with a donation:"
@@ -790,33 +793,31 @@ msgstr ""
 "Привет! Tolma.ch - это некоммерческий проект, поэтому если он был вам "
 "полезен и понравился, вы можете отблагодарить нас пожертвованием:"
 
-#: templates/tolmach/partial/download_translated_document.html:34
+#: templates/tolmach/partial/download_translated_document.html:54
 msgid "Credit card"
 msgstr "Банковская карта"
 
-#: templates/tolmach/partial/download_translated_document.html:39
+#: templates/tolmach/partial/download_translated_document.html:59
 msgid "ЮMoney"
 msgstr "ЮMoney"
 
-#: templates/tolmach/partial/download_translated_document.html:47
+#: templates/tolmach/partial/download_translated_document.html:67
 msgid "Message (optional)"
 msgstr "Комментарий (по желанию)"
 
-#: templates/tolmach/partial/download_translated_document.html:54
+#: templates/tolmach/partial/download_translated_document.html:74
 msgid "Donate"
 msgstr "Пожертвовать"
 
-#: templates/tolmach/partial/download_translated_document.html:63
+#: templates/tolmach/partial/download_translated_document.html:83
 msgid "Download variants"
 msgstr "Варианты скачивания"
 
-#: templates/tolmach/partial/download_translated_document.html:76
-#: templates/translations/project.html:149
+#: templates/tolmach/partial/download_translated_document.html:96
 msgid "Download bilingual XLSX"
 msgstr "Скачать двуязычный XLSX"
 
-#: templates/tolmach/partial/download_translated_document.html:82
-#: templates/translations/project.html:155
+#: templates/tolmach/partial/download_translated_document.html:102
 msgid "Download as PO-file"
 msgstr "Скачать как PO"
 
@@ -1142,9 +1143,9 @@ msgstr "Приватный"
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:40
-#: templates/translations/project.html:184
-#: templates/translations/project.html:186
-#: templates/translations/project.html:327
+#: templates/translations/project.html:166
+#: templates/translations/project.html:168
+#: templates/translations/project.html:309
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr "Добавить"
@@ -1387,59 +1388,59 @@ msgstr "Подтверждено:"
 msgid "Options"
 msgstr "Опции"
 
-#: templates/translations/project.html:162
+#: templates/translations/project.html:144
 msgid "Download"
 msgstr "Скачать"
 
-#: templates/translations/project.html:170
+#: templates/translations/project.html:152
 msgid "Document params"
 msgstr "Параметры документа"
 
-#: templates/translations/project.html:186
+#: templates/translations/project.html:168
 msgid "Click here to add new document to translate"
 msgstr "Нажмите, чтобы добавить новый документ для перевода"
 
-#: templates/translations/project.html:240
+#: templates/translations/project.html:222
 msgid "Tools"
 msgstr "Инструменты"
 
-#: templates/translations/project.html:243
+#: templates/translations/project.html:225
 msgid "About"
 msgstr "О проекте"
 
-#: templates/translations/project.html:315
+#: templates/translations/project.html:297
 msgid "Here will be TMXes and glossaries"
 msgstr "Здесь располагаются базы памяти перевода и глоссарии"
 
-#: templates/translations/project.html:319
+#: templates/translations/project.html:301
 msgid "Click here to translation memory or glossary"
 msgstr "Нажмите, чтобы добавить глоссарий или базу памяти переводов"
 
-#: templates/translations/project.html:335
+#: templates/translations/project.html:317
 msgid "Glossary"
 msgstr "Глоссарий"
 
-#: templates/translations/project.html:393
+#: templates/translations/project.html:375
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/project.html:418
+#: templates/translations/project.html:400
 msgid "Description"
 msgstr "Описание"
 
-#: templates/translations/project.html:442
+#: templates/translations/project.html:424
 msgid "Project statistics"
 msgstr "Статистика проекта"
 
-#: templates/translations/project.html:447
+#: templates/translations/project.html:429
 msgid "Attention!"
 msgstr "Внимание!"
 
-#: templates/translations/project.html:455
+#: templates/translations/project.html:437
 msgid "Remove Project"
 msgstr "Удалить проект"
 
-#: templates/translations/project.html:465
+#: templates/translations/project.html:447
 msgid "Leave Project"
 msgstr "Покинуть проект"
 
@@ -1734,7 +1735,7 @@ msgid "Project id is not set"
 msgstr "Номер проекта не указан"
 
 #: translations/decorators.py:69 translations/views.py:42
-#: translations/views.py:43 translations/views.py:387
+#: translations/views.py:43 translations/views.py:388
 msgid "Third-party projects"
 msgstr "Сторонние проекты"
 
@@ -1746,11 +1747,11 @@ msgstr "Файл слишком большой"
 msgid "Something went wrong"
 msgstr "Что-то пошло не так"
 
-#: translations/utils.py:353 translations/utils.py:386
+#: translations/utils.py:354 translations/utils.py:387
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:361 translations/utils.py:394
+#: translations/utils.py:362 translations/utils.py:395
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
@@ -1774,16 +1775,16 @@ msgstr "Переводчик"
 msgid "Spectator"
 msgstr "Наблюдатель"
 
-#: translations/views.py:366 translations/views.py:368
-#: translations/views.py:521
+#: translations/views.py:367 translations/views.py:369
+#: translations/views.py:522
 msgid "Sorry, no such text here!"
 msgstr "Простите, указанный текст не найден"
 
-#: translations/views.py:527
+#: translations/views.py:528
 msgid "Sorry, no such page here!"
 msgstr "Простите, указанная страница не найдена"
 
-#: translations/views.py:579
+#: translations/views.py:580
 msgid "Sorry, no such TM database here!"
 msgstr "Простите, указанная база памяти не найдена"
 
