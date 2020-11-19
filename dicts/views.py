@@ -1,48 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils import timezone
-import json, subprocess
+from django.utils.translation import ugettext as _
+import json
 
 from stats.models import DictStats
 from entries.models import Language
+from translations.models import Text, ProjectTranslation, GlossaryEntry
+from translations.utils import cleanse_glossary_entries
 
-# Create your views here.
-
-def get_local_dict_names(source_lang, target_lang):
-    dicts = [
-        {'name': 'dabkrs',
-         'source_lang': 'zh',
-         'target_lang': 'ru'}
-    ]
-
-    dict_names_to_search = []
-    for name in dicts:
-        if name['source_lang'] == source_lang and name['target_lang'] == target_lang:
-            dict_names_to_search.append(name['name'])
-
-    return dict_names_to_search
-
-def dict_search_1(request):
-    if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
-        # print(post)
-
-        word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
-
-        output = json.loads(subprocess.check_output(['/usr/bin/sdcv', '-nj', word]))
-        # print(output)
-        out_data = []
-        for element in output:
-            out_data.append({
-                "translation": "<br />".join(element['definition'].split("\n"))
-            })
-
-        return HttpResponse(json.dumps(out_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
 
 @login_required
 def dict_search(request):
@@ -55,6 +23,7 @@ def dict_search(request):
         word = post['params']['phrase'] if 'phrase' in post['params'].keys() else ""
         source_lang = post['params']['from']
         target_lang = post['params']['dest']
+        text_id = post['params']['text']
 
         return_data = stardict(word, source_lang, target_lang)
 
@@ -91,6 +60,10 @@ def dict_search(request):
                             glosbe_data["definition"] += entry["phrase"]["text"] + ", "
             if glosbe_data["definition"]:
                 return_data.append(glosbe_data)
+
+        glossary_search_data = glossary_dict_search(word, source_lang, target_lang, text_id)
+        if glossary_search_data:
+            return_data.append(glossary_search_data)
 
         counter, created = DictStats.objects.get_or_create(user=request.user,
                                                            date=timezone.now().strftime("%Y%m%d"),
@@ -133,3 +106,69 @@ def stardict(word, source_lang, target_lang):
         return return_data
     else:
         return return_data
+
+
+def glossary_dict_search(word, source_lang, target_lang, text_id):
+    query_source_lang = Language.objects.filter(code_tmx__startswith=source_lang)[0]
+    try:
+        text = Text.objects.get(id=text_id)
+    except Text.DoesNotExist:
+        return False
+    print(text.id)
+    project_source_lang = text.project.source_lang
+    try:
+        translation_direction = [source_lang, target_lang].index(project_source_lang.code)
+    except ValueError:
+        return False
+
+    print(translation_direction)
+    if translation_direction == 0:
+        try:
+            project_translations = ProjectTranslation.objects.filter(project=text.project,
+                                                                     target_lang__code_tmx__startswith=target_lang)
+        except ProjectTranslation.DoesNotExist:
+            return False
+    elif translation_direction == 1:
+        try:
+            project_translations = ProjectTranslation.objects.filter(project=text.project,
+                                                                     target_lang__code_tmx__startswith=source_lang)
+        except ProjectTranslation.DoesNotExist:
+            return False
+
+    glossaries_list = []
+    for i in project_translations:
+        for x in i.glossaries_list.all():
+            glossaries_list.append(x)
+    print(glossaries_list)
+    if glossaries_list:
+        gloss_data = {"dict": _("Project glossaries"),
+                      "word": word,
+                      "definition": []}
+        from nltk.stem.snowball import SnowballStemmer
+
+        word_to_search = word.lower()
+        if not query_source_lang.is_cjk():
+            stemmer = SnowballStemmer(query_source_lang.name.lower().split(" ")[0])
+            if len(word.split()) == 1:
+                word_to_search = stemmer.stem(word.lower())
+
+        for source_entry, target_entry in cleanse_glossary_entries(glossaries_list).items():
+            if translation_direction == 0:
+                if len(source_entry.split(" ")) == 1:
+                    if word_to_search == stemmer.stem(source_entry.lower()):
+                        gloss_data['definition'].append(target_entry)
+                else:
+                    if word_to_search in source_entry.lower():
+                        gloss_data['definition'].append(target_entry)
+            elif translation_direction == 1:
+                if len(target_entry.split(" ")) == 1:
+                    if word_to_search == stemmer.stem(target_entry.lower()):
+                        gloss_data['definition'].append(source_entry)
+                else:
+                    if word_to_search in target_entry.lower():
+                        gloss_data['definition'].append(source_entry)
+        if len(gloss_data['definition']) > 0:
+            gloss_data['definition'] = ', '.join(gloss_data['definition'])
+            return gloss_data
+
+    return False
