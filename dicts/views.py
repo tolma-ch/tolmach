@@ -63,7 +63,7 @@ def dict_search(request):
 
         glossary_search_data = glossary_dict_search(word, source_lang, target_lang, text_id)
         if glossary_search_data:
-            return_data.append(glossary_search_data)
+            return_data.insert(0, glossary_search_data)
 
         counter, created = DictStats.objects.get_or_create(user=request.user,
                                                            date=timezone.now().strftime("%Y%m%d"),
@@ -148,27 +148,27 @@ def glossary_dict_search(word, source_lang, target_lang, text_id):
 
         word_to_search = word.lower()
         if not query_source_lang.is_cjk():
-            stemmer = SnowballStemmer(query_source_lang.name.lower().split(" ")[0])
             if len(word.split()) == 1:
+                stemmer = SnowballStemmer(query_source_lang.name.lower().split(" ")[0])
                 word_to_search = stemmer.stem(word.lower())
 
         for source_entry, target_entry in cleanse_glossary_entries(glossaries_list).items():
             if translation_direction == 0:
                 if len(source_entry.split(" ")) == 1:
                     if word_to_search == stemmer.stem(source_entry.lower()):
-                        gloss_data['definition'].append(target_entry)
+                        gloss_data['definition'].append(f"{source_entry} — {target_entry}")
                 else:
                     if word_to_search in source_entry.lower():
-                        gloss_data['definition'].append(target_entry)
+                        gloss_data['definition'].append(f"{source_entry} — {target_entry}")
             elif translation_direction == 1:
                 if len(target_entry.split(" ")) == 1:
                     if word_to_search == stemmer.stem(target_entry.lower()):
-                        gloss_data['definition'].append(source_entry)
+                        gloss_data['definition'].append(f"{target_entry} — {source_entry}")
                 else:
                     if word_to_search in target_entry.lower():
-                        gloss_data['definition'].append(source_entry)
+                        gloss_data['definition'].append(f"{target_entry} — {source_entry}")
         if len(gloss_data['definition']) > 0:
-            gloss_data['definition'] = ', '.join(gloss_data['definition'])
+            gloss_data['definition'] = '<br>'.join(gloss_data['definition'])
             return gloss_data
 
     return False
