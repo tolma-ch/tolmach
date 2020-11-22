@@ -109,37 +109,49 @@ def stardict(word, source_lang, target_lang):
 
 
 def glossary_dict_search(word, source_lang, target_lang, text_id):
-    query_source_lang = Language.objects.filter(code_tmx__startswith=source_lang)[0]
+    try:
+        query_source_lang = Language.objects.filter(code_tmx__startswith=source_lang)[0]
+    except IndexError:
+        return False
+
     try:
         text = Text.objects.get(id=text_id)
     except Text.DoesNotExist:
         return False
-    print(text.id)
+
+    # получаем исходный язык проекта
     project_source_lang = text.project.source_lang
     try:
+        # чтобы далее понять, является ли он в данном запросе исходным языком или целевым
         translation_direction = [source_lang, target_lang].index(project_source_lang.code)
     except ValueError:
+        # если ни тем, ни тем, то по глоссариям не ищем
         return False
 
-    print(translation_direction)
     if translation_direction == 0:
+        # если исходный язык проекта совпадает с исходным языком запроса,
+        # то ищем все переводы проекта по целевому языку запроса
         try:
             project_translations = ProjectTranslation.objects.filter(project=text.project,
                                                                      target_lang__code_tmx__startswith=target_lang)
+        # если таковых не находим, то что ж, ничего не поделать
         except ProjectTranslation.DoesNotExist:
             return False
     elif translation_direction == 1:
+        # и наоборот, если исходный язык проекта является целевым языком запроса,
+        # то ищем переводы проекта по исходному языку запроса
         try:
             project_translations = ProjectTranslation.objects.filter(project=text.project,
                                                                      target_lang__code_tmx__startswith=source_lang)
         except ProjectTranslation.DoesNotExist:
             return False
 
+    # далее проходимся по всем переводам проекта и собираем глоссарии в один плоский список
     glossaries_list = []
     for i in project_translations:
         for x in i.glossaries_list.all():
             glossaries_list.append(x)
-    print(glossaries_list)
+
     if glossaries_list:
         gloss_data = {"dict": _("Project glossaries"),
                       "word": word,
@@ -147,26 +159,33 @@ def glossary_dict_search(word, source_lang, target_lang, text_id):
         from nltk.stem.snowball import SnowballStemmer
 
         word_to_search = word.lower()
+        source_stemmer = False
         if not query_source_lang.is_cjk():
+            # если исходный язык запроса стеммируется (не является азиатским), заводим стеммер
+            source_stemmer = SnowballStemmer(query_source_lang.name.lower().split(" ")[0])
             if len(word.split()) == 1:
-                stemmer = SnowballStemmer(query_source_lang.name.lower().split(" ")[0])
-                word_to_search = stemmer.stem(word.lower())
+                # и тут же применяем, если искомое фраза состоит из одного слова
+                word_to_search = source_stemmer.stem(word_to_search)
 
         for source_entry, target_entry in cleanse_glossary_entries(glossaries_list).items():
+            # далее проходимся по всем парам в глоссариях и с зависимости от выясненного выше направления поиска,
+            # сравниваем поисковую фразу либо с оригинальным фрагментом
             if translation_direction == 0:
-                if len(source_entry.split(" ")) == 1:
-                    if word_to_search == stemmer.stem(source_entry.lower()):
+                if len(source_entry.split()) == 1 and len(word.split()) == 1 and source_stemmer:
+                    if word_to_search == source_stemmer.stem(source_entry.lower()):
                         gloss_data['definition'].append(f"{source_entry} — {target_entry}")
                 else:
                     if word_to_search in source_entry.lower():
                         gloss_data['definition'].append(f"{source_entry} — {target_entry}")
+            # либо с целевым
             elif translation_direction == 1:
-                if len(target_entry.split(" ")) == 1:
-                    if word_to_search == stemmer.stem(target_entry.lower()):
+                if len(target_entry.split()) == 1 and len(word.split()) == 1 and source_stemmer:
+                    if word_to_search == source_stemmer.stem(target_entry.lower()):
                         gloss_data['definition'].append(f"{target_entry} — {source_entry}")
                 else:
                     if word_to_search in target_entry.lower():
                         gloss_data['definition'].append(f"{target_entry} — {source_entry}")
+
         if len(gloss_data['definition']) > 0:
             gloss_data['definition'] = '<br>'.join(gloss_data['definition'])
             return gloss_data
