@@ -128,6 +128,7 @@ def glossary_dict_search(word, source_lang, target_lang, text_id):
         # если ни тем, ни тем, то по глоссариям не ищем
         return False
 
+    project_translations = []
     if translation_direction == 0:
         # если исходный язык проекта совпадает с исходным языком запроса,
         # то ищем все переводы проекта по целевому языку запроса
