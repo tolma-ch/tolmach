@@ -156,6 +156,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -355,8 +356,8 @@ CHANNEL_LAYERS = {
 from django.core.urlresolvers import reverse_lazy
 LOGOUT_URL = reverse_lazy('loginas-logout')
 
-DEBUG = os.environ.get("DEBUG", False)
-PROD = os.environ.get("PROD", False)
+DEBUG = os.environ.get("DEBUG", False) == 'True'
+PROD = os.environ.get("PROD", False) == 'True'
 
 try:
     from tolmach.local_settings import *
