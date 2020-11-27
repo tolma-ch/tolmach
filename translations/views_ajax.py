@@ -1677,7 +1677,7 @@ def tmdb_search(request):
                     if seq.ratio() > 0.6:
                         diffs = dmp.diff_main(item['fields'][entry_source_lang.code_tmx][0], utils.unescape_html(entry_body_clean))
                         dmp.diff_cleanupSemantic(diffs)
-                        tmx_diff =  dmp.diff_prettyHtml(diffs)
+                        tmx_diff = dmp.diff_prettyHtml(diffs)
                         obj = {
                               'id': 123,
                               'text': utils.escape_html(item['fields'][entry_target_lang.code_tmx][0]),
@@ -1685,7 +1685,7 @@ def tmdb_search(request):
                               'tmx': tmx.name,
                               'diff': tmx_diff,
                               }
-                        if not obj in search_results:
+                        if not any(d['text'] == obj['text'] for d in search_results):
                             search_results.append(obj)
                 sorted_search_results = sorted(search_results, key=lambda k: k['percent'], reverse=True)
             return HttpResponse(json.dumps(sorted_search_results))
