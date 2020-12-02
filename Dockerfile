@@ -4,7 +4,9 @@ USER root
 RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor nodejs npm && \
     yum clean all && \
     rm -rf /var/cache/yum && \
-    wget -O /usr/bin/sdcv megavenik.ru/sdcv && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts
+    wget -O /usr/bin/sdcv megavenik.ru/sdcv && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts && \
+    wget -O /opt/okapi.zip "https://bintray.com/okapi/Distribution/download_file?file_path=okapi-lib_all-platforms_1.39.0.zip" && \
+    cd /opt && unzip okapi.zip -d okapi && rm -f okapi.zip
 RUN npm install -g inherits coffee-script grunt grunt-cli
 
 RUN mkdir /var/www /var/log/tolma.ch
