@@ -1336,7 +1336,7 @@
                 }, function () {
                 });
             };
-            $scope.$on('tagClick', function (event, index) {
+            $scope.$on('tagClick', function (event, index, type) {
                 if (!$scope.activeEntry) {
                     return;
                 }
@@ -1368,12 +1368,18 @@
                                 if (range.startOffset > 0) {
                                     newNodes.push(document.createTextNode(text.substr(0, range.startOffset)));
                                 }
-                                newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
+                                if (type === "tag" || type === "g") {
+                                    newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
+                                } else if (type === "x") {
+                                    newNodes.push(angular.element('<hr s i="' + index + '">')[0]);
+                                }
                                 if (range.endContainer === node) {
                                     if (range.endOffset > range.startOffset) {
                                         newNodes.push(document.createTextNode(text.substr(range.startOffset, range.endOffset - range.startOffset)));
                                     }
-                                    newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                    if (type === "tag" || type === "g") {
+                                        newNodes.push(angular. element('<hr r i="' + index + '">')[0]);
+                                    }
                                     if (range.endOffset < text.length) {
                                         newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                     }
@@ -1386,7 +1392,9 @@
                                 if (range.endOffset > 0) {
                                     newNodes.push(document.createTextNode(text.substr(0, range.endOffset)));
                                 }
-                                newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                if (type === "tag" || type === "g") {
+                                    newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                }
                                 if (range.endOffset < text.length) {
                                     newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                 }
