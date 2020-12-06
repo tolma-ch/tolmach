@@ -2920,7 +2920,7 @@
                 }, function () {
                 });
             };
-            $scope.$on('tagClick', function (event, index) {
+            $scope.$on('tagClick', function (event, index, type) {
                 if (!$scope.activeEntry) {
                     return;
                 }
@@ -2952,12 +2952,18 @@
                                 if (range.startOffset > 0) {
                                     newNodes.push(document.createTextNode(text.substr(0, range.startOffset)));
                                 }
-                                newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
+                                if (type === "tag" || type === "g") {
+                                    newNodes.push(angular.element('<hr l i="' + index + '">')[0]);
+                                } else if (type === "x") {
+                                    newNodes.push(angular.element('<hr s i="' + index + '">')[0]);
+                                }
                                 if (range.endContainer === node) {
                                     if (range.endOffset > range.startOffset) {
                                         newNodes.push(document.createTextNode(text.substr(range.startOffset, range.endOffset - range.startOffset)));
                                     }
-                                    newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                    if (type === "tag" || type === "g") {
+                                        newNodes.push(angular. element('<hr r i="' + index + '">')[0]);
+                                    }
                                     if (range.endOffset < text.length) {
                                         newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                     }
@@ -2970,7 +2976,9 @@
                                 if (range.endOffset > 0) {
                                     newNodes.push(document.createTextNode(text.substr(0, range.endOffset)));
                                 }
-                                newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                if (type === "tag" || type === "g") {
+                                    newNodes.push(angular.element('<hr r i="' + index + '">')[0]);
+                                }
                                 if (range.endOffset < text.length) {
                                     newNodes.push(document.createTextNode(text.substr(range.endOffset)));
                                 }
@@ -3218,15 +3226,55 @@
                 var leftTag = angular.element('<a href="#" class="tag-left" i="' + scope.i + '">'),
                     rightTag = angular.element('<a href="#" class="tag-right" i="' + scope.i + '">'),
                     clickTrigger = function () {
-                        scope.$emit('tagClickBefore', scope.i);
-                        scope.$emit('tagClick', scope.i);
-                        scope.$emit('tagClickAfter', scope.i);
+                        scope.$emit('tagClickBefore', scope.i, 'tag');
+                        scope.$emit('tagClick', scope.i, 'tag');
+                        scope.$emit('tagClickAfter', scope.i, 'tag');
                     };
                 leftTag.on("click", clickTrigger);
                 rightTag.on("click", clickTrigger);
                 element.prepend(leftTag);
 
                 element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('g', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', scope.id, 'g');
+                        scope.$emit('tagClick', scope.id, 'g');
+                        scope.$emit('tagClickAfter', scope.id, 'g');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('x', [function () {
+        // и одинарных тоже
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var singleTag = angular.element('<a href = "#" class="tag-single" i="' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', scope.id, 'x');
+                        scope.$emit('tagClick', scope.id, 'x');
+                        scope.$emit('tagClickAfter', scope.id, 'x');
+                    };
+                singleTag.on("click", clickTrigger);
+                element.append(singleTag);
             }
         };
     }]);
@@ -3253,6 +3301,7 @@
                         j,
                         index,
                         type;
+                    console.log(node);
                     if (allowBr && (node.tagName === 'BR')) {
                         lastBr = node;
                         continue;
