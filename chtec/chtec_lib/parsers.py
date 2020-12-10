@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import print_function
+# -*- coding: utf-8 -*-
 
 from . import utils
 
 import os, subprocess, json
+from typing import List
+
 LIBREOFFICE_BIN = os.environ.get("LIBREOFFICE_BIN", "/usr/bin/libreoffice --headless")
+
 
 def to_x(target_path, file_path, output_format):
     # converting files to docx, xlsx, pptx
@@ -94,6 +94,7 @@ def from_plain_text(text, source_lang='en', split_mode="default"):
             parsed_data['marked_text'] += "\n"
 
     return parsed_data
+
 
 def from_docx(file_path, source_lang='en', split_mode="default"):
     from zipfile import ZipFile
@@ -237,6 +238,7 @@ def from_docx(file_path, source_lang='en', split_mode="default"):
 
     return parsed_data
 
+
 def from_xlsx(file_path, custom_parse=None):
     from openpyxl import load_workbook
     # import chardet
@@ -336,30 +338,14 @@ def from_xlsx(file_path, custom_parse=None):
 
 def from_srt(file_path, source_lang='en'):
     import srt
-    def remove_bom(s):
-        bom_info = (
-            (b'\xFF\xFE\x00\x00', 4, 'UTF-32LE'),
-            (b'\x00\x00\xFE\xFF', 4, 'UTF-32BE'),
-            (b'\xEF\xBB\xBF',     3, 'UTF-8'),
-            (b'\xFF\xFE',         2, 'UTF-16LE'),
-            (b'\xFE\xFF',         2, 'UTF-16BE'),
-            )
-        for sig, siglen, enc in bom_info:
-            if s.startswith(sig):
-                print(sig, enc)
-                return s[siglen:]
-        return s
 
     import codecs
     enc = utils.detect_by_bom(file_path, 'utf-8-sig')
-    srt_file =  codecs.open(file_path, 'r', encoding=enc)
-    # srt_file = open(file_path, 'rU')
-    # srt_text = remove_bom(srt_file.read())
+    srt_file = codecs.open(file_path, 'r', encoding=enc)
     srt_text = srt_file.read()
 
     subtitles = srt.parse(srt_text)
     subtitles_list = list(subtitles)
-
 
     parsed_data = {
                 "marked_text": "",
@@ -554,3 +540,113 @@ def from_po_mo(file_path, file_type, source_lang='en'):
         local_num += 1
 
     return parsed_data
+
+
+def from_xlf(file_path):
+    from xml.dom import minidom
+    import re
+
+    def stringify_children_minidom(node: minidom.Node) -> str:
+        string = ""
+        for child in node.childNodes:
+            # https://docs.python.org/3/library/xml.dom.html?highlight=getelementsbytagname#xml.dom.Node.nodeType
+            if child.nodeType == 1:  # ELEMENT_NODE
+                string += child.toxml()
+            elif child.nodeType == 3:  # TEXT_NODE
+                string += child.data
+        return string
+
+    def get_attributes(node: minidom.Node, attributes_list: List[str]) -> dict:
+        attribs = dict(
+            (attr, node.getAttribute(attr)) for attr in attributes_list if not node.getAttribute(attr) == ""
+        )
+
+        return attribs
+
+    parsed_data = {
+        'marked_text': '',
+        'text_meta':
+            {
+                'parse_version': 1.0,
+                'files':
+                    {}
+            },
+        'entries':
+            [
+            ],
+        "Error": 0,
+        'ErrorText': '',
+    }
+
+    with open(file_path, 'rb') as source:
+        try:
+            xmldoc = minidom.parse(source)
+            xliff = xmldoc.getElementsByTagName('xliff')[0]
+            if float(xliff.getAttribute('version')) > 1.2:
+                parsed_data['Error'] = 400
+                parsed_data['ErrorText'] = "Sorry, at the moment we work only with XLIFF v1.2"
+                return parsed_data
+        except:
+            parsed_data['Error'] = 400
+            parsed_data['ErrorText'] = "Provided file doesn't look like a valid XLIFF"
+            return parsed_data
+
+        xliff_attribs = []
+
+        local_num = 1
+
+        files = xmldoc.getElementsByTagName('file')
+        file_attribs = ["source-language", "datatype", "tool", "tool-id", "date", "xml:space", "ts",
+                        "category", "target-language", "product-name", "product-version", "build-num"]
+        for file in files:
+            file_attribs_actual = get_attributes(file, file_attribs)
+            file_header_actual = file.getElementsByTagName('header')
+            file_original_actual = file.getAttribute('original')
+            units = file.getElementsByTagName('trans-unit')
+            parsed_data['text_meta']['files'][file_original_actual] = {
+                    'attributes': file_attribs_actual,
+                    'header': file_header_actual.toxml() if file_header_actual else "",
+                    'units_count': len(units),
+                    'non_translatable_units': []
+                }
+
+            unit_attribs = ["id", "approved", "translate", "reformat", "xml:space", "datatype", "ts",
+                            "phase-name", "restype", "resname", "extradata", "help-id", "menu",
+                            "menu-option", "menu-name", "coord", "font", "css-style", "style", "exstyle",
+                            "extype", "maxbytes", "minbytes", "size-unit", "maxheight", "minheight",
+                            "maxwidth", "minwidth", "charclass"]
+            id_in_file = 1
+            for unit in units:
+                unit_attribs_actual = get_attributes(unit, unit_attribs)
+                source_text = stringify_children_minidom(unit.getElementsByTagName('source')[0])
+
+                # проверяем, есть ли в строке что-то кроме служебных тегов
+                if not re.sub(r"<(bx|ex|x|g).+?(\/)?>", "", source_text).strip() == "":
+                    # TODO если да, то проверять, есть ли вокруг сегмента строчные теги,
+                    # которые можно не показывать пользователю
+                    # if source_text.startswith() and source_text.endswith():
+                    #     pass
+                    # и если да, то отправляем на перевод
+                    parsed_data['entries'].append(
+                        {
+                            'num': local_num,
+                            'entry': source_text,
+                            'entry_meta': {
+                                'file': file_original_actual,
+                                'unit_attributes': unit_attribs_actual,
+                                'id_in_file': id_in_file
+                            },
+                            'new_lines_after': 1,
+                        }
+                    )
+                    local_num += 1
+                else:
+                    # а если нет, то на свалку просто плейнтекстом, откуда потом заберём при экспорте
+                    parsed_data['text_meta']['files'][file_original_actual]['non_translatable_units'].append(
+                        {
+                            'entry': unit.toxml(),
+                            'id_in_file': id_in_file
+                        }
+                    )
+                id_in_file += 1
+        return parsed_data

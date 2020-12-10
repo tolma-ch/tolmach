@@ -315,29 +315,33 @@ def save_to_db(data, project_id, source_lang_code, target_lang_code, subject_id,
         text.save()
 
         if text_meta:
-            text_meta = TextMeta(text=text,
-                                meta_type=document_format,
-                                meta_data=json.dumps(text_meta),
-                                )
+            text_meta = TextMeta(
+                text=text,
+                meta_type=document_format,
+                meta_data=json.dumps(text_meta),
+            )
             text_meta.save()
 
         for proj_translation in target_translations:
-            translation = TextTranslation(text=text,
-                                        project_translation=proj_translation,
-                                        target_lang=Language.objects.get(code_tmx=proj_translation.target_lang.code_tmx),
-                                        )
+            translation = TextTranslation(
+                text=text,
+                project_translation=proj_translation,
+                target_lang=Language.objects.get(code_tmx=proj_translation.target_lang.code_tmx),
+            )
             translation.save()
 
         entry_translation_text_trans = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code_tmx=target_lang_code))
 
         if text.document_format == "text/x-gettext-translation":
             for sent in sentences:
-                txt_entry = TextEntry(body=sent['entry'],
-                                    text=text,
-                                    id_in_text=sent['num'],
-                                    author=user,
-                                    new_lines_after=get_new_lines(marked_text, sent)
-                                    )
+                txt_entry = TextEntry(
+                    body=sent['entry'],
+                    text=text,
+                    id_in_text=sent['num'],
+                    author=user,
+                    new_lines_after=get_new_lines(marked_text, sent) if not marked_text == ""
+                        else sent['new_lines_after']
+                )
                 entry_meta = sent.get('entry_meta', '{}')
                 txt_entry.meta_data = json.dumps(entry_meta)
 
@@ -358,12 +362,14 @@ def save_to_db(data, project_id, source_lang_code, target_lang_code, subject_id,
         else:
             bulk_sent_list = []
             for sent in sentences:
-                txt_entry = TextEntry(body=sent['entry'],
-                                    text=text,
-                                    id_in_text=sent['num'],
-                                    author=user,
-                                    new_lines_after=get_new_lines(marked_text, sent)
-                                    )
+                txt_entry = TextEntry(
+                    body=sent['entry'],
+                    text=text,
+                    id_in_text=sent['num'],
+                    author=user,
+                    new_lines_after = get_new_lines(marked_text, sent) if not marked_text == ""
+                        else sent['new_lines_after']
+                )
                 # txt_entry.save()
                 entry_meta = sent.get('entry_meta', '{}')
 

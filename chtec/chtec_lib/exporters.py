@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import print_function
+# -*- coding: utf-8 -*-
 
 import json, os, sys
+from typing import Tuple
 
 import django
 sys.path.append('/var/www/tolma.ch/')
@@ -112,6 +110,8 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
             export_data = export_srt(text, text_translation)
         elif text_format == formats.FORMATS['ass']:
             export_data = export_ass(text, text_translation)
+        elif text_format == formats.FORMATS['xlf']:
+            export_data = export_xlf(text, text_translation)
         else:
             RETURN_DATA['Error'] = 400
             RETURN_DATA['error_message'] = "Sorry, such format is not supported right now"
@@ -662,62 +662,240 @@ def export_srt(text, text_translation):
     }
 
 
+def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
+    from xml.dom import minidom
+    import re
+
+    def replace_tags(string: str) -> str:
+        def get_tag_name_and_id(match: str) -> Tuple[str, int]:
+            # Получаем строку вида '<hr l="" i="g1">',
+            # делим по двойной кавычке, и берём четвёртый элемент - 'g1'
+            index_string = match.split('"')[3]
+
+            # дальше из полученной строки сначала выбираем все буквы - g
+            tag_name = ''.join(filter(str.isalpha, index_string))
+
+            # а потом все цифры - 1
+            tag_index = int(''.join(filter(str.isdigit, index_string)))
+
+            # возвращаем строку 'g' и число 1
+            return tag_name, tag_index
+
+        def repl_numbered_tag(matchobj):
+            tag_name, tag_index = get_tag_name_and_id(matchobj.group(0))
+
+            return f'<{tag_name} id="{tag_index}">'
+
+        def repl_single_tag(matchobj):
+            tag_name, tag_index = get_tag_name_and_id(matchobj.group(0))
+
+            return f'<{tag_name} id="{tag_index}"/>'
+
+        # TODO: обработать все варианты тегов по спеке
+        # сначала заменяем все закрывающие теги, т.к. там не требуется вычленять айдишник
+        string = re.sub(r'<hr r="" i="g[0-9]+?">', '</g>', string)
+
+        # потом непарные
+        string = re.sub(r'<hr l="" i="g[0-9]+?">', repl_numbered_tag, string)
+
+        # потом одинарные
+        string = re.sub(r'<hr s="" i="x[0-9]+?">', repl_single_tag, string)
+
+        return string
+
+    doc = minidom.Document()
+
+    # создаём корневой тег xliff
+    xliff = doc.createElement('xliff')
+    # TODO: парсить реальные аттрибуты и генерить из них
+    xliff.setAttribute("xmlns", "urn:oasis:names:tc:xliff:document:1.2")
+    xliff.setAttribute("xmlns:okp", "okapi-framework:xliff-extensions")
+    xliff.setAttribute("xmlns:its", "http://www.w3.org/2005/11/its")
+    xliff.setAttribute("xmlns:itsxlf", "http://www.w3.org/ns/its-xliff/")
+    xliff.setAttribute("its:version", "2.0")
+    xliff.setAttribute("version", "1.2")
+    doc.appendChild(xliff)
+
+    text_meta = json.loads(TextMeta.objects.get(text=text).meta_data)
+
+    trans_units = {}
+
+    entries = TextEntry.objects.filter(text=text, parent_entry=None)
+    entries_translations = TextEntry.objects.filter(translation=text_translation, is_approved=True)
+
+    # выбираем все энтрики
+    for entry in entries:
+        entry_meta = json.loads(entry.meta_data)
+        entry_translation = get_entry_translation(entry, entries_translations)
+        if entry_translation:
+            entry_translation_text = replace_tags(entry_translation.body)
+        else:
+            entry_translation_text = entry.body
+
+        # и складываем в словарь по ключу тега file, в который будем их далее складывать,
+        # отмечая при этом, что они являются полноценными энтриками - is_translatable
+        # далее к ним будем примешивать сдампанные побуквенно неполноценные из TextMeta
+        if entry_meta['file'] in trans_units:
+            trans_units[entry_meta['file']].append(
+                {
+                    "source": entry.body,
+                    "target": entry_translation_text,
+                    "unit_attributes": entry_meta['unit_attributes'],
+                    "id_in_file": entry_meta['id_in_file'],
+                    "is_translatable": True,
+                }
+            )
+        else:
+            trans_units[entry_meta['file']] = [{
+                "source": entry.body,
+                "target": entry_translation_text,
+                "unit_attributes": entry_meta['unit_attributes'],
+                "id_in_file": entry_meta["id_in_file"],
+                "is_translatable": True,
+            }]
+
+    files = text_meta['files']
+    # {
+    #     "word/document.xml":{
+    #       "attributes":{
+    #         "source-language":"ru",
+    #         "datatype":"x-undefined",
+    #         "target-language":"en"
+    #       },
+    #       "header":"",
+    #       "units_count":24,
+    #       "non_translatable_units":[
+    #         {
+    #           "entry":"<trans-unit id=\"NFDBB2FA9-tu1\" xml:space=\"preserve\">\n</trans-unit>",
+    #           "id_in_file":1
+    #         }
+    #       ]
+    #     },
+    # }
+
+    for file, keys in files.items():
+        # Выбираем все юниты указанного файла. Если таковых нет, просто пустой список
+        file_units = trans_units.get(file, [])
+        non_translatable_units = keys['non_translatable_units']
+
+        # берём все исключённые при парсинге юниты и примешиваем в общий список,
+        # который ранее составили из энтриков
+        for nt_unit in non_translatable_units:
+            file_units.append({
+                "source": nt_unit["entry"],
+                "id_in_file": nt_unit["id_in_file"],
+                "is_translatable": False
+            })
+
+        # сортируем все юниты по айдишнику, чтобы восстановить порядок оригинального документа
+        file_units = sorted(file_units, key=lambda k: k['id_in_file'])
+
+        fl = doc.createElement('file')
+        fl.setAttribute('original', file)
+        for attr, value in keys['attributes'].items():
+            fl.setAttribute(attr, value)
+        if len(keys['header']) > 1:
+            header = minidom.parseString(keys['header']).documentElement
+            fl.appendChild(header)
+        body = doc.createElement('body')
+        fl.appendChild(body)
+        xliff.appendChild(fl)
+
+        for unit_instance in file_units:
+            if unit_instance["is_translatable"]:
+                unit = doc.createElement('trans-unit')
+                for attr, value in unit_instance['unit_attributes'].items():
+                    unit.setAttribute(attr, value)
+
+                target_lang = keys['attributes'].get('target-language', None)
+                if target_lang:
+                    target_lang_string = f'xml:lang="{target_lang}"'
+                else:
+                    target_lang_string = ''
+
+                source_lang = keys['attributes'].get('source-language', None)
+                if source_lang:
+                    source_lang_string = f'xml:lang="{source_lang}"'
+                else:
+                    source_lang_string = ''
+
+                source = minidom.parseString(
+                    f"""<source {source_lang_string}>{unit_instance['source']}</source>"""
+                ).documentElement
+                target = minidom.parseString(
+                    f"""<target {target_lang_string}>{unit_instance['target']}</target>"""
+                ).documentElement
+
+                unit.appendChild(source)
+                unit.appendChild(target)
+                body.appendChild(unit)
+            else:
+                nt_unit = minidom.parseString(unit_instance['source']).documentElement
+                body.appendChild(nt_unit)
+
+    content_type = "text/srt"
+    doc_ext = "xlf"
+
+    export_file_name = '%s.xlf' % utils.random_string(15)
+    tmp_path = EXPORT_DIR + export_file_name
+
+    # записываем полученную xml-ку в однострочный текст
+    xml_str = doc.toxml(encoding="utf-8")
+
+    # размечаем переносы аналогично тому, как это делает Tikal
+    def xml_add_newlines(matchobj):
+        return f"{matchobj.group(0)}\n"
+
+    xml_str = re.sub(
+        r'<([\/]?trans-unit|\/source|\/target|[\/]?body|[\/]?file|[\/]?header|[\/]?xliff|\?xml).*?>(?!\n)',
+        xml_add_newlines,
+        xml_str.decode('utf-8')
+    )
+    with open(tmp_path, "w") as f:
+        f.write(xml_str)
+
+    return {
+        "doc_ext": doc_ext,
+        "content_type": content_type,
+        "file_name": export_file_name
+    }
+
+
 def export_txt(text, text_translation):
     import re
-    pure_text = ""
+
     try:
-        text_meta = TextMeta.objects.get(text=text,
-                                     meta_type="text/plain")
-    except:
+        text_meta = TextMeta.objects.get(
+            text=text,
+            meta_type="text/plain"
+        )
+    except TextMeta.DoesNotExist:
         text_meta = False
+
     if not text_meta:
         pure_text = re.sub(r'<.*?>', "", text.body)
 
         entries = TextEntry.objects.filter(text=text, parent_entry=None)
         for entry in entries:
-            entry_translation = TextEntry.objects.filter(parent_entry=entry, translation=text_translation, is_approved=True)
+            entry_translation = TextEntry.objects.filter(
+                parent_entry=entry,
+                translation=text_translation,
+                is_approved=True
+            )
             if entry_translation:
-                pure_text = re.sub(utils.escape_brackets(entry.body), unescape_html(entry_translation[0].body), pure_text, 1)
+                pure_text = re.sub(
+                    utils.escape_brackets(entry.body),
+                    unescape_html(entry_translation[0].body),
+                    pure_text,
+                    1
+                )
     else:
-        pure_text = "".join(PreexportEntry.objects.filter(translation=text_translation).values_list("body", flat=True).order_by('id_in_text'))
+        pure_text = "".join(PreexportEntry.objects.filter(
+            translation=text_translation
+        ).values_list("body", flat=True).order_by('id_in_text'))
 
-        # print(pure_text)
-        # paragraphs_list = {}
-        # entries_metas = TextEntry.objects.filter(text=text).exclude(meta_data="").exclude(meta_data="{}")
-        # text_meta_data = json.loads(text_meta.meta_data)
-        #
-        # # получаем список параграфов
-        # for ent in entries_metas:
-        #     ent_data = json.loads(ent.meta_data)
-        #     if not ent_data['paragraph'] in paragraphs_list:
-        #         paragraphs_list[ent_data['paragraph']] = [ent]
-        #     else:
-        #         paragraphs_list[ent_data['paragraph']].append(ent)
-        #
-        # entries_translations = TextEntry.objects.filter(translation=text_translation, is_approved=True)
-        #
-        # for key, value in paragraphs_list.items():
-        #     for entry in value:
-        #         entry_translation = get_entry_translation(entry, entries_translations)
-        #
-        #         if entry_translation:
-        #             pure_text += unescape_html(entry_translation.body).rstrip('\n')
-        #         else:
-        #             pure_text += unescape_html(entry.body).rstrip('\n')
-        #
-        #         # если сплиттили по предложениям, то надо добавить пробелов между кусками, мало ли
-        #         if text_meta_data['split_mode'] == 'default':
-        #             pure_text += " "
-        #
-        #     pure_text += "\n"
-        #
-        #     # если следующего параграфа нет в метах энтриков, значит, он пустой, надо нарисовать пропуск
-        #     if not key + 1 in paragraphs_list:
-        #         pure_text += "\n"
-
-    # response = HttpResponse(pure_text, content_type='text/plain')
     doc_ext = "txt"
-    content_type='text/plain'
+    content_type = 'text/plain'
 
     export_file_name = '%s.txt' % utils.random_string(15)
     tmp_path = EXPORT_DIR + export_file_name

@@ -20,6 +20,7 @@ FORMATS = {
     "po": "text/x-gettext-translation",
     "pot": "text/x-gettext-translation-template",
     "mo": "application/x-gettext-translation",
+    "xlf": "application/x-xliff+xml",
 
     # Subtitles files
     "srt": "text/srt",
