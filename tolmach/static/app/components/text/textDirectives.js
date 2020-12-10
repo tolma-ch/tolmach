@@ -159,12 +159,12 @@
                 id: "="
             },
             link: function (scope, element, attr) {
-                var leftTag = angular.element('<a href="#" class="tag-left" i="' + scope.id + '">'),
-                    rightTag = angular.element('<a href="#" class="tag-right" i="' + scope.id + '">'),
+                var leftTag = angular.element('<a href="#" class="tag-left" i="g' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="g' + scope.id + '">'),
                     clickTrigger = function () {
-                        scope.$emit('tagClickBefore', scope.id, 'g');
-                        scope.$emit('tagClick', scope.id, 'g');
-                        scope.$emit('tagClickAfter', scope.id, 'g');
+                        scope.$emit('tagClickBefore', 'g' + scope.id, 'g');
+                        scope.$emit('tagClick', 'g' + scope.id, 'g');
+                        scope.$emit('tagClickAfter', 'g' + scope.id, 'g');
                     };
                 leftTag.on("click", clickTrigger);
                 rightTag.on("click", clickTrigger);
@@ -181,11 +181,11 @@
                 id: "="
             },
             link: function (scope, element, attr) {
-                var singleTag = angular.element('<a href = "#" class="tag-single" i="' + scope.id + '">'),
+                var singleTag = angular.element('<a href = "#" class="tag-single" i="x' + scope.id + '">'),
                     clickTrigger = function () {
-                        scope.$emit('tagClickBefore', scope.id, 'x');
-                        scope.$emit('tagClick', scope.id, 'x');
-                        scope.$emit('tagClickAfter', scope.id, 'x');
+                        scope.$emit('tagClickBefore', 'x' + scope.id, 'x');
+                        scope.$emit('tagClick', 'x' + scope.id, 'x');
+                        scope.$emit('tagClickAfter', 'x' + scope.id, 'x');
                     };
                 singleTag.on("click", clickTrigger);
                 element.append(singleTag);

@@ -116,6 +116,8 @@ def convert():
         data = parsers.from_po_mo(file_path, file_type, source_lang_code)
     elif file_type == formats.FORMATS['srt']:
         data = parsers.from_srt(file_path, source_lang_code)
+    elif file_type == formats.FORMATS['xlf']:
+        data = parsers.from_xlf(file_path)
     elif file_type == formats.FORMATS['ass']:
         data = parsers.from_ass(file_path, source_lang_code)
     else:
