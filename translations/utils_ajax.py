@@ -6,10 +6,6 @@ from translations.models import ProjectMember, TextEntry
 import json
 
 
-def entry_to_json(entry):
-    pass
-
-
 def translation_to_json(translation):
     return {
         'id': translation.id,
@@ -66,7 +62,7 @@ def user_to_json(user, project=None):
                                                user=user,
                                                )
             status = member.status
-        except:
+        except ProjectMember.DoesNotExist:
             if project.is_user_manager(user):
                 status = 10
             else:
@@ -81,7 +77,6 @@ def user_to_json(user, project=None):
 
 def text_to_json(text, text_translation):
     from entries.views import get_language_name
-    import re
 
     translation_counts, translation_progress = text_translation.get_progress()
     translation = {
@@ -91,14 +86,16 @@ def text_to_json(text, text_translation):
         'progress': translation_progress,
         'counts': translation_counts,
         'langLocal': get_language_name(text_translation.target_lang.code_region),
-        'glossaries': [int(x.id) for x in filter(None, text_translation.glossaries_list.all())] if text_translation.glossaries_list.all() else [],
-        'tmxes': [int(x.id) for x in filter(None, text_translation.tmdatabases_list.all())] if text_translation.tmdatabases_list.all() else [],
+        'glossaries': [int(x.id) for x in filter(
+            None, text_translation.glossaries_list.all()
+        )] if text_translation.glossaries_list.all() else [],
+        'tmxes': [int(x.id) for x in filter(
+            None, text_translation.tmdatabases_list.all()
+        )] if text_translation.tmdatabases_list.all() else [],
         }
 
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
-
-    clean_text = re.sub(r"<(/)?span.*?>", "", text.body)
 
     return {
         'id': text.id,
@@ -108,6 +105,20 @@ def text_to_json(text, text_translation):
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translation': translation,
-        'original_chars': len(clean_text),
-        'original_chars_without_spaces': len(clean_text.replace(" ", "").replace("\n", "")),
+        'original_chars': len(
+            "".join(
+                [x.body_without_tags() for x in TextEntry.objects.filter(
+                    text=text,
+                    parent_entry=None,
+                )]
+            )
+        ),
+        'original_chars_without_spaces': len(
+            "".join(
+                [x.body_without_tags().replace(" ", "").replace("\n", "") for x in TextEntry.objects.filter(
+                    text=text,
+                    parent_entry=None,
+                )]
+            )
+        ),
     }
