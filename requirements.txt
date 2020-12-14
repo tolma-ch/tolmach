@@ -14,6 +14,7 @@ social-auth-core==1.7.0
 uWSGI
 django-background-tasks==1.2.5
 asgi_redis
+django-redis==4.9
 diff_match_patch
 requests
 lxml
@@ -33,7 +34,7 @@ elastic-apm
 
 
 # chtec reqs
-gevent==1.2.2
+gevent==1.5.0
 greenlet
 srt
 polib

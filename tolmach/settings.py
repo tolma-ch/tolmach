@@ -330,14 +330,20 @@ ELASTIC_LIST = [
     {"host": "localhost", "port": 9200, "timeout": 30}
 ]
 
+redis_host = os.environ.get('REDIS_HOST', 'redis')
+
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f'redis://{redis_host}:6379/2',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
-redis_host = os.environ.get('REDIS_HOST', 'localhost')
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 # Channel layer definitions
 # http://channels.readthedocs.org/en/latest/deploying.html#setting-up-a-channel-backend
