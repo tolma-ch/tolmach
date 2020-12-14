@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from django.db.models import Q
 from django.db import models
-import math, json
+import math, json, re
 from simple_history.models import HistoricalRecords
 
 from channels import Group
@@ -370,26 +370,31 @@ class TextTranslation(models.Model):
 
             translated_entries = TextEntry.objects.filter(translation=self)
 
-            translated_chars = sum([len(re.sub(r"<hr [rl].*?>", "", x.body)) for x in translated_entries])
+            translated_chars = sum([len(x.body_without_tags()) for x in translated_entries])
             translated_chars_without_spaces = sum(
-                [len(re.sub(r"<hr [rl].*?>", "", x.body).replace(" ", "")) for x in translated_entries])
+                [len(x.body_without_tags().replace(" ", "")) for x in translated_entries])
 
             activity_by_user = {}
 
             for entry in translated_entries:
                 if entry.author in activity_by_user:
                     activity_by_user[entry.author]['fragments'] += 1
-                    activity_by_user[entry.author]['chars_with_spaces'] += len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                    activity_by_user[entry.author]['chars_with_spaces'] += len(entry.body_without_tags())
                     activity_by_user[entry.author]['chars_without_spaces'] += len(
-                        re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-                    activity_by_user[entry.author]['words_translated'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+                        entry.body_without_tags().replace(" ", "")
+                    )
+                    activity_by_user[entry.author]['words_translated'] += len(entry.body_without_tags().split(" "))
                     if entry.is_approved:
                         activity_by_user[entry.author]['fragments_approved'] += 1
                         activity_by_user[entry.author]['chars_with_spaces_approved'] += len(
-                            re.sub(r"<hr [rl].*?>", "", entry.body))
+                            entry.body_without_tags()
+                        )
                         activity_by_user[entry.author]['chars_without_spaces_approved'] += len(
-                            re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-                        activity_by_user[entry.author]['words_translated_approved'] += len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+                            entry.body_without_tags().replace(" ", "")
+                        )
+                        activity_by_user[entry.author]['words_translated_approved'] += len(
+                            entry.body_without_tags().split(" ")
+                        )
                 else:
                     activity_by_user[entry.author] = {}
                     activity_by_user[entry.author]['words_translated_approved'] = 0
@@ -397,30 +402,41 @@ class TextTranslation(models.Model):
                     activity_by_user[entry.author]['chars_without_spaces_approved'] = 0
                     activity_by_user[entry.author]['fragments_approved'] = 0
                     activity_by_user[entry.author]['fragments'] = 1
-                    activity_by_user[entry.author]['chars_with_spaces'] = len(re.sub(r"<hr [rl].*?>", "", entry.body))
+                    activity_by_user[entry.author]['chars_with_spaces'] = len(entry.body_without_tags())
                     activity_by_user[entry.author]['chars_without_spaces'] = len(
-                        re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-                    activity_by_user[entry.author]['words_translated'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
+                        entry.body_without_tags().replace(" ", ""))
+                    activity_by_user[entry.author]['words_translated'] = len(entry.body_without_tags().split(" "))
                     if entry.is_approved:
                         activity_by_user[entry.author]['fragments_approved'] = 1
                         activity_by_user[entry.author]['chars_with_spaces_approved'] = len(
-                            re.sub(r"<hr [rl].*?>", "", entry.body))
+                            entry.body_without_tags())
                         activity_by_user[entry.author]['chars_without_spaces_approved'] = len(
-                            re.sub(r"<hr [rl].*?>", "", entry.body).replace(" ", ""))
-                        activity_by_user[entry.author]['words_translated_approved'] = len(re.sub(r"<hr [rl].*?>", "", entry.body).split(" "))
-
+                            entry.body_without_tags().replace(" ", ""))
+                        activity_by_user[entry.author]['words_translated_approved'] = len(
+                            entry.body_without_tags().split(" ")
+                        )
 
             users_translated = []
             for key, value in activity_by_user.items():
                 user_dict = user_to_json(key, project=self.text.project)
                 user_dict["fragments_translated"] = value
 
-                user_translated_parents = [x.parent_entry.id for x in TextEntry.objects.filter(translation=self, is_approved=True, author=key)]
+                user_translated_parents = [x.parent_entry.id for x in TextEntry.objects.filter(
+                    translation=self,
+                    is_approved=True,
+                    author=key
+                )]
                 if len(user_translated_parents) > 0:
                     user_fragments = len(set(user_translated_parents))
-                    user_words = len(" ".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]).split(" "))
-                    user_chars_with_spaces = len("".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]))
-                    user_chars_without_spaces = len("".join([x.body for x in TextEntry.objects.filter(id__in=user_translated_parents)]).replace(" ", ""))
+                    user_words = len(" ".join(
+                        [x.body_without_tags() for x in TextEntry.objects.filter(id__in=user_translated_parents)]
+                    ).split(" "))
+                    user_chars_with_spaces = len("".join(
+                        [x.body_without_tags() for x in TextEntry.objects.filter(id__in=user_translated_parents)]
+                    ))
+                    user_chars_without_spaces = len("".join(
+                        [x.body_without_tags() for x in TextEntry.objects.filter(id__in=user_translated_parents)]
+                    ).replace(" ", ""))
                 else:
                     user_fragments = 0
                     user_words = 0
@@ -501,6 +517,9 @@ class TextEntry(models.Model):
         if not skip_last_modified:
             self.last_modified = timezone.now()
         super(TextEntry, self).save(*args, **kwargs)
+
+    def body_without_tags(self):
+        return re.sub(r'<((/)?tag|hr [rl]).*?>', '', self.body)
 
 
 class PreexportEntry(models.Model):
