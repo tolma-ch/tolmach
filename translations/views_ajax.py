@@ -1250,7 +1250,7 @@ def translate_entry_ajax(request):
             'idInText': entry.id_in_text,
             'translation': translation_to_json(entry_translation)
         }
-        translation_counts, translation_progress = entry_translation.translation.get_progress()
+        translation_counts, translation_progress = entry_translation.translation.get_progress(no_cache=True)
         entry_translation.translation.websocket_group.send({'text': json.dumps(
             {
                 'progress': {'translation_progress': translation_progress,
@@ -1305,7 +1305,7 @@ def remove_entry_ajax(request):
     }
     entry_translation.delete()
 
-    translation_counts, translation_progress = entry_translation.translation.get_progress()
+    translation_counts, translation_progress = entry_translation.translation.get_progress(no_cache=True)
     entry_translation.translation.websocket_group.send({'text': json.dumps(
         {
             'progress': {'translation_progress': translation_progress,
@@ -1345,7 +1345,7 @@ def disable_entry_ajax(request):
             # 'translation': translation_to_json(entry)
         }
         for text_translation in TextTranslation.objects.filter(text = entry.text):
-            translation_counts, translation_progress = text_translation.get_progress()
+            translation_counts, translation_progress = text_translation.get_progress(no_cache=True)
             text_translation.websocket_group.send({'text': json.dumps(
                 {
                     'progress': {'translation_progress': translation_progress,
@@ -1387,7 +1387,7 @@ def enable_entry_ajax(request):
             # 'translation': translation_to_json(entry)
         }
         for text_translation in TextTranslation.objects.filter(text = entry.text):
-            translation_counts, translation_progress = text_translation.get_progress()
+            translation_counts, translation_progress = text_translation.get_progress(no_cache=True)
             text_translation.websocket_group.send({'text': json.dumps(
                 {
                     'progress': {'translation_progress': translation_progress,
