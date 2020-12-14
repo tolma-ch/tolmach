@@ -102,6 +102,7 @@ def update_projects_progress():
                                                     parent_entry=None,
                                                     text__status=Text.READY,
                                                     is_disabled=True).count() * project_translations
+        logger.debug(f"Project id: {project.id}. Entries total: {entries_total}. Entries disabled: {entries_disabled}.")
         entries_enabled = entries_total - entries_disabled
         entries_translated = 0
         for trans in TextTranslation.objects.filter(project_translation__project=project, text__status=Text.READY):
@@ -110,7 +111,11 @@ def update_projects_progress():
             translated_ids_list = [i['parent_entry'] for i in translated_entries_list]
 
             entries_translated += TextEntry.objects.filter(id__in=translated_ids_list, is_disabled=False).count()
-        entries_approved = TextEntry.objects.filter(text__project=project, is_approved=True).count()
+        entries_approved = TextEntry.objects.filter(
+            text__project=project,
+            is_approved=True,
+            text__status=Text.READY
+        ).count()
 
         if not entries_total == 0 and entries_enabled > 0:
             percent_translated = int(math.ceil(entries_translated / (entries_enabled / 100.0))) if (
@@ -120,7 +125,7 @@ def update_projects_progress():
             project_progress = [percent_approved, percent_translated-percent_approved]
         else:
             project_progress = [0, 0]
-
+        logger.debug(f"Project id: {project.id}. Project progress - {json.dumps(project_progress)}")
         project.progress_data = json.dumps(project_progress)
         project.last_modified = project.last_modified
         project.save(skip_last_modified=True)
