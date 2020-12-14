@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from django.core.cache import cache
 from tolmach.models import UserMeta
 from translations.models import ProjectMember, TextEntry
 
@@ -97,6 +98,30 @@ def text_to_json(text, text_translation):
     text_options = json.loads(text.options)
     machine_trans_enabled = text_options.get('machine', True)
 
+    original_chars = cache.get(f"{text.id}_original_chars", None)
+    if not original_chars:
+        original_chars = len(
+            "".join(
+                [x.body_without_tags() for x in TextEntry.objects.filter(
+                    text=text,
+                    parent_entry=None,
+                )]
+            )
+        )
+        cache.set(f"{text.id}_original_chars", original_chars, 60*60*24*100)
+
+    original_chars_without_spaces = cache.get(f"{text.id}_original_chars_without_spaces", None)
+    if not original_chars_without_spaces:
+        original_chars_without_spaces = len(
+            "".join(
+                [x.body_without_tags().replace(" ", "").replace("\n", "") for x in TextEntry.objects.filter(
+                    text=text,
+                    parent_entry=None,
+                )]
+            )
+        )
+        cache.set(f"{text.id}_original_chars_without_spaces", original_chars_without_spaces, 60*60*24*100)
+
     return {
         'id': text.id,
         'title': text.title,
@@ -105,20 +130,6 @@ def text_to_json(text, text_translation):
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translation': translation,
-        'original_chars': len(
-            "".join(
-                [x.body_without_tags() for x in TextEntry.objects.filter(
-                    text=text,
-                    parent_entry=None,
-                )]
-            )
-        ),
-        'original_chars_without_spaces': len(
-            "".join(
-                [x.body_without_tags().replace(" ", "").replace("\n", "") for x in TextEntry.objects.filter(
-                    text=text,
-                    parent_entry=None,
-                )]
-            )
-        ),
+        'original_chars': original_chars,
+        'original_chars_without_spaces': original_chars_without_spaces,
     }

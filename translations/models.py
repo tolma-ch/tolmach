@@ -327,8 +327,7 @@ class TextTranslation(models.Model):
         entries_approved/(entries_total/100.0)
         """
         if detalization == "short":
-            # all_stats = cache.get("%d_translation_progress" % self.id)
-            all_stats = []
+            all_stats = cache.get(f"{self.id}_short_translation_progress", None)
 
             if all_stats:
                 entries_total = all_stats[0]
@@ -348,10 +347,10 @@ class TextTranslation(models.Model):
                 entries_translated = TextEntry.objects.filter(id__in=translated_ids_list, is_disabled=False).count()
 
                 entries_approved = TextEntry.objects.filter(text=self.text, translation=self, is_approved=True).count()
-                cache.set('%d_translation_progress' % self.id, [entries_total,
-                                                                entries_translated,
-                                                                entries_approved,
-                                                                entries_disabled], 60*10)
+                cache.set(f"{self.id}_short_translation_progress", [entries_total,
+                                                                    entries_translated,
+                                                                    entries_approved,
+                                                                    entries_disabled], 60*10)
 
             if not entries_total == 0 and not entries_enabled == 0:
                 percent_translated = int(math.ceil(entries_translated/( entries_enabled / 100.0)))\
