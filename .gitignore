@@ -12,6 +12,7 @@ venv
 
 /media/*
 /static/
+tolmach/static/dist/*
 static/node_modules
 local.tolma.ch.conf
 local.tolmach.ini
