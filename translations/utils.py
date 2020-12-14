@@ -593,13 +593,7 @@ def approve_entry(entry, request):
         entry.is_approved = True
         entry.save()
         update_entry_stats(request.user, "approve", entry.text.project, 1)
-        # counter, created = EntryStats.objects.get_or_create(user=request.user,
-        #                                                     date=timezone.now().strftime("%Y%m%d"),
-        #                                                     project=entry.text.project,
-        #                                                     action_type="approve")
-        #
-        # counter.action_count = counter.action_count + 1
-        # counter.save()
+
     ws_send_entry_status("approve", [entry], request.user.id)
 
     return entry
@@ -610,19 +604,14 @@ def disapprove_entry(entry, request):
         entry.is_approved = False
         entry.save()
         update_entry_stats(request.user, "disapprove", entry.text.project, 1)
-        # counter, created = EntryStats.objects.get_or_create(user=request.user,
-        #                                                     date=timezone.now().strftime("%Y%m%d"),
-        #                                                     project=entry.text.project,
-        #                                                     action_type="disapprove")
-        #
-        # counter.action_count = counter.action_count + 1
-        # counter.save()
+
     ws_send_entry_status("disapprove", [entry], request.user.id)
 
     return entry
 
+
 def ws_send_entry_status(action, entries, user_id):
-    translation_counts, translation_progress = entries[0].translation.get_progress()
+    translation_counts, translation_progress = entries[0].translation.get_progress(no_cache=True)
     entries[0].translation.websocket_group.send({'text': json.dumps(
         {
             'progress': {'translation_progress': translation_progress,
@@ -653,8 +642,9 @@ def ws_send_entry_status(action, entries, user_id):
 
     return True
 
+
 def update_entry_stats(user, action, project, count):
-    if not action in ["approve", "disapprove", "add", "remove"]:
+    if action not in ["approve", "disapprove", "add", "remove"]:
         return False
     counter, created = EntryStats.objects.get_or_create(user=user,
                                                         date=timezone.now().strftime("%Y%m%d"),

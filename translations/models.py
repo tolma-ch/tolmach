@@ -320,14 +320,17 @@ class TextTranslation(models.Model):
     def __str__(self):
         return "%s - %s" % (self.text, self.target_lang)
 
-    def get_progress(self, detalization="short"):
+    def get_progress(self, detalization="short", no_cache=False):
         """
         Get progress percentage of the current text and return Int from 0 to 100
 
         entries_approved/(entries_total/100.0)
         """
         if detalization == "short":
-            all_stats = cache.get(f"{self.id}_short_translation_progress", None)
+            if not no_cache:
+                all_stats = cache.get(f"{self.id}_short_translation_progress", None)
+            else:
+                all_stats = []
 
             if all_stats:
                 entries_total = all_stats[0]
