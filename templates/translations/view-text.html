@@ -173,7 +173,8 @@
                                             <a ng-init="entryUrl = baseHost + '/text/' + currentTextId + '/' + currentTargetLang + '/f/' + entry['previewCode']+'/'"
                                                title="{% trans "Copy fragment link" %}"
                                                ng-click-copy="{= entryUrl =}" ng-click-copy-message="{{ fragment_link }}"
-                                               style="font-size: 16px;">
+                                               style="font-size: 16px;"
+                                               ng-show="(!userIsManager && userMembershipStatus != 0)">
                                                 <i class="fa fa-fw fa-link"></i>
                                             </a>
                                             <div class="translation-variant__options"
@@ -182,6 +183,15 @@
                                                        href="#"
                                                        data-toggle="dropdown"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></a>
                                                     <ul class="dropdown-menu dropdown-menu-right dropdown-yellow dropdown-caret">
+                                                        <li>
+                                                            <a ng-init="entryUrl = baseHost + '/text/' + currentTextId + '/' + currentTargetLang + '/f/' + entry['previewCode']+'/'"
+                                                                title="{% trans "Copy fragment link" %}"
+                                                                ng-click-copy="{= entryUrl =}" ng-click-copy-message="{{ fragment_link }}">
+                                                                <i class="fa fa-fw fa-link"></i>
+                                                                &nbsp{% trans "Copy fragment link" %}
+                                                            </a>
+                                                        </li>
+                                                        <li class="divider"></li>
                                                         <li>
                                                             <a href=""
                                                                ng-click="disableEntry(entry)">
