@@ -548,7 +548,7 @@ def export_translation(request, text_id, target_lang, extra=None):
     the_page = json.loads(utils.chtec_request('http://127.0.0.1:8080/export', values))
 
     if not the_page['Error'] == 0:
-        return HttpResponse(json.dumps(the_page["error_message"]), content_type="application/json", status=the_page['Error'])
+        return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=the_page['Error'])
 
     content_type = the_page['content_type']
     doc_ext = the_page['file_ext']

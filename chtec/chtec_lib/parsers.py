@@ -5,6 +5,7 @@ from . import utils
 
 import os, subprocess, json
 from typing import List
+import logging
 
 LIBREOFFICE_BIN = os.environ.get("LIBREOFFICE_BIN", "/usr/bin/libreoffice --headless")
 
@@ -32,6 +33,29 @@ def to_x(target_path, file_path, output_format):
         return [True, target_path + new_filename]
     else:
         return [False, ""]
+
+
+def to_tmp_xliff(file_path):
+    print(f"To_tmp_xliff cwd: {os.path.dirname(os.path.abspath(__file__))}")
+    command = f"/opt/okapi/tikal.sh -x {file_path} -seg -sl en -tl ru"
+    print(command)
+    return_code = subprocess.call(command, shell=True)
+
+    if return_code == 0:
+        return [True, file_path + ".xlf"]
+    else:
+        return [False, ""]
+
+
+def from_tmp_xliff(file_path):
+    print(f"To_tmp_xliff cwd: {os.path.dirname(os.path.abspath(__file__))}")
+    command = f"/opt/okapi/tikal.sh -m {file_path}"
+    print(command)
+    return_code = subprocess.call(command, shell=True)
+    if return_code == 0:
+        return True
+    else:
+        return False
 
 
 def from_x(target_path, file_path, output_format):
@@ -542,7 +566,7 @@ def from_po_mo(file_path, file_type, source_lang='en'):
     return parsed_data
 
 
-def from_xlf(file_path):
+def from_xliff(file_path):
     from xml.dom import minidom
     import re
 
@@ -562,6 +586,24 @@ def from_xlf(file_path):
         )
 
         return attribs
+
+    def get_whitespaces(string: str) -> List:
+        all_whitespaces = []
+        current_whitespaces = ""
+        tag_opened = False
+        for idx, char in enumerate(string):
+            if char == "<" and string[idx:idx + 4] == "<mrk":
+                tag_opened = True
+            elif char == "<" and string[idx:idx + 5] == "</mrk":
+                tag_opened = False
+                all_whitespaces.append(current_whitespaces)
+                current_whitespaces = ""
+            elif not tag_opened and char.isspace():
+                current_whitespaces += char
+            if idx == len(string) - 1:
+                all_whitespaces.append(current_whitespaces)
+
+        return all_whitespaces
 
     parsed_data = {
         'marked_text': '',
@@ -607,7 +649,8 @@ def from_xlf(file_path):
                     'attributes': file_attribs_actual,
                     'header': file_header_actual.toxml() if file_header_actual else "",
                     'units_count': len(units),
-                    'non_translatable_units': []
+                    'non_translatable_units': {},
+                    'non_translatable_segments': {}
                 }
 
             unit_attribs = ["id", "approved", "translate", "reformat", "xml:space", "datatype", "ts",
@@ -617,36 +660,71 @@ def from_xlf(file_path):
                             "maxwidth", "minwidth", "charclass"]
             id_in_file = 1
             for unit in units:
-                unit_attribs_actual = get_attributes(unit, unit_attribs)
-                source_text = stringify_children_minidom(unit.getElementsByTagName('source')[0])
+                segmented_source = unit.getElementsByTagName('seg-source')
+                unit_segmented_spaces = []
 
-                # проверяем, есть ли в строке что-то кроме служебных тегов
-                if not re.sub(r"<(bx|ex|x|g).+?(\/)?>", "", source_text).strip() == "":
-                    # TODO если да, то проверять, есть ли вокруг сегмента строчные теги,
-                    # которые можно не показывать пользователю
-                    # if source_text.startswith() and source_text.endswith():
-                    #     pass
-                    # и если да, то отправляем на перевод
-                    parsed_data['entries'].append(
-                        {
-                            'num': local_num,
-                            'entry': source_text,
-                            'entry_meta': {
-                                'file': file_original_actual,
-                                'unit_attributes': unit_attribs_actual,
-                                'id_in_file': id_in_file
-                            },
-                            'new_lines_after': 1,
-                        }
-                    )
-                    local_num += 1
+                if segmented_source:
+                    segmented = True
+                    source = segmented_source[0].getElementsByTagName('mrk')
+                    segmented_source_text = stringify_children_minidom(segmented_source[0])
+                    unit_segmented_spaces = get_whitespaces(segmented_source_text)
                 else:
-                    # а если нет, то на свалку просто плейнтекстом, откуда потом заберём при экспорте
-                    parsed_data['text_meta']['files'][file_original_actual]['non_translatable_units'].append(
-                        {
-                            'entry': unit.toxml(),
-                            'id_in_file': id_in_file
-                        }
-                    )
-                id_in_file += 1
+                    segmented = False
+                    source = unit.getElementsByTagName('source')
+
+                unit_attribs_actual = get_attributes(unit, unit_attribs)
+                for segment in source:
+                    source_text = stringify_children_minidom(segment)
+                    print(source_text)
+
+                    # проверяем, есть ли в строке что-то кроме служебных тегов
+                    if not re.sub(r"<(bx|ex|x|g).+?(\/)?>", "", source_text).strip() == "":
+                        # TODO если да, то проверять, есть ли вокруг сегмента строчные теги,
+                        # которые можно не показывать пользователю
+                        # if source_text.startswith() and source_text.endswith():
+                        #     pass
+                        # и если да, то отправляем на перевод
+                        parsed_data['entries'].append(
+                            {
+                                'num': local_num,
+                                'entry': source_text,
+                                'entry_meta': {
+                                    'file': file_original_actual,
+                                    'unit_attributes': unit_attribs_actual,
+                                    'unit_segments_spaces': unit_segmented_spaces,
+                                    'is_segmented': segmented,
+                                    'id_in_file': id_in_file
+                                },
+                                'new_lines_after': 1,
+                            }
+                        )
+                        local_num += 1
+                    else:
+                        # а если нет, то на свалку просто плейнтекстом, откуда потом заберём при экспорте
+                        if not segmented:
+                            unit_source = unit.getElementsByTagName('source')[0]
+                            parsed_data['text_meta']['files'][file_original_actual]['non_translatable_units'][unit_attribs_actual['id']] = {
+                                    'entry': stringify_children_minidom(unit_source),
+                                    'is_segmented': segmented,
+                                    'id_in_file': id_in_file
+                                }
+                        else:
+                            if unit_attribs_actual['id'] in parsed_data['text_meta']['files'][file_original_actual]['non_translatable_segments']:
+                                parsed_data['text_meta']['files'][file_original_actual]['non_translatable_segments'][unit_attribs_actual['id']].append(
+                                    {
+                                        'entry': stringify_children_minidom(segment),
+                                        'is_segmented': segmented,
+                                        'id_in_file': id_in_file
+                                    }
+                                )
+                            else:
+                                parsed_data['text_meta']['files'][file_original_actual]['non_translatable_segments'][
+                                    unit_attribs_actual['id']] = [
+                                        {
+                                            'entry': stringify_children_minidom(segment),
+                                            'is_segmented': segmented,
+                                            'id_in_file': id_in_file
+                                        }
+                                    ]
+                    id_in_file += 1
         return parsed_data
