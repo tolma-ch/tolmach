@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json, os, sys
+import json, os, sys, re
 from typing import Tuple
 
 import django
@@ -19,6 +19,7 @@ import logging
 
 FILES_DIR = os.environ.get("FILES_DIR", "/var/www/tolmach_documents")
 EXPORT_DIR = FILES_DIR + "/exports/"
+
 
 def unescape_html(s, with_backslashes=False):
     s = s.replace("&lt;", "<")
@@ -40,7 +41,6 @@ def get_entry_translation(entry, trans_list):
     return entry_translation
 
 
-
 def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po=False):
     logging.info('%s - exporting document id="%s", target_lang="%s"',
                  export_id, text_id, target_lang)
@@ -57,7 +57,9 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
     }
     text = Text.objects.get(id=text_id)
     try:
-        text_translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code_tmx=target_lang))
+        text_translation = TextTranslation.objects.get(
+            text=text, target_lang=Language.objects.get(code_tmx=target_lang)
+        )
     except TextTranslation.DoesNotExist:
         RETURN_DATA['Error'] = 404
         RETURN_DATA['error_message'] = "Sorry, no such translations here"
@@ -91,9 +93,48 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
                     extension_to_return = extension
 
             logging.info("%s - converting from DOCX to %s", tmp_export_data['file_name'], extension_to_return.upper())
-            convert_status, new_filename = parsers.from_x(EXPORT_DIR, EXPORT_DIR + tmp_export_data['file_name'], extension_to_return)
+            convert_status, new_filename = parsers.from_x(
+                EXPORT_DIR,
+                EXPORT_DIR + tmp_export_data['file_name'],
+                extension_to_return
+            )
             if convert_status:
                 logging.info("%s - converted successfully - %s", export_id, new_filename)
+                export_data['file_name'] = new_filename
+                export_data['doc_ext'] = extension_to_return
+                export_data['content_type'] = tmp_export_data['content_type']
+            else:
+                RETURN_DATA['Error'] = 500
+                RETURN_DATA['error_message'] = "Sorry, something went wrong"
+
+                return RETURN_DATA
+        elif text_format == formats.FORMATS['pptx']:
+            from shutil import copyfile
+
+            tmp_export_data = export_xliff(text, text_translation)
+
+            tmp_xliff_filepath = f"{EXPORT_DIR}/{tmp_export_data['file_name']}"
+            original_document_filepath = f"{FILES_DIR}/{text.project.manager.id}/{text.project.id}/{text.document_name}"
+
+            # копируем в диру экспортов к временному xlf-файлу оригинальный документ и переименовываем для соответствия
+            # временному
+            copyfile(
+                original_document_filepath,
+                f"{EXPORT_DIR}/{re.sub(r'.xlf$', '.pptx', tmp_export_data['file_name'])}"
+            )
+            os.rename(
+                tmp_xliff_filepath,
+                re.sub(r".xlf$", ".pptx.xlf", tmp_xliff_filepath)
+            )
+            new_file_path = f"{EXPORT_DIR}/{tmp_export_data['file_name'].split('.')[:-1][0]}.pptx.xlf"
+            extension_to_return = "pptx"
+            logging.info(f"{tmp_export_data['file_name']} - converting from DOCX to {extension_to_return}")
+            convert_status = parsers.from_tmp_xliff(new_file_path)
+            # TODO: зачищать ненужные файлы после скачивания
+            # os.remove(f"{EXPORT_DIR}/{tmp_export_data['file_name'].split('.')[:-1][0]}.docx")
+            if convert_status:
+                new_filename = "".join([tmp_export_data['file_name'].split('.')[:-1][0], ".out.pptx"])
+                logging.info(f"{export_id} - converted successfully - {new_filename}")
                 export_data['file_name'] = new_filename
                 export_data['doc_ext'] = extension_to_return
                 export_data['content_type'] = tmp_export_data['content_type']
@@ -117,6 +158,12 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
             RETURN_DATA['error_message'] = "Sorry, such format is not supported right now"
 
             return RETURN_DATA
+
+    error_num = export_data.get('Error', 0)
+    if error_num > 0:
+        RETURN_DATA['Error'] = error_num
+        RETURN_DATA['error_message'] = export_data.get('error_message', '')
+        return RETURN_DATA
 
     RETURN_DATA['file_name'] = export_data['file_name']
     RETURN_DATA['file_ext'] = export_data['doc_ext']
@@ -193,7 +240,13 @@ def export_docx(text, text_translation):
     file_dir = '/%s/%d/%d' % (FILES_DIR,
                               int(manager.id),
                               int(project.id))
-    z = ZipFile("%s/%s" % (file_dir, text.document_name), 'r')
+    try:
+        z = ZipFile("%s/%s" % (file_dir, text.document_name), 'r')
+    except FileNotFoundError:
+        return {
+            'Error': 404,
+            'error_message': 'Original file not found',
+        }
     doc = z.open('word/document.xml')
     doc_str = doc.read()
 
@@ -455,8 +508,8 @@ def export_xlsx(text, text_translation):
 
     project = text.project
     file_path = '/%s/%d/%d/%s' % (FILES_DIR,
-                              int(project.manager.id),
-                              int(project.id),
+                                  int(project.manager.id),
+                                  int(project.id),
                                   text.document_name)
 
     doc_ext = "xlsx"
@@ -472,7 +525,11 @@ def export_xlsx(text, text_translation):
         entry_translation = get_entry_translation(entry, entries_translations)
 
         if entry_translation:
-            entry_translation.body = re.sub('[%s]' % "".join([chr(x) for x in range(0,32)]), "", entry_translation.body)
+            entry_translation.body = re.sub(
+                '[%s]' % "".join([chr(x) for x in range(0, 32)]),
+                "",
+                entry_translation.body
+            )
             entry_translation_text = unescape_html(entry_translation.body)
 
             ws = wb[entry_meta["sheet"]]
@@ -495,19 +552,15 @@ def export_po(text, text_translation):
 
     doc_format = text.document_format
 
-    # try:
-    #     trans_meta = TextTranslationMeta.objects.get(translation=text_translation, meta_type="gettext_metadata")
-    #     meta_data = trans_meta.meta_data
-    # except TextTranslationMeta.DoesNotExist:
     meta_data = {"PO-Revision-Date": "YEAR-MO-DA HO:MI+ZONE",
-             "Content-Transfer-Encoding": "8bit",
-             "Plural-Forms": text_translation.target_lang.plural_forms,
-             "Project-Id-Version": "PACKAGE VERSION",
-             "Report-Msgid-Bugs-To": "",
-             "Last-Translator": "FULL NAME <EMAIL@ADDRESS>",
-             "Language-Team": "LANGUAGE <LL@li.org>",
-             "Content-Type": "text/plain; charset=UTF-8",
-             "MIME-Version": "1.0"}
+                 "Content-Transfer-Encoding": "8bit",
+                 "Plural-Forms": text_translation.target_lang.plural_forms,
+                 "Project-Id-Version": "PACKAGE VERSION",
+                 "Report-Msgid-Bugs-To": "",
+                 "Last-Translator": "FULL NAME <EMAIL@ADDRESS>",
+                 "Language-Team": "LANGUAGE <LL@li.org>",
+                 "Content-Type": "text/plain; charset=UTF-8",
+                 "MIME-Version": "1.0"}
 
     if doc_format == "application/x-gettext-translation":
         po = polib.MOFile()
@@ -550,11 +603,10 @@ def export_po(text, text_translation):
                 occurrences=entry_meta.get('occurrences', ''),
                 tcomment=entry_meta.get('tcomment', ''),
                 comment=entry_meta.get('comment', ''),
-                msgid_plural = unescape_html(entry_meta.get('msgid_plural', ''), with_backslashes=True),
-                msgstr_plural = str_plural,
+                msgid_plural=unescape_html(entry_meta.get('msgid_plural', ''), with_backslashes=True),
+                msgstr_plural=str_plural,
             )
         po.append(ent)
-
 
     export_file_name = '%s.%s' % (utils.random_string(15), doc_ext)
     tmp_path = EXPORT_DIR + export_file_name
@@ -568,7 +620,7 @@ def export_po(text, text_translation):
     }
 
 
-def export_ass(text, text_translation):
+def export_ass(text: Text, text_translation: TextTranslation) -> dict:
     from ext_libs import ass
     import datetime
 
@@ -622,7 +674,7 @@ def export_ass(text, text_translation):
     }
 
 
-def export_srt(text, text_translation):
+def export_srt(text: Text, text_translation: TextTranslation) -> dict:
     import srt
     import datetime
 
@@ -632,11 +684,12 @@ def export_srt(text, text_translation):
     entries_translations = TextEntry.objects.filter(translation=text_translation, is_approved=True)
     for entry in entries:
         entry_meta = json.loads(entry.meta_data)
-        sub_object = srt.Subtitle(index=entry_meta['index'],
-                                  start=datetime.timedelta(seconds=entry_meta['start']),
-                                  end=datetime.timedelta(seconds=entry_meta['end']),
-                                  content=str(''),
-                                  proprietary=entry_meta['proprietary'],
+        sub_object = srt.Subtitle(
+            index=entry_meta['index'],
+            start=datetime.timedelta(seconds=entry_meta['start']),
+            end=datetime.timedelta(seconds=entry_meta['end']),
+            content=str(''),
+            proprietary=entry_meta['proprietary'],
         )
         entry_translation = get_entry_translation(entry, entries_translations)
         if entry_translation:
@@ -662,7 +715,7 @@ def export_srt(text, text_translation):
     }
 
 
-def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
+def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
     from xml.dom import minidom
     import re
 
@@ -693,6 +746,7 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
 
         # TODO: обработать все варианты тегов по спеке
         # сначала заменяем все закрывающие теги, т.к. там не требуется вычленять айдишник
+        # i="(g[0-9]+)" group(1)
         string = re.sub(r'<hr r="" i="g[0-9]+?">', '</g>', string)
 
         # потом непарные
@@ -742,6 +796,9 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
                     "target": entry_translation_text,
                     "unit_attributes": entry_meta['unit_attributes'],
                     "id_in_file": entry_meta['id_in_file'],
+                    "unit_segments_spaces": entry_meta['unit_segments_spaces'],
+                    "unit_id": entry_meta['unit_attributes']['id'],
+                    "is_segmented": entry_meta['is_segmented'],
                     "is_translatable": True,
                 }
             )
@@ -751,6 +808,9 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
                 "target": entry_translation_text,
                 "unit_attributes": entry_meta['unit_attributes'],
                 "id_in_file": entry_meta["id_in_file"],
+                "unit_segments_spaces": entry_meta['unit_segments_spaces'],
+                "unit_id": entry_meta['unit_attributes']['id'],
+                "is_segmented": entry_meta['is_segmented'],
                 "is_translatable": True,
             }]
 
@@ -775,20 +835,94 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
 
     for file, keys in files.items():
         # Выбираем все юниты указанного файла. Если таковых нет, просто пустой список
-        file_units = trans_units.get(file, [])
+        file_segments = trans_units.get(file, [])
         non_translatable_units = keys['non_translatable_units']
+        non_translatable_segments = keys['non_translatable_segments']
 
         # берём все исключённые при парсинге юниты и примешиваем в общий список,
         # который ранее составили из энтриков
-        for nt_unit in non_translatable_units:
-            file_units.append({
-                "source": nt_unit["entry"],
-                "id_in_file": nt_unit["id_in_file"],
+        for key, value in non_translatable_units.items():
+            file_segments.append({
+                "source": value["entry"],
+                "target": value["entry"],
+                "id_in_file": value["id_in_file"],
+                "unit_id": key,
+                "is_segmented": value['is_segmented'],
                 "is_translatable": False
             })
 
-        # сортируем все юниты по айдишнику, чтобы восстановить порядок оригинального документа
-        file_units = sorted(file_units, key=lambda k: k['id_in_file'])
+        for unit_name, segments in non_translatable_segments.items():
+            for seg in segments:
+                file_segments.append({
+                    "source": seg['entry'],
+                    "id_in_file": seg['id_in_file'],
+                    "unit_id": unit_name,
+                    "is_segmented": True,
+                    "is_translatable": False,
+                })
+
+        # сортируем все сегменты по айдишнику, чтобы восстановить порядок оригинального документа
+        file_segments = sorted(file_segments, key=lambda k: k['id_in_file'])
+        file_units = {}
+        seg_counts = {}
+
+        # находим одинарные юниты и множественные
+        for seg in file_segments:
+            if seg['unit_id'] in seg_counts:
+                seg_counts[seg['unit_id']] += 1
+            else:
+                seg_counts[seg['unit_id']] = 1
+
+        def get_segments_by_unit_id(unit_id, single=True):
+            if single:
+                for i in file_segments:
+                    if i["unit_id"] == unit_id:
+                        return i
+            else:
+                list_to_return = []
+                for i in file_segments:
+                    if i["unit_id"] == unit_id:
+                        list_to_return.append(i)
+                return list_to_return
+
+        for unit_id, num in seg_counts.items():
+            if num == 1:
+                new_unit = get_segments_by_unit_id(unit_id, single=True)
+                file_units[unit_id] = {
+                    "id_in_file": new_unit["id_in_file"],
+                    # если пробелов нет, то можно для унификации указать пустые строки
+                    "spaces": new_unit.get("unit_segments_spaces", ["", ""]),
+                    "sources": [
+                        new_unit["source"]
+                    ],
+                    "targets": [
+                        new_unit["target"]
+                    ],
+                    "is_segmented": new_unit["is_segmented"],
+                }
+                if not file_units[unit_id].get("unit_attributes", []):
+                    if "unit_attributes" in new_unit:
+                        file_units[unit_id]["unit_attributes"] = new_unit["unit_attributes"]
+                    else:
+                        file_units[unit_id]["unit_attributes"] = {'id': unit_id}
+            else:
+                new_unit = get_segments_by_unit_id(unit_id, single=False)
+                file_units[unit_id] = {
+                    "id_in_file": new_unit[0]["id_in_file"],
+                    "spaces": new_unit[0]["unit_segments_spaces"],
+                    "sources": [],
+                    "targets": [],
+                    "is_segmented": new_unit[0]["is_segmented"],
+                }
+                for seg in new_unit:
+                    if not file_units[unit_id].get("unit_attributes", []):
+                        file_units[unit_id]["unit_attributes"] = seg["unit_attributes"]
+                    if seg["is_translatable"]:
+                        file_units[unit_id]["sources"].append(seg["source"])
+                        file_units[unit_id]["targets"].append(seg["target"])
+                    else:
+                        file_units[unit_id]["sources"].append(seg["source"])
+                        file_units[unit_id]["targets"].append(seg["source"])
 
         fl = doc.createElement('file')
         fl.setAttribute('original', file)
@@ -801,39 +935,54 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
         fl.appendChild(body)
         xliff.appendChild(fl)
 
-        for unit_instance in file_units:
-            if unit_instance["is_translatable"]:
-                unit = doc.createElement('trans-unit')
-                for attr, value in unit_instance['unit_attributes'].items():
-                    unit.setAttribute(attr, value)
+        target_lang = keys['attributes'].get('target-language', None)
+        source_lang = keys['attributes'].get('source-language', None)
 
-                target_lang = keys['attributes'].get('target-language', None)
-                if target_lang:
-                    target_lang_string = f'xml:lang="{target_lang}"'
+        for unit_id, unit in file_units.items():
+            new_unit = doc.createElement('trans-unit')
+            for attr, value in unit.get('unit_attributes', {}).items():
+                new_unit.setAttribute(attr, value)
+            body.appendChild(new_unit)
+            new_seg_source = doc.createElement("seg-source")
+            new_target = doc.createElement("target")
+            if target_lang:
+                new_target.setAttribute("xml:lang", target_lang)
+
+            source_string_full = ""
+            source_mid_num = 0
+            target_mid_num = 0
+            # TODO: убрать двоение нормальным мержем списков - https://stackoverflow.com/a/3682033/1044605
+            for idx, element in enumerate(sum(zip(unit["spaces"], unit["sources"]+[0]), ())[:-1]):
+                source_string_full += element
+                if (idx % 2) != 0:
+                    el = minidom.parseString(
+                        f"""<mrk mid="{source_mid_num}" mtype="seg">{element}</mrk>"""
+                    ).documentElement
+                    source_mid_num += 1
                 else:
-                    target_lang_string = ''
+                    el = doc.createTextNode(element)
+                new_seg_source.appendChild(el)
 
-                source_lang = keys['attributes'].get('source-language', None)
-                if source_lang:
-                    source_lang_string = f'xml:lang="{source_lang}"'
+            for idx, element in enumerate(sum(zip(unit["spaces"], unit["targets"]+[0]), ())[:-1]):
+                if (idx % 2) != 0:
+                    el = minidom.parseString(
+                        f"""<mrk mid="{target_mid_num}" mtype="seg">{element}</mrk>"""
+                    ).documentElement
+                    target_mid_num += 1
                 else:
-                    source_lang_string = ''
+                    el = doc.createTextNode(element)
+                new_target.appendChild(el)
 
-                source = minidom.parseString(
-                    f"""<source {source_lang_string}>{unit_instance['source']}</source>"""
-                ).documentElement
-                target = minidom.parseString(
-                    f"""<target {target_lang_string}>{unit_instance['target']}</target>"""
-                ).documentElement
+            source_string_clean = re.sub(r'</?mrk.*?>', "", source_string_full)
+            source_string_element = minidom.parseString(
+                f"""<source xml:lang="{source_lang}">{source_string_clean}</source>"""
+            ).documentElement
 
-                unit.appendChild(source)
-                unit.appendChild(target)
-                body.appendChild(unit)
-            else:
-                nt_unit = minidom.parseString(unit_instance['source']).documentElement
-                body.appendChild(nt_unit)
+            new_unit.appendChild(source_string_element)
+            new_unit.appendChild(new_seg_source)
+            new_unit.appendChild(new_target)
 
-    content_type = "text/srt"
+    content_type = "application/x-xliff+xml"
     doc_ext = "xlf"
 
     export_file_name = '%s.xlf' % utils.random_string(15)
@@ -847,7 +996,7 @@ def export_xlf(text: Text, text_translation: TextTranslation) -> dict:
         return f"{matchobj.group(0)}\n"
 
     xml_str = re.sub(
-        r'<([\/]?trans-unit|\/source|\/target|[\/]?body|[\/]?file|[\/]?header|[\/]?xliff|\?xml).*?>(?!\n)',
+        r'<([/]?trans-unit|/source|/seg-source|/target|[/]?body|[/]?file|[/]?header|[/]?xliff|\?xml).*?>(?!\n)',
         xml_add_newlines,
         xml_str.decode('utf-8')
     )

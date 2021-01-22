@@ -31,7 +31,7 @@ FORMATS = {
     "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
     # Presentations
-    # "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     # "ppt": "application/vnd.ms-powerpoint",
 
     # Static docs
