@@ -112,7 +112,9 @@ def convert():
             data = parsers.from_docx(new_filename, source_lang_code, split_mode=split_mode)
     elif file_type == formats.FORMATS['xlsx']:
         data = parsers.from_xlsx(file_path, custom_parse)
-    elif file_type == formats.FORMATS['pptx']:
+    elif file_type in [formats.FORMATS['pptx'],
+                       formats.FORMATS['html'],
+                       ]:
         logging.info("%s - converting to XLIFF", parse_id)
         convert_status, new_filename = parsers.to_tmp_xliff(file_path)
         if convert_status:

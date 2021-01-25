@@ -108,32 +108,33 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
                 RETURN_DATA['error_message'] = "Sorry, something went wrong"
 
                 return RETURN_DATA
-        elif text_format == formats.FORMATS['pptx']:
-            from shutil import copyfile
-
+        elif text_format in [formats.FORMATS['pptx'],
+                             formats.FORMATS['html'],
+                             ]:
             tmp_export_data = export_xliff(text, text_translation)
-
-            tmp_xliff_filepath = f"{EXPORT_DIR}/{tmp_export_data['file_name']}"
-            original_document_filepath = f"{FILES_DIR}/{text.project.manager.id}/{text.project.id}/{text.document_name}"
-
-            # копируем в диру экспортов к временному xlf-файлу оригинальный документ и переименовываем для соответствия
-            # временному
-            copyfile(
-                original_document_filepath,
-                f"{EXPORT_DIR}/{re.sub(r'.xlf$', '.pptx', tmp_export_data['file_name'])}"
-            )
+            # 1) взять оригинальный файл
+            # 2) положить с ним рядом темповый xlf с таким же именем
+            project_documents_dir = f"{FILES_DIR}/{text.project.manager.id}/{text.project.id}"
+            tmp_xlf_target_file_path = f"{project_documents_dir}/{text.document_name}.xlf"
             os.rename(
-                tmp_xliff_filepath,
-                re.sub(r".xlf$", ".pptx.xlf", tmp_xliff_filepath)
+                f"{EXPORT_DIR}/{tmp_export_data['file_name']}",
+                tmp_xlf_target_file_path
             )
-            new_file_path = f"{EXPORT_DIR}/{tmp_export_data['file_name'].split('.')[:-1][0]}.pptx.xlf"
-            extension_to_return = "pptx"
+
+            # 3) конвертнуть
+            extension_to_return = text.document_name.split(".")[-1]
             logging.info(f"{tmp_export_data['file_name']} - converting from DOCX to {extension_to_return}")
-            convert_status = parsers.from_tmp_xliff(new_file_path)
-            # TODO: зачищать ненужные файлы после скачивания
-            # os.remove(f"{EXPORT_DIR}/{tmp_export_data['file_name'].split('.')[:-1][0]}.docx")
+            convert_status = parsers.from_tmp_xliff(tmp_xlf_target_file_path)
+
+            # 4) удалить темповый .xlf
+            os.remove(tmp_xlf_target_file_path)
             if convert_status:
-                new_filename = "".join([tmp_export_data['file_name'].split('.')[:-1][0], ".out.pptx"])
+                # 5) получить готовый .out.pptx и отдать пользователю
+                new_filename = re.sub(r".%s$" % extension_to_return, ".out.%s" % extension_to_return, text.document_name)
+                os.rename(
+                    f"{project_documents_dir}/{new_filename}",
+                    f"{EXPORT_DIR}/{new_filename}"
+                )
                 logging.info(f"{export_id} - converted successfully - {new_filename}")
                 export_data['file_name'] = new_filename
                 export_data['doc_ext'] = extension_to_return
@@ -896,7 +897,7 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
                         new_unit["source"]
                     ],
                     "targets": [
-                        new_unit["target"]
+                        new_unit.get("target", None)
                     ],
                     "is_segmented": new_unit["is_segmented"],
                 }

@@ -21,6 +21,7 @@ from translations.utils_ajax import translation_to_json
 
 FORMATS = {
     "txt": "text/plain",
+    "html": "text/html",
     # Docs
     "doc": "application/msword",
     "odt": "application/vnd.oasis.opendocument.text",
