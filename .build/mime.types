@@ -1,0 +1,27 @@
+text/plain                                                                      txt
+text/html                                                                       html
+# Docs
+application/msword                                                              doc
+application/vnd.oasis.opendocument.text                                         odt
+application/vnd.openxmlformats-officedocument.wordprocessingml.document         docx
+application/rtf                                                                 rtf
+
+# Tables
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet               xlsx
+
+# Presentations
+application/vnd.openxmlformats-officedocument.presentationml.presentation       pptx
+application/vnd.ms-powerpoint                                                   ppt
+
+# Static docs
+application/pdf                                                                 pdf
+
+# Localization files
+text/x-gettext-translation                                                      po
+text/x-gettext-translation-template                                             pot
+application/x-gettext-translation                                               mo
+application/x-xliff+xml                                                         xlf
+
+# Subtitles files
+text/srt                                                                        srt
+text/ass                                                                        ass
