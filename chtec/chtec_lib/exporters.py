@@ -758,6 +758,15 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
 
         return string
 
+    def pre_xliff_escape(string: str) -> str:
+        string = string.replace("&", "&amp;")
+        string = string.replace("<", "&lt;")
+
+        def repl_left_tag_bracket(matchobj):
+            return matchobj.group(0).replace(matchobj.group(1), "<")
+
+        return re.sub(r"(&lt;)(/)?(g|bpt|ept|ph|it|sub|ex|bx|x)(\s|>)?", repl_left_tag_bracket, string)
+
     doc = minidom.Document()
 
     # создаём корневой тег xliff
@@ -793,8 +802,8 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
         if entry_meta['file'] in trans_units:
             trans_units[entry_meta['file']].append(
                 {
-                    "source": entry.body,
-                    "target": entry_translation_text,
+                    "source": pre_xliff_escape(entry.body),
+                    "target": pre_xliff_escape(entry_translation_text),
                     "unit_attributes": entry_meta['unit_attributes'],
                     "id_in_file": entry_meta['id_in_file'],
                     "unit_segments_spaces": entry_meta['unit_segments_spaces'],
@@ -805,8 +814,8 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
             )
         else:
             trans_units[entry_meta['file']] = [{
-                "source": entry.body,
-                "target": entry_translation_text,
+                "source": pre_xliff_escape(entry.body),
+                "target": pre_xliff_escape(entry_translation_text),
                 "unit_attributes": entry_meta['unit_attributes'],
                 "id_in_file": entry_meta["id_in_file"],
                 "unit_segments_spaces": entry_meta['unit_segments_spaces'],
@@ -889,6 +898,10 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
         for unit_id, num in seg_counts.items():
             if num == 1:
                 new_unit = get_segments_by_unit_id(unit_id, single=True)
+                if not new_unit.get("target", ""):
+                    targets = new_unit["source"]
+                else:
+                    targets = new_unit["target"]
                 file_units[unit_id] = {
                     "id_in_file": new_unit["id_in_file"],
                     # если пробелов нет, то можно для унификации указать пустые строки
@@ -897,7 +910,7 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
                         new_unit["source"]
                     ],
                     "targets": [
-                        new_unit.get("target", None)
+                        targets
                     ],
                     "is_segmented": new_unit["is_segmented"],
                 }
@@ -952,10 +965,11 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
             source_string_full = ""
             source_mid_num = 0
             target_mid_num = 0
-            # TODO: убрать двоение нормальным мержем списков - https://stackoverflow.com/a/3682033/1044605
+            # https://stackoverflow.com/a/3682033/1044605
             for idx, element in enumerate(sum(zip(unit["spaces"], unit["sources"]+[0]), ())[:-1]):
                 source_string_full += element
                 if (idx % 2) != 0:
+                    print(f"""<mrk mid="{source_mid_num}" mtype="seg">{element}</mrk>""")
                     el = minidom.parseString(
                         f"""<mrk mid="{source_mid_num}" mtype="seg">{element}</mrk>"""
                     ).documentElement
