@@ -659,7 +659,7 @@ def from_xliff(file_path):
                             "extype", "maxbytes", "minbytes", "size-unit", "maxheight", "minheight",
                             "maxwidth", "minwidth", "charclass"]
             id_in_file = 1
-            for unit in units:
+            for unit_id, unit in enumerate(units):
                 segmented_source = unit.getElementsByTagName('seg-source')
                 unit_segmented_spaces = []
 
@@ -673,10 +673,26 @@ def from_xliff(file_path):
                     source = unit.getElementsByTagName('source')
 
                 unit_attribs_actual = get_attributes(unit, unit_attribs)
-                for idx, segment in enumerate(source, 1):
+                for segment_id, segment in enumerate(source, 1):
                     source_text = stringify_children_minidom(segment)
 
-                    new_lines_after = 1 if idx == len(source) else 0
+                    # расставляем корректные переносы абзацев, чтобы превьюха красиво работала в толмаче
+                    if segment_id == len(source):
+                        if len(source) > 1:
+                            new_lines_after = 2
+                        else:
+                            # если следующий юнит многосегментный
+                            try:
+                                # если он вообще есть этот следующий
+                                next_unit_length = len(units[unit_id+1].getElementsByTagName('seg-source')[0].getElementsByTagName('mrk'))
+                                new_lines_after = 2 if next_unit_length > 1 else 1
+                                # на будущее - следующий юнит может состоять только из служебных тегов
+                                # и поэтому не будет попадать в итоговый текст в толмаче, но перенос будет одинарный,
+                                # даже если после "служебного" юнита идёт полноценный сегментированный
+                            except IndexError:
+                                new_lines_after = 1
+                    else:
+                        new_lines_after = 0
 
                     # проверяем, есть ли в строке что-то кроме служебных тегов
                     if not re.sub(r"</?(g|bpt|ept|ph|it|ex|bx|x).*?/?>", "", source_text).strip() == "":
