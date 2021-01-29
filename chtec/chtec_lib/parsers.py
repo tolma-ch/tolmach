@@ -673,12 +673,13 @@ def from_xliff(file_path):
                     source = unit.getElementsByTagName('source')
 
                 unit_attribs_actual = get_attributes(unit, unit_attribs)
-                for segment in source:
+                for idx, segment in enumerate(source, 1):
                     source_text = stringify_children_minidom(segment)
-                    print(source_text)
+
+                    new_lines_after = 1 if idx == len(source) else 0
 
                     # проверяем, есть ли в строке что-то кроме служебных тегов
-                    if not re.sub(r"<(bx|ex|x|g).+?(\/)?>", "", source_text).strip() == "":
+                    if not re.sub(r"</?(g|bpt|ept|ph|it|ex|bx|x).*?/?>", "", source_text).strip() == "":
                         # TODO если да, то проверять, есть ли вокруг сегмента строчные теги,
                         # которые можно не показывать пользователю
                         # if source_text.startswith() and source_text.endswith():
@@ -695,7 +696,7 @@ def from_xliff(file_path):
                                     'is_segmented': segmented,
                                     'id_in_file': id_in_file
                                 },
-                                'new_lines_after': 1,
+                                'new_lines_after': new_lines_after,
                             }
                         )
                         local_num += 1
