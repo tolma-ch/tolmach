@@ -174,6 +174,144 @@
             }
         };
     }]);
+    module.directive('bpt', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="bpt' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="bpt' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'bpt' + scope.id, 'bpt');
+                        scope.$emit('tagClick', 'bpt' + scope.id, 'bpt');
+                        scope.$emit('tagClickAfter', 'bpt' + scope.id, 'bpt');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('ept', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="ept' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="ept' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'ept' + scope.id, 'ept');
+                        scope.$emit('tagClick', 'ept' + scope.id, 'ept');
+                        scope.$emit('tagClickAfter', 'ept' + scope.id, 'ept');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('it', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="it' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="it' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'it' + scope.id, 'it');
+                        scope.$emit('tagClick', 'it' + scope.id, 'it');
+                        scope.$emit('tagClickAfter', 'it' + scope.id, 'it');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('ph', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="ph' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="ph' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'ph' + scope.id, 'ph');
+                        scope.$emit('tagClick', 'ph' + scope.id, 'ph');
+                        scope.$emit('tagClickAfter', 'ph' + scope.id, 'ph');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('mrk', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="mrk' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="mrk' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'mrk' + scope.id, 'mrk');
+                        scope.$emit('tagClick', 'mrk' + scope.id, 'mrk');
+                        scope.$emit('tagClickAfter', 'mrk' + scope.id, 'mrk');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
+    module.directive('sub', [function () {
+        // дублируем парные теги для прямой обработки тегов из XLIFF'ов
+        // PS. дублируем, да не совсем, обрати внимание, что i превратился в id в параметрах
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var leftTag = angular.element('<a href="#" class="tag-left" i="sub' + scope.id + '">'),
+                    rightTag = angular.element('<a href="#" class="tag-right" i="sub' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'sub' + scope.id, 'sub');
+                        scope.$emit('tagClick', 'sub' + scope.id, 'sub');
+                        scope.$emit('tagClickAfter', 'sub' + scope.id, 'sub');
+                    };
+                leftTag.on("click", clickTrigger);
+                rightTag.on("click", clickTrigger);
+                element.prepend(leftTag);
+
+                element.append(rightTag);
+            }
+        };
+    }]);
     module.directive('x', [function () {
         // и одинарных тоже
         return {
@@ -186,6 +324,42 @@
                         scope.$emit('tagClickBefore', 'x' + scope.id, 'x');
                         scope.$emit('tagClick', 'x' + scope.id, 'x');
                         scope.$emit('tagClickAfter', 'x' + scope.id, 'x');
+                    };
+                singleTag.on("click", clickTrigger);
+                element.append(singleTag);
+            }
+        };
+    }]);
+    module.directive('ex', [function () {
+        // и одинарных тоже
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var singleTag = angular.element('<a href = "#" class="tag-single" i="ex' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'ex' + scope.id, 'ex');
+                        scope.$emit('tagClick', 'ex' + scope.id, 'ex');
+                        scope.$emit('tagClickAfter', 'ex' + scope.id, 'ex');
+                    };
+                singleTag.on("click", clickTrigger);
+                element.append(singleTag);
+            }
+        };
+    }]);
+    module.directive('bx', [function () {
+        // и одинарных тоже
+        return {
+            scope: {
+                id: "="
+            },
+            link: function (scope, element, attr) {
+                var singleTag = angular.element('<a href = "#" class="tag-single" i="bx' + scope.id + '">'),
+                    clickTrigger = function () {
+                        scope.$emit('tagClickBefore', 'bx' + scope.id, 'bx');
+                        scope.$emit('tagClick', 'bx' + scope.id, 'bx');
+                        scope.$emit('tagClickAfter', 'bx' + scope.id, 'bx');
                     };
                 singleTag.on("click", clickTrigger);
                 element.append(singleTag);

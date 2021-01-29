@@ -721,40 +721,31 @@ def export_xliff(text: Text, text_translation: TextTranslation) -> dict:
     import re
 
     def replace_tags(string: str) -> str:
-        def get_tag_name_and_id(match: str) -> Tuple[str, int]:
-            # Получаем строку вида '<hr l="" i="g1">',
-            # делим по двойной кавычке, и берём четвёртый элемент - 'g1'
-            index_string = match.split('"')[3]
-
-            # дальше из полученной строки сначала выбираем все буквы - g
-            tag_name = ''.join(filter(str.isalpha, index_string))
-
-            # а потом все цифры - 1
-            tag_index = int(''.join(filter(str.isdigit, index_string)))
-
-            # возвращаем строку 'g' и число 1
-            return tag_name, tag_index
-
-        def repl_numbered_tag(matchobj):
-            tag_name, tag_index = get_tag_name_and_id(matchobj.group(0))
+        def repl_numbered_tag_open(matchobj):
+            tag_name = matchobj.group(1)
+            tag_index = matchobj.group(2)
 
             return f'<{tag_name} id="{tag_index}">'
 
+        def repl_numbered_tag_close(matchobj):
+            tag_name = matchobj.group(1)
+
+            return f'</{tag_name}>'
+
         def repl_single_tag(matchobj):
-            tag_name, tag_index = get_tag_name_and_id(matchobj.group(0))
+            tag_name = matchobj.group(1)
+            tag_index = matchobj.group(2)
 
             return f'<{tag_name} id="{tag_index}"/>'
 
-        # TODO: обработать все варианты тегов по спеке
-        # сначала заменяем все закрывающие теги, т.к. там не требуется вычленять айдишник
-        # i="(g[0-9]+)" group(1)
-        string = re.sub(r'<hr r="" i="g[0-9]+?">', '</g>', string)
+        # сначала заменяем все закрывающие теги
+        string = re.sub(r'<hr r="" i="(g|bpt|ept|ph|it|sub|ex|bx|x)([0-9]+?)">', repl_numbered_tag_close, string)
 
-        # потом непарные
-        string = re.sub(r'<hr l="" i="g[0-9]+?">', repl_numbered_tag, string)
+        # потом открывающие
+        string = re.sub(r'<hr l="" i="(g|bpt|ept|ph|it|sub|ex|bx|x)([0-9]+?)">', repl_numbered_tag_open, string)
 
         # потом одинарные
-        string = re.sub(r'<hr s="" i="x[0-9]+?">', repl_single_tag, string)
+        string = re.sub(r'<hr r="" i="(g|bpt|ept|ph|it|sub|ex|bx|x)([0-9]+?)">', repl_single_tag, string)
 
         return string
 
