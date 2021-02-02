@@ -1,3 +1,6 @@
+import warnings
+warnings.simplefilter('default', DeprecationWarning)
+
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
@@ -11,12 +14,11 @@ import dicts.views as dict_views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-admin.autodiscover()
 
 PATH = getattr(settings, 'URL_PATH', '')
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
@@ -25,7 +27,7 @@ urlpatterns = [
     # main
     url(r'^$', main_views.index, name='index'),
     url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html')),
-    url(r'^%slogout/$' % PATH, django.contrib.auth.views.logout, {'next_page': '/'}),
+    url(r'^%slogout/$' % PATH, django.contrib.auth.views.LogoutView.as_view(next_page = '/')),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
     url(r'password-reset/$', main_views.reset_password_approve, name="reset_password_approve"),
