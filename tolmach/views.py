@@ -19,7 +19,7 @@ from tolmach import utils as tolmach_utils
 
 
 def index(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         first_name = request.user.first_name
         last_name = request.user.last_name
 

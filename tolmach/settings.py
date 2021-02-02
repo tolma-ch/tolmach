@@ -54,6 +54,8 @@ ALLOWED_HOSTS = [DOMAIN]
 WS_HOST = ("wss" if PORT == 443 else "ws") + f"://{DOMAIN}"
 SERVER_EMAIL = f'noreply@email.{DOMAIN}'
 
+LOGOUT_REDIRECT_URL = "/"
+
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -132,8 +134,8 @@ TEMPLATES = [
         ],
         'OPTIONS': {
             'loaders': ['django.template.loaders.filesystem.Loader',
-                        'django.template.loaders.app_directories.Loader',
-                        'django.template.loaders.eggs.Loader',],
+                        'django.template.loaders.app_directories.Loader'],
+                        # 'django.template.loaders.eggs.Loader',],
             'context_processors': ['django.contrib.auth.context_processors.auth',
                                     'social_django.context_processors.backends',
                                     'social_django.context_processors.login_redirect',
@@ -148,7 +150,7 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -359,7 +361,7 @@ CHANNEL_LAYERS = {
 }
 
 
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 LOGOUT_URL = reverse_lazy('loginas-logout')
 
 DEBUG = os.environ.get("DEBUG", False) == 'True'
@@ -370,7 +372,7 @@ try:
 except ImportError:
     pass
 
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += (
     'social_django.middleware.SocialAuthExceptionMiddleware',
 )
 
