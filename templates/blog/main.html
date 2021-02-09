@@ -1,0 +1,27 @@
+{% extends "main/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block content %}
+    <script src="http://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+    <script src="http://yastatic.net/share2/share.js"></script>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+				</div>
+				<div class="col-md-6">
+				<br />
+                    {% for post in posts %}
+                    {% include 'blog/partial/post_layout.html' %}
+                    {% endfor %}
+                    <div class="blog-footer">
+                        <a href="{% url 'rss' blog_lang=blog_lang is_rss='rss' %}">
+                            <i class="fa fa-rss-square" aria-hidden="true"></i>&nbspRSS
+                        </a>
+                    </div>
+				</div>
+				<div class="col-md-3">
+				</div>
+			</div>
+		</div>
+{% endblock %}

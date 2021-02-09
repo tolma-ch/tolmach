@@ -176,6 +176,8 @@ INSTALLED_APPS = (
     'translations',
     'entries',
     'chat',
+    'blog',
+    'markdownx',
     'stats',
     'channels',
     'loginas',

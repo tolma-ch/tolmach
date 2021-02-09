@@ -1,0 +1,119 @@
+from django.utils.translation import ugettext as _
+from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.urls import reverse as reverse_url
+from entries.models import Language
+from .models import Post
+
+
+def main(request, blog_lang, is_rss=False):
+    if blog_lang == "ru":
+        language_full_code = "ru-RU"
+        blog_lang_return = "ru"
+    elif blog_lang == "en":
+        language_full_code = "en-US"
+        blog_lang_return = "en"
+    else:
+        language_full_code = "en-US"
+        blog_lang_return = "en"
+
+    l = get_object_or_404(Language, code_tmx=language_full_code)
+    posts = Post.objects.filter(language=l).order_by('-id')
+    for p in posts:
+        p.formatted_content = p.formatted_markdown()
+        p.lang_code = p.language.code_tmx
+        p.url = reverse_url('post', kwargs={
+            'blog_lang': p.language.code,
+            'date': p.date.strftime("%y%m%d"),
+            'slug': p.slug
+        })
+
+    if is_rss:
+        from xml.dom import minidom
+        from email.utils import format_datetime
+        method = "https" if request.is_secure() else "http"
+        domain = request.get_host()
+        base_domain = method + "://" + domain
+
+        doc = minidom.Document()
+        rss = doc.createElement('rss')
+        rss.setAttribute('version', '2.0')
+        doc.appendChild(rss)
+        channel = doc.createElement('channel')
+        rss.appendChild(channel)
+
+        channelTitle = doc.createElement('title')
+        channel.appendChild(channelTitle)
+        channelTitleText = doc.createTextNode("Tolma.ch Blog")
+        channelTitle.appendChild(channelTitleText)
+
+        channelLink = doc.createElement('link')
+        channel.appendChild(channelLink)
+        channelLinkText = doc.createTextNode(base_domain + reverse_url('blog', kwargs={'blog_lang': l.code}))
+        channelLink.appendChild(channelLinkText)
+
+        channelDescription = doc.createElement('description')
+        channel.appendChild(channelDescription)
+        channelDescriptionText = doc.createTextNode('Tolma.ch CAT news-feed')
+        channelDescription.appendChild(channelDescriptionText)
+
+        for p in posts:
+            newItem = doc.createElement('item')
+            channel.appendChild(newItem)
+
+            newItemLink = doc.createElement('link')
+            newItemLinkText = doc.createTextNode(base_domain + p.url)
+            newItem.appendChild(newItemLink)
+            newItemLink.appendChild(newItemLinkText)
+
+            newItemTitle = doc.createElement('title')
+            newItemTitleText = doc.createTextNode(p.title)
+            newItem.appendChild(newItemTitle)
+            newItemTitle.appendChild(newItemTitleText)
+
+            newItemPubDate = doc.createElement('pubDate')
+            newItemPubDateText = doc.createTextNode(format_datetime(p.date))
+            newItem.appendChild(newItemPubDate)
+            newItemPubDate.appendChild(newItemPubDateText)
+
+            newItemDescription = doc.createElement('description')
+            newItemDescriptionText = doc.createCDATASection(p.formatted_content)
+            newItem.appendChild(newItemDescription)
+            newItemDescription.appendChild(newItemDescriptionText)
+
+        response = HttpResponse(doc.toxml(), content_type="application/xml")
+        response['Content-Disposition'] = 'inline; filename=myfile.xml'
+        return response
+    context = {
+        'posts': posts,
+        'blog_lang': blog_lang_return,
+        'breadcrumbs': [
+            {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
+        ],
+    }
+    return render(request, "blog/main.html", context)
+
+
+def post(request, blog_lang, date, slug):
+    import datetime
+    if blog_lang == "ru":
+        language_full_code = "ru-RU"
+    elif blog_lang == "en":
+        language_full_code = "en-US"
+    else:
+        language_full_code = "en-US"
+    t = datetime.datetime.strptime(date, "%y%m%d")
+    l = get_object_or_404(Language, code_tmx=language_full_code)
+    p = get_object_or_404(Post, slug=slug, date__date=t, language=l)
+    p.formatted_content = p.formatted_markdown()
+    p.url = reverse_url('post', kwargs={'blog_lang': l.code, 'date': date, 'slug': slug})
+
+    context = {
+        'post': p,
+        'breadcrumbs': [
+            {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
+            {'title': p.title, 'url': '#', 'type': ''},
+        ],
+    }
+
+    return render(request, "blog/post.html", context)
+
