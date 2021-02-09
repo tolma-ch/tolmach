@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block content %}
+    <script src="http://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+    <script src="http://yastatic.net/share2/share.js"></script>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+				</div>
+				<div class="col-md-6">
+				<br />
+                    {% include 'blog/partial/post_layout.html' %}
+				</div>
+				<div class="col-md-3">
+				</div>
+			</div>
+		</div>
+{% endblock %}

@@ -23,10 +23,12 @@ urlpatterns = [
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^rest/', include('api.urls')),
+    url(r'^blog/', include("blog.urls")),
+    url(r'^markdownx/', include('markdownx.urls')),
 
     # main
     url(r'^$', main_views.index, name='index'),
-    url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html')),
+    url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html'), name="privacy_policy"),
     url(r'^%slogout/$' % PATH, django.contrib.auth.views.LogoutView.as_view(next_page = '/')),
     url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),

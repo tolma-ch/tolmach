@@ -12,7 +12,15 @@
 @import "tolmach/blocks/flags";
 @import "tolmach/blocks/navbar";
 @import "tolmach/blocks/messages";
+@import "tolmach/blocks/blog";
 
+
+body {
+  background-color: white !important;
+  @media (prefers-color-scheme: dark) {
+    background-color: @grayBg-dark !important;
+  }
+}
 
 .dropleft,
 .navbar-fixed-bottom .dropdown {
