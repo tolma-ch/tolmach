@@ -12,7 +12,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="theme-color" content="#3B8DB6" />
 
-        {% with front_version="eghbnt7n5p5tbvfmlilnxf" %}
+        {% with front_version="t362t7cnvmep967epbhk" %}
 
 
         <link href="{% static 'img/favicon.ico' %}?v={{ front_version }}" rel="shortcut icon">
@@ -28,6 +28,27 @@
         <meta name="msapplication-TileColor" content="#00a300">
         <meta name="msapplication-config" content="{% static 'img/browserconfig.xml' %}">
 
+
+        {% if social_preview_tags %}
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Tolma.ch">
+        <meta property="og:title" content="{{ social_preview_tags.title }}">
+        <meta property="og:description" content="{{ social_preview_tags.description }}">
+        <meta property="og:url" content="{{ base_domain }}{{ request.path }}">
+        <meta property="og:locale" content="ru_RU">
+    {#    <meta property="og:image" content="{{ base_domain }}{% static 'img/opengraph.png' %}">#}
+    {#    <meta property="og:image:width" content="968">#}
+    {#    <meta property="og:image:height" content="504">#}
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ social_preview_tags.title }}">
+        <meta name="twitter:description" content="{{ social_preview_tags.description }}">
+        <meta name="twitter:image:src" content="{{ base_domain }}{% static 'img/opengraph.png' %}">
+        <meta name="twitter:url" content="{{ base_domain }}">
+        <meta name="twitter:domain" content="tolma.ch">
+        <meta name="twitter:site" content="@">
+        <meta name="twitter:creator" content="@...">
+        {% endif %}
 
 
         {% if debug == 'false' %}

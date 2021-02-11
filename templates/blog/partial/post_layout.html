@@ -1,5 +1,5 @@
 {% block post_layout %}
-<div class="blog-post">
+<div class="blog-post{% if not post.published %} not-published{% endif %}">
     <h3 class="post-header">
         <a href="{{ post.url }}">{{ post.title }}</a>
     </h3>
@@ -15,6 +15,7 @@
          data-title="Tolma.ch: {{ post.title }}"
          data-description="{{ post.formatted_content|safe }}">
     </div>
+    {% if user.is_staff %}<br><br><p><a href="/admin/blog/post/{{ post.id }}/change">Edit</a></p>{% endif %}
     <hr style="height:30px">
 </div>
 {% endblock %}
