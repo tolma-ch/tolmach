@@ -32,5 +32,9 @@ class Post(models.Model):
     def formatted_markdown(self):
         return markdown.markdown(self.content)
 
+    def clean_content_text(self):
+        import re
+        return re.sub(r'<(/)?.+?( /)?>', '', self.formatted_markdown())
+
     def __str__(self):
         return self.title

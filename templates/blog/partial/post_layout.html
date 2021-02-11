@@ -13,7 +13,7 @@
          data-services="vkontakte,facebook,twitter"
          data-url="{{ base_domain }}{{ post.url }}"
          data-title="Tolma.ch: {{ post.title }}"
-         data-description="{{ post.formatted_content|safe }}">
+         data-description="{{ post.clean_content|safe }}">
     </div>
     {% if user.is_staff %}<br><br><p><a href="/admin/blog/post/{{ post.id }}/change">Edit</a></p>{% endif %}
     <hr style="height:30px">
