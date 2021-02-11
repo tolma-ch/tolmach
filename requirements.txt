@@ -9,9 +9,8 @@ Pillow
 daphne==1.3.0
 channels==1.1.8
 translate-toolkit==2.5.1
-python-openid==2.2.5
 social-auth-app-django==2.1.0
-social-auth-core==1.7.0
+social-auth-core==2.0.0
 uWSGI
 django-background-tasks==1.2.5
 asgi_redis
