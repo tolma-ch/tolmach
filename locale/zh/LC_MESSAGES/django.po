@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-19 16:58+0000\n"
+"POT-Creation-Date: 2021-02-11 17:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,6 +12,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: blog/views.py:90 blog/views.py:93 blog/views.py:120
+#: templates/main/base-logged-in.html:14 templates/main/partial/footer.html:9
+msgid "Blog"
+msgstr "博客"
+
+#: blog/views.py:90
+msgid "Tolma.ch news and tips & tricks"
+msgstr ""
+
+#: blog/views.py:111
+msgid "Blog post does not exist"
+msgstr ""
 
 #: chat/views.py:17 chat/views.py:34
 #, fuzzy
@@ -41,7 +54,7 @@ msgstr "未找到"
 msgid "Text is empty"
 msgstr ""
 
-#: dicts/views.py:144
+#: dicts/views.py:157
 #, fuzzy
 #| msgid "All glossaries"
 msgid "Project glossaries"
@@ -135,39 +148,6 @@ msgstr ""
 msgid "Chinese (traditional, Macao SAR China"
 msgstr ""
 
-#: templates/email/emailtemplatesbodies.json:5
-msgid "Welcome to Tolma.ch!"
-msgstr "欢迎光临Tolma.ch！"
-
-#: templates/email/emailtemplatesbodies.json:7
-msgid "Start Translating in Minutes"
-msgstr "开始翻译吧！"
-
-#: templates/email/emailtemplatesbodies.json:8
-#: templates/email/emailtemplatesbodies.json:17
-msgid "Hello, <b><username></b>!"
-msgstr "你好, <b><username></b>!"
-
-#: templates/email/emailtemplatesbodies.json:9
-msgid ""
-"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-"excited to have you on-board."
-msgstr "我们很高兴您同意我们的会社！"
-
-#: templates/email/emailtemplatesbodies.json:14
-#: templates/email/emailtemplatesbodies.json:16
-#, fuzzy
-#| msgid "Password"
-msgid "Password reset approval"
-msgstr "密码"
-
-#: templates/email/emailtemplatesbodies.json:18
-msgid ""
-"You have asked for a new password. Here is the URL to reset the password:"
-"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
-"not asked for new password, just ignore this messsage."
-msgstr ""
-
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
 msgstr "仪表板"
@@ -209,10 +189,6 @@ msgstr "翻译数据库"
 msgid "Support"
 msgstr "支持"
 
-#: templates/main/base-logged-in.html:14
-msgid "Blog"
-msgstr "博客"
-
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
 #: templates/tolmach/organization.html:9 tolmach/views.py:119
@@ -228,17 +204,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:117 templates/main/base.html:223
+#: templates/main/base.html:138 templates/main/base.html:244
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:120 templates/main/base.html:226
+#: templates/main/base.html:141 templates/main/base.html:247
 #: templates/translations/partial/add_text_modal.html:109
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:252
+#: templates/main/base.html:273
 msgid "No results"
 msgstr "没有结果"
 
@@ -262,7 +238,7 @@ msgstr ""
 msgid "Tolma.ch on Facebook"
 msgstr "我们在Facebook"
 
-#: templates/main/partial/footer.html:10
+#: templates/main/partial/footer.html:11
 msgid "Privacy policy"
 msgstr ""
 
@@ -304,15 +280,19 @@ msgstr "满屏"
 msgid "Help"
 msgstr "帮助"
 
-#: templates/main/partial/navbar-loggedin.html:138
+#: templates/main/partial/navbar-loggedin.html:140
+msgid "Admin panel"
+msgstr ""
+
+#: templates/main/partial/navbar-loggedin.html:152
 msgid "Chat"
 msgstr "聊天区"
 
-#: templates/main/partial/navbar-loggedin.html:167
+#: templates/main/partial/navbar-loggedin.html:181
 msgid "Hi,"
 msgstr "你好,"
 
-#: templates/main/partial/navbar-loggedin.html:185
+#: templates/main/partial/navbar-loggedin.html:199
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr "通知"
@@ -1085,7 +1065,7 @@ msgstr "概述"
 msgid "Recent projects"
 msgstr "最近项目"
 
-#: templates/tolmach/profile.html:83 templates/tolmach/view_user.html:79
+#: templates/tolmach/profile.html:82 templates/tolmach/view_user.html:79
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] "已翻译碎片"
@@ -1402,7 +1382,7 @@ msgid "Approved:"
 msgstr ""
 
 #: templates/translations/project.html:137
-#: templates/translations/view-text.html:363
+#: templates/translations/view-text.html:373
 #, fuzzy
 #| msgid "Translation"
 msgid "Options"
@@ -1602,19 +1582,19 @@ msgid "To glossary"
 msgstr "添加词库"
 
 #: templates/translations/view-text.html:125
-#: templates/translations/view-text.html:395
+#: templates/translations/view-text.html:405
 #, fuzzy
 #| msgid "Remove translation"
 msgid "Approve translation"
 msgstr "删除翻译题"
 
 #: templates/translations/view-text.html:131
-#: templates/translations/view-text.html:401
+#: templates/translations/view-text.html:411
 msgid "Edit translation"
 msgstr "编辑翻译"
 
 #: templates/translations/view-text.html:148
-#: templates/translations/view-text.html:386
+#: templates/translations/view-text.html:396
 #, fuzzy
 #| msgid "Remove translation"
 msgid "Disapprove translation"
@@ -1627,65 +1607,67 @@ msgid "Enable translation"
 msgstr "机器翻译"
 
 #: templates/translations/view-text.html:174
+#: templates/translations/view-text.html:188
+#: templates/translations/view-text.html:191
 #, fuzzy
 #| msgid "Fragment link"
 msgid "Copy fragment link"
 msgstr "碎片链接"
 
-#: templates/translations/view-text.html:196
+#: templates/translations/view-text.html:206
 #, fuzzy
 #| msgid "Collective translations"
 msgid "Restore deleted translation"
 msgstr "众包翻译"
 
-#: templates/translations/view-text.html:206
+#: templates/translations/view-text.html:216
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:207
+#: templates/translations/view-text.html:217
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:369
+#: templates/translations/view-text.html:379
 msgid "Approve all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:376
+#: templates/translations/view-text.html:386
 msgid "Disapprove all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:500
+#: templates/translations/view-text.html:510
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:501
+#: templates/translations/view-text.html:511
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:502
+#: templates/translations/view-text.html:512
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:503
+#: templates/translations/view-text.html:513
 #, fuzzy
 #| msgid "Collective translations"
 msgid "Click to add new translation"
 msgstr "众包翻译"
 
-#: templates/translations/view-text.html:504
+#: templates/translations/view-text.html:514
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:505
+#: templates/translations/view-text.html:515
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:506
+#: templates/translations/view-text.html:516
 msgid "Source text"
 msgstr "源文本"
 
-#: templates/translations/view-text.html:507
+#: templates/translations/view-text.html:517
 msgid "All the text with translated fragments"
 msgstr "素有已翻译片段"
 
@@ -1803,19 +1785,19 @@ msgstr "项目类型未设置"
 msgid "Third-party projects"
 msgstr "第三方项目"
 
-#: translations/utils.py:119
+#: translations/utils.py:122
 msgid "File is too big"
 msgstr "文件太大"
 
-#: translations/utils.py:141 translations/utils.py:143
+#: translations/utils.py:144 translations/utils.py:146
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/utils.py:354 translations/utils.py:387
+#: translations/utils.py:357 translations/utils.py:390
 msgid "This source language is not supported yet"
 msgstr "该原语言暂时未支持"
 
-#: translations/utils.py:362 translations/utils.py:395
+#: translations/utils.py:365 translations/utils.py:398
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
@@ -2050,6 +2032,25 @@ msgstr ""
 #: translations/views_ajax.py:1855 translations/views_ajax.py:1859
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
+
+#~ msgid "Welcome to Tolma.ch!"
+#~ msgstr "欢迎光临Tolma.ch！"
+
+#~ msgid "Start Translating in Minutes"
+#~ msgstr "开始翻译吧！"
+
+#~ msgid "Hello, <b><username></b>!"
+#~ msgstr "你好, <b><username></b>!"
+
+#~ msgid ""
+#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+#~ "excited to have you on-board."
+#~ msgstr "我们很高兴您同意我们的会社！"
+
+#, fuzzy
+#~| msgid "Password"
+#~ msgid "Password reset approval"
+#~ msgstr "密码"
 
 #, fuzzy
 #~| msgid "Translated document"

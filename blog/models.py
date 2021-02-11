@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 from autoslug import AutoSlugField
@@ -22,7 +23,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     slug = AutoSlugField(populate_from='title')
     overview = MarkdownxField()
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)
     content = MarkdownxField()
     language = models.ForeignKey(Language, on_delete=None, default=Language.objects.get(code_tmx="ru-RU"))
     categories = models.ManyToManyField(Category, blank=True)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-19 16:58+0000\n"
+"POT-Creation-Date: 2021-02-11 17:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,19 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: blog/views.py:90 blog/views.py:93 blog/views.py:120
+#: templates/main/base-logged-in.html:14 templates/main/partial/footer.html:9
+msgid "Blog"
+msgstr ""
+
+#: blog/views.py:90
+msgid "Tolma.ch news and tips & tricks"
+msgstr ""
+
+#: blog/views.py:111
+msgid "Blog post does not exist"
+msgstr ""
 
 #: chat/views.py:17 chat/views.py:34
 msgid "Project not set"
@@ -41,7 +54,7 @@ msgstr ""
 msgid "Text is empty"
 msgstr ""
 
-#: dicts/views.py:144
+#: dicts/views.py:157
 msgid "Project glossaries"
 msgstr ""
 
@@ -133,39 +146,6 @@ msgstr ""
 msgid "Chinese (traditional, Macao SAR China"
 msgstr ""
 
-#: templates/email/emailtemplatesbodies.json:5
-msgid "Welcome to Tolma.ch!"
-msgstr ""
-
-#: templates/email/emailtemplatesbodies.json:7
-#, fuzzy
-#| msgid "Translation variants"
-msgid "Start Translating in Minutes"
-msgstr "Translation variants"
-
-#: templates/email/emailtemplatesbodies.json:8
-#: templates/email/emailtemplatesbodies.json:17
-msgid "Hello, <b><username></b>!"
-msgstr ""
-
-#: templates/email/emailtemplatesbodies.json:9
-msgid ""
-"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-"excited to have you on-board."
-msgstr ""
-
-#: templates/email/emailtemplatesbodies.json:14
-#: templates/email/emailtemplatesbodies.json:16
-msgid "Password reset approval"
-msgstr ""
-
-#: templates/email/emailtemplatesbodies.json:18
-msgid ""
-"You have asked for a new password. Here is the URL to reset the password:"
-"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
-"not asked for new password, just ignore this messsage."
-msgstr ""
-
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
 msgstr ""
@@ -207,10 +187,6 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: templates/main/base-logged-in.html:14
-msgid "Blog"
-msgstr ""
-
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
 #: templates/tolmach/organization.html:9 tolmach/views.py:119
@@ -226,17 +202,17 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: templates/main/base.html:117 templates/main/base.html:223
+#: templates/main/base.html:138 templates/main/base.html:244
 msgid "Close"
 msgstr ""
 
-#: templates/main/base.html:120 templates/main/base.html:226
+#: templates/main/base.html:141 templates/main/base.html:247
 #: templates/translations/partial/add_text_modal.html:109
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr ""
 
-#: templates/main/base.html:252
+#: templates/main/base.html:273
 msgid "No results"
 msgstr ""
 
@@ -260,7 +236,7 @@ msgstr ""
 msgid "Tolma.ch on Facebook"
 msgstr ""
 
-#: templates/main/partial/footer.html:10
+#: templates/main/partial/footer.html:11
 msgid "Privacy policy"
 msgstr ""
 
@@ -300,15 +276,19 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:138
+#: templates/main/partial/navbar-loggedin.html:140
+msgid "Admin panel"
+msgstr ""
+
+#: templates/main/partial/navbar-loggedin.html:152
 msgid "Chat"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:167
+#: templates/main/partial/navbar-loggedin.html:181
 msgid "Hi,"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:185
+#: templates/main/partial/navbar-loggedin.html:199
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr ""
@@ -1021,7 +1001,7 @@ msgstr ""
 msgid "Recent projects"
 msgstr ""
 
-#: templates/tolmach/profile.html:83 templates/tolmach/view_user.html:79
+#: templates/tolmach/profile.html:82 templates/tolmach/view_user.html:79
 msgid "fragment translated."
 msgid_plural "fragments translated."
 msgstr[0] ""
@@ -1300,7 +1280,7 @@ msgid "Approved:"
 msgstr ""
 
 #: templates/translations/project.html:137
-#: templates/translations/view-text.html:363
+#: templates/translations/view-text.html:373
 msgid "Options"
 msgstr ""
 
@@ -1476,17 +1456,17 @@ msgid "To glossary"
 msgstr ""
 
 #: templates/translations/view-text.html:125
-#: templates/translations/view-text.html:395
+#: templates/translations/view-text.html:405
 msgid "Approve translation"
 msgstr ""
 
 #: templates/translations/view-text.html:131
-#: templates/translations/view-text.html:401
+#: templates/translations/view-text.html:411
 msgid "Edit translation"
 msgstr ""
 
 #: templates/translations/view-text.html:148
-#: templates/translations/view-text.html:386
+#: templates/translations/view-text.html:396
 msgid "Disapprove translation"
 msgstr ""
 
@@ -1497,61 +1477,63 @@ msgid "Enable translation"
 msgstr "Users translations"
 
 #: templates/translations/view-text.html:174
+#: templates/translations/view-text.html:188
+#: templates/translations/view-text.html:191
 msgid "Copy fragment link"
 msgstr ""
 
-#: templates/translations/view-text.html:196
+#: templates/translations/view-text.html:206
 #, fuzzy
 #| msgid "Export translation"
 msgid "Restore deleted translation"
 msgstr "Users translations"
 
-#: templates/translations/view-text.html:206
+#: templates/translations/view-text.html:216
 msgid "singular:"
 msgstr ""
 
-#: templates/translations/view-text.html:207
+#: templates/translations/view-text.html:217
 msgid "plural:"
 msgstr ""
 
-#: templates/translations/view-text.html:369
+#: templates/translations/view-text.html:379
 msgid "Approve all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:376
+#: templates/translations/view-text.html:386
 msgid "Disapprove all entries from user"
 msgstr ""
 
-#: templates/translations/view-text.html:500
+#: templates/translations/view-text.html:510
 msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
-#: templates/translations/view-text.html:501
+#: templates/translations/view-text.html:511
 msgid "Click to expand fragment and begin translation"
 msgstr ""
 
-#: templates/translations/view-text.html:502
+#: templates/translations/view-text.html:512
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
 
-#: templates/translations/view-text.html:503
+#: templates/translations/view-text.html:513
 msgid "Click to add new translation"
 msgstr ""
 
-#: templates/translations/view-text.html:504
+#: templates/translations/view-text.html:514
 msgid "Here we can see the whole text"
 msgstr ""
 
-#: templates/translations/view-text.html:505
+#: templates/translations/view-text.html:515
 msgid "Click on the fragment in text to move to its translation form"
 msgstr ""
 
-#: templates/translations/view-text.html:506
+#: templates/translations/view-text.html:516
 msgid "Source text"
 msgstr ""
 
-#: templates/translations/view-text.html:507
+#: templates/translations/view-text.html:517
 msgid "All the text with translated fragments"
 msgstr ""
 
@@ -1653,19 +1635,19 @@ msgstr ""
 msgid "Third-party projects"
 msgstr ""
 
-#: translations/utils.py:119
+#: translations/utils.py:122
 msgid "File is too big"
 msgstr ""
 
-#: translations/utils.py:141 translations/utils.py:143
+#: translations/utils.py:144 translations/utils.py:146
 msgid "Something went wrong"
 msgstr ""
 
-#: translations/utils.py:354 translations/utils.py:387
+#: translations/utils.py:357 translations/utils.py:390
 msgid "This source language is not supported yet"
 msgstr ""
 
-#: translations/utils.py:362 translations/utils.py:395
+#: translations/utils.py:365 translations/utils.py:398
 msgid "This target language is not supported yet"
 msgstr ""
 
@@ -1866,6 +1848,11 @@ msgstr ""
 #: translations/views_ajax.py:1855 translations/views_ajax.py:1859
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Translation variants"
+#~ msgid "Start Translating in Minutes"
+#~ msgstr "Translation variants"
 
 #, fuzzy
 #~| msgid "Export translation"

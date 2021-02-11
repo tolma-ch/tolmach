@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext as _
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.urls import reverse as reverse_url
+from django.http import Http404
 from entries.models import Language
 from .models import Post
 
@@ -17,7 +18,7 @@ def main(request, blog_lang, is_rss=False):
         blog_lang_return = "en"
 
     l = get_object_or_404(Language, code_tmx=language_full_code)
-    posts = Post.objects.filter(language=l).order_by('-id')
+    posts = Post.objects.filter(language=l).order_by('-date')
     for p in posts:
         p.formatted_content = p.formatted_markdown()
         p.lang_code = p.language.code_tmx
@@ -86,6 +87,8 @@ def main(request, blog_lang, is_rss=False):
     context = {
         'posts': posts,
         'blog_lang': blog_lang_return,
+        'social_preview_tags': {'title': _('Blog'), 'description': _('Tolma.ch news and tips & tricks')},
+        'page_title': f"{_('Blog')} / Tolma.ch",
         'breadcrumbs': [
             {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
         ],
@@ -104,11 +107,15 @@ def post(request, blog_lang, date, slug):
     t = datetime.datetime.strptime(date, "%y%m%d")
     l = get_object_or_404(Language, code_tmx=language_full_code)
     p = get_object_or_404(Post, slug=slug, date__date=t, language=l)
+    if not p.published and not request.user.is_staff:
+        raise Http404(_("Blog post does not exist"))
     p.formatted_content = p.formatted_markdown()
     p.url = reverse_url('post', kwargs={'blog_lang': l.code, 'date': date, 'slug': slug})
 
     context = {
         'post': p,
+        'social_preview_tags': {'title': p.title, 'description' : p.content},
+        'page_title': f"{p.title} / {_('Blog')} / Tolma.ch",
         'breadcrumbs': [
             {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
             {'title': p.title, 'url': '#', 'type': ''},

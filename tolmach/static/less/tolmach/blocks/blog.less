@@ -1,3 +1,10 @@
+.not-published {
+	background-color: #efefef;
+    border: 2px dotted #000000;
+	@media (prefers-color-scheme: dark) {
+		background-color: @navbar-bg-dark;
+	}
+}
 .blog-footer {
 	font-size: 16px;
 }
@@ -27,6 +34,9 @@
 	border-style: solid;
 	@media (prefers-color-scheme: dark) {
 		color: #BEBFBE;
+	}
+	img {
+		max-width: 100%;
 	}
 }
 .post-date {

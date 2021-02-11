@@ -21,6 +21,7 @@ def login_navbar(context):
     messages = []
 
     return {
+        'request': request,
         'invites': unread_messages,
         'invites_num': len(unread_messages),
         'messages': messages,

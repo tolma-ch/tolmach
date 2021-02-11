@@ -134,6 +134,20 @@
 			<i class="fa fa-question-circle-o" ></i>
 		</a>
     </li>
+    {% if request.user.is_staff %}
+    <li class="navbar-nav__button button_blue hidden-xs"
+        ng-show="showSearch == false"
+        uib-tooltip="{% trans 'Admin panel' %}"
+        tooltip-append-to-body="true"
+        tooltip-placement="bottom">
+        <a class="" href="/admin/"
+           target="_blank"
+           style="font-size: 22px;
+                padding-top: 14px;">
+			<i class="fa fa-wrench" ></i>
+		</a>
+    </li>
+    {% endif %}
     <!--<li class="navbar-nav__button button_gray"-->
         <!--uib-tooltip="{% trans 'Chat' %}"-->
         <!--tooltip-append-to-body="true"-->
