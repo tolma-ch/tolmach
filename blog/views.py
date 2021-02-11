@@ -18,9 +18,13 @@ def main(request, blog_lang, is_rss=False):
         blog_lang_return = "en"
 
     l = get_object_or_404(Language, code_tmx=language_full_code)
-    posts = Post.objects.filter(language=l).order_by('-date')
+
+    # для админа показываем посты со всеми статусами, для обычного юзера - только те, что опубликованы
+    published = [True, False] if request.user.is_staff else [True]
+    posts = Post.objects.filter(language=l, published__in=published).order_by('-date')
     for p in posts:
         p.formatted_content = p.formatted_markdown()
+        p.clean_content = p.clean_content_text()
         p.lang_code = p.language.code_tmx
         p.url = reverse_url('post', kwargs={
             'blog_lang': p.language.code,
@@ -110,6 +114,7 @@ def post(request, blog_lang, date, slug):
     if not p.published and not request.user.is_staff:
         raise Http404(_("Blog post does not exist"))
     p.formatted_content = p.formatted_markdown()
+    p.clean_content = p.clean_content_text()
     p.url = reverse_url('post', kwargs={'blog_lang': l.code, 'date': date, 'slug': slug})
 
     context = {

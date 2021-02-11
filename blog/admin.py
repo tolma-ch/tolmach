@@ -4,6 +4,7 @@ from .models import Post, Category
 
 
 class TolmachBlogModelAdmin(MarkdownxModelAdmin):
-    fields = ('title', 'overview', 'content', 'categories', 'language', 'date')
+    fields = ('title', 'overview', 'content', 'categories', 'language', 'date', 'published')
 
 admin.site.register(Post, TolmachBlogModelAdmin)
+admin.site.register(Category)
