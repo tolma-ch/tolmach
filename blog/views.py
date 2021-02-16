@@ -42,6 +42,7 @@ def main(request, blog_lang, is_rss=False):
         doc = minidom.Document()
         rss = doc.createElement('rss')
         rss.setAttribute('version', '2.0')
+        rss.setAttribute('xmlns:atom', 'http://www.w3.org/2005/Atom')
         doc.appendChild(rss)
         channel = doc.createElement('channel')
         rss.appendChild(channel)
@@ -56,6 +57,12 @@ def main(request, blog_lang, is_rss=False):
         channelLinkText = doc.createTextNode(base_domain + reverse_url('blog', kwargs={'blog_lang': l.code}))
         channelLink.appendChild(channelLinkText)
 
+        atom = doc.createElement('atom:link')
+        atom.setAttribute('href', base_domain + reverse_url('rss', kwargs={'blog_lang': l.code, 'is_rss': 'rss'}))
+        atom.setAttribute('rel', 'self')
+        atom.setAttribute('type', 'application/rss+xml')
+        channel.appendChild(atom)
+
         channelDescription = doc.createElement('description')
         channel.appendChild(channelDescription)
         channelDescriptionText = doc.createTextNode('Tolma.ch CAT news-feed')
@@ -66,6 +73,11 @@ def main(request, blog_lang, is_rss=False):
             channel.appendChild(newItem)
 
             newItemLink = doc.createElement('link')
+            newItemLinkText = doc.createTextNode(base_domain + p.url)
+            newItem.appendChild(newItemLink)
+            newItemLink.appendChild(newItemLinkText)
+
+            newItemLink = doc.createElement('guid')
             newItemLinkText = doc.createTextNode(base_domain + p.url)
             newItem.appendChild(newItemLink)
             newItemLink.appendChild(newItemLinkText)
