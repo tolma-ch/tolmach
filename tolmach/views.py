@@ -294,7 +294,7 @@ def invite_urls(request, invite_type, invite_id):
     elif invite_type == "org":
         org = get_object_or_404(Organization, invite_link_code=invite_id)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         redirect_path = invite_user(request.user, invite_id, invite_type)
 
         response = redirect(redirect_path)
