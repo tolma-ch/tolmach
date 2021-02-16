@@ -22,15 +22,14 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=200)
     slug = AutoSlugField(populate_from='title')
-    overview = MarkdownxField()
     date = models.DateTimeField(default=timezone.now)
     content = MarkdownxField()
-    language = models.ForeignKey(Language, on_delete=None, default=Language.objects.get(code_tmx="ru-RU"))
+    language = models.ForeignKey(Language, on_delete=None)
     categories = models.ManyToManyField(Category, blank=True)
     published = models.BooleanField()
 
     def formatted_markdown(self):
-        return markdown.markdown(self.content)
+        return markdown.markdown(self.content, extensions=['attr_list'])
 
     def clean_content_text(self):
         import re
