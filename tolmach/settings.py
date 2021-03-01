@@ -331,7 +331,7 @@ GLOBAL_DOCUMENTS_DIR = "/var/www/tolmach_documents"
 GLOBAL_DOCUMENTS_TMP_DIR = "/tmp"
 
 ELASTIC_LIST = [
-    {"host": "localhost", "port": 9200, "timeout": 30}
+    {"host": ES_HOST, "port": ES_PORT, "timeout": 30}
 ]
 
 redis_host = os.environ.get('REDIS_HOST', 'redis')
