@@ -131,6 +131,7 @@ def upload_file(file_object, max_size):
 
     return file_name, file_path, file_type, error
 
+
 def chtec_request(url, values):
     from urllib.parse import urlencode
     from urllib.request import urlopen, Request
@@ -181,11 +182,8 @@ def parse_glossary(file_on_disk, filetype):
         # открываем файл
         for line in file_to_show:
             if not line == '':
-                # print(filetype)
-                print(line)
                 if filetype in ['text/plain', 'application/octet-stream']:
                     # и режем либо по запятым, либо по табам
-                    # print(line.decode('utf-8').rstrip().split('\t', 1))
                     try:
                         array.append(line.decode('utf-8').rstrip().split('\t', 1))
                     except:
@@ -280,6 +278,7 @@ def glossary_to_entry(entry_body, glossary_list, language):
 
     return body_to_return
 
+
 def parse_tmx(filename, tmdb_name, project, target_lang, request):
     from lxml import etree
 
@@ -352,7 +351,6 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     try:
                         source_lang_obj = Language.objects.filter(Q(code=source_lang_name) | Q(code_tmx=source_lang_name) | Q(code_639_3=source_lang_name))[0]
                     except IndexError:
-                        print('This source language is not supported yet')
                         error_code = 400
                         error_message = _('This source language is not supported yet')
                         return {'error': error_code, 'message': error_message}
@@ -360,7 +358,6 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                     try:
                         target_lang_obj = Language.objects.filter(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))[0]
                     except IndexError:
-                        print('This target language is not supported yet')
                         error_code = 400
                         error_message = _('This target language is not supported yet')
                         return {'error': error_code, 'message': error_message}
@@ -393,7 +390,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                 try:
                     target_lang_obj = Language.objects.filter(Q(code=target_lang_name) | Q(code_tmx=target_lang_name) | Q(code_639_3=target_lang_name))[0]
                 except IndexError:
-                    print('This target language is not supported yet')
+                    # print('This target language is not supported yet')
                     error_code = 400
                     error_message = _('This target language is not supported yet')
                     return {'error': error_code, 'message': error_message}
@@ -473,22 +470,6 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
                                                      target_edited=target_edited,
                                                      )
                     bulk_entries_list.append(new_tmdb_entry)
-                    # new_tmdb_entry.save()
-
-                # doc = {
-                #     'db_id': new_tmdb_entry.id,
-                #     'source_lang': source_text,
-                #     'target_lang': target_text,
-                # }
-                #
-                # res = es.index(
-                #     index=tmdb_names[lang_pair],
-                #     doc_type='tmx1',
-                #     id=elastic_id,
-                #     body=doc
-                # )
-                #
-                # print("ELASTICSEARCH: ", res['created'])
 
                 elastic_id += 1
                 # Нет обращений к потомкам, поэтому вызов clear() безопасен
@@ -501,6 +482,7 @@ def parse_tmx(filename, tmdb_name, project, target_lang, request):
 
     return {'error': error_code, 'message': error_message, 'result': result}
 
+
 def add_pair_to_tmx(request, text, project, source_text, target_text, source_lang, target_lang):
     text_translation = TextTranslation.objects.get(text=text, target_lang=target_lang)
     project_translation = ProjectTranslation.objects.get(project=project, target_lang=target_lang)
@@ -508,9 +490,9 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
 
     try:
         tmdb_to_write = TextTranslationMeta.objects.get(translation=text_translation, meta_type="tmdb_to_write")
-        print("TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data)
+        # print("TMDB_TO_WIRITE FOUND! ID = %s" % tmdb_to_write.meta_data)
     except:
-        print("ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one...")
+        # print("ERROR! TMDB_TO_WRITE NOT FOUND! Creating new one...")
         tmdb_to_write = TextTranslationMeta(translation=text_translation, meta_type="tmdb_to_write", meta_data="")
         tmdb_to_write.save()
 
@@ -580,7 +562,7 @@ def add_pair_to_tmx(request, text, project, source_text, target_text, source_lan
             res['created'] = "error"
 
 
-        print("ELASTICSEARCH: ", res['created'])
+        # print("ELASTICSEARCH: ", res['created'])
 
         return True
 
