@@ -1230,6 +1230,16 @@ def translate_entry_ajax(request):
         with transaction.atomic():
             entry_translation.is_approved = set_approved
             entry_translation.save()
+            log_data = {
+                'id': entry_translation.id,
+                'status': 'success',
+                'body': entry_translation.body,
+                'parent_body': entry_translation.parent_entry.body,
+                'document_id': entry_translation.text.id,
+                'source_lang': entry_translation.text.source_lang.code_tmx,
+                'target_lang': entry_translation.translation.target_lang.code_tmx
+            }
+            logger.info(log_prefix(request) + f"'{action_type} segment translation' {json.dumps(log_data)}")
             counter, created = EntryStats.objects.get_or_create(user=request.user,
                                                                 date=timezone.now().strftime("%Y%m%d"),
                                                                 project=project,
@@ -1580,7 +1590,7 @@ def yandex_translate_ajax(request):
             'Content-Type': 'application/json',
             'Authorization': f'Api-Key {api_key}',
         }
-        print(headers)
+        # print(headers)
         response = requests.post('https://translate.api.cloud.yandex.net/translate/v2/translate', headers=headers,
                                  data=data)
 
@@ -1593,6 +1603,15 @@ def yandex_translate_ajax(request):
 
         for key, value in match_dict.items():
             str_to_return = re.sub(' ?ᐛ%s ?' % key, value, str_to_return)
+        log_data = {
+            'provider': 'yandex',
+            'status': 'success',
+            'source_body': post['entry_body'],
+            'target_body': translated_body,
+            'source_lang': post['lang_pair'].split("-")[0],
+            'target_lang': post['lang_pair'].split("-")[1]
+        }
+        logger.info(log_prefix(request) + f"'segment machine translation' {json.dumps(log_data)}")
 
         return HttpResponse(json.dumps(utils.escape_html(str_to_return)), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
