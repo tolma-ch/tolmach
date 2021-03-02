@@ -25,8 +25,9 @@ import json, os, shutil, re
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json, entry_history_to_json
 from translations.utils import approve_entry, disapprove_entry, ws_send_entry_status
 
-import logging
+import logging, time
 logger = logging.getLogger(__name__)
+logging.Formatter.converter = time.gmtime
 
 
 def log_prefix(request):
