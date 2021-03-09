@@ -1234,8 +1234,8 @@ def translate_entry_ajax(request):
             log_data = {
                 'id': entry_translation.id,
                 'status': 'success',
-                'body': entry_translation.body,
-                'parent_body': entry_translation.parent_entry.body,
+                'target_body': entry_translation.body,
+                'source_body': entry_translation.parent_entry.body,
                 'document_id': entry_translation.text.id,
                 'source_lang': entry_translation.text.source_lang.code_tmx,
                 'target_lang': entry_translation.translation.target_lang.code_tmx
