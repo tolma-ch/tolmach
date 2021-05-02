@@ -53,6 +53,7 @@ urlpatterns = [
     url(r'^project/(?P<proj_id>\d+)/$', trans_views.project, name='project'),
     url(r'^project/(?P<proj_id>\d+)/stats/$', trans_views.project_stats, name='project_stats'),
     url(r'^project/(?P<proj_id>\d+)/(?P<target_lang>[\w-]+)/$', trans_views.project_by_translation, name='project_by_translation'),
+    url(r'^text/show-readability/$', trans_views.show_readability, name='show_readability'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>[\w-]+)/$', trans_views.view_translation, name='view_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>[\w-]+)/export/$', trans_views.export_translation, name='export_translation'),
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>[\w-]+)/export/(?P<extra>\w+)/$', trans_views.export_translation, name='export_translation'),
@@ -99,6 +100,7 @@ urlpatterns = [
     url(r'^ajax/message/(?:(?P<all>\w+)/)?$', trans_ajax.message_ajax, name='message_ajax'),
     url(r'^ajax/user/$', trans_ajax.user_ajax, name='user_ajax'),
     url(r'^ajax/languagetool/$', trans_ajax.languagetool_ajax, name='languagetool_ajax'),
+    url(r'^ajax/get-url-og/$', main_ajax.get_url_og_meta, name='get_url_og_meta'),
 
     url('', include('chat.urls')),
 
