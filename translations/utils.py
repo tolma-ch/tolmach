@@ -142,7 +142,7 @@ def chtec_request(url, values):
     try:
         response = urlopen(req)
     except HTTPError as e:
-        return json.dumps({'Error': e.code, "Text": _("Something went wrong")})
+        return json.dumps({'Error': e.code, "Text": e.read().decode()})
     except URLError as e:
         return json.dumps({'Error': 500, "Text": _("Something went wrong")})
 

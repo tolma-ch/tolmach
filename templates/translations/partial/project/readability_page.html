@@ -1,0 +1,21 @@
+{% extends "main/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block content %}
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-3">
+				</div>
+				<div class="col-md-6 text-left">
+				<br />
+                    <hr>
+                    <div class="readability">
+                        {{ readability_data|safe }}
+                    </div>
+				</div>
+				<div class="col-md-3">
+				</div>
+			</div>
+		</div>
+{% endblock %}

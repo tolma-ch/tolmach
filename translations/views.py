@@ -594,3 +594,35 @@ def export_tmx(request, tmx_id):
 
     return response
 
+
+@login_required
+def show_readability(request):
+    if request.method == 'GET':
+        from urllib.request import urlopen, Request
+        from urllib.error import HTTPError, URLError
+
+        params = request.GET
+        data = {"url": params['url']}
+        data = json.dumps(data).encode('utf-8')
+        headers = {'Content-Type': 'application/json'}
+        req = Request("http://readability:3000/", data, headers)
+
+        try:
+            response = urlopen(req)
+            output_data = json.loads(response.read())['content']
+        except HTTPError as e:
+            # return HttpResponse(json.dumps({'Error': 500, "Text": e.read().decode()}), content_type="application/json")
+            output_data = e.read().decode()
+        except URLError as e:
+            output_data = e.read().decode()
+            # return json.dumps({'Error': 500, "Text": _("Something went wrong")})
+
+        return_data = {
+            "readability_data": output_data,
+            'breadcrumbs': [
+                {'title': _('Readability check'), 'url': '', 'type': ''}
+            ],
+        }
+
+        template = 'translations/partial/project/readability_page.html'
+        return render(request, template, return_data)

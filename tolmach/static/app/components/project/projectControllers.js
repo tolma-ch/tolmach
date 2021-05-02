@@ -506,10 +506,15 @@
     ]);
     module.controller('AddTextModalCtrl', ['$scope', '$uibModalInstance', '$http', 'Upload', '$uibModal',
         function ($scope, $uibModalInstance, $http, Upload, $uibModal) {
+            $scope.showOgCard = false;
+            $scope.isValidUrl = false;
+            $scope.encodedURI = '';
+            $scope.ogCardData = {};
             $scope.busy = false;
             $scope.progress = 0;
             $scope.text = {
-                subject: 1
+                subject: 1,
+                readability: false,
             };
             $scope.tab = 0;
             $scope.$watch('text.files', function (value) {
@@ -517,6 +522,43 @@
                     $scope.text.title = value[0].name;
                 }
             });
+
+            $scope.checkIfURL = function () {
+                var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.@~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+              console.log("< " + $scope.text.title + " >" + "is valid URL: " + !!pattern.test($scope.text.title));
+
+              if (!!pattern.test($scope.text.title)) {
+                  var data = {
+                      url: $scope.text.title
+                  };
+                  $scope.busy = true;
+                  $http.post('/ajax/get-url-og/', data)
+                      .success(function (data) {
+                          // $uibModalInstance.close(text);
+                          console.log(data);
+                          $scope.ogCardData = data;
+                          $scope.showOgCard = true;
+                          $scope.isValidUrl = true;
+                          $scope.encodedURI = encodeURIComponent($scope.text.title);
+                          $scope.error = '';
+                          $scope.busy = false;
+                      })
+                      .error(function (data) {
+                          $scope.error = data;
+                          $scope.isValidUrl = false;
+                          $scope.showOgCard = false;
+                          $scope.busy = false;
+                      });
+              } else {
+                  $scope.showOgCard = false;
+                  $scope.isValidUrl = false;
+              }
+            };
             $scope.ok = function () {
                 if (!$scope.text.title) {
                     $scope.error = 'Where is the title?';
@@ -532,100 +574,117 @@
                     title: $scope.text.title.substring(0, 250),
                     project_target_lang: window['targetLang'],
                     subject: $scope.text.subject,
-                    split_mode: $scope.splitMode
+                    split_mode: $scope.splitMode,
+                    is_valid_url: $scope.isValidUrl,
+                    readability: $scope.text.readability,
                 };
                 if ($scope.tab === 0) {
-                    if (!$scope.text.files || !$scope.text.files.length) {
-                        $scope.error = 'Please, select a file';
+                    if ((!$scope.text.files || !$scope.text.files.length) && !$scope.isValidUrl) {
+                        console.log('Please, select a file or provide URL to web page');
+                        $scope.error = 'Please, select a file or provide URL to web page';
                         return;
                     }
                     $scope.busy = true;
-                    var fileName = $scope.text.files[0].name,
-                        ext = fileName ? fileName.split('.').pop() : false;
-                    if (ext === 'xlsx') {
-                        data['xlsx_prepare_state'] = 1;
-                    }
-                    Upload.upload({
-                            url: '/ajax/text/',
-                            fields: data,
-                            file: $scope.text.files[0]
-                        })
-                        .progress(function (evt) {
-                            $scope.progress = 100.0 * evt.loaded / evt.total;
-                        })
+                    if ($scope.isValidUrl) {
+                        $http.post('/ajax/text/', data)
                         .success(function (text) {
+                            $uibModalInstance.close(text);
                             $scope.busy = false;
-                            console.log(text);
-                            if (ext === 'xlsx') {
-                                var serverFileName = text['file_name'],
-                                    serverFileType = text['file_type'],
-                                    sheets = text['Text'],
-                                    modalInstance = $uibModal.open({
-                                    templateUrl: 'selectTextRangesModal.html',
-                                    controller: 'SelectTextRangesModalCtrl',
-                                    size: 'lg',
-                                    backdrop: 'static',
-                                    resolve: {
-                                        data: function () {
-                                            return sheets;
-                                        }
-                                    }
-                                });
-
-                                modalInstance.result.then(function (res) {
-                                    var ranges = {};
-                                    for (var i in res) {
-                                        if (!res.hasOwnProperty(i)) {
-                                            continue;
-                                        }
-                                        var sheet = res[i];
-                                        ranges[i] = {
-                                            'source_coords': [],
-                                            'target_coords': []
-                                        };
-                                        for (var j in sheet) {
-                                            if (!sheet.hasOwnProperty(j)) {
-                                                continue;
-                                            }
-                                            var range = sheet[j];
-                                            ranges[i]['source_coords'].push(range.source.text);
-                                            ranges[i]['target_coords'].push(range.target.text);
-                                        }
-                                    }
-                                    function getFirstKey( data ) {
-                                        for (var elem in data ) {
-                                            return elem;
-                                        }
-                                    }
-                                    var data = {
-                                        project: window['projectId'],
-                                        title: $scope.text.title,
-                                        project_target_lang: window['targetLang'],
-                                        subject: $scope.text.subject,
-                                        file_name: serverFileName,
-                                        file_type: serverFileType,
-                                        custom_parse: ranges[getFirstKey(ranges)]['source_coords'].length > 0 ? ranges : []
-                                    };
-                                    $scope.busy = true;
-                                    $http.post('/ajax/text/', data)
-                                        .success(function (text) {
-                                            $scope.busy = false;
-                                            $uibModalInstance.close(text);
-                                        })
-                                        .error(function (data) {
-                                            $scope.busy = false;
-                                        });
-                                }, function () {
-                                });
-
-                            } else {
-                                $uibModalInstance.close(text);
-                            }
                         })
                         .error(function (data) {
                             $scope.error = data;
                             $scope.busy = false;
                         });
+                    } else {
+                        var fileName = $scope.text.files[0].name,
+                            ext = fileName ? fileName.split('.').pop() : false;
+                        if (ext === 'xlsx') {
+                            data['xlsx_prepare_state'] = 1;
+                        }
+                        Upload.upload({
+                            url: '/ajax/text/',
+                            fields: data,
+                            file: $scope.text.files[0]
+                        })
+                            .progress(function (evt) {
+                                $scope.progress = 100.0 * evt.loaded / evt.total;
+                            })
+                            .success(function (text) {
+                                $scope.busy = false;
+                                console.log(text);
+                                if (ext === 'xlsx') {
+                                    var serverFileName = text['file_name'],
+                                        serverFileType = text['file_type'],
+                                        sheets = text['Text'],
+                                        modalInstance = $uibModal.open({
+                                            templateUrl: 'selectTextRangesModal.html',
+                                            controller: 'SelectTextRangesModalCtrl',
+                                            size: 'lg',
+                                            backdrop: 'static',
+                                            resolve: {
+                                                data: function () {
+                                                    return sheets;
+                                                }
+                                            }
+                                        });
+
+                                    modalInstance.result.then(function (res) {
+                                        var ranges = {};
+                                        for (var i in res) {
+                                            if (!res.hasOwnProperty(i)) {
+                                                continue;
+                                            }
+                                            var sheet = res[i];
+                                            ranges[i] = {
+                                                'source_coords': [],
+                                                'target_coords': []
+                                            };
+                                            for (var j in sheet) {
+                                                if (!sheet.hasOwnProperty(j)) {
+                                                    continue;
+                                                }
+                                                var range = sheet[j];
+                                                ranges[i]['source_coords'].push(range.source.text);
+                                                ranges[i]['target_coords'].push(range.target.text);
+                                            }
+                                        }
+
+                                        function getFirstKey(data) {
+                                            for (var elem in data) {
+                                                return elem;
+                                            }
+                                        }
+
+                                        var data = {
+                                            project: window['projectId'],
+                                            title: $scope.text.title,
+                                            project_target_lang: window['targetLang'],
+                                            subject: $scope.text.subject,
+                                            file_name: serverFileName,
+                                            file_type: serverFileType,
+                                            custom_parse: ranges[getFirstKey(ranges)]['source_coords'].length > 0 ? ranges : []
+                                        };
+                                        $scope.busy = true;
+                                        $http.post('/ajax/text/', data)
+                                            .success(function (text) {
+                                                $scope.busy = false;
+                                                $uibModalInstance.close(text);
+                                            })
+                                            .error(function (data) {
+                                                $scope.busy = false;
+                                            });
+                                    }, function () {
+                                    });
+
+                                } else {
+                                    $uibModalInstance.close(text);
+                                }
+                            })
+                            .error(function (data) {
+                                $scope.error = data;
+                                $scope.busy = false;
+                            });
+                    }
                 } else {
                     if (!$scope.text.textBody) {
                         $scope.error = 'Empty text';

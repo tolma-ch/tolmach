@@ -28,7 +28,9 @@
                 <input type="text"
                        placeholder="{% trans "Title" %}"
                        class="form-control"
-                       ng-model="text.title">
+                       ng-model="text.title"
+                       ng-change="checkIfURL()"
+                >
             </div>
             <div class="form-group" style="display: none">
                 <select class="form-control"
@@ -39,6 +41,39 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="card card--twitter"
+                 ng-show="showOgCard"
+            >
+                <div class="bg-center bg-no-repeat bg-cover card__image"
+                     style="background-image: url(&quot;{= ogCardData.image =}&quot;);">
+                </div>
+                <div class="antialiased break-words card__meta"><!---->
+                    <div class="overflow-hidden select-none card__title-wrapper">
+                        <div class="overflow-hidden truncate whitespace-no-wrap card__title">
+                            {= ogCardData.title =}
+                        </div>
+                        <div class="overflow-hidden break-words truncate whitespace-no-wrap select-none card__description">
+                            {= ogCardData.description =}
+                        </div>
+                    </div>
+                    <div class="overflow-hidden uppercase truncate whitespace-no-wrap card__website">
+                        {= ogCardData.website =}
+                    </div>
+                </div>
+                <div class="card__readability">
+                    <label class="middle" for="readabilityInput">
+                        <input class="ace"
+                               type="checkbox"
+                               id="readabilityInput"
+                               ng-model="text.readability"/>
+                        <span class="lbl grey">
+                            {% trans "Get only useful data with Reader View" %} <a ng-href="{% url 'show_readability' %}?url={= encodedURI =}" target="_blank">( ? )</a>
+                        </span>
+                    </label>
+
+                </div>
+            </div>
+        <div class="document-upload-form" ng-show="!showOgCard">
             <div class="form-group"
                  ng-show="!glossary.id">
                 <div class="switcher">
@@ -78,9 +113,6 @@
                           ng-model="text.textBody"></textarea>
             </div>
 
-            <div class="form-group" ng-show="error">
-                <div class="label label-danger">{= error =}</div>
-            </div>
             <a class="btn btn-link" ng-click="(addTextAdvancedOptions = !addTextAdvancedOptions) && addTextAdvancedOptions">{{ advanced_options_label }}</a>
             <div class="new-project__advanced-options"
                  ng-show="addTextAdvancedOptions">
@@ -95,6 +127,10 @@
                     </label>
                 </div>
             </div>
+        </div>
+        <div class="form-group" ng-show="error">
+            <div class="label label-danger">{= error =}</div>
+        </div>
         </form>
     </div>
     <div class="modal-footer">

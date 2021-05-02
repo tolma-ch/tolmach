@@ -1,0 +1,103 @@
+.card--twitter {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+  transition: background-color .15s ease-in-out,border-color .15s ease-in-out;
+  outline-offset: -1px;
+  background: #fff;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+  line-height: 1.3em;
+
+  @media (prefers-color-scheme: dark) {
+    background: @grayBg-dark;
+  }
+
+  .card__image {
+    height: 220px;
+    border: 1px solid #e1e8ed;
+    @media (prefers-color-scheme: dark) {
+      border-color: @navbar-bg-dark;
+    }
+  }
+  .card__meta {
+    box-sizing: border-box;
+    padding: .75em;
+    text-decoration: none;
+    border: 1px solid #e1e8ed;
+    border-top: none;
+    @media (prefers-color-scheme: dark) {
+      border-color: @navbar-bg-dark;
+      background: @navbar-bg-dark;
+    }
+  }
+  .card__title {
+    margin: 0 0 .15em;
+    line-height: 18px;
+  }
+  .card__description {
+    max-height: 2.6em;
+    margin-top: .32333em;
+    -webkit-line-clamp: 2;
+  }
+  .card__description, .card__title, .card__website {
+    color: #000;
+    font-size: 14px;
+    line-height: 18px;
+    @media (prefers-color-scheme: dark) {
+      color: @grayBorder;
+    }
+  }
+   .card__website {
+      margin-top: .32333em;
+      overflow: hidden;
+      color: #8899a6;
+      text-overflow: ellipsis;
+      text-transform: lowercase;
+      white-space: nowrap;
+  }
+}
+.bg-cover {
+    background-size: cover;
+}
+.bg-no-repeat {
+    background-repeat: no-repeat;
+}
+.bg-center {
+    background-position: 50%;
+}
+.card__title-wrapper {
+    display: block;
+    border-collapse: separate;
+    word-wrap: break-word;
+    -webkit-border-horizontal-spacing: 0;
+    -webkit-border-vertical-spacing: 0;
+    direction: ltr;
+    text-align: left;
+}
+.card__title {
+    font-family: inherit;
+    font-weight: 600;
+}
+.card__description {
+    display: block;
+    border-collapse: separate;
+    text-align: left;
+    word-wrap: break-word;
+    -webkit-border-horizontal-spacing: 0;
+    -webkit-border-vertical-spacing: 0;
+    -webkit-box-orient: vertical;
+    direction: ltr;
+}
+.card__readability {
+  margin-top: 10px;
+}
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.readability {
+  background-color: @yellow-main;
+  padding: 10px;
+}
