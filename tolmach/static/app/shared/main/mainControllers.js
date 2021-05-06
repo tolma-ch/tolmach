@@ -245,7 +245,10 @@
 
             $scope.$on('GlobalKeydown', function (e, event) {
                 var ctrlKey = navigator.platform.indexOf('Mac') > -1 ? event.metaKey : event.ctrlKey;
-                if ((event.keyCode === 114) || (ctrlKey && event.keyCode === 70)) {
+                if (
+                    ((event.keyCode === 114) || (ctrlKey && event.keyCode === 70)) &&
+                    window['textId'] !== undefined
+                    ) {
                     event.stopPropagation();
                     event.preventDefault();
                     $scope.showSearch = true;
