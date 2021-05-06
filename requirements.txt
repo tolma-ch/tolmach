@@ -16,6 +16,7 @@ django-background-tasks==1.2.5
 asgi_redis
 django-redis==4.9
 diff_match_patch
+bs4
 requests
 lxml
 elasticsearch

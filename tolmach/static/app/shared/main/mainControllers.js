@@ -243,23 +243,18 @@
                 $scope.$broadcast('GlobalMouseup', event);
             };
 
-            $scope.lastKeysPressed = [];
-            $scope.$on('GlobalKeyup', function (e, event) {
-                console.log($scope.lastKeysPressed);
-                var code = event.keyCode ? event.keyCode : event.which;
-                $scope.lastKeysPressed.push({"time": Date.now(), "code": code});
-                $scope.lastKeysPressed = $scope.lastKeysPressed.slice(-2);
-                if ( ($scope.lastKeysPressed[0].code === 16 && $scope.lastKeysPressed[1].code === 16) &&
-                   ($scope.lastKeysPressed[1].time - $scope.lastKeysPressed[0].time < 300) &&
-                   (!event.altKey) &&
-                   (!event.metaKey) &&
-                   (!event.ctrlKey) ) { // Double-shift press
-                    $scope.lastKeysPressed = [];
+            $scope.$on('GlobalKeydown', function (e, event) {
+                var ctrlKey = navigator.platform.indexOf('Mac') > -1 ? event.metaKey : event.ctrlKey;
+                if ((event.keyCode === 114) || (ctrlKey && event.keyCode === 70)) {
+                    event.stopPropagation();
+                    event.preventDefault();
                     $scope.showSearch = true;
                     setTimeout(function () {
                         $('.search-btn__input').focus();
                     }, 10);
                 }
+                var code = event.keyCode ? event.keyCode : event.which;
+
                 if (code === 27) {
                     if ($scope.showSearch) {
                         $scope.showSearch = false;
