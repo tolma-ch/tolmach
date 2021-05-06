@@ -524,39 +524,14 @@ def text_ajax(request, project):
             split_mode = post.get('split_mode', 'default')
             split_mode = split_mode if split_mode in ["default", "line"] else "default"
             text_body = ""
+            is_valid_url = post.get('is_valid_url', False)
+            readability = post.get('readability', False)
 
             if 'textBody' in post:
                 file_type = "text/plain"
                 file_name = "None"
                 title = post['title']
                 text_body = post['textBody']
-
-            elif post.get('is_valid_url', False):
-                import requests
-                from tolmach.utils import random_string
-
-                target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
-                                              int(project.manager.id),
-                                              int(project.id))
-                if not os.path.isdir(target_path):
-                    os.makedirs(target_path)
-                file_type = "text/html"
-                file_name = random_string(15) + ".html"
-                file_path = '%s/%s' % (target_path, file_name)
-                title = post['title']
-
-                if post.get('readability', False):
-                    data = {"url": post['title']}
-                    headers = {'Content-Type': 'application/json'}
-                    r = requests.post("http://readability:3000", json=data, headers=headers)
-                    r.encoding = 'utf-8'
-                    content = json.loads(r.text)['content']
-                else:
-                    r = requests.get(post['title'])
-                    r.encoding = 'utf-8'
-                    content = r.text
-                with open(file_path, 'w') as file:
-                    file.write(content)
 
             elif 'file_name' in post:
                 file_name = post['file_name']
@@ -584,6 +559,33 @@ def text_ajax(request, project):
                     shutil.move(file_path, '%s/%s' % (target_path, file_name))
                     file_path = '%s/%s' % (target_path, file_name)
                 title = post['title']
+
+            elif is_valid_url:
+                import requests
+                from tolmach.utils import random_string
+
+                target_path = '/%s/%d/%d/' % (settings.GLOBAL_DOCUMENTS_DIR,
+                                              int(project.manager.id),
+                                              int(project.id))
+                if not os.path.isdir(target_path):
+                    os.makedirs(target_path)
+                file_type = "text/html"
+                file_name = random_string(15) + ".html"
+                file_path = '%s/%s' % (target_path, file_name)
+                title = post['title']
+
+                if readability:
+                    data = {"url": post['title']}
+                    headers = {'Content-Type': 'application/json'}
+                    r = requests.post("http://readability:3000", json=data, headers=headers)
+                    r.encoding = 'utf-8'
+                    content = json.loads(r.text)['content']
+                else:
+                    r = requests.get(post['title'])
+                    r.encoding = 'utf-8'
+                    content = r.text
+                with open(file_path, 'w') as file:
+                    file.write(content)
 
             values = {'fname': file_name,
                       'format': file_type,
