@@ -41,6 +41,8 @@ class UserMeta(models.Model):
 
     password_reset_token = models.TextField(default="")
 
+    tm_percentage = models.IntegerField(default=60)
+
 
 class Messages(models.Model):
     """

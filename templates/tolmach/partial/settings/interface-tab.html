@@ -6,6 +6,7 @@
 {% trans 'Original' as original_text %}
 {% trans 'Translation' as translated_text %}
 {% trans 'Font size:' as font_size_label %}
+{% trans 'TM percentage:' as tm_percentage_lable %}
     <style>
         .text-overview__font-size {
             display: inline-block;
@@ -47,6 +48,17 @@
             display: inline-block;
         }
     </style>
+    <div class="text-overview__tm-percentage">
+        <div class="tm-percentage-title text-size-title">
+            <span>{{ tm_percentage_lable }}</span>
+        </div>
+        <div class="tm-percentage-input text-size-slider">
+            <input type="range" min="0" max="100" step="5"
+                   ng-model="tmPercentage" ng-mouseup="updateTmPercentage()"
+                   class="slider">
+            <span>{= tmPercentage =}</span>
+        </div>
+    </div>
     <div class="text-overview__font-size">
         <div class="text-size-title">
             <span>{{ font_size_label }}</span>
@@ -61,7 +73,7 @@
             <span class="big-letter" ng-style="{ fontSize: maxFontSize + 'px' }">A</span>
         </div>
     </div>
-    <div class="workbench-layout" style="height: 500px;">
+    <div class="workbench-layout" style="height: 500px;margin-top: 30px">
 
         <div class="workbench-layout__row row" style="box-shadow: none;">
             <div class="workbench-layout__col col-sm-6" id="translation-text" style="width: 100%;">

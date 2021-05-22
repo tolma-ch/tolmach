@@ -1647,6 +1647,26 @@ def yandex_translate_ajax(request):
 
 
 @login_required
+def update_tmdb_percentage(request):
+    if request.method == 'POST':
+        post = json.loads(request.body)
+
+        if 'tmPercentage' not in post:
+            return HttpResponse(json.dumps(_('Percentage is not set')), content_type="application/json", status=400)
+        new_percentage = int(post['tmPercentage'])
+        if new_percentage > 100:
+            new_percentage = 100
+        elif new_percentage < 0:
+            new_percentage = 0
+
+        usermeta = UserMeta.objects.get(user=request.user)
+        usermeta.tm_percentage = new_percentage
+        usermeta.save()
+
+        return HttpResponse(json.dumps({'updated': True}))
+
+
+@login_required
 def tmdb_search(request):
     if request.method == 'POST':
         post = json.loads(request.body)
@@ -1664,6 +1684,9 @@ def tmdb_search(request):
         entry_source_lang = text.source_lang
         entry_target_lang = tlang
         translation_tmx_list = [int(x.id) for x in filter(None, project_translation.tmdatabases_list.all())] if project_translation.tmdatabases_list.all() else []
+
+        usermeta, p = UserMeta.objects.get_or_create(user=request.user)
+        tm_percentage = usermeta.tm_percentage / 100.0
 
         search_results = []
 
@@ -1722,7 +1745,7 @@ def tmdb_search(request):
 
                 for item in res['hits']['hits']:
                     seq=difflib.SequenceMatcher(a=utils.unescape_html(entry_body_clean).lower(), b=item['fields'][entry_source_lang.code_tmx][0].lower())
-                    if seq.ratio() > 0.6:
+                    if seq.ratio() > tm_percentage:
                         diffs = dmp.diff_main(item['fields'][entry_source_lang.code_tmx][0], utils.unescape_html(entry_body_clean))
                         dmp.diff_cleanupSemantic(diffs)
                         tmx_diff = dmp.diff_prettyHtml(diffs)
