@@ -6,6 +6,7 @@
     module.controller('settingsCtrl', ['$scope', '$http', 'localStorageService',
         function ($scope, $http, localStorageService) {
             $scope.userData = window['userData'];
+            $scope.tmPercentage = $scope.userData.tmPercentage;
 
             $scope.cropper = {};
             $scope.cropper.sourceImage = null;
@@ -51,6 +52,21 @@
             $scope.newFontSize = function () {
                 console.log($scope.increaseFontSize);
                 localStorageService.set('customFontSize', $scope.increaseFontSize);
+            };
+
+            $scope.updateTmPercentage = function () {
+                console.log($scope.tmPercentage);
+                $scope.busy = true;
+                $scope.error = '';
+                $http.post('/ajax/tm-percentage/', {'tmPercentage': $scope.tmPercentage})
+                    .success(function (data) {
+                        $scope.busy = false;
+                    })
+                    .error(function(data) {
+                        $scope.error = data;
+                        $scope.busy = false;
+                        //$uibModalInstance.close();
+                    });
             };
         }
     ]);

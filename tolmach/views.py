@@ -111,7 +111,9 @@ def settings_page(request, sett_type):
     elif sett_type == "interface":
         active_tab = "interface"
         template = 'tolmach/partial/settings/interface-tab.html'
-        user_data = """{}"""
+        user_data = json.dumps({
+            'tmPercentage': usermeta.tm_percentage
+        })
     else:
         return HttpResponseRedirect('/')
 
