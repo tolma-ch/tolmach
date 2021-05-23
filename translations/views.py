@@ -596,6 +596,56 @@ def export_tmx(request, tmx_id):
 
 
 @login_required
+def export_glossary(request, glossary_id):
+    from translations.models import Glossary, GlossaryEntry
+
+    gloss = get_object_or_404(Glossary, id=glossary_id)
+
+    if not request.user == gloss.owner and not request.user.is_superuser:
+        raise Http404(_('Sorry, no such glossary here!'))
+
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment
+    from openpyxl.worksheet.write_only import WriteOnlyCell
+
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet()
+    ws.column_dimensions['A'].width = 70
+    ws.column_dimensions['B'].width = 70
+
+    for pair in GlossaryEntry.objects.filter(glossary=gloss).iterator():
+        source_text = pair.source_entry
+        target_text = pair.target_entry
+
+        cell_source = WriteOnlyCell(ws, value=source_text)
+        cell_source.alignment = Alignment(wrap_text=True, vertical='top')
+
+        cell_target = WriteOnlyCell(ws, value=target_text)
+        cell_target.alignment = Alignment(wrap_text=True, vertical='top')
+        ws.append([cell_source, cell_target])
+
+    export_file_name = '%s.xlsx' % utils.random_string(15)
+    tmp_path = '/tmp/' + export_file_name
+
+    wb.save(tmp_path)
+
+    content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    file_body = open(tmp_path, 'rb').read()
+    response = HttpResponse(file_body, content_type=content_type)
+    import os
+    os.remove(tmp_path)
+
+    from django.utils.encoding import iri_to_uri
+    if "Chrome" in request.META['HTTP_USER_AGENT']:
+        response['Content-Disposition'] = f"attachment; filename=\"{iri_to_uri(gloss.name)}.xlsx\""
+    else:
+        response['Content-Disposition'] = f"attachment; filename*=\"UTF-8' '{iri_to_uri(gloss.name)}.xlsx\""
+
+    return response
+
+
+@login_required
 def show_readability(request):
     if request.method == 'GET':
         from urllib.request import urlopen, Request

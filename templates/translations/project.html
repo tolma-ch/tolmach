@@ -380,6 +380,9 @@
                                         {=:: glossary.name =}
                                     </div>
                                     <div class="project-list-glossary__btns">
+                                        <a class="project-list-glossary__btn" href="/glossary/{=:: glossary.id =}/export/"
+                                           ng-show="(isUserManager || (userMembershipStatus == 0))"
+                                           class="btn btn-default"><i class="fa fa-download"></i></a>
                                         <a class="project-list-glossary__btn" href=""
                                            ng-show="(isUserManager || (userMembershipStatus == 0))"
                                            uib-popover-template="'glossaryRemovePopover.html'"
