@@ -60,6 +60,7 @@ urlpatterns = [
     url(r'^text/(?P<text_id>\d+)/(?P<target_lang>[\w-]+)/f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
 
     url(r'^tmx/(?P<tmx_id>\d+)/export/$', trans_views.export_tmx, name='export_tmx'),
+    url(r'^glossary/(?P<glossary_id>\d+)/export/$', trans_views.export_glossary, name='export_glossary'),
 
     # short link for fragment with social preview
     # url(r'^f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
