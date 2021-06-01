@@ -4,7 +4,6 @@
 
   &__button {
     display: inline-block;
-    height: 32px;
     padding: 0 25px;
     line-height: 32px;
     color: @mainBlue;
@@ -18,7 +17,6 @@
       text-decoration: none;
     }
     > span {
-      border-bottom: 1px dashed @mainBlue;
       display: inline-block;
       line-height: 17px;
       @media (prefers-color-scheme: dark) {
@@ -26,13 +24,8 @@
       }
     }
     &_active {
-      background: @mainBlue;
-      color: #fff;
+      border-bottom: 5px solid #02C14F;
       cursor: default;
-      @media (prefers-color-scheme: dark) {
-        color: @grayBg-dark;
-        background: @yellow-main;
-      }
       &:hover {
         text-decoration: none;
       }
