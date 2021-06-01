@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-22 12:30+0300\n"
+"POT-Creation-Date: 2021-06-01 18:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,8 +175,8 @@ msgid "People"
 msgstr "Люди"
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:324
-#: templates/translations/project.html:352
+#: templates/translations/project.html:325
+#: templates/translations/project.html:353
 msgid "TM Databases"
 msgstr "Памяти перевода (TM)"
 
@@ -1123,9 +1123,9 @@ msgstr "Приватный"
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:40
-#: templates/translations/project.html:166
-#: templates/translations/project.html:168
-#: templates/translations/project.html:309
+#: templates/translations/project.html:167
+#: templates/translations/project.html:169
+#: templates/translations/project.html:310
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr "Добавить"
@@ -1192,7 +1192,7 @@ msgstr "Название:"
 
 #: templates/translations/partial/add_text_modal.html:70
 msgid "Get only useful data with Reader View"
-msgstr ""
+msgstr "Извлечь только полезные данные с помощью Режима Чтения"
 
 #: templates/translations/partial/add_text_modal.html:84
 msgid "Upload file"
@@ -1367,64 +1367,68 @@ msgstr "Переведено:"
 msgid "Approved:"
 msgstr "Подтверждено:"
 
-#: templates/translations/project.html:137
+#: templates/translations/project.html:127
+msgid "Disabled:"
+msgstr "Заблокировано:"
+
+#: templates/translations/project.html:138
 #: templates/translations/view-text.html:373
 msgid "Options"
 msgstr "Опции"
 
-#: templates/translations/project.html:144
+#: templates/translations/project.html:145
 msgid "Download"
 msgstr "Скачать"
 
-#: templates/translations/project.html:152
+#: templates/translations/project.html:153
 msgid "Document params"
 msgstr "Параметры документа"
 
-#: templates/translations/project.html:168
+#: templates/translations/project.html:169
 msgid "Click here to add new document to translate"
 msgstr "Нажмите, чтобы добавить новый документ для перевода"
 
-#: templates/translations/project.html:222
+#: templates/translations/project.html:223
 msgid "Tools"
 msgstr "Инструменты"
 
-#: templates/translations/project.html:225
+#: templates/translations/project.html:226
 msgid "About"
 msgstr "О проекте"
 
-#: templates/translations/project.html:297
+#: templates/translations/project.html:298
 msgid "Here will be TMXes and glossaries"
 msgstr "Здесь располагаются базы памяти перевода и глоссарии"
 
-#: templates/translations/project.html:301
+#: templates/translations/project.html:302
 msgid "Click here to translation memory or glossary"
 msgstr "Нажмите, чтобы добавить глоссарий или базу памяти переводов"
 
-#: templates/translations/project.html:317
+#: templates/translations/project.html:318
 msgid "Glossary"
 msgstr "Глоссарий"
 
-#: templates/translations/project.html:375
+#: templates/translations/project.html:376
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/project.html:400
+#: templates/translations/project.html:404
 msgid "Description"
 msgstr "Описание"
 
-#: templates/translations/project.html:424
+#: templates/translations/project.html:428
 msgid "Project statistics"
 msgstr "Статистика проекта"
 
-#: templates/translations/project.html:429
+#: templates/translations/project.html:433
 msgid "Attention!"
 msgstr "Внимание!"
 
-#: templates/translations/project.html:437
+#: templates/translations/project.html:441
 msgid "Remove Project"
 msgstr "Удалить проект"
 
-#: templates/translations/project.html:447
+#: templates/translations/project.html:451
 msgid "Leave Project"
 msgstr "Покинуть проект"
 
@@ -1782,9 +1786,13 @@ msgstr "Простите, указанная страница не найден�
 msgid "Sorry, no such TM database here!"
 msgstr "Простите, указанная база памяти не найдена"
 
-#: translations/views.py:623
+#: translations/views.py:605
+msgid "Sorry, no such glossary here!"
+msgstr "Простите, указанный глоссарий не найден"
+
+#: translations/views.py:673
 msgid "Readability check"
-msgstr ""
+msgstr "Проверка Режима Чтения"
 
 #: translations/views_ajax.py:160 translations/views_ajax.py:183
 #: translations/views_ajax.py:277 translations/views_ajax.py:385
@@ -1997,9 +2005,6 @@ msgstr ""
 
 #~ msgid "Translated"
 #~ msgstr "Переведено"
-
-#~ msgid "Disabled"
-#~ msgstr "Заблокировано"
 
 #~ msgid "Copy"
 #~ msgstr "Скопировать"

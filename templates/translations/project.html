@@ -123,7 +123,8 @@
                                         <div class="progress-bar"
                                              uib-tooltip="{% trans 'Fragments total:' %} {=:: text.translation.counts[0] =}
 {% trans 'Translated:' %} {=:: text.translation.counts[1] =}
-{% trans 'Approved:' %} {=:: text.translation.counts[2] =}"
+{% trans 'Approved:' %} {=:: text.translation.counts[2] =}
+{% trans 'Disabled:' %} {=:: text.translation.counts[3] =}"
                                              tooltip-append-to-body="true">
                                             <div class="progress-bar__gauge" style="width:{=:: text.translation.progress[1] =}%;background:#02c14f"></div>
                                             <div class="progress-bar__gauge" style="width: {=:: text.translation.progress[0] - text.translation.progress[1] =}%;background:rgb(255, 217, 121)"></div>
