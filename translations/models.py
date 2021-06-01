@@ -362,7 +362,8 @@ class TextTranslation(models.Model):
 
                 return [int(entries_total),
                         int(entries_translated),
-                        int(entries_approved)],\
+                        int(entries_approved),
+                        int(entries_disabled)],\
                        [percent_translated, percent_approved]
             else:
                 return [int(entries_total), int(entries_translated), int(entries_approved)], [0, 0]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-22 12:30+0300\n"
+"POT-Creation-Date: 2021-06-01 18:41+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -178,8 +178,8 @@ msgid "People"
 msgstr ""
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:324
-#: templates/translations/project.html:352
+#: templates/translations/project.html:325
+#: templates/translations/project.html:353
 msgid "TM Databases"
 msgstr ""
 
@@ -1049,9 +1049,9 @@ msgstr ""
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:40
-#: templates/translations/project.html:166
-#: templates/translations/project.html:168
-#: templates/translations/project.html:309
+#: templates/translations/project.html:167
+#: templates/translations/project.html:169
+#: templates/translations/project.html:310
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr ""
@@ -1287,64 +1287,68 @@ msgstr ""
 msgid "Approved:"
 msgstr ""
 
-#: templates/translations/project.html:137
+#: templates/translations/project.html:127
+msgid "Disabled:"
+msgstr ""
+
+#: templates/translations/project.html:138
 #: templates/translations/view-text.html:373
 msgid "Options"
 msgstr ""
 
-#: templates/translations/project.html:144
+#: templates/translations/project.html:145
 msgid "Download"
 msgstr ""
 
-#: templates/translations/project.html:152
+#: templates/translations/project.html:153
 msgid "Document params"
 msgstr ""
 
-#: templates/translations/project.html:168
+#: templates/translations/project.html:169
 msgid "Click here to add new document to translate"
 msgstr ""
 
-#: templates/translations/project.html:222
+#: templates/translations/project.html:223
 msgid "Tools"
 msgstr ""
 
-#: templates/translations/project.html:225
+#: templates/translations/project.html:226
 msgid "About"
 msgstr ""
 
-#: templates/translations/project.html:297
+#: templates/translations/project.html:298
 msgid "Here will be TMXes and glossaries"
 msgstr ""
 
-#: templates/translations/project.html:301
+#: templates/translations/project.html:302
 msgid "Click here to translation memory or glossary"
 msgstr ""
 
-#: templates/translations/project.html:317
+#: templates/translations/project.html:318
 msgid "Glossary"
 msgstr ""
 
-#: templates/translations/project.html:375
+#: templates/translations/project.html:376
 msgid "Glossaries"
 msgstr ""
 
-#: templates/translations/project.html:400
+#: templates/translations/project.html:404
 msgid "Description"
 msgstr ""
 
-#: templates/translations/project.html:424
+#: templates/translations/project.html:428
 msgid "Project statistics"
 msgstr ""
 
-#: templates/translations/project.html:429
+#: templates/translations/project.html:433
 msgid "Attention!"
 msgstr ""
 
-#: templates/translations/project.html:437
+#: templates/translations/project.html:441
 msgid "Remove Project"
 msgstr ""
 
-#: templates/translations/project.html:447
+#: templates/translations/project.html:451
 msgid "Leave Project"
 msgstr ""
 
@@ -1699,7 +1703,11 @@ msgstr ""
 msgid "Sorry, no such TM database here!"
 msgstr ""
 
-#: translations/views.py:623
+#: translations/views.py:605
+msgid "Sorry, no such glossary here!"
+msgstr ""
+
+#: translations/views.py:673
 msgid "Readability check"
 msgstr ""
 
