@@ -102,7 +102,7 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
                 logging.info("%s - converted successfully - %s", export_id, new_filename)
                 export_data['file_name'] = new_filename
                 export_data['doc_ext'] = extension_to_return
-                export_data['content_type'] = tmp_export_data['content_type']
+                export_data['content_type'] = text_format
             else:
                 RETURN_DATA['Error'] = 500
                 RETURN_DATA['error_message'] = "Sorry, something went wrong"
