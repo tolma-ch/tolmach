@@ -47,9 +47,9 @@ jobs:
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
-        registry: rg.fr-par.scw.cloud/tolmach-web
-        username: nologin
-        password: ${{ secrets.SCALEWAY_REGISTRY_TOKEN }}
+        registry: registry.venya.tech/tolmach-web
+        username: ${{ secrets.REGISTRY_VENYA_TECH_LOGIN }}
+        password: ${{ secrets.REGISTRY_VENYA_TECH_PASSWORD }}
 
     - name: Build and push Docker images
       uses: docker/build-push-action@v2
@@ -57,11 +57,11 @@ jobs:
         context: .
         push: true
         tags: |
-          rg.fr-par.scw.cloud/tolmach-web/${{ steps.prep.outputs.tags }}
-          rg.fr-par.scw.cloud/tolmach-web/tolmach:latest
+          registry.venya.tech/tolmach-web/${{ steps.prep.outputs.tags }}
+          registry.venya.tech/tolmach-web/tolmach:latest
         labels: |
           org.opencontainers.image.source=${{ github.event.repository.html_url }}
           org.opencontainers.image.created=${{ steps.prep.outputs.created }}
           org.opencontainers.image.revision=${{ github.sha }}
-        cache-from: type=registry,ref=rg.fr-par.scw.cloud/tolmach-web/tolmach:latest
+        cache-from: type=registry,ref=registry.venya.tech/tolmach-web/tolmach:latest
         cache-to: type=inline
