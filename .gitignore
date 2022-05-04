@@ -4,6 +4,7 @@
 *.mo
 .idea
 .vscode
+*.code-workspace
 .DS_Store
 .reload
 local_settings.py
