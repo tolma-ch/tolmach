@@ -5,11 +5,17 @@ RUN apt update && apt install -q -y nodejs npm supervisor default-libmysqlclient
     libreoffice-core-nogui libreoffice-writer-nogui libreoffice-calc-nogui libreoffice-java-common default-jre && \
     wget -O /opt/okapi.zip "https://okapiframework.org/binaries/main/1.43.0/okapi-lib_all-platforms_1.43.0.zip" && \
     cd /opt && unzip okapi.zip -d okapi && rm -f okapi.zip
-# RUN yum install -y epel-release && yum install -y libreoffice-core libreoffice-writer libreoffice-calc supervisor nodejs npm && \
-#     yum clean all && \
-#     rm -rf /var/cache/yum && \
-#     wget -O /usr/bin/sdcv megavenik.ru/sdcv && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts && \
-
+RUN /bin/bash -c 'ARCH=`uname -m` && \
+    if [ "$ARCH" == "x86_64" ]; then \
+       echo "Current arch is x86_64" && \
+       wget -O /usr/bin/sdcv megavenik.ru/sdcv/sdcv-x86_64 && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts; \
+    elif [ "$ARCH" == "aarch64" ]; then \
+       echo "Current arch is aarch64" && \
+       wget -O /usr/bin/sdcv megavenik.ru/sdcv/sdcv-aarch64 && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts; \
+    else \
+       echo "Unknown arch, wont install sdcv"; \
+    fi'
+    
 RUN npm install -g inherits coffee-script grunt grunt-cli
 
 RUN mkdir /var/www /var/log/tolma.ch
