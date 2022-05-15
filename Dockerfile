@@ -14,7 +14,7 @@ RUN /bin/bash -c 'ARCH=`uname -m` && \
        wget -O /usr/bin/sdcv megavenik.ru/sdcv/sdcv-aarch64 && chmod +x /usr/bin/sdcv && mkdir /usr/share/dicts; \
     else \
        echo "Unknown arch, wont install sdcv"; \
-    fi'
+    fi' && ln -s /lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.6
     
 RUN npm install -g inherits coffee-script grunt grunt-cli
 
