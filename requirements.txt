@@ -19,7 +19,7 @@ diff_match_patch
 bs4
 requests
 lxml
-elasticsearch
+elasticsearch==7.12.1
 babel
 srt
 sparkpost
