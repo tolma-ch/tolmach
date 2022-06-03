@@ -26,6 +26,9 @@ urlpatterns = [
     url(r'^blog/', include("blog.urls")),
     url(r'^markdownx/', include('markdownx.urls')),
 
+    # new landing
+    url(r'^landos/', main_views.new_landing, name='new_landing'),
+
     # main
     url(r'^$', main_views.index, name='index'),
     url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html'), name="privacy_policy"),

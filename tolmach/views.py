@@ -619,3 +619,7 @@ def accept_password(request):
 def logout(request):
     logout(request)
     return HttpResponseRedirect("/")
+
+def new_landing(request):
+    template = 'tolmach/future_landing/index.html'
+    return render(request, template)
