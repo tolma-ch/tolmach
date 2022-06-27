@@ -38,6 +38,7 @@ module.exports = function (grunt) {
                     "tolmach/static/assets/bootstrap/dist/css/bootstrap.css": "tolmach/static/assets/bootstrap/less/bootstrap.less",
                     "tolmach/static/dist/ace.css": "tolmach/static/less/ace.less",
                     "tolmach/static/dist/landing.css": "tolmach/static/less/landing.less",
+                    "tolmach/static/dist/new_landing.css": "tolmach/static/less/new_landing.less",
                     "tmp/tolmach.css": "tolmach/static/less/tolmach.less"
                 }
             }
@@ -122,7 +123,28 @@ module.exports = function (grunt) {
                     ]
                 }
             }
-        }
+        },
+
+        exec: {
+            collectstatic: {
+                command: "python manage.py collectstatic --noinput"
+            }
+        },
+
+        watch: {
+            scripts: {
+              files: ["tolmach/static/less/**/*.less"],
+              tasks: [
+                'clean:dist',
+                'css',
+                'string-replace',
+                'exec'
+              ],
+              options: {
+                spawn: false,
+              },
+            },
+          },
 
     });
 
@@ -135,6 +157,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-include-source');
     grunt.loadNpmTasks('grunt-string-replace');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-exec');
 
     grunt.registerTask('dev', [
         'includeSource'
