@@ -7,143 +7,9 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,500;1,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'dist/new_landing.css' %}?v={{ front_version }}">
     </head>
     <body>
-        <style>
-            body {
-                font-family: 'Ubuntu';
-                margin: 0;
-            }
-            .container {
-                display: grid;
-                grid-template-columns: repeat(12, 1fr);
-                grid-template-rows: 60px 660px 300px 300px 160px;
-                row-gap: 20px;
-            }
-            header {
-              grid-column: span 12;
-              display: flex;
-              align-items: center;
-              border-bottom: 1px solid #EBEBEB;
-              padding: 0 15px 0 15px;
-            }
-            .header-menu {
-              display: flex;
-              gap: 45px;
-              font-family: 'Ubuntu';
-              font-size: 16px;
-              font-weight: 300;
-              align-items: center;
-            }
-            .header-menu__item {
-              color: #0B254B;
-              text-decoration: none;
-            }
-            .header-menu__item:hover {
-              color: #40D060;
-              text-decoration-line: underline;
-              text-underline-offset: 5px;
-              text-decoration-thickness: 2px;
-            }
-            .main {
-              grid-column: span 12;
-              background-image: url({% static 'img/new-landing/blue-back-vector.svg' %});
-              background-repeat: space;
-              background-position: center;
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              grid-template-rows: repeat(12, 1fr);
-              padding: 0 30px 0 30px;
-            }
-            .main__motto {
-              grid-column: 1;
-              grid-row: 2/4;
-              font-size: 60px;
-              font-weight: 600;
-              width: 370px;
-              color: #0B254B;
-            }
-            .main__description {
-              grid-column: 1;
-              grid-row: 5/6;
-              font-size: 18px;
-              font-weight: 300;
-              color: #536277;
-              width: 600px;
-              line-height: 160%;
-            }
-            .main__signup {
-              grid-column: 1;
-              grid-row: 7;
-            }
-            .main__image {
-              grid-column: 2;
-              grid-row: 1/12;
-            }
-            .benefits {
-              grid-column: span 12;
-              background-color: grey;
-            }
-            .feedback {
-              grid-column: span 12;
-              background-color: yellow;
-            }
-            footer {
-              grid-column: span 12;
-              background-color: #0B254B;
-              padding: 0 15px 0 15px;
-              color: white;
-            }
-            .upper-footer {
-              display: flex;
-              gap: 45px;
-              align-items: center;
-              height: 80px;
-              border-bottom: 1px solid #1F4479;
-            }
-            .lower-footer {
-              display: flex;
-              gap: 45px;
-              align-items: center;
-              height: 80px;
-            }
-            .footer-menu__item {
-              color: #B4C1D2;
-              text-decoration: none;
-            }
-            .logo {
-              margin-right: auto;
-            }
-            header > div:nth-child(3) {
-              margin-left: auto;
-            }
-            .signin-button {
-              background-color: #ECFFE0;
-              border-radius: 3px;
-              height: 40px;
-              line-height: 40px;
-            }
-            .signin-button > a {
-              padding: 15px;
-              color: #40D060;
-              font-weight: 400;
-              text-decoration: none;
-            }
-            .main__signup {
-              background-color: #40D060;
-              border-radius: 3px;
-              height: 50px;
-              max-width: 180px;
-              line-height: 50px;
-              text-align: center;
-            }
-            .main__signup > a {
-              padding: 15px;
-              color: white;
-              font-weight: 400;
-              text-decoration: none;
-            }
-        </style>
         <div class="container">
             <header>
                 <img class="logo" src="{% static 'img/top-logo-black.svg' %}">
@@ -165,7 +31,37 @@
               </div>
               <img class="main__image" src="{% static 'img/new-landing/popoog.png' %}">
             </div>
-            <div class="benefits">benefits</div>
+            <div class="benefits">
+              <div class="benefits__description">
+                «Толмач» экономит переводчикам кучу времени, денег и нервов, ведь вся команда и инструменты – в одном месте
+              </div>
+              <div class="benefits__items">
+                <div class="benefits__item">
+                  <div class="benefits__item__title">
+                    Одна голова хорошо, а много – лучше.
+                  </div>
+                  <div class="benefits__item__body">
+                    Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.
+                  </div>
+                </div>
+                <div class="benefits__item">
+                  <div class="benefits__item__title">
+                    Одна голова хорошо, а много – лучше.
+                  </div>
+                  <div class="benefits__item__body">
+                    Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.
+                  </div>
+                </div>
+                <div class="benefits__item">
+                  <div class="benefits__item__title">
+                    Одна голова хорошо, а много – лучше.
+                  </div>
+                  <div class="benefits__item__body">
+                    Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="feedback">feedback</div>
             <footer>
               <div class="upper-footer">
