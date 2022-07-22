@@ -226,7 +226,6 @@ def cleanse_glossary_entries(glossary_list):
 
 # выделяем слова, из глоссария в активном entry на странице перевода текста
 def glossary_to_entry(entry_body, glossary_list, language):
-    from nltk.stem.snowball import SnowballStemmer
     from nltk.tokenize import word_tokenize
 
     def highlight_word(target_word):
@@ -239,7 +238,12 @@ def glossary_to_entry(entry_body, glossary_list, language):
         """
         Если язык не азиатский, то можно пользоваться стеммером для более лучшего поиска
         """
-        stemmer = SnowballStemmer(language.name.lower().split(" ")[0])
+        if language.code == "tr":
+            from TurkishStemmer import TurkishStemmer
+            stemmer = TurkishStemmer()
+        else:
+            from nltk.stem.snowball import SnowballStemmer
+            stemmer = SnowballStemmer(language.name.lower().split(" ")[0])
         tokenized_body = word_tokenize(entry_body)
         for source_entry, target_entry in cleanse_glossary_entries(glossary_list).items():
             if len(source_entry.split()) == 1:

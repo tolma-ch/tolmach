@@ -43,6 +43,9 @@ ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\" "
 IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\" "
 IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\" "
 
+TR_U = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZQWX\-…“”«»()'\" "
+TR_L = "abcçdefgğhıijklmnoöprsştuüvyzqwx\-…“”«»()'\" "
+
 KOR = "[가-힣]"
 
 # +----+----------+------+
@@ -69,6 +72,7 @@ SPLIT_PATTERN = {
         'fr': " [%(FR_L)s%(FR_U)s]+(!|\\.|\\?) [%(FR_U)s]+| [a-zA-Z]{2,}(!|\\.|\\?) [A-Z]+" % locals(),  # fra
         'de': " [%(DE_L)s%(DE_U)s]+(!|\\.|\\?) [%(DE_U)s]+| [a-zA-Z]{2,}(!|\\.|\\?) [A-Z]+" % locals(),  # deu
         'it': " [%(IT_L)s%(IT_U)s]+(!|\\.|\\?) [%(IT_U)s]+| [a-zA-Z]{2,}(!|\\.|\\?) [A-Z]+" % locals(),  # ita
+        'tr': " [%(TR_L)s%(TR_U)s]+(!|\\.|\\?) [%(TR_U)s]+| [a-zA-Z]{2,}(!|\\.|\\?) [A-Z]+" % locals(),  # tur
         }
 
 def random_string(len):
@@ -132,8 +136,9 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1, MARK_ONL
                 line = line.replace("! ", "!† ")
                 line = line.replace("? ", "?† ")
             return line
-        elif lang in ['ru', 'fr', 'es', 'de', 'it']:
+        elif lang in ['ru', 'fr', 'es', 'de', 'it', 'tr']:
             # print(matchobj.group(0))
+            
             line = matchobj.group(0)
             line = line.replace(". ", ".† ")
             line = line.replace("! ", "!† ")

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-01 18:41+0300\n"
+"POT-Creation-Date: 2022-07-22 16:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -116,30 +116,38 @@ msgid "Italian (Switzerland)"
 msgstr "итальянский (Швейцария)"
 
 #: entries/views.py:29
+msgid "Turkish"
+msgstr "турецкий"
+
+#: entries/views.py:30
+msgid "Turkish (Cyprus)"
+msgstr "турецкий (Кипр)"
+
+#: entries/views.py:32
 msgid "Korean"
 msgstr "корейский"
 
-#: entries/views.py:31
+#: entries/views.py:34
 msgid "Japanese"
 msgstr "японский"
 
-#: entries/views.py:33
+#: entries/views.py:36
 msgid "Chinese (simplified, China)"
 msgstr "китайский (упрощённый, Китай)"
 
-#: entries/views.py:34
+#: entries/views.py:37
 msgid "Chinese (simplified, Singapore)"
 msgstr "китайский (упрощённый, Сингапур)"
 
-#: entries/views.py:35
+#: entries/views.py:38
 msgid "Chinese (traditional, Taiwan)"
 msgstr "китайский (традиционный, Тайвань)"
 
-#: entries/views.py:36
+#: entries/views.py:39
 msgid "Chinese (traditional, Hong Hong SAR China)"
 msgstr "китайский (традиционный, Гонконг [САР])"
 
-#: entries/views.py:37
+#: entries/views.py:40
 msgid "Chinese (traditional, Macao SAR China"
 msgstr "китайский (традиционный, Макао [САР])"
 
@@ -175,8 +183,8 @@ msgid "People"
 msgstr "Люди"
 
 #: templates/main/base-logged-in.html:12
-#: templates/translations/project.html:325
-#: templates/translations/project.html:353
+#: templates/translations/project.html:331
+#: templates/translations/project.html:359
 msgid "TM Databases"
 msgstr "Памяти перевода (TM)"
 
@@ -1123,9 +1131,9 @@ msgstr "Приватный"
 #: templates/translations/partial/add_tmx_modal.html:46
 #: templates/translations/partial/new_project_modal.html:12
 #: templates/translations/partial/view_text/to_glossary_modal.html:40
-#: templates/translations/project.html:167
-#: templates/translations/project.html:169
-#: templates/translations/project.html:310
+#: templates/translations/project.html:173
+#: templates/translations/project.html:175
+#: templates/translations/project.html:316
 #: templates/translations/view-text.html:13
 msgid "Add"
 msgstr "Добавить"
@@ -1355,80 +1363,80 @@ msgstr "Участники"
 msgid "Documents"
 msgstr "Документы"
 
-#: templates/translations/project.html:124
+#: templates/translations/project.html:130
 msgid "Fragments total:"
 msgstr "Всего фрагментов:"
 
-#: templates/translations/project.html:125
+#: templates/translations/project.html:131
 msgid "Translated:"
 msgstr "Переведено:"
 
-#: templates/translations/project.html:126
+#: templates/translations/project.html:132
 msgid "Approved:"
 msgstr "Подтверждено:"
 
-#: templates/translations/project.html:127
+#: templates/translations/project.html:133
 msgid "Disabled:"
 msgstr "Заблокировано:"
 
-#: templates/translations/project.html:138
+#: templates/translations/project.html:144
 #: templates/translations/view-text.html:373
 msgid "Options"
 msgstr "Опции"
 
-#: templates/translations/project.html:145
+#: templates/translations/project.html:151
 msgid "Download"
 msgstr "Скачать"
 
-#: templates/translations/project.html:153
+#: templates/translations/project.html:159
 msgid "Document params"
 msgstr "Параметры документа"
 
-#: templates/translations/project.html:169
+#: templates/translations/project.html:175
 msgid "Click here to add new document to translate"
 msgstr "Нажмите, чтобы добавить новый документ для перевода"
 
-#: templates/translations/project.html:223
+#: templates/translations/project.html:229
 msgid "Tools"
 msgstr "Инструменты"
 
-#: templates/translations/project.html:226
+#: templates/translations/project.html:232
 msgid "About"
 msgstr "О проекте"
 
-#: templates/translations/project.html:298
+#: templates/translations/project.html:304
 msgid "Here will be TMXes and glossaries"
 msgstr "Здесь располагаются базы памяти перевода и глоссарии"
 
-#: templates/translations/project.html:302
+#: templates/translations/project.html:308
 msgid "Click here to translation memory or glossary"
 msgstr "Нажмите, чтобы добавить глоссарий или базу памяти переводов"
 
-#: templates/translations/project.html:318
+#: templates/translations/project.html:324
 msgid "Glossary"
 msgstr "Глоссарий"
 
-#: templates/translations/project.html:376
+#: templates/translations/project.html:382
 msgid "Glossaries"
 msgstr "Глоссарии"
 
-#: templates/translations/project.html:404
+#: templates/translations/project.html:410
 msgid "Description"
 msgstr "Описание"
 
-#: templates/translations/project.html:428
+#: templates/translations/project.html:434
 msgid "Project statistics"
 msgstr "Статистика проекта"
 
-#: templates/translations/project.html:433
+#: templates/translations/project.html:439
 msgid "Attention!"
 msgstr "Внимание!"
 
-#: templates/translations/project.html:441
+#: templates/translations/project.html:447
 msgid "Remove Project"
 msgstr "Удалить проект"
 
-#: templates/translations/project.html:451
+#: templates/translations/project.html:457
 msgid "Leave Project"
 msgstr "Покинуть проект"
 

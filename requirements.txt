@@ -21,6 +21,7 @@ requests
 lxml
 elasticsearch==7.12.1
 babel
+TurkishStemmer==1.3
 srt
 sparkpost
 django-debug-toolbar

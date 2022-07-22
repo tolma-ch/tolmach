@@ -26,6 +26,9 @@ def get_language_name(lang_regional_code):
         'it_IT': _("Italian"),
         'it_CH': _("Italian (Switzerland)"),
 
+        'tr_TR': _("Turkish"),
+        'tr_CY': _("Turkish (Cyprus)"),
+
         'ko_KR': _("Korean"),
 
         'ja_JP': _("Japanese"),
