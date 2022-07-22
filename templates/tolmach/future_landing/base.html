@@ -1,0 +1,48 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>base test</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,500;1,700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'dist/new_landing.css' %}?v={{ front_version }}">
+    </head>
+    <body>
+        <div class="container">
+            <div class="header-outline">
+              <header>
+                  <img class="logo" src="{% static 'img/top-logo-black.svg' %}">
+                  <div class="header-menu">
+                    <a href="/" class="header-menu__item active">Продукт</a>
+                    <a href="/" class="header-menu__item">Цены</a>
+                    <a href="/" class="header-menu__item">О нас</a>
+                    <a href="/" class="header-menu__item">Контакты</a>
+                    <div class="signin-button">
+                      <a href="/">Вход/Регистрация</a>
+                    </div>
+                  </div>
+              </header>
+            </div>
+            {% block content %}
+            {% endblock content %}
+            <footer>
+              <div class="upper-footer">
+                <img class="logo" src="{% static 'img/top-logo.svg' %}">
+                <div class="header-menu">
+                  <a href="https://vk.com/tolma_ch" class="footer-menu__item">Вконтакте</a>
+                  <a href="https://twitter.com/tolma_ch" class="footer-menu__item">Twitter</a>
+                  <a href="/blog/" class="footer-menu__item">Блог</a>
+                  <a href="/" class="footer-menu__item">Сотрудничество</a>
+                </div>
+              </div>
+              <div class="lower-footer">
+                <div class="logo">© 2020 Tolma.ch. Красть контент – плохо!</div>
+                <div class="header-menu">
+                  <a href="/privacy/" class="footer-menu__item">Политика приватности</a>
+                </div>
+              </div>
+            </footer>
+           </div>
+    </body>
+</html>

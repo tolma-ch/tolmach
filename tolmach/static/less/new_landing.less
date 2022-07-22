@@ -6,14 +6,26 @@ body {
 .container {
 	display: grid;
 	grid-template-columns: repeat(12, 1fr);
-	grid-template-rows: 60px 660px 300px 300px 160px;
+	grid-template-rows: 60px 660px auto auto 160px;
 	row-gap: 20px;
 }
+.accent {
+	display: inline;
+    color: #40D060;
+}
+
+.header-outline {
+	grid-column: span 12;
+	border-bottom: 1px solid #EBEBEB;
+}
+
 header {
+	max-width: 1440px;
+	margin: 0 auto;
+	margin-top: 8px;
 	grid-column: span 12;
 	display: flex;
 	align-items: center;
-	border-bottom: 1px solid #EBEBEB;
 	padding: 0 15px 0 15px;
 }
 
@@ -38,14 +50,20 @@ header {
 	}
 }
 
-.main {
+.main-background {
 	grid-column: span 12;
 	background-image: url('/static/img/new-landing/blue-back-vector.svg');
-	background-repeat: space;
+	background-repeat: no-repeat;
+	background-size: 100% 80%;
 	background-position: center;
+}
+
+.main {
+	max-width: 1440px;
+	margin: 0 auto;
+	grid-column: span 12;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	grid-template-rows: repeat(12, 1fr);
 	padding: 0 30px 0 30px;
 
 	&__motto {
@@ -91,11 +109,14 @@ header {
 }
 
 .benefits {
+	max-width: 1440px;
+	margin: 0 auto;
 	padding: 0 30px 0 30px;
 	display: grid;
 	grid-column: span 12;
 	grid-template-columns: repeat(1, 1fr);
 	grid-template-rows: repeat(2, 1fr);
+	grid-row-gap: 40px;
 
 	&__description {
 		color: #0B254B;
@@ -123,9 +144,47 @@ header {
 	}
 }
 .feedback {
+	max-width: 1440px;
+	margin: 0 auto;
+	padding: 0 30px 0 30px;
+	display: grid;
 	grid-column: span 12;
-	background-color: yellow;
+	grid-template-columns: min-content auto;
+	grid-template-rows: 1;
+
+	&__avatar {
+		grid-column: 1;
+	}
+
+	&__description {
+		grid-column: 2;
+		max-width: 680px;
+		margin-top: 50px;
+	}
+
+	&__bottom-quote img {
+		-moz-transform: scale(-1, -1);
+		-o-transform: scale(-1, -1);
+		-webkit-transform: scale(-1, -1);
+		transform: scale(-1, -1);
+		float: right;
+	}
+
+	&__bottom-quote__author {
+		font-size: 16px;
+		font-weight: 300;
+		color: #536277;
+	}
+
+	&__text {
+		font-size: 30px;
+		line-height: 150%;
+		margin: 20px 0;
+		color: #0B254B;
+	}
 }
+
+
 footer {
 	grid-column: span 12;
 	background-color: #0B254B;
@@ -133,6 +192,8 @@ footer {
 	color: white;
 }
 .upper-footer {
+	max-width: 1440px;
+	margin: 0 auto;
 	display: flex;
 	gap: 45px;
 	align-items: center;
@@ -140,6 +201,8 @@ footer {
 	border-bottom: 1px solid #1F4479;
 }
 .lower-footer {
+	max-width: 1440px;
+	margin: 0 auto;
 	display: flex;
 	gap: 45px;
 	align-items: center;

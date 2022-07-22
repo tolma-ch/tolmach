@@ -621,5 +621,5 @@ def logout(request):
     return HttpResponseRedirect("/")
 
 def new_landing(request):
-    template = 'tolmach/future_landing/index.html'
+    template = 'tolmach/future_landing/login.html'
     return render(request, template)

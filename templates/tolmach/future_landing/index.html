@@ -1,42 +1,25 @@
+{% extends "tolmach/future_landing/base.html" %}
 {% load staticfiles %}
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>base test</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,500;1,700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'dist/new_landing.css' %}?v={{ front_version }}">
-    </head>
-    <body>
-        <div class="container">
-            <header>
-                <img class="logo" src="{% static 'img/top-logo-black.svg' %}">
-                <div class="header-menu">
-                  <a href="/" class="header-menu__item active">Продукт</a>
-                  <a href="/" class="header-menu__item">Цены</a>
-                  <a href="/" class="header-menu__item">О нас</a>
-                  <a href="/" class="header-menu__item">Контакты</a>
-                  <div class="signin-button">
-                    <a href="/">Вход/Регистрация</a>
-                  </div>
+{% block content %}
+            <div class="main-background">
+              <div class="main">
+                <div class="main__motto">Переводим вместе!</div>
+                <div class="main__description">Tolma.ch - онлайн-платформа для переводчиков, которая позволяет достичь максимальной продуктивности при работе над текстами любой сложности.</div>
+                <div class="main__signup">
+                  <a href="">Попробовать</a>
                 </div>
-            </header>
-            <div class="main">
-              <div class="main__motto">Переводим вместе!</div>
-              <div class="main__description">Tolma.ch - онлайн-платформа для переводчиков, которая позволяет достичь максимальной продуктивности при работе над текстами любой сложности.</div>
-              <div class="main__signup">
-                <a href="">Попробовать</a>
+                <img class="main__image" src="{% static 'img/new-landing/popoog.png' %}">
               </div>
-              <img class="main__image" src="{% static 'img/new-landing/popoog.png' %}">
             </div>
             <div class="benefits">
               <div class="benefits__description">
-                «Толмач» экономит переводчикам кучу времени, денег и нервов, ведь вся команда и инструменты – в одном месте
+                «Толмач» экономит переводчикам <div class="accent">кучу времени, денег и нервов</div>, ведь вся команда и инструменты – в одном месте
               </div>
               <div class="benefits__items">
                 <div class="benefits__item">
+                  <div class="benefits__item__icon">
+                    <img src="{% static 'img/new-landing/benefit-icon.svg' %}" alt="">
+                  </div>
                   <div class="benefits__item__title">
                     Одна голова хорошо, а много – лучше.
                   </div>
@@ -45,41 +28,46 @@
                   </div>
                 </div>
                 <div class="benefits__item">
+                  <div class="benefits__item__icon">
+                    <img src="{% static 'img/new-landing/benefit-icon.svg' %}" alt="">
+                  </div>
                   <div class="benefits__item__title">
-                    Одна голова хорошо, а много – лучше.
+                    Работу с документами берем на себя.
                   </div>
                   <div class="benefits__item__body">
-                    Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.
+                    Разбираем исходные документы, извлекаем все текстовые данные, разбиваем их на удобные для перевода отрывки, а потом собираем обратно 
                   </div>
                 </div>
                 <div class="benefits__item">
+                  <div class="benefits__item__icon">
+                    <img src="{% static 'img/new-landing/benefit-icon.svg' %}" alt="">
+                  </div>
                   <div class="benefits__item__title">
-                    Одна голова хорошо, а много – лучше.
+                    Переводим с комфортом.
                   </div>
                   <div class="benefits__item__body">
-                    Приглашайте к работе над Вашим проектом своих старых коллег или ищите новых, не отрываясь от перевода.
+                    Переводим текст с использованием глоссариев, баз памяти перевода, систем машинного перевода и готовых словарей.
                   </div>
                 </div>
               </div>
             </div>
-            <div class="feedback">feedback</div>
-            <footer>
-              <div class="upper-footer">
-                <img class="logo" src="{% static 'img/top-logo.svg' %}">
-                <div class="header-menu">
-                  <a href="https://vk.com/tolma_ch" class="footer-menu__item">Вконтакте</a>
-                  <a href="https://twitter.com/tolma_ch" class="footer-menu__item">Twitter</a>
-                  <a href="/blog/" class="footer-menu__item">Блог</a>
-                  <a href="/" class="footer-menu__item">Сотрудничество</a>
+            <div class="feedback">
+              <div class="feedback__avatar">
+                <img src="{% static 'img/new-landing/feedback-avatar.svg' %}" alt="">
+              </div>
+              <div class="feedback__description">
+                <div class="feedback__top-quote">
+                  <img src="{% static 'img/new-landing/quote.svg' %}" alt="">
+                </div>
+                <div class="feedback__text">
+                  Товарищи! дальнейшее развитие различных форм деятельности в значительной степени обуславливает создание систем массового участия.
+                </div>
+                <div class="feedback__bottom-quote">
+                  <img src="{% static 'img/new-landing/quote.svg' %}" alt="">
+                </div>
+                <div class="feedback__bottom-quote__author">
+                Иосиф Пупочкин, генеральный директор в «IT Summa»
                 </div>
               </div>
-              <div class="lower-footer">
-                <div class="logo">© 2020 Tolma.ch. Красть контент – плохо!</div>
-                <div class="header-menu">
-                  <a href="/privacy/" class="footer-menu__item">Политика приватности</a>
-                </div>
-              </div>
-            </footer>
-           </div>
-    </body>
-</html>
+            </div>
+{% endblock content %}
