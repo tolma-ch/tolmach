@@ -125,8 +125,8 @@ def upload_file(file_object, max_size):
             fd.write(chunk)
 
     # Проверяем тип файла
-    from mimetypes import MimeTypes
-    mime = MimeTypes()
+    import mimetypes as mime
+    mime.init()
     file_type = mime.guess_type(file_path)[0]
 
     return file_name, file_path, file_type, error
