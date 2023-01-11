@@ -129,6 +129,7 @@ def upload_file(file_object, max_size):
     mime.init()
     file_type = mime.guess_type(file_path)[0]
 
+
     return file_name, file_path, file_type, error
 
 
