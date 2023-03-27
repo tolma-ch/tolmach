@@ -2,6 +2,7 @@ import warnings
 warnings.simplefilter('default', DeprecationWarning)
 
 from django.conf import settings
+from django.shortcuts import render
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
@@ -19,6 +20,7 @@ PATH = getattr(settings, 'URL_PATH', '')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^login/twitter/', lambda request: render(request, "main/helpers/twitter-outage.html")),
     url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
