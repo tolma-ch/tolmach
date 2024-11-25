@@ -206,16 +206,16 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.vk.VKOAuth2',
 )
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = '***REMOVED***'
-SOCIAL_AUTH_VK_OAUTH2_SECRET = '***REMOVED***'
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.environ.get('VK_KEY', '')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.environ.get('VK_SECRET', '')
 SOCIAL_AUTH_VK_OAUTH2_EXTRA_DATA = [
     'photo_max'
 ]
-SOCIAL_AUTH_TWITTER_KEY = '***REMOVED***'
-SOCIAL_AUTH_TWITTER_SECRET = '***REMOVED***'
+SOCIAL_AUTH_TWITTER_KEY = os.environ.get('TWITTER_KEY', '')
+SOCIAL_AUTH_TWITTER_SECRET = os.environ.get('TWITTER_SECRET', '')
 
-SOCIAL_AUTH_FACEBOOK_KEY = '***REMOVED***'
-SOCIAL_AUTH_FACEBOOK_SECRET = '***REMOVED***'
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ.get('FB_KEY', '')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ.get('FB_SECRET', '')
 
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
@@ -248,8 +248,10 @@ SOCIAL_AUTH_PIPELINE = (
     'tolmach.pipeline.update_user_social_data',
 )
 
+SENTRY_URL = os.environ.get('SENTRY_URL', '')
+
 RAVEN_CONFIG = {
-    'dsn': '***REMOVED***',
+    'dsn': SENTRY_URL,
     # If you are using git, you can also automatically configure the
     # release based on the git info.
     'release': raven.fetch_git_sha(BASE_DIR),
@@ -321,7 +323,7 @@ AUTH_USER_MODEL = 'auth.User'
 
 AUTOSLUG_SLUGIFY_FUNCTION = slugify.slugify
 
-YANDEX_TRANSLATE_KEY = "***REMOVED***"
+YANDEX_TRANSLATE_KEY = os.environ.get('YANDEX_TRANSLATE_KEY', '')
 
 GLOSSARY_FILE_SIZE = 1048576
 TM_FILE_SIZE = 104857600
