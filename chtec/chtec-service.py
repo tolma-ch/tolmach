@@ -236,7 +236,7 @@ sent_app = app()
 sent_app.catchall = False
 from raven import Client
 from raven.contrib.bottle import Sentry
-client = Client('***REMOVED***')
+client = Client(os.environ.get('CHTEC_SENTRY_URL', ''))
 sent_app = Sentry(sent_app, client)
 
 run(host=HOST, port=8080, server="gunicorn", workers=10, debug=True, app=sent_app, timeout=WORKER_TIMEOUT)
