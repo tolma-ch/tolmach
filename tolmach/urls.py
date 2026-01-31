@@ -71,6 +71,7 @@ urlpatterns = [
     # url(r'^f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
 
     # ajax
+    url(r'^update-email/$', main_ajax.update_email_ajax, name='update_email_ajax'),
     url(r'^ajax/search/$', main_ajax.global_search_ajax, name='global_search_ajax'),
     url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
     url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),

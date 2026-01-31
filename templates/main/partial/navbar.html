@@ -1,9 +1,68 @@
 {% load i18n %}
 {% load staticfiles %}
 		<header class="navbar navbar-default" id="navbar">
+            <style>
+                #navbar-container {
+                    height: 40px;
+                }
+                .navbar-email-reminder {
+                    color: #fff;
+                    background-color: #f0ad4e;
+                    padding: 5px 10px;
+                    text-align: center;
+                    margin-top: 10px;
+                }
+            </style>
 			<script type="text/javascript">
 				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
 			</script>
+            
+            <script type="text/javascript">
+            $(document).ready(function() {
+                $('#email-update-form').on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    var form = $(this);
+                    var email = form.find('input[name="email"]').val();
+                    var csrfToken = form.find('input[name="csrfmiddlewaretoken"]').val();
+                    
+                    if (!email) {
+                        alert('Please enter an email address');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    var submitBtn = form.find('button[type="submit"]');
+                    var originalText = submitBtn.text();
+                    submitBtn.text('Updating...').prop('disabled', true);
+                    
+                    $.ajax({
+                        url: '/update-email/',
+                        type: 'POST',
+                        data: {
+                            email: email,
+                            csrfmiddlewaretoken: csrfToken
+                        },
+                        success: function(response) {
+                            alert('Email updated successfully!');
+                            form.find('input[name="email"]').val('');
+                            // Optionally hide the entire reminder after successful update
+                            // $('.navbar-email-reminder').hide();
+                        },
+                        error: function(xhr, status, error) {
+                            var errorMsg = 'Error updating email';
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                errorMsg = xhr.responseJSON.error;
+                            }
+                            alert(errorMsg);
+                        },
+                        complete: function() {
+                            submitBtn.text(originalText).prop('disabled', false);
+                        }
+                    });
+                });
+            });
+            </script>
 
 			<div class="navbar-container" id="navbar-container" style="margin: 0 auto; max-width: 1400px">
 				<div class="navbar-header pull-left">
@@ -76,5 +135,20 @@
                 {% endblock %}
                 {% endif %}
 			</div><!-- /.container -->
+                            
+                {% if user.is_authenticated %}
+                <!-- Conditional navbar for email reminder -->
+                <div class="navbar-email-reminder">
+                    Please, set your email
+                    <form id="email-update-form" style="display: inline-block; margin-left: 20px;">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Enter your email" required style="padding: 3px 8px; border: 1px solid #ccc; border-radius: 3px;">
+                        <button type="submit" style="padding: 3px 12px; background-color: #5cb85c; color: white; border: none; border-radius: 3px; margin-left: 5px;">
+                            Update
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+                
 
 		</header>

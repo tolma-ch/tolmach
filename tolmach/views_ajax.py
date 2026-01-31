@@ -385,3 +385,50 @@ def get_url_og_meta(request):
             )
 
         return HttpResponse(ogp.to_json(), content_type="application/json")
+
+
+@login_required
+def update_email_ajax(request):
+    if request.method == 'POST':
+        from tolmach.models import UserMeta
+        import re
+        
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            return HttpResponse(
+                json.dumps({'error': 'Email is required'}),
+                content_type="application/json",
+                status=400
+            )
+        
+        # Basic email validation
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            return HttpResponse(
+                json.dumps({'error': 'Invalid email format'}),
+                content_type="application/json",
+                status=400
+            )
+        
+        try:
+            # Get or create UserMeta for the current user
+            user_meta, created = UserMeta.objects.get_or_create(user=request.user)
+            user_meta.email = email
+            user_meta.save()
+            
+            return HttpResponse(
+                json.dumps({'success': True, 'message': 'Email updated successfully'}),
+                content_type="application/json"
+            )
+        except Exception as e:
+            return HttpResponse(
+                json.dumps({'error': str(e)}),
+                content_type="application/json",
+                status=500
+            )
+    
+    return HttpResponse(
+        json.dumps({'error': 'Method not allowed'}),
+        content_type="application/json",
+        status=405
+    )
