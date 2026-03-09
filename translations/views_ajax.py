@@ -1881,6 +1881,8 @@ def user_ajax(request):
                 request.user.last_name = post['lastName']
             if 'username' in post:
                 request.user.username = post['username']
+            if 'email' in post:
+                request.user.email = post['email']
             try:
                 request.user.save()
             except IntegrityError:

@@ -18,40 +18,50 @@
                                      crop-area-bounds="bounds"></canvas>
                         </div>
                         <div class="form-group">
-                            <label class="control-label no-padding-right" for="form-field-1"> {% trans "Nickname" %}: </label>
+                            <label class="control-label no-padding-right" for="form-field-1"> {% trans "Email" %}: </label>
                             <div class="">
                                 <input type="text"
                                        id="form-field-1"
+                                       placeholder="{% trans "Email" %}"
+                                       class="form-control"
+                                       ng-model="userData.email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label no-padding-right" for="form-field-2"> {% trans "Nickname" %}: </label>
+                            <div class="">
+                                <input type="text"
+                                       id="form-field-2"
                                        placeholder="{% trans "Nickname" %}"
                                        class="form-control"
                                        ng-model="userData.username">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label no-padding-right" for="form-field-2"> {% trans "First Name" %}: </label>
+                            <label class="control-label no-padding-right" for="form-field-3"> {% trans "First Name" %}: </label>
                             <div class="">
                                 <input type="text"
-                                       id="form-field-2"
+                                       id="form-field-3"
                                        placeholder="{% trans "First Name" %}"
                                        class="form-control"
                                        ng-model="userData.firstName">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label no-padding-right" for="form-field-3"> {% trans "Last Name" %}: </label>
+                            <label class="control-label no-padding-right" for="form-field-4"> {% trans "Last Name" %}: </label>
                             <div class="">
                                 <input type="text"
-                                       id="form-field-3"
+                                       id="form-field-4"
                                        placeholder="{% trans "Last Name" %}"
                                        class="form-control"
                                        ng-model="userData.lastName">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label no-padding-right" for="form-field-3"> {% trans "Website" %}: </label>
+                            <label class="control-label no-padding-right" for="form-field-5"> {% trans "Website" %}: </label>
                             <div class="">
                                 <input type="text"
-                                       id="form-field-3"
+                                       id="form-field-5"
                                        placeholder="{% trans "Website" %}"
                                        class="form-control"
                                        ng-model="userData.website">
