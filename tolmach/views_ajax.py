@@ -432,3 +432,39 @@ def update_email_ajax(request):
         content_type="application/json",
         status=405
     )
+
+
+@login_required
+def check_email_approved_ajax(request):
+    """Check if user's email is approved"""
+    from tolmach.models import UserMeta
+    
+    try:
+        user_meta = UserMeta.objects.get(user=request.user)
+        email_approved = user_meta.email_approved
+        has_email = bool(user_meta.email and user_meta.email.strip())
+        
+        return HttpResponse(
+            json.dumps({
+                'email_approved': email_approved,
+                'has_email': has_email,
+                'email': user_meta.email if has_email else ''
+            }),
+            content_type="application/json"
+        )
+    except UserMeta.DoesNotExist:
+        # UserMeta doesn't exist for this user
+        return HttpResponse(
+            json.dumps({
+                'email_approved': False,
+                'has_email': False,
+                'email': ''
+            }),
+            content_type="application/json"
+        )
+    except Exception as e:
+        return HttpResponse(
+            json.dumps({'error': str(e)}),
+            content_type="application/json",
+            status=500
+        )

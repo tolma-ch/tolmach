@@ -18,47 +18,92 @@
 			</script>
             
             <script type="text/javascript">
-            $(document).ready(function() {
-                $('#email-update-form').on('submit', function(e) {
-                    e.preventDefault();
-                    
-                    var form = $(this);
-                    var email = form.find('input[name="email"]').val();
-                    var csrfToken = form.find('input[name="csrfmiddlewaretoken"]').val();
-                    
-                    if (!email) {
-                        alert('Please enter an email address');
-                        return;
+            document.addEventListener('DOMContentLoaded', function() {
+                // Wait for jQuery to be available
+                function waitForJQuery(callback) {
+                    if (window.jQuery) {
+                        callback();
+                    } else {
+                        setTimeout(function() {
+                            waitForJQuery(callback);
+                        }, 100);
                     }
-                    
-                    // Show loading state
-                    var submitBtn = form.find('button[type="submit"]');
-                    var originalText = submitBtn.text();
-                    submitBtn.text('Updating...').prop('disabled', true);
-                    
-                    $.ajax({
-                        url: '/update-email/',
-                        type: 'POST',
-                        data: {
-                            email: email,
-                            csrfmiddlewaretoken: csrfToken
-                        },
-                        success: function(response) {
-                            alert('Email updated successfully!');
-                            form.find('input[name="email"]').val('');
-                            // Optionally hide the entire reminder after successful update
-                            // $('.navbar-email-reminder').hide();
-                        },
-                        error: function(xhr, status, error) {
-                            var errorMsg = 'Error updating email';
-                            if (xhr.responseJSON && xhr.responseJSON.error) {
-                                errorMsg = xhr.responseJSON.error;
-                            }
-                            alert(errorMsg);
-                        },
-                        complete: function() {
-                            submitBtn.text(originalText).prop('disabled', false);
+                }
+                
+                waitForJQuery(function() {
+                    $(function() {
+                        // Function to check email approval status
+                        function checkEmailApproval() {
+                            $.ajax({
+                                url: '/check-email-approved/',
+                                type: 'GET',
+                                success: function(response) {
+                                    if (response.email_approved === false || response.has_email === false) {
+                                        // Show the email reminder if email is not approved or not set
+                                        $('.navbar-email-reminder').show();
+                                    } else {
+                                        // Hide the email reminder if email is approved
+                                        $('.navbar-email-reminder').hide();
+                                    }
+                                    
+                                    // Pre-fill email if user has one but not approved
+                                    if (response.has_email && response.email && !response.email_approved) {
+                                        $('#email-update-form input[name="email"]').val(response.email);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error checking email approval status:', error);
+                                    // Show reminder by default if there's an error
+                                    $('.navbar-email-reminder').show();
+                                }
+                            });
                         }
+                        
+                        // Check email approval status on page load
+                        checkEmailApproval();
+                        
+                        $('#email-update-form').on('submit', function(e) {
+                            e.preventDefault();
+                            
+                            var form = $(this);
+                            var email = form.find('input[name="email"]').val();
+                            var csrfToken = form.find('input[name="csrfmiddlewaretoken"]').val();
+                            
+                            if (!email) {
+                                alert('Please enter an email address');
+                                return;
+                            }
+                            
+                            // Show loading state
+                            var submitBtn = form.find('button[type="submit"]');
+                            var originalText = submitBtn.text();
+                            submitBtn.text('Updating...').prop('disabled', true);
+                            
+                            $.ajax({
+                                url: '/update-email/',
+                                type: 'POST',
+                                data: {
+                                    email: email,
+                                    csrfmiddlewaretoken: csrfToken
+                                },
+                                success: function(response) {
+                                    alert('Email updated successfully!');
+                                    form.find('input[name="email"]').val('');
+                                    // Re-check email approval status after update
+                                    checkEmailApproval();
+                                },
+                                error: function(xhr, status, error) {
+                                    var errorMsg = 'Error updating email';
+                                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                                        errorMsg = xhr.responseJSON.error;
+                                    }
+                                    alert(errorMsg);
+                                },
+                                complete: function() {
+                                    submitBtn.text(originalText).prop('disabled', false);
+                                }
+                            });
+                        });
                     });
                 });
             });

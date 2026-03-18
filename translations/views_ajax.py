@@ -1893,6 +1893,7 @@ def user_ajax(request):
                 usermeta.website = post['website']
                 usermeta.save()
             result = {
+                'email': request.user.email,
                 'firstName': request.user.first_name,
                 'lastName': request.user.last_name,
                 'username': request.user.username,

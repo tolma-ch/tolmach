@@ -43,6 +43,9 @@ class UserMeta(models.Model):
 
     tm_percentage = models.IntegerField(default=60)
 
+    email_approved = models.BooleanField(default=False)
+    email_appove_token = models.TextField(default="")
+    email_approve_token_request_time = models.DateTimeField(default=timezone.now())
 
 class Messages(models.Model):
     """
