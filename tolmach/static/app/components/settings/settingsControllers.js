@@ -68,6 +68,25 @@
                         //$uibModalInstance.close();
                     });
             };
+
+            $scope.resendConfirmationEmail = function () {
+                $scope.busy = true;
+                $scope.error = '';
+                $http.post('/confirm-email/')
+                    .success(function (data) {
+                        $scope.busy = false;
+                        if (data.success) {
+                            $scope.error = '';
+                            alert(data.message || 'Confirmation email has been sent.');
+                        } else {
+                            $scope.error = data.error || 'Failed to send confirmation email.';
+                        }
+                    })
+                    .error(function(data) {
+                        $scope.busy = false;
+                        $scope.error = data.error || 'Failed to send confirmation email.';
+                    });
+            };
         }
     ]);
 

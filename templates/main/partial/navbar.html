@@ -1,9 +1,181 @@
 {% load i18n %}
 {% load staticfiles %}
 		<header class="navbar navbar-default" id="navbar">
+            <style>
+                #navbar-container {
+                    height: 40px;
+                }
+                .navbar-email-reminder {
+                    color: #fff;
+                    background-color: #a0a0a0;
+                    padding: 5px 10px;
+                    text-align: center;
+                    margin-top: 10px;
+                }
+            </style>
 			<script type="text/javascript">
 				try{ace.settings.check('navbar' , 'fixed')}catch(e){}
 			</script>
+            
+            <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                // Wait for jQuery to be available
+                function waitForJQuery(callback) {
+                    if (window.jQuery) {
+                        callback();
+                    } else {
+                        setTimeout(function() {
+                            waitForJQuery(callback);
+                        }, 100);
+                    }
+                }
+                
+                waitForJQuery(function() {
+                    $(function() {
+                        // Function to check email approval status
+                        function checkEmailApproval() {
+                            $.ajax({
+                                url: '/check-email-approved/',
+                                type: 'GET',
+                                success: function(response) {
+                                    // Hide all email reminder forms first
+                                    $('.navbar-email-reminder').hide();
+                                    
+                                    // Show appropriate form based on state
+                                    if (response.state === 'no_email') {
+                                        $('#email-reminder-no-email').show();
+                                        $('#email-update-form input[name="email"]').val('');
+                                    } else if (response.state === 'needs_confirmation') {
+                                        $('#email-reminder-confirm').show();
+                                        $('#email-to-confirm').text(response.email);
+                                    } else if (response.state === 'approved') {
+                                        // No form needed, all hidden
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error checking email approval status:', error);
+                                    // Show no-email form by default if there's an error
+                                    $('.navbar-email-reminder').hide();
+                                    $('#email-reminder-no-email').show();
+                                }
+                            });
+                        }
+                        
+                        // Function to resend confirmation email
+                        function resendConfirmationEmail() {
+                            var resendBtn = $('#resend-confirmation-btn');
+                            var originalText = resendBtn.text();
+                            var messageDiv = $('#resend-message');
+                            
+                            resendBtn.text('Sending...').prop('disabled', true);
+                            messageDiv.hide();
+                            
+                            $.ajax({
+                                url: '/confirm-email/',
+                                type: 'POST',
+                                data: {
+                                    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        messageDiv.html('<div style="color: #5cb85c;">' + response.message + '</div>').show();
+                                    } else {
+                                        messageDiv.html('<div style="color: #d9534f;">' + response.error + '</div>').show();
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    var errorMsg = 'Error sending confirmation email';
+                                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                                        errorMsg = xhr.responseJSON.error;
+                                    }
+                                    messageDiv.html('<div style="color: #d9534f;">' + errorMsg + '</div>').show();
+                                },
+                                complete: function() {
+                                    resendBtn.text(originalText).prop('disabled', false);
+                                }
+                            });
+                        }
+                        
+                        // Check email approval status on page load
+                        checkEmailApproval();
+                        
+                        // Handle email update form submission
+                        $('#email-update-form').on('submit', function(e) {
+                            e.preventDefault();
+                            
+                            var form = $(this);
+                            var email = form.find('input[name="email"]').val();
+                            var csrfToken = form.find('input[name="csrfmiddlewaretoken"]').val();
+                            
+                            if (!email) {
+                                alert('Please enter an email address');
+                                return;
+                            }
+                            
+                            // Show loading state
+                            var submitBtn = form.find('button[type="submit"]');
+                            var originalText = submitBtn.text();
+                            submitBtn.text('Updating...').prop('disabled', true);
+                            
+                            $.ajax({
+                                url: '/update-email/',
+                                type: 'POST',
+                                data: {
+                                    email: email,
+                                    csrfmiddlewaretoken: csrfToken
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        alert(response.message);
+                                        form.find('input[name="email"]').val('');
+                                        
+                                        // If email needs confirmation, show confirmation form
+                                        if (response.needs_confirmation) {
+                                            // Update the email in confirmation form and show it
+                                            $('#email-to-confirm').text(email);
+                                            $('.navbar-email-reminder').hide();
+                                            $('#email-reminder-confirm').show();
+                                        } else {
+                                            // Re-check email approval status after update
+                                            checkEmailApproval();
+                                        }
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    var errorMsg = 'Error updating email';
+                                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                                        errorMsg = xhr.responseJSON.error;
+                                    }
+                                    alert(errorMsg);
+                                },
+                                complete: function() {
+                                    submitBtn.text(originalText).prop('disabled', false);
+                                }
+                            });
+                        });
+                        
+                        // Handle resend confirmation button
+                        $('#resend-confirmation-btn').on('click', function() {
+                            resendConfirmationEmail();
+                        });
+                        
+                        // Handle change email button
+                        $('#change-email-btn').on('click', function() {
+                            // Switch to the no-email form to allow changing email
+                            $('.navbar-email-reminder').hide();
+                            $('#email-reminder-no-email').show();
+                            $('#email-update-form input[name="email"]').val($('#email-to-confirm').text());
+                        });
+                        
+                        // Handle cancel email button
+                        $('#cancel-email-btn').on('click', function() {
+                            // Re-check email approval status and show appropriate form
+                            checkEmailApproval();
+                        });
+                    });
+                });
+            });
+            </script>
 
 			<div class="navbar-container" id="navbar-container" style="margin: 0 auto; max-width: 1400px">
 				<div class="navbar-header pull-left">
@@ -76,5 +248,38 @@
                 {% endblock %}
                 {% endif %}
 			</div><!-- /.container -->
+                            
+                {% if user.is_authenticated %}
+                <!-- Conditional navbar for email reminder -->
+                <div class="navbar-email-reminder" id="email-reminder-no-email" style="display: none;">
+                    {% trans "Please, set your email" %}
+                    <form id="email-update-form" style="display: inline-block; margin-left: 20px;">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Enter your email" required style="padding: 3px 8px; border: 1px solid #ccc; border-radius: 3px; line-height: 15px;">
+                        <button type="submit" style="padding: 3px 12px; background-color: #5cb85c; color: white; border: none; border-radius: 3px; margin-left: 5px;">
+                            {% trans "Update" %}
+                        </button>
+                        <button type="button" id="cancel-email-btn" style="padding: 3px 12px; background-color: #d9534f; color: white; border: none; border-radius: 3px; margin-left: 5px;">
+                            {% trans "Cancel" %}
+                        </button>
+                    </form>
+                    &nbsp;&nbsp;&nbsp;<a href="https://tolma.ch/blog/ru/260405/obnovlenie-pochtovykh-adresov-i-sposobov-avtorizat/" style="color: white;text-decoration: underline;">{% trans "What's going on?" %}</a>
+                </div>
+                
+                <div class="navbar-email-reminder" id="email-reminder-confirm" style="display: none;">
+                    {% trans "Please, confirm this is your valid email:" %} <span id="email-to-confirm" style="font-weight: bold; margin: 0 10px;"></span>
+                    <div style="display: inline-block; margin-left: 20px;">
+                        <button id="resend-confirmation-btn" style="padding: 3px 12px; background-color: #5cb85c; color: white; border: none; border-radius: 3px; margin-right: 5px;">
+                            {% trans "Resend email" %}
+                        </button>
+                        <button id="change-email-btn" style="padding: 3px 12px; background-color: #d9534f; color: white; border: none; border-radius: 3px;">
+                            {% trans "Change email" %}
+                        </button>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;<a href="https://tolma.ch/blog/ru/260405/obnovlenie-pochtovykh-adresov-i-sposobov-avtorizat/" style="color: white;text-decoration: underline;">{% trans "What's going on?" %}</a>
+                    <div id="resend-message" style="display: none; margin-top: 5px; font-size: 12px;"></div>
+                </div>
+                {% endif %}
+                
 
 		</header>

@@ -71,6 +71,10 @@ urlpatterns = [
     # url(r'^f/(?P<preview_code>\w+)/$', trans_views.fragment_preview, name='fragment_preview'),
 
     # ajax
+    url(r'^update-email/$', main_ajax.update_email_from_banner_ajax, name='update_email_ajax'),
+    url(r'^check-email-approved/$', main_ajax.check_email_approved_from_banner_ajax, name='check_email_approved_ajax'),
+    url(r'^confirm-email/$', main_ajax.request_email_confirmation_token_ajax, name='confirm_email_ajax'),
+    url(r'^confirm-email/(?P<token>\w+)/$', main_ajax.validate_email_confirmation_token_ajax, name='confirm_email_token'),
     url(r'^ajax/search/$', main_ajax.global_search_ajax, name='global_search_ajax'),
     url(r'^ajax/orgs/$', main_ajax.organization_ajax, name='manage_orgs_ajax'),
     url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),

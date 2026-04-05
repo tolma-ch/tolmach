@@ -102,10 +102,12 @@ def settings_page(request, sett_type):
         active_tab = "profile"
         template = 'tolmach/partial/settings/profile-tab.html'
         user_data = json.dumps({
+            'email': request.user.email,
             'firstName': first_name,
             'lastName': last_name,
             'username': request.user.username,
             'website': usermeta.website,
+            'email_approved': usermeta.email_approved,
         })
 
     elif sett_type == "interface":

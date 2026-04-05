@@ -3,11 +3,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-22 16:54+0300\n"
+"POT-Creation-Date: 2026-04-05 17:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: ru\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -151,6 +151,55 @@ msgstr "китайский (традиционный, Гонконг [САР])"
 msgid "Chinese (traditional, Macao SAR China"
 msgstr "китайский (традиционный, Макао [САР])"
 
+#: templates/email/emailtemplatesbodies.json:5
+msgid "Welcome to Tolma.ch!"
+msgstr "Добро пожаловать в Толма.ч!"
+
+#: templates/email/emailtemplatesbodies.json:7
+msgid "Start Translating in Minutes"
+msgstr "Начните переводить прямо сейчас"
+
+#: templates/email/emailtemplatesbodies.json:8
+#: templates/email/emailtemplatesbodies.json:17
+#: templates/email/emailtemplatesbodies.json:26
+msgid "Hello, <b><username></b>!"
+msgstr "Привет, <b><username></b>!"
+
+#: templates/email/emailtemplatesbodies.json:9
+msgid ""
+"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+"excited to have you on-board."
+msgstr "Рады видеть тебя среди пользователей <span>Tolma‌</span>‌.‌<span>‌ch</span>!"
+
+#: templates/email/emailtemplatesbodies.json:14
+#: templates/email/emailtemplatesbodies.json:16
+msgid "Password reset approval"
+msgstr "Подтверждение сброса пароля"
+
+#: templates/email/emailtemplatesbodies.json:18
+msgid ""
+"You have asked for a new password. Here is the URL to reset the password:"
+"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
+"not asked for new password, just ignore this messsage."
+msgstr ""
+"Вы запросили новый пароль. Перейдите по ссылке, чтобы сбросить пароль:"
+"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>Если вы "
+"не запрашивали новый пароль, можете игнорировать сообщение."
+
+#: templates/email/emailtemplatesbodies.json:23
+#: templates/email/emailtemplatesbodies.json:25
+msgid "Email approval"
+msgstr "Подтверждение почтового ящика"
+
+#: templates/email/emailtemplatesbodies.json:27
+msgid ""
+"You have updated your email address. Here is the URL to approve it:<br><br> "
+"https://tolma.ch/confirm-email/<approve_token>/ <br><br>If you have not "
+"updated your email, just ignore this messsage."
+msgstr ""
+"Вы обновили свой почтовый адрес. Перейдите под ссылке, чтобы подтвердить "
+"новый адрес:<br><br>https://tolma.ch/confirm-email/<approve_token>/ <br><br>"
+
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
 msgstr "Табло"
@@ -194,8 +243,8 @@ msgstr "Поддержка"
 
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
-#: templates/tolmach/organization.html:9 tolmach/views.py:121
-#: tolmach/views.py:124 tolmach/views.py:126
+#: templates/tolmach/organization.html:9 tolmach/views.py:123
+#: tolmach/views.py:126 tolmach/views.py:128
 msgid "Settings"
 msgstr "Настройки"
 
@@ -298,17 +347,138 @@ msgstr "Привет,"
 msgid "Notifications"
 msgstr "Уведомления"
 
-#: templates/main/partial/navbar.html:43
+#: templates/main/partial/navbar.html:215
 msgid "Export translation"
 msgstr "Выгрузить перевод"
 
-#: templates/main/partial/navbar.html:64
+#: templates/main/partial/navbar.html:236
 msgid "Fragments approved:"
 msgstr "Фрагментов подтверждено:"
 
-#: templates/main/partial/navbar.html:65
+#: templates/main/partial/navbar.html:237
 msgid "Fragments translated:"
 msgstr "Фрагментов переведено:"
+
+#: templates/main/partial/navbar.html:255
+msgid "Please, set your email"
+msgstr "Пожалуйста, укажите ваш почтовый адрес"
+
+#: templates/main/partial/navbar.html:260
+msgid "Update"
+msgstr "Обновить"
+
+#: templates/main/partial/navbar.html:263
+msgid "Cancel"
+msgstr "Отмена"
+
+#: templates/main/partial/navbar.html:266
+msgid "What's going on?"
+msgstr "Что происходит?"
+
+#: templates/main/partial/navbar.html:270
+msgid "Please, confirm this is your valid email:"
+msgstr "Пожалуйста, подтвердите, что это ваш актуальный почтовый адрес"
+
+#: templates/main/partial/navbar.html:273
+msgid "Resend email"
+msgstr "Выслать ещё раз"
+
+#: templates/main/partial/navbar.html:276
+msgid "Change email"
+msgstr "Изменить адрес"
+
+#: templates/tolmach/email_confirm_error.html:10
+msgid "Email Confirmation Error"
+msgstr "Ошибка подтверждения электронной почты"
+
+#: templates/tolmach/email_confirm_error.html:15 translations/utils.py:147
+msgid "Something went wrong"
+msgstr "Что-то пошло не так"
+
+#: templates/tolmach/email_confirm_error.html:20
+msgid "Possible reasons:"
+msgstr "Возможные причины:"
+
+#: templates/tolmach/email_confirm_error.html:23
+msgid "The confirmation link has expired"
+msgstr "Срок действия подтверждающей ссылки истек"
+
+#: templates/tolmach/email_confirm_error.html:24
+msgid "The confirmation link was already used"
+msgstr "Подтверждающая ссылка уже была использована"
+
+#: templates/tolmach/email_confirm_error.html:25
+msgid "The confirmation link is invalid"
+msgstr "Подтверждающая ссылка недействительна"
+
+#: templates/tolmach/email_confirm_error.html:29
+#: templates/tolmach/email_confirm_expired.html:27
+#: templates/tolmach/email_confirm_success.html:26
+msgid "Go to Homepage"
+msgstr "Перейти на главную"
+
+#: templates/tolmach/email_confirm_error.html:32
+#: templates/tolmach/email_confirm_success.html:29
+msgid "Go to Settings"
+msgstr "Перейти в настроки"
+
+#: templates/tolmach/email_confirm_expired.html:10
+msgid "Confirmation Link Expired"
+msgstr "Срок действия подтверждающей ссылки истек"
+
+#: templates/tolmach/email_confirm_expired.html:15
+msgid "Confirmation Link Has Expired"
+msgstr "Срок действия подтверждающей ссылки истек"
+
+#: templates/tolmach/email_confirm_expired.html:20
+msgid ""
+"Email confirmation links are valid for 24 hours. You need to request a new "
+"confirmation email."
+msgstr ""
+"Ссылки для подтверждения почтового адреса действительны только в течение 24 "
+"часов. Вам необходимо запросить новую ссылку."
+
+#: templates/tolmach/email_confirm_expired.html:24
+#: templates/tolmach/email_confirm_expired.html:66
+#: templates/tolmach/email_confirm_expired.html:73
+msgid "Resend Confirmation Email"
+msgstr "Выслать новую ссылку"
+
+#: templates/tolmach/email_confirm_expired.html:45
+msgid "Sending..."
+msgstr "Отправка..."
+
+#: templates/tolmach/email_confirm_expired.html:70
+msgid "Error sending confirmation email"
+msgstr "Ошибка при отправке электронного письма с подтверждением"
+
+#: templates/tolmach/email_confirm_success.html:10
+msgid "Email Confirmed Successfully"
+msgstr "Почтовый ящик успешно подтверждён"
+
+#: templates/tolmach/email_confirm_success.html:15
+msgid "Congratulations!"
+msgstr "Поздравляем!"
+
+#: templates/tolmach/email_confirm_success.html:17
+#, python-format
+msgid ""
+"\n"
+"                            Your email address <strong>%(email)s</strong> "
+"has been successfully confirmed.\n"
+"                            "
+msgstr ""
+"\n"
+"Ваш адрес электронной почты <strong>%(email)s</strong> был успешно "
+"подтвержден.\n"
+"                            "
+
+#: templates/tolmach/email_confirm_success.html:22
+msgid ""
+"You can now use all features of Tolma.ch that require email verification."
+msgstr ""
+"Теперь вы можете использовать все функции Tolma.ch, для которых требуется "
+"подтверждение электронной почты."
 
 #: templates/tolmach/landing.html:5
 msgid "Translating together!"
@@ -664,8 +834,8 @@ msgstr "Начать новый"
 msgid "There're no projects here at the moment."
 msgstr "Тут пока нет ни одного проекта"
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:247
-#: tolmach/views.py:279
+#: templates/tolmach/organization.html:8 tolmach/views.py:249
+#: tolmach/views.py:281
 msgid "Members"
 msgstr "Участники"
 
@@ -812,34 +982,34 @@ msgstr "Редактировать профиль"
 
 #: templates/tolmach/partial/edit_profile_modal.html:27
 #: templates/tolmach/partial/edit_profile_modal.html:31
-#: templates/tolmach/partial/settings/profile-tab.html:21
-#: templates/tolmach/partial/settings/profile-tab.html:25
+#: templates/tolmach/partial/settings/profile-tab.html:45
+#: templates/tolmach/partial/settings/profile-tab.html:49
 msgid "Nickname"
 msgstr "Псевдоним"
 
 #: templates/tolmach/partial/edit_profile_modal.html:37
 #: templates/tolmach/partial/edit_profile_modal.html:41
-#: templates/tolmach/partial/settings/profile-tab.html:31
-#: templates/tolmach/partial/settings/profile-tab.html:35
+#: templates/tolmach/partial/settings/profile-tab.html:55
+#: templates/tolmach/partial/settings/profile-tab.html:59
 msgid "First Name"
 msgstr "Имя"
 
 #: templates/tolmach/partial/edit_profile_modal.html:47
 #: templates/tolmach/partial/edit_profile_modal.html:51
-#: templates/tolmach/partial/settings/profile-tab.html:41
-#: templates/tolmach/partial/settings/profile-tab.html:45
+#: templates/tolmach/partial/settings/profile-tab.html:65
+#: templates/tolmach/partial/settings/profile-tab.html:69
 msgid "Last Name"
 msgstr "Фамилия"
 
 #: templates/tolmach/partial/edit_profile_modal.html:57
 #: templates/tolmach/partial/edit_profile_modal.html:61
-#: templates/tolmach/partial/settings/profile-tab.html:51
-#: templates/tolmach/partial/settings/profile-tab.html:55
+#: templates/tolmach/partial/settings/profile-tab.html:75
+#: templates/tolmach/partial/settings/profile-tab.html:79
 msgid "Website"
 msgstr "Адрес сайта"
 
 #: templates/tolmach/partial/edit_profile_modal.html:74
-#: templates/tolmach/partial/settings/profile-tab.html:66
+#: templates/tolmach/partial/settings/profile-tab.html:90
 #: templates/translations/partial/add_glossary_modal.html:89
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:136
@@ -912,12 +1082,12 @@ msgstr "Только приглашённые пользователи смог�
 msgid "Create"
 msgstr "Создать"
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:144
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:146
 msgid "owner"
 msgstr "владелец"
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:146
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:148
 msgid "admin"
 msgstr "админ"
 
@@ -981,6 +1151,8 @@ msgid "Log in"
 msgstr "Войти"
 
 #: templates/tolmach/partial/register_modal.html:76
+#: templates/tolmach/partial/settings/profile-tab.html:21
+#: templates/tolmach/partial/settings/profile-tab.html:25
 msgid "Email"
 msgstr "Почтовый адрес"
 
@@ -1063,6 +1235,22 @@ msgstr "Размер шрифта:"
 msgid "TM percentage:"
 msgstr ""
 
+#: templates/tolmach/partial/settings/profile-tab.html:31
+msgid "Email confirmed"
+msgstr "Подтверждёно"
+
+#: templates/tolmach/partial/settings/profile-tab.html:34
+msgid "Email not confirmed"
+msgstr "Не подтверждено"
+
+#: templates/tolmach/partial/settings/profile-tab.html:36
+msgid "Resend confirmation"
+msgstr "Выслать новую ссылку"
+
+#: templates/tolmach/partial/settings/profile-tab.html:40
+msgid "No email set"
+msgstr "Почта не указана"
+
 #: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
 #: translations/views.py:239 translations/views.py:260
 msgid "Statistics"
@@ -1072,9 +1260,9 @@ msgstr "Статистика"
 msgid "Total"
 msgstr "Всего"
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:174 tolmach/views.py:176
-#: tolmach/views.py:211 tolmach/views.py:213 tolmach/views.py:247
-#: tolmach/views.py:249 tolmach/views.py:279 tolmach/views.py:281
+#: templates/tolmach/profile.html:8 tolmach/views.py:176 tolmach/views.py:178
+#: tolmach/views.py:213 tolmach/views.py:215 tolmach/views.py:249
+#: tolmach/views.py:251 tolmach/views.py:281 tolmach/views.py:283
 msgid "Organizations"
 msgstr "Организации"
 
@@ -1640,7 +1828,9 @@ msgid "All the text with translated fragments"
 msgstr "Весь текст с включёнными в него сделанными переводами"
 
 #: tolmach/context_processors.py:48
-#, python-format
+#, fuzzy, python-format
+#| msgid "Tolma.ch is %(years_count)d year old today!"
+#| msgid_plural "Tolma.ch is %(years_count)d years old today!"
 msgid "Tolma.ch is %(years_count)d year old today!"
 msgid_plural "Tolma.ch is %(years_count)d years old today!"
 msgstr[0] "Толмачу сегодня один год!"
@@ -1651,16 +1841,16 @@ msgstr[2] "Толмачу сегодня %(years_count)d лет!"
 msgid "Organization id is not set"
 msgstr "ID организации не указан"
 
-#: tolmach/decorators.py:20 tolmach/views_ajax.py:25 tolmach/views_ajax.py:50
-#: tolmach/views_ajax.py:54
+#: tolmach/decorators.py:20 tolmach/views_ajax.py:26 tolmach/views_ajax.py:51
+#: tolmach/views_ajax.py:55
 msgid "Organization not found"
 msgstr "Организация не найдена"
 
-#: tolmach/views.py:148
+#: tolmach/views.py:150
 msgid "member"
 msgstr "участник"
 
-#: tolmach/views.py:190 tolmach/views.py:228 tolmach/views.py:263
+#: tolmach/views.py:192 tolmach/views.py:230 tolmach/views.py:265
 #: translations/decorators.py:63 translations/views.py:99
 #: translations/views.py:277 translations/views.py:279
 #: translations/views.py:298 translations/views.py:300
@@ -1668,42 +1858,42 @@ msgstr "участник"
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: tolmach/views.py:524
+#: tolmach/views.py:526
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 "Пароль сброшен. Дальнейшие инструкции были отправлены на электронную почту"
 
-#: tolmach/views.py:614
+#: tolmach/views.py:616
 msgid "New password saved. Please wait for the sign in."
 msgstr "Новый пароль сохранён. Пожалуйста, ожидайте входа в систему."
 
-#: tolmach/views_ajax.py:28 tolmach/views_ajax.py:56 tolmach/views_ajax.py:77
+#: tolmach/views_ajax.py:29 tolmach/views_ajax.py:57 tolmach/views_ajax.py:78
 msgid "You have to be an owner of organization"
 msgstr "Вы должны быть владельцем организации"
 
-#: tolmach/views_ajax.py:40 translations/views_ajax.py:206
+#: tolmach/views_ajax.py:41 translations/views_ajax.py:206
 msgid "Project name cannot be empty"
 msgstr "Название проекта не может быть пустым"
 
-#: tolmach/views_ajax.py:81 tolmach/views_ajax.py:117
+#: tolmach/views_ajax.py:82 tolmach/views_ajax.py:118
 #: translations/views_ajax.py:389 translations/views_ajax.py:438
 msgid "User id is not set"
 msgstr "Номер пользователя не указан"
 
-#: tolmach/views_ajax.py:85 tolmach/views_ajax.py:121
+#: tolmach/views_ajax.py:86 tolmach/views_ajax.py:122
 #: translations/views_ajax.py:393 translations/views_ajax.py:442
 msgid "User not found"
 msgstr "Пользователь не найден"
 
-#: tolmach/views_ajax.py:87 tolmach/views_ajax.py:125
+#: tolmach/views_ajax.py:88 tolmach/views_ajax.py:126
 msgid "This user is an owner of organization"
 msgstr "Указанный пользователь - владелец организации"
 
-#: tolmach/views_ajax.py:109 translations/views_ajax.py:430
+#: tolmach/views_ajax.py:110 translations/views_ajax.py:430
 msgid "User is already a member of project"
 msgstr "Пользователь уже является участником проекта"
 
-#: tolmach/views_ajax.py:123 translations/decorators.py:23
+#: tolmach/views_ajax.py:124 translations/decorators.py:23
 #: translations/views_ajax.py:447 translations/views_ajax.py:729
 #: translations/views_ajax.py:865 translations/views_ajax.py:1073
 #: translations/views_ajax.py:1187 translations/views_ajax.py:1196
@@ -1711,11 +1901,11 @@ msgstr "Пользователь уже является участником п
 msgid "Not allowed"
 msgstr "Нет доступа"
 
-#: tolmach/views_ajax.py:152
+#: tolmach/views_ajax.py:153
 msgid "You have to be a manager of the organization"
 msgstr "Вы должны быть владельцем организации"
 
-#: tolmach/views_ajax.py:383
+#: tolmach/views_ajax.py:384
 #, python-brace-format
 msgid ""
 "Sorry, we could not reach the url. Error '{err_msg}'. If everything is "
@@ -1749,15 +1939,11 @@ msgstr "Сторонние проекты"
 msgid "File is too big"
 msgstr "Файл слишком большой"
 
-#: translations/utils.py:147
-msgid "Something went wrong"
-msgstr "Что-то пошло не так"
-
-#: translations/utils.py:355 translations/utils.py:387
+#: translations/utils.py:359 translations/utils.py:391
 msgid "This source language is not supported yet"
 msgstr "Этот язык пока не поддерживается как исходный"
 
-#: translations/utils.py:362 translations/utils.py:395
+#: translations/utils.py:366 translations/utils.py:399
 msgid "This target language is not supported yet"
 msgstr "Этот язык пока не поддерживается как язык перевода"
 
@@ -1953,8 +2139,10 @@ msgid "entry is not set"
 msgstr "Номер фрагмента не указан"
 
 #: translations/views_ajax.py:1326
+#, fuzzy
+#| msgid "Entry translation text is not set"
 msgid "translation is not set"
-msgstr "Преевод не указан"
+msgstr "Перевод фрагмента не указан"
 
 #: translations/views_ajax.py:1655
 #, fuzzy
@@ -1966,74 +2154,13 @@ msgstr "Проект не указан"
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 
-#: translations/views_ajax.py:1910
+#: translations/views_ajax.py:1920
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:1926 translations/views_ajax.py:1930
+#: translations/views_ajax.py:1936 translations/views_ajax.py:1940
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
 
-#~ msgid "Welcome to Tolma.ch!"
-#~ msgstr "Добро пожаловать в Tolma.ch!"
-
-#~ msgid "Start Translating in Minutes"
-#~ msgstr "Приступаем к переводу"
-
-#~ msgid "Hello, <b><username></b>!"
-#~ msgstr "Привет, <b><username></b>!"
-
-#~ msgid ""
-#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-#~ "excited to have you on-board."
-#~ msgstr ""
-#~ "Благодарим за то, что вы присоединились к сообществу <span>Tolma‌</span>‌.‌"
-#~ "<span>‌ch</span>! Мы очень рады, что вы теперь с нами."
-
-#~ msgid "Password reset approval"
-#~ msgstr "Подтверждение сброса пароля"
-
-#~ msgid ""
-#~ "You have asked for a new password. Here is the URL to reset the password:"
-#~ "<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you "
-#~ "have not asked for new password, just ignore this messsage."
-#~ msgstr ""
-#~ "Кажется, кто-то запросил сброс пароля для вашего аккаунта. Если это были "
-#~ "вы, то пройдите по данной ссылке, чтобы сбросить пароль:<br><br> https://"
-#~ "tolma.ch/password-reset/<reset_token>/ <br><br>Если же вы не запрашивали "
-#~ "сброс пароля, то просто игнорируйте данное сообщение."
-
-#, fuzzy
-#~| msgid "Download translated document"
-#~ msgid "Download document"
-#~ msgstr "Скачать переведённый документ"
-
-#~ msgid "Not translated"
-#~ msgstr "Не переведено"
-
-#~ msgid "Translated"
-#~ msgstr "Переведено"
-
-#~ msgid "Copy"
-#~ msgstr "Скопировать"
-
-#~ msgid "Here you can see all the members"
-#~ msgstr "Здесь перечислены все участники проекта"
-
-#~ msgid "Click here to add member"
-#~ msgstr "Нажмите, чтобы добавить участника"
-
-#~ msgid "Add to glossary"
-#~ msgstr "Добавить в глоссарий"
-
-#~ msgid "TMX"
-#~ msgstr "Базы памяти"
-
-#~ msgid "Add text"
-#~ msgstr "Добавить текст"
-
-#~ msgid "Edit text"
-#~ msgstr "Редактировать текст"
-
-#~ msgid "Re-create"
-#~ msgstr "Пересоздать"
+#~ msgid "Confirmation email sent to:"
+#~ msgstr "Письмо с подтверждающей ссылкой выслано на:"

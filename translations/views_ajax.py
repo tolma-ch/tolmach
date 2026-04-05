@@ -1875,22 +1875,31 @@ def user_ajax(request):
             meta.save()
             return HttpResponse(json.dumps(True), content_type="application/json")
         else:
+            usermeta = UserMeta.objects.get(user=request.user)
+
             if 'firstName' in post:
                 request.user.first_name = post['firstName']
             if 'lastName' in post:
                 request.user.last_name = post['lastName']
             if 'username' in post:
                 request.user.username = post['username']
+            if 'email' in post:
+                if post['email'] != request.user.email:
+                    usermeta.email_approved = False
+
+                request.user.email = post['email']
             try:
                 request.user.save()
             except IntegrityError:
                 return HttpResponse(json.dumps("This username is already used, try find another one"), content_type="application/json")
 
-            usermeta = UserMeta.objects.get(user=request.user)
             if 'website' in post:
                 usermeta.website = post['website']
-                usermeta.save()
+
+            usermeta.save()
+
             result = {
+                'email': request.user.email,
                 'firstName': request.user.first_name,
                 'lastName': request.user.last_name,
                 'username': request.user.username,
