@@ -17,5 +17,14 @@
           "<hello_message>": "{% trans 'Hello, <b><username></b>!' %}",
           "<main_message>":  "{% trans 'You have asked for a new password. Here is the URL to reset the password:<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have not asked for new password, just ignore this messsage.' %}"
         }
+  },
+  "email-approve-url": {
+      "template": "email-approve-url",
+      "title": "{% trans 'Email approval' %}",
+      "body": {
+          "<header>":        "{% trans 'Email approval' %}",
+          "<hello_message>": "{% trans 'Hello, <b><username></b>!' %}",
+          "<main_message>":  "{% trans 'You have updated your email address. Here is the URL to approve it:<br><br> https://tolma.ch/confirm-email/<approve_token>/ <br><br>If you have not updated your email, just ignore this messsage.' %}"
+        }
   }
 }

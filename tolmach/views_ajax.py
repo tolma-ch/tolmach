@@ -4,10 +4,11 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from tolmach.models import Organization, OrganizationMember
+from tolmach.models import Organization, OrganizationMember, UserMeta
 from entries.models import Language
 from tolmach.decorators import accept_organization
 from tolmach.utils import org_user_to_json
+from tolmach import tasks
 from django.shortcuts import get_object_or_404
 
 import json
@@ -388,10 +389,12 @@ def get_url_og_meta(request):
 
 
 @login_required
-def update_email_ajax(request):
+def update_email_from_banner_ajax(request):
     if request.method == 'POST':
-        from tolmach.models import UserMeta
+        from django.utils import timezone
         import re
+        import random
+        import string
         
         email = request.POST.get('email', '').strip()
         
@@ -410,22 +413,47 @@ def update_email_ajax(request):
                 status=400
             )
         
-        try:
-            # Get or create UserMeta for the current user
-            user_meta, created = UserMeta.objects.get_or_create(user=request.user)
-            user_meta.email = email
-            user_meta.save()
+        # try:
+        # Get or create UserMeta for the current user with default values
+        user_meta, created = UserMeta.objects.get_or_create(user=request.user)
+
+        email_changed = request.user.email != email
+        request.user.email = email
+        
+        # If email is changed or not approved, generate new token and send confirmation email
+        if email_changed or not user_meta.email_approved:
+            user_meta.email_approved = False
             
-            return HttpResponse(
-                json.dumps({'success': True, 'message': 'Email updated successfully'}),
-                content_type="application/json"
-            )
-        except Exception as e:
-            return HttpResponse(
-                json.dumps({'error': str(e)}),
-                content_type="application/json",
-                status=500
-            )
+            # Generate confirmation token
+            token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
+            user_meta.email_appove_token = token
+            user_meta.email_approve_token_request_time = timezone.now()
+            
+            dynamic_data_dict = {"<username>": request.user.username,
+                        "<approve_token>": token}
+            tasks.email_send(message_type='email-approve-url',
+                            dynamic_data_dict=json.dumps(dynamic_data_dict),
+                            user_email=request.user.email,
+                            template='multilang-welcome')
+        
+        user_meta.save()
+        request.user.save()
+        
+        return HttpResponse(
+            json.dumps({
+                'success': True, 
+                'message': 'Email updated successfully. Confirmation email has been sent.',
+                'email_changed': email_changed,
+                'needs_confirmation': not user_meta.email_approved
+            }),
+            content_type="application/json"
+        )
+        # except Exception as e:
+        #     return HttpResponse(
+        #         json.dumps({'error': str(e)}),
+        #         content_type="application/json",
+        #         status=500
+        #     )
     
     return HttpResponse(
         json.dumps({'error': 'Method not allowed'}),
@@ -435,20 +463,32 @@ def update_email_ajax(request):
 
 
 @login_required
-def check_email_approved_ajax(request):
+def check_email_approved_from_banner_ajax(request):
     """Check if user's email is approved"""
     from tolmach.models import UserMeta
     
     try:
         user_meta = UserMeta.objects.get(user=request.user)
         email_approved = user_meta.email_approved
-        has_email = bool(user_meta.email and user_meta.email.strip())
+        has_email = bool(request.user.email and request.user.email.strip())
+        
+        # Determine the state for frontend
+        # 1. No email at all - show "set your email" form
+        # 2. Has email but not approved - show "confirm your email" form
+        # 3. Has email and approved - no form needed
+        state = 'no_email'
+        if has_email:
+            if email_approved:
+                state = 'approved'
+            else:
+                state = 'needs_confirmation'
         
         return HttpResponse(
             json.dumps({
                 'email_approved': email_approved,
                 'has_email': has_email,
-                'email': user_meta.email if has_email else ''
+                'email': request.user.email if has_email else '',
+                'state': state
             }),
             content_type="application/json"
         )
@@ -458,9 +498,125 @@ def check_email_approved_ajax(request):
             json.dumps({
                 'email_approved': False,
                 'has_email': False,
-                'email': ''
+                'email': '',
+                'state': 'no_email'
             }),
             content_type="application/json"
+        )
+    except Exception as e:
+        return HttpResponse(
+            json.dumps({'error': str(e)}),
+            content_type="application/json",
+            status=500
+        )
+
+
+def validate_email_confirmation_token_ajax(request, token):
+    """Confirm user's email using token from email"""
+    from tolmach.models import UserMeta
+    from django.utils import timezone
+    from django.shortcuts import render
+    
+    try:
+        # Find user by token
+        user_meta = UserMeta.objects.get(email_appove_token=token)
+        
+        # Check token expiration (e.g., 24 hours)
+        token_age = timezone.now() - user_meta.email_approve_token_request_time
+        if token_age.total_seconds() > 24 * 60 * 60:  # 24 hours
+            return render(request, 'tolmach/email_confirm_expired.html', {
+                'error': 'Confirmation link has expired. Please request a new one.'
+            })
+        
+        # Check if email matches
+        if not user_meta.user.email or not user_meta.user.email.strip():
+            return render(request, 'tolmach/email_confirm_error.html', {
+                'error': 'No email associated with this confirmation link.'
+            })
+        
+        # Mark email as approved and clear token
+        user_meta.email_approved = True
+        user_meta.email_appove_token = ''
+        user_meta.save()
+        
+        return render(request, 'tolmach/email_confirm_success.html', {
+            'email': request.user.email,
+            'username': request.user.username
+        })
+        
+    except UserMeta.DoesNotExist:
+        return render(request, 'tolmach/email_confirm_error.html', {
+            'error': 'Invalid confirmation link. Please check the link or request a new one.'
+        })
+    except Exception as e:
+        return render(request, 'tolmach/email_confirm_error.html', {
+            'error': f'Error confirming email: {str(e)}'
+        })
+
+
+@login_required
+def request_email_confirmation_token_ajax(request):
+    """Resend confirmation email"""
+    from tolmach.models import UserMeta
+    from django.utils import timezone
+    import random
+    import string
+    
+    if request.method != 'POST':
+        return HttpResponse(
+            json.dumps({'error': 'Method not allowed'}),
+            content_type="application/json",
+            status=405
+        )
+    
+    try:
+        user_meta = UserMeta.objects.get(user=request.user)
+        
+        # Check if user has an email to confirm
+        if not request.user.email or not request.user.email.strip():
+            return HttpResponse(
+                json.dumps({'error': 'No email to confirm'}),
+                content_type="application/json",
+                status=400
+            )
+        
+        # Check if email is already approved
+        if user_meta.email_approved:
+            return HttpResponse(
+                json.dumps({'error': 'Email is already confirmed'}),
+                content_type="application/json",
+                status=400
+            )
+        
+        # Generate new confirmation token
+        token = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
+        user_meta.email_appove_token = token
+        user_meta.email_approve_token_request_time = timezone.now()
+        user_meta.save()
+        
+        # Send confirmation email
+        from django.core.mail import send_mail
+        from django.conf import settings
+        from django.urls import reverse
+        
+        dynamic_data_dict = {"<username>": request.user.username,
+                         "<approve_token>": token}
+        tasks.email_send(message_type='email-approve-url',
+                        dynamic_data_dict=json.dumps(dynamic_data_dict),
+                        user_email=request.user.email,
+                        template='multilang-welcome')
+        
+        return HttpResponse(
+            json.dumps({'success': True, 'message': 'Confirmation email has been sent.'}),
+            content_type="application/json"
+        )
+        
+    except UserMeta.DoesNotExist:
+        # UserMeta doesn't exist for this user
+        return HttpResponse(
+            json.dumps({'error': 'User meta not found'}),
+            content_type="application/json",
+            status=404
         )
     except Exception as e:
         return HttpResponse(

@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container" style="margin-top: 50px;">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "Email Confirmed Successfully" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="text-center">
+                        <i class="fa fa-check-circle fa-5x text-success" style="margin-bottom: 20px;"></i>
+                        <h4>{% trans "Congratulations!" %}</h4>
+                        <p>
+                            {% blocktrans with email=email username=username %}
+                            Your email address <strong>{{ email }}</strong> has been successfully confirmed.
+                            {% endblocktrans %}
+                        </p>
+                        <p>
+                            {% trans "You can now use all features of Tolma.ch that require email verification." %}
+                        </p>
+                        <div style="margin-top: 30px;">
+                            <a href="/" class="btn btn-primary">
+                                <i class="fa fa-home"></i> {% trans "Go to Homepage" %}
+                            </a>
+                            <a href="/settings/" class="btn btn-default">
+                                <i class="fa fa-cog"></i> {% trans "Go to Settings" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

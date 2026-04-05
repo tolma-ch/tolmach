@@ -25,6 +25,12 @@ ADMINS = (
     ('Dmitry Chumak', 'mega.venik@gmail.com'),
 )
 SPARKPOST_API_KEY = os.environ.get("SPARKPOST_API_KEY", "")
+EMAIL_HOST = 'postbox.cloud.yandex.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+
 if SPARKPOST_API_KEY:
     EMAIL_BACKEND = 'sparkpost.django.email_backend.SparkPostEmailBackend'
 else:

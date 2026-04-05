@@ -107,6 +107,7 @@ def settings_page(request, sett_type):
             'lastName': last_name,
             'username': request.user.username,
             'website': usermeta.website,
+            'email_approved': usermeta.email_approved,
         })
 
     elif sett_type == "interface":

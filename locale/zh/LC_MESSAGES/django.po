@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-22 16:54+0300\n"
+"POT-Creation-Date: 2026-04-05 17:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,8 +51,10 @@ msgid "Chat not found"
 msgstr "未找到"
 
 #: chat/views.py:48
+#, fuzzy
+#| msgid "text id is not set"
 msgid "Text is empty"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: dicts/views.py:157
 #, fuzzy
@@ -156,6 +158,52 @@ msgstr ""
 msgid "Chinese (traditional, Macao SAR China"
 msgstr ""
 
+#: templates/email/emailtemplatesbodies.json:5
+msgid "Welcome to Tolma.ch!"
+msgstr "欢迎光临Tolma.ch！"
+
+#: templates/email/emailtemplatesbodies.json:7
+msgid "Start Translating in Minutes"
+msgstr "开始翻译吧！"
+
+#: templates/email/emailtemplatesbodies.json:8
+#: templates/email/emailtemplatesbodies.json:17
+#: templates/email/emailtemplatesbodies.json:26
+msgid "Hello, <b><username></b>!"
+msgstr "你好, <b><username></b>!"
+
+#: templates/email/emailtemplatesbodies.json:9
+msgid ""
+"Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+"excited to have you on-board."
+msgstr "我们很高兴您同意我们的会社！"
+
+#: templates/email/emailtemplatesbodies.json:14
+#: templates/email/emailtemplatesbodies.json:16
+#, fuzzy
+#| msgid "Password"
+msgid "Password reset approval"
+msgstr "密码"
+
+#: templates/email/emailtemplatesbodies.json:18
+msgid ""
+"You have asked for a new password. Here is the URL to reset the password:"
+"<br><br> https://tolma.ch/password-reset/<reset_token>/ <br><br>If you have "
+"not asked for new password, just ignore this messsage."
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:23
+#: templates/email/emailtemplatesbodies.json:25
+msgid "Email approval"
+msgstr ""
+
+#: templates/email/emailtemplatesbodies.json:27
+msgid ""
+"You have updated your email address. Here is the URL to approve it:<br><br> "
+"https://tolma.ch/confirm-email/<approve_token>/ <br><br>If you have not "
+"updated your email, just ignore this messsage."
+msgstr ""
+
 #: templates/main/base-logged-in.html:5
 msgid "Dashboard"
 msgstr "仪表板"
@@ -199,8 +247,8 @@ msgstr "支持"
 
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
-#: templates/tolmach/organization.html:9 tolmach/views.py:121
-#: tolmach/views.py:124 tolmach/views.py:126
+#: templates/tolmach/organization.html:9 tolmach/views.py:123
+#: tolmach/views.py:126 tolmach/views.py:128
 msgid "Settings"
 msgstr "设置"
 
@@ -305,17 +353,150 @@ msgstr "你好,"
 msgid "Notifications"
 msgstr "通知"
 
-#: templates/main/partial/navbar.html:43
+#: templates/main/partial/navbar.html:215
 msgid "Export translation"
 msgstr "翻译到处"
 
-#: templates/main/partial/navbar.html:64
+#: templates/main/partial/navbar.html:236
 msgid "Fragments approved:"
 msgstr "肯定的碎片"
 
-#: templates/main/partial/navbar.html:65
+#: templates/main/partial/navbar.html:237
 msgid "Fragments translated:"
 msgstr "翻译的碎片"
+
+#: templates/main/partial/navbar.html:255
+msgid "Please, set your email"
+msgstr ""
+
+#: templates/main/partial/navbar.html:260
+msgid "Update"
+msgstr ""
+
+#: templates/main/partial/navbar.html:263
+#, fuzzy
+#| msgid "Cancel (Esc)"
+msgid "Cancel"
+msgstr "取消 (Esc)"
+
+#: templates/main/partial/navbar.html:266
+msgid "What's going on?"
+msgstr ""
+
+#: templates/main/partial/navbar.html:270
+msgid "Please, confirm this is your valid email:"
+msgstr ""
+
+#: templates/main/partial/navbar.html:273
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Resend email"
+msgstr "确认密码"
+
+#: templates/main/partial/navbar.html:276
+msgid "Change email"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:10
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Email Confirmation Error"
+msgstr "确认密码"
+
+#: templates/tolmach/email_confirm_error.html:15 translations/utils.py:147
+msgid "Something went wrong"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:20
+msgid "Possible reasons:"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:23
+msgid "The confirmation link has expired"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:24
+msgid "The confirmation link was already used"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:25
+msgid "The confirmation link is invalid"
+msgstr ""
+
+#: templates/tolmach/email_confirm_error.html:29
+#: templates/tolmach/email_confirm_expired.html:27
+#: templates/tolmach/email_confirm_success.html:26
+#, fuzzy
+#| msgid "Fragment link"
+msgid "Go to Homepage"
+msgstr "碎片链接"
+
+#: templates/tolmach/email_confirm_error.html:32
+#: templates/tolmach/email_confirm_success.html:29
+#, fuzzy
+#| msgid "Settings"
+msgid "Go to Settings"
+msgstr "设置"
+
+#: templates/tolmach/email_confirm_expired.html:10
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Confirmation Link Expired"
+msgstr "确认密码"
+
+#: templates/tolmach/email_confirm_expired.html:15
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Confirmation Link Has Expired"
+msgstr "确认密码"
+
+#: templates/tolmach/email_confirm_expired.html:20
+msgid ""
+"Email confirmation links are valid for 24 hours. You need to request a new "
+"confirmation email."
+msgstr ""
+
+#: templates/tolmach/email_confirm_expired.html:24
+#: templates/tolmach/email_confirm_expired.html:66
+#: templates/tolmach/email_confirm_expired.html:73
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Resend Confirmation Email"
+msgstr "确认密码"
+
+#: templates/tolmach/email_confirm_expired.html:45
+msgid "Sending..."
+msgstr ""
+
+#: templates/tolmach/email_confirm_expired.html:70
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Error sending confirmation email"
+msgstr "确认密码"
+
+#: templates/tolmach/email_confirm_success.html:10
+msgid "Email Confirmed Successfully"
+msgstr ""
+
+#: templates/tolmach/email_confirm_success.html:15
+#, fuzzy
+#| msgid "Translation"
+msgid "Congratulations!"
+msgstr "翻译"
+
+#: templates/tolmach/email_confirm_success.html:17
+#, python-format
+msgid ""
+"\n"
+"                            Your email address <strong>%(email)s</strong> "
+"has been successfully confirmed.\n"
+"                            "
+msgstr ""
+
+#: templates/tolmach/email_confirm_success.html:22
+msgid ""
+"You can now use all features of Tolma.ch that require email verification."
+msgstr ""
 
 #: templates/tolmach/landing.html:5
 msgid "Translating together!"
@@ -626,8 +807,8 @@ msgstr "创建项目"
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:247
-#: tolmach/views.py:279
+#: templates/tolmach/organization.html:8 tolmach/views.py:249
+#: tolmach/views.py:281
 msgid "Members"
 msgstr ""
 
@@ -783,34 +964,34 @@ msgstr "个人信息设置"
 
 #: templates/tolmach/partial/edit_profile_modal.html:27
 #: templates/tolmach/partial/edit_profile_modal.html:31
-#: templates/tolmach/partial/settings/profile-tab.html:21
-#: templates/tolmach/partial/settings/profile-tab.html:25
+#: templates/tolmach/partial/settings/profile-tab.html:45
+#: templates/tolmach/partial/settings/profile-tab.html:49
 msgid "Nickname"
 msgstr "昵称"
 
 #: templates/tolmach/partial/edit_profile_modal.html:37
 #: templates/tolmach/partial/edit_profile_modal.html:41
-#: templates/tolmach/partial/settings/profile-tab.html:31
-#: templates/tolmach/partial/settings/profile-tab.html:35
+#: templates/tolmach/partial/settings/profile-tab.html:55
+#: templates/tolmach/partial/settings/profile-tab.html:59
 msgid "First Name"
 msgstr "名字"
 
 #: templates/tolmach/partial/edit_profile_modal.html:47
 #: templates/tolmach/partial/edit_profile_modal.html:51
-#: templates/tolmach/partial/settings/profile-tab.html:41
-#: templates/tolmach/partial/settings/profile-tab.html:45
+#: templates/tolmach/partial/settings/profile-tab.html:65
+#: templates/tolmach/partial/settings/profile-tab.html:69
 msgid "Last Name"
 msgstr "姓氏"
 
 #: templates/tolmach/partial/edit_profile_modal.html:57
 #: templates/tolmach/partial/edit_profile_modal.html:61
-#: templates/tolmach/partial/settings/profile-tab.html:51
-#: templates/tolmach/partial/settings/profile-tab.html:55
+#: templates/tolmach/partial/settings/profile-tab.html:75
+#: templates/tolmach/partial/settings/profile-tab.html:79
 msgid "Website"
 msgstr "网站"
 
 #: templates/tolmach/partial/edit_profile_modal.html:74
-#: templates/tolmach/partial/settings/profile-tab.html:66
+#: templates/tolmach/partial/settings/profile-tab.html:90
 #: templates/translations/partial/add_glossary_modal.html:89
 #: templates/translations/partial/add_tmx_modal.html:47
 #: templates/translations/partial/edit_text_modal.html:136
@@ -895,12 +1076,12 @@ msgstr "邀请你加入项目"
 msgid "Create"
 msgstr "新建"
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:144
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:146
 msgid "owner"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:146
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:148
 msgid "admin"
 msgstr ""
 
@@ -970,6 +1151,8 @@ msgid "Log in"
 msgstr "登录"
 
 #: templates/tolmach/partial/register_modal.html:76
+#: templates/tolmach/partial/settings/profile-tab.html:21
+#: templates/tolmach/partial/settings/profile-tab.html:25
 msgid "Email"
 msgstr "邮箱"
 
@@ -1052,6 +1235,24 @@ msgstr ""
 msgid "TM percentage:"
 msgstr ""
 
+#: templates/tolmach/partial/settings/profile-tab.html:31
+msgid "Email confirmed"
+msgstr ""
+
+#: templates/tolmach/partial/settings/profile-tab.html:34
+msgid "Email not confirmed"
+msgstr ""
+
+#: templates/tolmach/partial/settings/profile-tab.html:36
+#, fuzzy
+#| msgid "Password confirmation"
+msgid "Resend confirmation"
+msgstr "确认密码"
+
+#: templates/tolmach/partial/settings/profile-tab.html:40
+msgid "No email set"
+msgstr ""
+
 #: templates/tolmach/profile.html:5 templates/tolmach/view_user.html:5
 #: translations/views.py:239 translations/views.py:260
 msgid "Statistics"
@@ -1061,9 +1262,9 @@ msgstr "统计"
 msgid "Total"
 msgstr "总计"
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:174 tolmach/views.py:176
-#: tolmach/views.py:211 tolmach/views.py:213 tolmach/views.py:247
-#: tolmach/views.py:249 tolmach/views.py:279 tolmach/views.py:281
+#: templates/tolmach/profile.html:8 tolmach/views.py:176 tolmach/views.py:178
+#: tolmach/views.py:213 tolmach/views.py:215 tolmach/views.py:249
+#: tolmach/views.py:251 tolmach/views.py:281 tolmach/views.py:283
 #, fuzzy
 #| msgid "Translation"
 msgid "Organizations"
@@ -1277,13 +1478,17 @@ msgstr "翻译"
 
 #: templates/translations/partial/edit_text_modal.html:51
 #: templates/translations/project_stats.html:91
+#, fuzzy
+#| msgid "Remove translation"
 msgid "approved"
-msgstr ""
+msgstr "删除翻译题"
 
 #: templates/translations/partial/edit_text_modal.html:61
 #: templates/translations/project_stats.html:110
+#, fuzzy
+#| msgid "Machine translations"
 msgid "Characters in original"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/partial/edit_text_modal.html:65
 #: templates/translations/partial/edit_text_modal.html:79
@@ -1340,8 +1545,10 @@ msgid "Someone is working on this fragment right now..."
 msgstr ""
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:18
+#, fuzzy
+#| msgid "Remove translation"
 msgid "Approved"
-msgstr ""
+msgstr "删除翻译题"
 
 #: templates/translations/partial/view_text/entry_history_list_content.html:19
 #, fuzzy
@@ -1394,8 +1601,10 @@ msgid "Translated:"
 msgstr "翻译"
 
 #: templates/translations/project.html:132
+#, fuzzy
+#| msgid "Remove translation"
 msgid "Approved:"
-msgstr ""
+msgstr "删除翻译题"
 
 #: templates/translations/project.html:133
 #, fuzzy
@@ -1411,8 +1620,10 @@ msgid "Options"
 msgstr "翻译"
 
 #: templates/translations/project.html:151
+#, fuzzy
+#| msgid "text id is not set"
 msgid "Download"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: templates/translations/project.html:159
 #, fuzzy
@@ -1499,27 +1710,37 @@ msgid "All fragments created by participant"
 msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:189
+#, fuzzy
+#| msgid "Machine translations"
 msgid ""
 "Words of original text, that have approved translations made by participant"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:192
+#, fuzzy
+#| msgid "Machine translations"
 msgid "Words of translation text made by participant, that have been approved"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:195
+#, fuzzy
+#| msgid "Machine translations"
 msgid "Words of all translation text made by participant"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:200
+#, fuzzy
+#| msgid "Machine translations"
 msgid ""
 "Characters of original text, that have approved translations made by "
 "participant"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:203
+#, fuzzy
+#| msgid "Machine translations"
 msgid "Characters of translations made by participant, that have been approved"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:206
 #, fuzzy
@@ -1528,20 +1749,26 @@ msgid "Characters of all translations made by participant"
 msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:211
+#, fuzzy
+#| msgid "Machine translations"
 msgid ""
 "Characters of original text, that have approved translations made by "
 "participant (without spaces)"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:214
+#, fuzzy
+#| msgid "Machine translations"
 msgid ""
 "Characters of translations made by participant, that have been approved "
 "(without spaces)"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/project_stats.html:217
+#, fuzzy
+#| msgid "Machine translations"
 msgid "Words of all translated text made by participant (without spaces)"
-msgstr ""
+msgstr "机器翻译"
 
 #: templates/translations/projects.html:5
 msgid "My"
@@ -1663,13 +1890,20 @@ msgid "Here we can see all the fragments text was splitted to"
 msgstr ""
 
 #: templates/translations/view-text.html:511
+#, fuzzy
+#| msgid "Collective translations"
 msgid "Click to expand fragment and begin translation"
-msgstr ""
+msgstr "众包翻译"
 
 #: templates/translations/view-text.html:512
+#, fuzzy
+#| msgid ""
+#| "Translate the text using glossaries, translation memory databases, "
+#| "machine translation systems and prepared dictionaries."
 msgid ""
 "Translation entry form, translation memory variants and machine translations"
 msgstr ""
+"翻译文本时使用软件为您提供的词汇表、翻译内存数据库、机器翻译系统和任何词典。"
 
 #: templates/translations/view-text.html:513
 #, fuzzy
@@ -1706,18 +1940,18 @@ msgstr[1] "Tolma.ch她已满%(years_count)d岁!"
 msgid "Organization id is not set"
 msgstr "文案ID未设置"
 
-#: tolmach/decorators.py:20 tolmach/views_ajax.py:25 tolmach/views_ajax.py:50
-#: tolmach/views_ajax.py:54
+#: tolmach/decorators.py:20 tolmach/views_ajax.py:26 tolmach/views_ajax.py:51
+#: tolmach/views_ajax.py:55
 #, fuzzy
 #| msgid "Translation not found"
 msgid "Organization not found"
 msgstr "未找到翻译"
 
-#: tolmach/views.py:148
+#: tolmach/views.py:150
 msgid "member"
 msgstr ""
 
-#: tolmach/views.py:190 tolmach/views.py:228 tolmach/views.py:263
+#: tolmach/views.py:192 tolmach/views.py:230 tolmach/views.py:265
 #: translations/decorators.py:63 translations/views.py:99
 #: translations/views.py:277 translations/views.py:279
 #: translations/views.py:298 translations/views.py:300
@@ -1725,49 +1959,49 @@ msgstr ""
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: tolmach/views.py:524
+#: tolmach/views.py:526
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:614
+#: tolmach/views.py:616
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
-#: tolmach/views_ajax.py:28 tolmach/views_ajax.py:56 tolmach/views_ajax.py:77
+#: tolmach/views_ajax.py:29 tolmach/views_ajax.py:57 tolmach/views_ajax.py:78
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be an owner of organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:40 translations/views_ajax.py:206
+#: tolmach/views_ajax.py:41 translations/views_ajax.py:206
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Project name cannot be empty"
 msgstr "项目类型未设置"
 
-#: tolmach/views_ajax.py:81 tolmach/views_ajax.py:117
+#: tolmach/views_ajax.py:82 tolmach/views_ajax.py:118
 #: translations/views_ajax.py:389 translations/views_ajax.py:438
 msgid "User id is not set"
 msgstr "用户ID未设置"
 
-#: tolmach/views_ajax.py:85 tolmach/views_ajax.py:121
+#: tolmach/views_ajax.py:86 tolmach/views_ajax.py:122
 #: translations/views_ajax.py:393 translations/views_ajax.py:442
 msgid "User not found"
 msgstr "未找到用户"
 
-#: tolmach/views_ajax.py:87 tolmach/views_ajax.py:125
+#: tolmach/views_ajax.py:88 tolmach/views_ajax.py:126
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "This user is an owner of organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:109 translations/views_ajax.py:430
+#: tolmach/views_ajax.py:110 translations/views_ajax.py:430
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "User is already a member of project"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:123 translations/decorators.py:23
+#: tolmach/views_ajax.py:124 translations/decorators.py:23
 #: translations/views_ajax.py:447 translations/views_ajax.py:729
 #: translations/views_ajax.py:865 translations/views_ajax.py:1073
 #: translations/views_ajax.py:1187 translations/views_ajax.py:1196
@@ -1775,13 +2009,13 @@ msgstr "该用户不是项目成员"
 msgid "Not allowed"
 msgstr "不允许"
 
-#: tolmach/views_ajax.py:152
+#: tolmach/views_ajax.py:153
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be a manager of the organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:383
+#: tolmach/views_ajax.py:384
 #, python-brace-format
 msgid ""
 "Sorry, we could not reach the url. Error '{err_msg}'. If everything is "
@@ -1819,15 +2053,11 @@ msgstr "第三方项目"
 msgid "File is too big"
 msgstr "文件太大"
 
-#: translations/utils.py:147
-msgid "Something went wrong"
-msgstr ""
-
-#: translations/utils.py:355 translations/utils.py:387
+#: translations/utils.py:359 translations/utils.py:391
 msgid "This source language is not supported yet"
 msgstr "该原语言暂时未支持"
 
-#: translations/utils.py:362 translations/utils.py:395
+#: translations/utils.py:366 translations/utils.py:399
 msgid "This target language is not supported yet"
 msgstr "该目标语言暂时不支持"
 
@@ -2044,8 +2274,10 @@ msgid "Translation not found"
 msgstr "未找到翻译"
 
 #: translations/views_ajax.py:1236
+#, fuzzy
+#| msgid "text id is not set"
 msgid "Entry translation text is not set"
-msgstr ""
+msgstr "文案ID未设置"
 
 #: translations/views_ajax.py:1314
 #, fuzzy
@@ -2069,32 +2301,13 @@ msgstr "项目类型未设置"
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 
-#: translations/views_ajax.py:1910
+#: translations/views_ajax.py:1920
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:1926 translations/views_ajax.py:1930
+#: translations/views_ajax.py:1936 translations/views_ajax.py:1940
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
-
-#~ msgid "Welcome to Tolma.ch!"
-#~ msgstr "欢迎光临Tolma.ch！"
-
-#~ msgid "Start Translating in Minutes"
-#~ msgstr "开始翻译吧！"
-
-#~ msgid "Hello, <b><username></b>!"
-#~ msgstr "你好, <b><username></b>!"
-
-#~ msgid ""
-#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
-#~ "excited to have you on-board."
-#~ msgstr "我们很高兴您同意我们的会社！"
-
-#, fuzzy
-#~| msgid "Password"
-#~ msgid "Password reset approval"
-#~ msgstr "密码"
 
 #, fuzzy
 #~| msgid "Translated document"

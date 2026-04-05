@@ -1,0 +1,94 @@
+{% extends 'main/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container" style="margin-top: 50px;">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "Confirmation Link Expired" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="text-center">
+                        <i class="fa fa-clock-o fa-5x text-warning" style="margin-bottom: 20px;"></i>
+                        <h4>{% trans "Confirmation Link Has Expired" %}</h4>
+                        <p class="alert alert-warning">
+                            {{ error }}
+                        </p>
+                        <p>
+                            {% trans "Email confirmation links are valid for 24 hours. You need to request a new confirmation email." %}
+                        </p>
+                        <div style="margin-top: 30px;">
+                            <button id="resend-confirmation-btn" class="btn btn-primary">
+                                <i class="fa fa-envelope"></i> {% trans "Resend Confirmation Email" %}
+                            </button>
+                            <a href="/" class="btn btn-default">
+                                <i class="fa fa-home"></i> {% trans "Go to Homepage" %}
+                            </a>
+                        </div>
+                        <div id="resend-message" style="display: none; margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var resendBtn = document.getElementById('resend-confirmation-btn');
+    var messageDiv = document.getElementById('resend-message');
+    
+    resendBtn.addEventListener('click', function() {
+        resendBtn.disabled = true;
+        resendBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {% trans "Sending..." %}';
+        
+        fetch('/confirm-email/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            credentials: 'same-origin'
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                messageDiv.innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+                messageDiv.style.display = 'block';
+            } else {
+                messageDiv.innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+                messageDiv.style.display = 'block';
+                resendBtn.disabled = false;
+                resendBtn.innerHTML = '<i class="fa fa-envelope"></i> {% trans "Resend Confirmation Email" %}';
+            }
+        })
+        .catch(function(error) {
+            messageDiv.innerHTML = '<div class="alert alert-danger">{% trans "Error sending confirmation email" %}</div>';
+            messageDiv.style.display = 'block';
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = '<i class="fa fa-envelope"></i> {% trans "Resend Confirmation Email" %}';
+        });
+    });
+    
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container" style="margin-top: 50px;">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "Email Confirmation Error" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="text-center">
+                        <i class="fa fa-exclamation-circle fa-5x text-danger" style="margin-bottom: 20px;"></i>
+                        <h4>{% trans "Something went wrong" %}</h4>
+                        <p class="alert alert-danger">
+                            {{ error }}
+                        </p>
+                        <p>
+                            {% trans "Possible reasons:" %}
+                        </p>
+                        <ul class="text-left" style="display: inline-block;">
+                            <li>{% trans "The confirmation link has expired" %}</li>
+                            <li>{% trans "The confirmation link was already used" %}</li>
+                            <li>{% trans "The confirmation link is invalid" %}</li>
+                        </ul>
+                        <div style="margin-top: 30px;">
+                            <a href="/" class="btn btn-primary">
+                                <i class="fa fa-home"></i> {% trans "Go to Homepage" %}
+                            </a>
+                            <a href="/settings/" class="btn btn-default">
+                                <i class="fa fa-cog"></i> {% trans "Go to Settings" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
