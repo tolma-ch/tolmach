@@ -16,7 +16,7 @@ from django.contrib.auth.models import User
 from django.db import transaction
 
 from translations.models import Project, ProjectTranslation, Text, TextTranslation, TextTranslationMeta, TextMeta, TextEntry
-from entries.models import Subject, Language
+from entries.models import Language
 
 
 RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\" "
@@ -276,7 +276,7 @@ def get_plural_examples(p):
     return num_dict
 
 
-def save_to_db(data, project_id, source_lang_code, target_lang_code, subject_id, user_id, title, document_format, document_name, original_format):
+def save_to_db(data, project_id, source_lang_code, target_lang_code, user_id, title, document_format, document_name, original_format):
     marked_text = data['marked_text']
     sentences = data['entries']
 
@@ -304,7 +304,6 @@ def save_to_db(data, project_id, source_lang_code, target_lang_code, subject_id,
     user = User.objects.get(id=user_id)
 
     project = Project.objects.get(id=project_id)
-    subject = Subject.objects.get(id=subject_id)
     source_lang = Language.objects.get(code_tmx=source_lang_code)
     target_translations = ProjectTranslation.objects.filter(project=project)
 
@@ -312,7 +311,6 @@ def save_to_db(data, project_id, source_lang_code, target_lang_code, subject_id,
         text = Text(title=title,
                     body=marked_text,
                     project=project,
-                    subject=subject,
                     source_lang=source_lang,
                     document_format=original_format if original_format else document_format,
                     document_name=document_name,

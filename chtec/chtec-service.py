@@ -42,7 +42,6 @@ def convert():
     title = getattr(request.forms, 'title')
     user_id = request.forms.get("user_id", type=int)
     project_id = request.forms.get("project_id", type=int)
-    subject_id = request.forms.get("subject_id", default=5, type=int)
     source_lang_code = request.forms.get("source_lang")
     target_lang_code = request.forms.get("target_lang")
     save_to_db = request.forms.get("save_to_db", default=True, type=bool)
@@ -145,7 +144,6 @@ def convert():
                                  project_id,
                                  source_lang_code,
                                  target_lang_code,
-                                 subject_id,
                                  user_id,
                                  title,
                                  document_format=file_type,

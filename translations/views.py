@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from tolmach.models import UserMeta
 from translations.decorators import define_project_breadcrumbs
 from translations.models import Project, ProjectMember, ProjectTranslation, Text, TextEntry, TextTranslation, TextTranslationUserPosition
-from entries.models import Language, Subject
+from entries.models import Language
 import translations.utils as utils
 
 from tolmach import settings
@@ -253,7 +253,6 @@ def project_stats(request, pr, projects_text, projects_url, projects_type):
                                      'langLocal': lang.localized_name,
                                      'id': lang.id
                                      } for lang in lang_list]),
-        'subjects': Subject.objects.all(),
         'breadcrumbs': [
             {'title': projects_text, 'url': projects_url, 'type': projects_type},
             {'title': pr.name, 'url': '/project/%d/' % pr.id, 'type': ''},
@@ -347,7 +346,6 @@ def project_by_translation(request, pr, projects_text, projects_url, projects_ty
                                      'langLocal': lang.localized_name,
                                      'id': lang.id
                                      } for lang in lang_list]),
-        'subjects': Subject.objects.all(),
         'breadcrumbs': [
             {'title': projects_text, 'url': projects_url, 'type': projects_type},
             {'title': pr.name, 'url': '', 'type': ''},

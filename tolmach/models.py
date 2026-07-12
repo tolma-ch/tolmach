@@ -80,18 +80,6 @@ class Messages(models.Model):
     time_created = models.DateTimeField(default=timezone.now)
 
 
-class EmailTemplate(models.Model):
-    type = models.TextField(default="")
-    body = models.TextField(default="")
-
-
-class EmailTemplateBody(models.Model):
-    template = models.ForeignKey('tolmach.EmailTemplate', on_delete=models.deletion.CASCADE)
-    title = models.CharField(max_length=256, default=None, null=True)
-    body = models.TextField(default="")
-    lang = models.ForeignKey('entries.Language', related_name='template_body_lang', on_delete=models.deletion.CASCADE)
-
-
 class OrganizationMember(models.Model):
     organization = models.ForeignKey('tolmach.Organization', related_name='organization_members', on_delete=models.deletion.CASCADE)
     user = models.ForeignKey('auth.User', on_delete=models.deletion.CASCADE)

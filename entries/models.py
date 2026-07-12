@@ -15,17 +15,3 @@ class Language(models.Model):
 
     def is_cjk(self):
         return True if self.code in ['zh', 'ja', 'ko'] else False
-
-class Subject(models.Model):
-    name = models.CharField(max_length=128)
-
-    def __str__(self):
-        return self.name
-
-class Entry(models.Model):
-    body = models.TextField(default="")
-    language = models.ForeignKey(Language, on_delete=models.deletion.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.deletion.CASCADE)
-
-    def __str__(self):
-        return self.text

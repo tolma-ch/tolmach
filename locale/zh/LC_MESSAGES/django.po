@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-05 17:34+0300\n"
+"POT-Creation-Date: 2026-07-09 20:15+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,36 +25,6 @@ msgstr ""
 #: blog/views.py:127
 msgid "Blog post does not exist"
 msgstr ""
-
-#: chat/views.py:17 chat/views.py:34
-#, fuzzy
-#| msgid "Project type is not set"
-msgid "Project not set"
-msgstr "项目类型未设置"
-
-#: chat/views.py:21 chat/views.py:38 translations/decorators.py:49
-#: translations/views_ajax.py:156 translations/views_ajax.py:175
-#: translations/views_ajax.py:180 translations/views_ajax.py:272
-#: translations/views_ajax.py:884
-msgid "Project not found"
-msgstr "项目找不到"
-
-#: chat/views.py:23 chat/views.py:40 tolmach/decorators.py:22
-#: translations/decorators.py:51
-msgid "Access denied"
-msgstr "禁止访问 (403)"
-
-#: chat/views.py:28 chat/views.py:45
-#, fuzzy
-#| msgid "Text not found"
-msgid "Chat not found"
-msgstr "未找到"
-
-#: chat/views.py:48
-#, fuzzy
-#| msgid "text id is not set"
-msgid "Text is empty"
-msgstr "文案ID未设置"
 
 #: dicts/views.py:157
 #, fuzzy
@@ -260,17 +230,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:138 templates/main/base.html:244
+#: templates/main/base.html:138 templates/main/base.html:150
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:141 templates/main/base.html:247
+#: templates/main/base.html:141 templates/main/base.html:153
 #: templates/translations/partial/add_text_modal.html:145
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:273
+#: templates/main/base.html:179
 msgid "No results"
 msgstr "没有结果"
 
@@ -340,15 +310,11 @@ msgstr "帮助"
 msgid "Admin panel"
 msgstr ""
 
-#: templates/main/partial/navbar-loggedin.html:152
-msgid "Chat"
-msgstr "聊天区"
-
-#: templates/main/partial/navbar-loggedin.html:181
+#: templates/main/partial/navbar-loggedin.html:173
 msgid "Hi,"
 msgstr "你好,"
 
-#: templates/main/partial/navbar-loggedin.html:199
+#: templates/main/partial/navbar-loggedin.html:191
 #: templates/tolmach/partial/all_messages_modal.html:8
 msgid "Notifications"
 msgstr "通知"
@@ -1947,7 +1913,11 @@ msgstr "文案ID未设置"
 msgid "Organization not found"
 msgstr "未找到翻译"
 
-#: tolmach/views.py:150
+#: tolmach/decorators.py:22 translations/decorators.py:51
+msgid "Access denied"
+msgstr "禁止访问 (403)"
+
+#: tolmach/views.py:148
 msgid "member"
 msgstr ""
 
@@ -2044,6 +2014,12 @@ msgstr "未找到"
 msgid "Project id is not set"
 msgstr "项目类型未设置"
 
+#: translations/decorators.py:49 translations/views_ajax.py:156
+#: translations/views_ajax.py:175 translations/views_ajax.py:180
+#: translations/views_ajax.py:272 translations/views_ajax.py:884
+msgid "Project not found"
+msgstr "项目找不到"
+
 #: translations/decorators.py:69 translations/views.py:42
 #: translations/views.py:43 translations/views.py:388
 msgid "Third-party projects"
@@ -2052,6 +2028,10 @@ msgstr "第三方项目"
 #: translations/utils.py:122
 msgid "File is too big"
 msgstr "文件太大"
+
+#: translations/utils.py:147
+msgid "Something went wrong"
+msgstr ""
 
 #: translations/utils.py:359 translations/utils.py:391
 msgid "This source language is not supported yet"
@@ -2308,6 +2288,38 @@ msgstr ""
 #: translations/views_ajax.py:1936 translations/views_ajax.py:1940
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
+
+#, fuzzy
+#~| msgid "Project type is not set"
+#~ msgid "Project not set"
+#~ msgstr "项目类型未设置"
+
+#, fuzzy
+#~| msgid "Text not found"
+#~ msgid "Chat not found"
+#~ msgstr "未找到"
+
+#~ msgid "Chat"
+#~ msgstr "聊天区"
+
+#~ msgid "Welcome to Tolma.ch!"
+#~ msgstr "欢迎光临Tolma.ch！"
+
+#~ msgid "Start Translating in Minutes"
+#~ msgstr "开始翻译吧！"
+
+#~ msgid "Hello, <b><username></b>!"
+#~ msgstr "你好, <b><username></b>!"
+
+#~ msgid ""
+#~ "Thank you for signing up with <span>Tolma‌</span>‌.‌<span>‌ch</span>! We’re "
+#~ "excited to have you on-board."
+#~ msgstr "我们很高兴您同意我们的会社！"
+
+#, fuzzy
+#~| msgid "Password"
+#~ msgid "Password reset approval"
+#~ msgstr "密码"
 
 #, fuzzy
 #~| msgid "Translated document"
