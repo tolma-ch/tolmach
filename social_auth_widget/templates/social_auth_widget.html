@@ -1,11 +1,6 @@
 {% load i18n static %}
 {% spaceless %}
-<!--<ul class="social-providers">-->
     {% for provider in providers %}
         <a class="social-btn social-btn__{{ provider.icon }}" href="{% url 'social:begin' backend=provider.id %}" ><i class="fa fa-{{ provider.icon }}"></i></a>
-        <!--<li class="social-provider">-->
-            <!--<a href="{% url 'social:begin' backend=provider.id %}" class="icon custom-{{ provider.icon }} "></a>-->
-        <!--</li>-->
     {% endfor %}
-<!--</ul>-->
 {% endspaceless %}
