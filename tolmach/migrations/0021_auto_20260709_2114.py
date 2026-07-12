@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tolmach', '0019_usermeta_tm_percentage'),
+        ('tolmach', '0020_auto_20260318_2140'),
     ]
 
     operations = [

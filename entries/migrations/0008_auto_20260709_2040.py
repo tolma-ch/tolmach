@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('translations', '0044_auto_20260709_2040'),
+        ('translations', '0045_auto_20260709_2040'),
         ('entries', '0007_turkish_lang'),
     ]
 
