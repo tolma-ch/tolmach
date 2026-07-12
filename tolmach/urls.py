@@ -113,8 +113,6 @@ urlpatterns = [
     url(r'^ajax/languagetool/$', trans_ajax.languagetool_ajax, name='languagetool_ajax'),
     url(r'^ajax/get-url-og/$', main_ajax.get_url_og_meta, name='get_url_og_meta'),
 
-    url('', include('chat.urls')),
-
     # temporarily added urls for developing purpuses
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

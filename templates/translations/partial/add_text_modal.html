@@ -32,15 +32,6 @@
                        ng-change="checkIfURL()"
                 >
             </div>
-            <div class="form-group" style="display: none">
-                <select class="form-control"
-                        ng-model="text.subject">
-                    <option value="" disabled selected>Select subject</option>
-                    {% for subject in subjects %}
-                        <option value="{{ subject.id }}">{{ subject.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
             <div class="card card--twitter"
                  ng-show="showOgCard"
             >

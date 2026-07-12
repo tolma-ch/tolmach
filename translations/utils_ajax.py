@@ -126,7 +126,6 @@ def text_to_json(text, text_translation):
         'id': text.id,
         'title': text.title,
         'machine': machine_trans_enabled,
-        'subject': text.subject.id,
         'sourceLang': str(text.source_lang),
         'sourceLangId': text.source_lang.id,
         'translation': translation,

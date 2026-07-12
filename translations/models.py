@@ -7,7 +7,7 @@ from simple_history.models import HistoricalRecords
 
 from channels import Group
 
-from entries.models import Subject, Language
+from entries.models import Language
 
 
 def random_string(length=30):
@@ -229,7 +229,6 @@ class Text(models.Model):
     title = models.CharField(max_length=256)
     body = models.TextField()
     word_price = models.IntegerField(default=0)
-    subject = models.ForeignKey('entries.Subject', on_delete=models.deletion.CASCADE)
     source_lang = models.ForeignKey('entries.Language', related_name='source_lang', on_delete=models.deletion.CASCADE)
     document_format = models.CharField(max_length=256)
     document_name = models.CharField(max_length=256, default=None, null=True)

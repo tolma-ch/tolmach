@@ -13,7 +13,6 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from entries.models import Subject
 from entries.models import Language
 from translations import utils
 from translations.decorators import accept_text, accept_project
@@ -498,10 +497,6 @@ def text_ajax(request, project):
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = request.POST or json.loads(request.body)
-        try:
-            subject = Subject.objects.get(id=post['subject'])
-        except Subject.DoesNotExist:
-            subject = Subject.objects.get(id=5)
 
         if 'id' in post:
             try:
@@ -593,7 +588,6 @@ def text_ajax(request, project):
                       'text_body': text_body,
                       'user_id': project.manager.id,
                       'project_id': project.id,
-                      'subject_id': subject.id,
                       'source_lang': source_lang.code_tmx,
                       'target_lang': target_lang,
                       'split_mode': split_mode,

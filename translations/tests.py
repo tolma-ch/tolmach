@@ -28,7 +28,6 @@ class CreateProjectTest(TestCase):
         project = Project.objects.get(manager=self.user, name=4321)
         data = json.dumps({"project":project.id,
                            "title":"French test",
-                           "subject":1,
                            "sourceLang":7,
                            "targetLang":2,
                            "textBody":"De son côté, Clay désire toujours récupérer le marteau: il recrute des Nomades, Frankie, Greg et Gogo, auxquels il promet de l'argent en échange d'agressions qu'ils devront perpétrer à Charming. L'objectif est de déstabiliser Jax et de faire porter la suspicion sur le club. Mais Rita, la femme du chef de la police Eli Roosevelt, est accidentellement tuée lors de l'une de ces attaques. L'étau se resserre autour de Clay: il est soupçonné par Unser, et encore plus fortement par Jax et Bobby, d'autant plus lorsque Frankie le balance avant d'être tué. Eli et Jax concluent un deal: Jax doit livrer Frankie vivant au policier, et Eli lui révélera le nom de la taupe au sein du MC. Mais Jax ne peut empêcher la mort de Frankie. Eli est furieux en découvrant le cadavre de Frankie, mais Jax lui explique qu'il va trouver des preuves pour incriminer Clay, le vrai responsable. Jax, devant le refus d'Eli de livrer la taupe, explique qu'il la connaît déjà, par déduction: il s'agit de Juice."})

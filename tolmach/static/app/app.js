@@ -13,7 +13,6 @@
         'projectsModule',
         'organizationsModule',
         'textModule',
-        'chatModule',
         'dictModule'
     ]);
 

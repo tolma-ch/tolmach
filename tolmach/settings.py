@@ -181,7 +181,6 @@ INSTALLED_APPS = (
     'tolmach',
     'translations',
     'entries',
-    'chat',
     'blog',
     'markdownx',
     'stats',

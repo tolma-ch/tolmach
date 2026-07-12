@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Q
 
 from translations.models import Project, Text, TextTranslation, TextEntry
-from entries.models import Language, Subject
+from entries.models import Language
 
 from tolmach.models import UserMeta, Organization, OrganizationMember
 from stats.models import PairStats
