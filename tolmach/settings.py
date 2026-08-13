@@ -232,8 +232,6 @@ SOCIAL_AUTH_PROVIDERS = [
     {'id': p[0], 'name': p[1], 'icon': p[2]}
     for p in (
         ('vk-oauth2', u'Vk.com', 'vk'),
-        ('facebook', u'Login via Facebook', 'facebook'),
-        ('twitter', u'Twitter', 'twitter'),
     )
 ]
 
