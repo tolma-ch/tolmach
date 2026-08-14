@@ -70,12 +70,11 @@ def projects_ajax(request, proj_type, object_id=""):
                               if x.is_user_allowed(request.user)]
     elif proj_type == 'user':
         try:
-            target_user_id = int(object_id)
-        except:
+            target_user = User.objects.get(username=object_id)
+        except User.DoesNotExist:
             logger.info(log_prefix(request))
             raise Http404("Poll does not exist")
         logger.info(log_prefix(request))
-        target_user = get_object_or_404(User, id=target_user_id)
         if request.user == user or request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(manager=target_user,
                                                         status=Project.READY).order_by('-last_modified')

@@ -62,8 +62,8 @@ def index(request):
 
 
 @login_required
-def user_page(request, user_id):
-    user = get_object_or_404(User, id=user_id)
+def user_page(request, username):
+    user = get_object_or_404(User, username=username)
     first_name = user.first_name
     last_name = user.last_name
 
@@ -73,7 +73,6 @@ def user_page(request, user_id):
     data = {
         'username': user.username,
         'usermeta': usermeta,
-        'user_id': user.id,
         'first_name': first_name,
         'last_name': last_name,
         'website': usermeta.website,

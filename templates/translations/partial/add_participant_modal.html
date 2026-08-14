@@ -125,7 +125,7 @@
                     {=:: participant.name =}
                 </div>
                 <div class="project-sidebar-participant__btns">
-                    <a class="project-sidebar-participant__btn" href="/user/{=:: participant.id =}"><i class="fa fa-eye"></i></a>
+                    <a class="project-sidebar-participant__btn" href="/user/{=:: participant.username =}"><i class="fa fa-eye"></i></a>
                     <a class="project-sidebar-participant__btn tooltip-warning" href=""
                        ng-if="!(participant.id == managerId)"
                        uib-tooltip="{% trans 'Remove participant' %}"

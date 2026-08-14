@@ -133,7 +133,7 @@
                                         </a>
                                     </div>
                                     <div class="translation-variant__author">
-                                        <span ng-if="entry.translations.length > 1"> ({= entry.translations.length =})</span> <a href="/user/{= entry.translations[entry.translations.length-1].author.id =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
+                                        <span ng-if="entry.translations.length > 1"> ({= entry.translations.length =})</span> <a href="/user/{= entry.translations[entry.translations.length-1].author.username =}/">{= entry.translations[entry.translations.length-1].author.name =}</a>
                                     </div>
                                 </div>
                                 <div ng-if="entry.approved">
@@ -356,7 +356,7 @@
                                      ng-bind-html="clearTranslation(entry, translation) | trusted">
                                 </div>
                                 <div class="translation-variant__author">
-                                    <a href="/user/{= translation.author.id =}">{= translation.author.name =}</a>
+                                    <a href="/user/{= translation.author.username =}">{= translation.author.name =}</a>
                                 </div>
                                 <div class="translation-variant__date">
                                     <!-- TODO: сделать красивый плюрал -->

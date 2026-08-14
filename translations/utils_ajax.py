@@ -14,6 +14,7 @@ def translation_to_json(translation):
         'parentId': translation.parent_entry.id if translation.parent_entry else 0,
         'author': {
             'id': translation.author.id,
+            'username': translation.author.username,
             'name': translation.author.username
         },
         'historyCount': translation.history.filter(history_type="~").count(),
@@ -44,6 +45,7 @@ def entry_history_to_json(history_entry):
         'parentId': history_entry.parent_entry.id,
         'author': {
             'id': history_entry.history_user.id if history_entry.history_user else history_entry.author.id,
+            'username': history_entry.history_user.username if history_entry.history_user else history_entry.author.username,
             'name': history_entry.history_user.username if history_entry.history_user else history_entry.author.username
         },
         'isApproved': history_entry.is_approved,
@@ -70,6 +72,7 @@ def user_to_json(user, project=None):
                 status = ProjectMember.SPECTATOR
     return {
         'id': user.id,
+        'username': user.username,
         'name': username,
         'avatar': avatar,
         'status': status

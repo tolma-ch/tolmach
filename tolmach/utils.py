@@ -67,6 +67,7 @@ def org_user_to_json(user, org=None):
         status = "owner"
     return {
         'id': user.id,
+        'username': user.username,
         'name': username,
         'avatar': avatar,
         'status': status

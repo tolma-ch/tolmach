@@ -390,7 +390,7 @@ def view_translation(request, text_id, target_lang):
         projects_url = '/projects/public/'
     else:
         projects_text = "%s" % pr.manager.username
-        projects_url = '/user/%d/' % pr.manager.id
+        projects_url = '/user/%s/' % pr.manager.username
 
     projects_type = ''
     if pr.organization:
