@@ -16,10 +16,12 @@ def ensure_valid_username(username):
     if not new:
         new = 'user'
     User = get_user_model()
-    existing = set(User.objects.values_list('username', flat=True))
+    # MySQL's utf8mb4_general_ci collation is case-insensitive, so compare
+    # names in lowercase when checking for collisions.
+    existing = set(name.lower() for name in User.objects.values_list('username', flat=True))
     original = new
     suffix = 1
-    while new in existing:
+    while new.lower() in existing:
         new = f'{original}-{suffix}'
         suffix += 1
     return new

@@ -28,7 +28,9 @@ class Command(BaseCommand):
             self.stdout.write('All usernames are valid — nothing to do.')
             return
 
-        existing = set(User.objects.values_list('username', flat=True))
+        # MySQL's default utf8mb4_general_ci collation enforces usernames
+        # case-insensitively, so track names in lowercase for collision checks.
+        existing = set(name.lower() for name in User.objects.values_list('username', flat=True))
         mappings = []
         for user in candidates:
             new = slugify(user.username)
@@ -36,10 +38,10 @@ class Command(BaseCommand):
                 new = f'user-{user.pk}'
             original = new
             suffix = 1
-            while new in existing:
+            while new.lower() in existing:
                 new = f'{original}-{suffix}'
                 suffix += 1
-            existing.add(new)
+            existing.add(new.lower())
             mappings.append((user, new))
 
         self.stdout.write(f'Found {len(mappings)} username(s) to sluggify:\n')
