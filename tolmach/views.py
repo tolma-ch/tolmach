@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import re
 from django.contrib.auth import logout
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
@@ -16,6 +17,7 @@ from entries.models import Language
 from tolmach.models import UserMeta, Organization, OrganizationMember
 from stats.models import PairStats
 from tolmach import utils as tolmach_utils
+from tolmach.utils import USERNAME_RE, ensure_valid_username
 
 
 def index(request):
@@ -407,6 +409,9 @@ def handler500(request):
     return response
 
 
+EMAIL_RE = re.compile(r'^[^@]+@[^@]+\.[^@]+$')
+
+
 def register(request):
     if request.method == "GET":
         raise Http404()
@@ -423,6 +428,22 @@ def register(request):
     project_invite_code = request.COOKIES.get('project_invite_code', False)
     org_invite_code = request.COOKIES.get('org_invite_code', False)
 
+    if not username or not USERNAME_RE.match(username):
+        answer = {
+            'status': '1',
+            'message': _('Username can only contain letters, numbers, dots, underscores, and hyphens'),
+            'redirect': '',
+        }
+        return HttpResponse(json.dumps(answer), content_type='application/json', status=400)
+
+    if not email or not EMAIL_RE.match(email):
+        answer = {
+            'status': '1',
+            'message': _('Please provide a valid email address'),
+            'redirect': '',
+        }
+        return HttpResponse(json.dumps(answer), content_type='application/json', status=400)
+
     try:
         new_user = User.objects.create_user(username, email, password)
         user = authenticate(username=username, password=password)
@@ -437,7 +458,7 @@ def register(request):
         # Redirect to a success page.
     except:
         status = "1"
-        message = "Some wrong"
+        message = _("Some wrong")
 
     answer = {
         'status': status,
