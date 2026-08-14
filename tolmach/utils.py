@@ -1,5 +1,32 @@
 # -*- coding: utf-8 -*-
 
+import re
+
+from django.contrib.auth import get_user_model
+from slugify import slugify
+
+
+USERNAME_RE = re.compile(r'^[0-9a-zA-Z._-]+$')
+
+
+def ensure_valid_username(username):
+    if USERNAME_RE.match(username):
+        return username
+    new = slugify(username)
+    if not new:
+        new = 'user'
+    User = get_user_model()
+    # MySQL's utf8mb4_general_ci collation is case-insensitive, so compare
+    # names in lowercase when checking for collisions.
+    existing = set(name.lower() for name in User.objects.values_list('username', flat=True))
+    original = new
+    suffix = 1
+    while new.lower() in existing:
+        new = f'{original}-{suffix}'
+        suffix += 1
+    return new
+
+
 from tolmach.models import Messages
 from tolmach.models import UserMeta
 from tolmach.models import OrganizationMember, Organization
@@ -40,6 +67,7 @@ def org_user_to_json(user, org=None):
         status = "owner"
     return {
         'id': user.id,
+        'username': user.username,
         'name': username,
         'avatar': avatar,
         'status': status

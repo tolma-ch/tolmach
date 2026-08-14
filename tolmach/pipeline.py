@@ -11,6 +11,13 @@ from social_core.backends.twitter import TwitterOAuth
 from social_core.backends.vk import VKOAuth2
 from social_core.backends.facebook import FacebookOAuth2
 from tolmach.models import UserMeta
+from tolmach.utils import ensure_valid_username
+
+
+def validate_username_from_social(strategy, details, *args, **kwargs):
+    username = details.get('username')
+    if username:
+        details['username'] = ensure_valid_username(username)
 
 
 def update_user_social_data(strategy, *args, **kwargs):

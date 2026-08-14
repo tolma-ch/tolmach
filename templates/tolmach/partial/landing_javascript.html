@@ -183,8 +183,16 @@
                         showError('{% trans "Username is required field" %}');
                         return;
                     }
+                    if (!/^[0-9a-zA-Z._-]+$/.test(username)) {
+                        showError('{% trans "Username can only contain letters, numbers, dots, underscores, and hyphens" %}');
+                        return;
+                    }
                     if (!email) {
                         showError('{% trans "Email is required field" %}');
+                        return;
+                    }
+                    if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+                        showError('{% trans "Please provide a valid email address" %}');
                         return;
                     }
                     if (password1 !== password2) {

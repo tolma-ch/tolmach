@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^$', main_views.index, name='index'),
     url(r'privacy/', TemplateView.as_view(template_name='main/policy/ru.html'), name="privacy_policy"),
     url(r'^%slogout/$' % PATH, django.contrib.auth.views.LogoutView.as_view(next_page = '/')),
-    url(r'^user/(?P<user_id>\d+)/$', main_views.user_page, name="user_page"),
+    url(r'^user/(?P<username>[\w.@+-]+)/$', main_views.user_page, name="user_page"),
     url(r'^register/', main_views.register, name="register_user"),
     url(r'password-reset/$', main_views.reset_password_approve, name="reset_password_approve"),
     url(r'password-reset/(?P<token>\w+)/$', main_views.reset_password_form, name="reset_password_form"),
@@ -80,7 +80,7 @@ urlpatterns = [
     url(r'^ajax/orgs/members/$', main_ajax.organization_members_ajax, name='manage_orgs_members_ajax'),
     url(r'^ajax/orgs/invite-code/$', main_ajax.organization_invite_code_ajax, name='manage_orgs_invites_ajax'),
 
-    url(r'^ajax/projects/(?P<proj_type>\w+)/(?:(?P<object_id>[\w-]+)/)?$', trans_ajax.projects_ajax),
+    url(r'^ajax/projects/(?P<proj_type>\w+)/(?:(?P<object_id>[\w.-]+)/)?$', trans_ajax.projects_ajax),
     url(r'^ajax/project-create/$', trans_ajax.create_project_ajax, name='create_project_ajax'),
     url(r'^ajax/project/invite-code/$', trans_ajax.project_invite_code, name='project_invite_code_ajax'),
     url(r'^ajax/project-add-translation/$', trans_ajax.add_project_translation, name='add_project_translation'),

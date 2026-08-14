@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-12 18:57+0300\n"
+"POT-Creation-Date: 2026-08-14 23:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,8 +219,8 @@ msgstr ""
 
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
-#: templates/tolmach/organization.html:9 tolmach/views.py:123
-#: tolmach/views.py:126 tolmach/views.py:128
+#: templates/tolmach/organization.html:9 tolmach/views.py:125
+#: tolmach/views.py:128 tolmach/views.py:130
 msgid "Settings"
 msgstr ""
 
@@ -746,8 +746,8 @@ msgstr ""
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:249
-#: tolmach/views.py:281
+#: templates/tolmach/organization.html:8 tolmach/views.py:251
+#: tolmach/views.py:283
 msgid "Members"
 msgstr ""
 
@@ -925,18 +925,27 @@ msgstr ""
 
 #: templates/tolmach/partial/landing_javascript.html:107
 #: templates/tolmach/partial/landing_javascript.html:147
-#: templates/tolmach/partial/landing_javascript.html:191
+#: templates/tolmach/partial/landing_javascript.html:199
 msgid "Password is required field"
 msgstr ""
 
 #: templates/tolmach/partial/landing_javascript.html:143
 #: templates/tolmach/partial/landing_javascript.html:183
-#: templates/tolmach/partial/landing_javascript.html:225
+#: templates/tolmach/partial/landing_javascript.html:233
 msgid "Username is required field"
 msgstr ""
 
-#: templates/tolmach/partial/landing_javascript.html:187
+#: templates/tolmach/partial/landing_javascript.html:187 tolmach/views.py:434
+msgid ""
+"Username can only contain letters, numbers, dots, underscores, and hyphens"
+msgstr ""
+
+#: templates/tolmach/partial/landing_javascript.html:191
 msgid "Email is required field"
+msgstr ""
+
+#: templates/tolmach/partial/landing_javascript.html:195 tolmach/views.py:442
+msgid "Please provide a valid email address"
 msgstr ""
 
 #: templates/tolmach/partial/new_organization_modal.html:3
@@ -987,12 +996,12 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:146
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:148
 msgid "owner"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:148
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:150
 msgid "admin"
 msgstr ""
 
@@ -1030,24 +1039,24 @@ msgid "Log in using password:"
 msgstr ""
 
 #: templates/tolmach/partial/register_modal.html:31
-#: templates/tolmach/partial/register_modal.html:69
+#: templates/tolmach/partial/register_modal.html:71
 msgid "Username"
 msgstr ""
 
 #: templates/tolmach/partial/register_modal.html:38
-#: templates/tolmach/partial/register_modal.html:83
-#: templates/tolmach/partial/register_modal.html:145
+#: templates/tolmach/partial/register_modal.html:85
+#: templates/tolmach/partial/register_modal.html:147
 msgid "Password"
 msgstr ""
 
 #: templates/tolmach/partial/register_modal.html:50
-#: templates/tolmach/partial/register_modal.html:102
+#: templates/tolmach/partial/register_modal.html:104
 msgid "Forgot your password?"
 msgstr ""
 
 #: templates/tolmach/partial/register_modal.html:53
 #: templates/tolmach/partial/register_modal.html:61
-#: templates/tolmach/partial/register_modal.html:108
+#: templates/tolmach/partial/register_modal.html:110
 msgid "Sign up"
 msgstr ""
 
@@ -1055,42 +1064,46 @@ msgstr ""
 msgid "Log in"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:76
+#: templates/tolmach/partial/register_modal.html:70
+msgid "Only letters, numbers, dots, underscores, and hyphens"
+msgstr ""
+
+#: templates/tolmach/partial/register_modal.html:78
 #: templates/tolmach/partial/settings/profile-tab.html:21
 #: templates/tolmach/partial/settings/profile-tab.html:25
 msgid "Email"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:90
-#: templates/tolmach/partial/register_modal.html:152
+#: templates/tolmach/partial/register_modal.html:92
+#: templates/tolmach/partial/register_modal.html:154
 msgid "Password confirmation"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:105
-#: templates/tolmach/partial/register_modal.html:126
+#: templates/tolmach/partial/register_modal.html:107
+#: templates/tolmach/partial/register_modal.html:128
 msgid "Authorization"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:113
-#: templates/tolmach/partial/register_modal.html:132
+#: templates/tolmach/partial/register_modal.html:115
+#: templates/tolmach/partial/register_modal.html:134
 msgid "Reset password"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:121
+#: templates/tolmach/partial/register_modal.html:123
 msgid "username"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:129
+#: templates/tolmach/partial/register_modal.html:131
 #, fuzzy
 #| msgid "Users translations"
 msgid "Registration"
 msgstr "Users translations"
 
-#: templates/tolmach/partial/register_modal.html:137
+#: templates/tolmach/partial/register_modal.html:139
 msgid "Type new password:"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:155
+#: templates/tolmach/partial/register_modal.html:157
 msgid "Submit"
 msgstr ""
 
@@ -1169,9 +1182,9 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:176 tolmach/views.py:178
-#: tolmach/views.py:213 tolmach/views.py:215 tolmach/views.py:249
-#: tolmach/views.py:251 tolmach/views.py:281 tolmach/views.py:283
+#: templates/tolmach/profile.html:8 tolmach/views.py:178 tolmach/views.py:180
+#: tolmach/views.py:215 tolmach/views.py:217 tolmach/views.py:251
+#: tolmach/views.py:253 tolmach/views.py:283 tolmach/views.py:285
 #, fuzzy
 #| msgid "Users translations"
 msgid "Organizations"
@@ -1785,11 +1798,11 @@ msgstr "Users translations"
 msgid "Access denied"
 msgstr ""
 
-#: tolmach/views.py:150
+#: tolmach/views.py:152
 msgid "member"
 msgstr ""
 
-#: tolmach/views.py:192 tolmach/views.py:230 tolmach/views.py:265
+#: tolmach/views.py:194 tolmach/views.py:232 tolmach/views.py:267
 #: translations/decorators.py:63 translations/views.py:99
 #: translations/views.py:276 translations/views.py:278
 #: translations/views.py:297 translations/views.py:299
@@ -1797,11 +1810,15 @@ msgstr ""
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: tolmach/views.py:526
+#: tolmach/views.py:461
+msgid "Some wrong"
+msgstr ""
+
+#: tolmach/views.py:547
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:616
+#: tolmach/views.py:637
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
