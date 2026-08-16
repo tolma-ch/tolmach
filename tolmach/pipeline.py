@@ -12,6 +12,7 @@ from social_core.backends.vk import VKOAuth2
 from social_core.backends.facebook import FacebookOAuth2
 from tolmach.models import UserMeta
 from tolmach.utils import ensure_valid_username
+from tolmach.action_log import log_action
 
 
 def validate_username_from_social(strategy, details, *args, **kwargs):
@@ -31,6 +32,10 @@ def update_user_social_data(strategy, *args, **kwargs):
     backend = kwargs['backend']
 
     user = kwargs['user']
+
+    if user:
+        log_action(user, 'auth.social_provider_used', status='success',
+                   detail={'backend': backend.name if hasattr(backend, 'name') else str(backend)})
 
     if isinstance(backend, VKOAuth2):
         full_name = kwargs['response'].get('screen_name')
@@ -77,3 +82,5 @@ def update_user_social_data(strategy, *args, **kwargs):
             ContentFile(image_stream.read()),
         )
         meta.save()
+        log_action(user, 'auth.social_avatar_set', status='success',
+                   detail={'backend': backend.name if hasattr(backend, 'name') else str(backend)})

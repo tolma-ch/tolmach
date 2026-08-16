@@ -23,14 +23,7 @@ from translations.models import TextEntry, Text, TextTranslation, TextTranslatio
 import json, os, shutil, re
 from translations.utils_ajax import translation_to_json, user_to_json, text_to_json, entry_history_to_json
 from translations.utils import approve_entry, disapprove_entry, ws_send_entry_status
-
-import logging, time
-logger = logging.getLogger(__name__)
-logging.Formatter.converter = time.gmtime
-
-
-def log_prefix(request):
-    return f"user:{request.user.id} - {request.method} - '{request.get_full_path()}' "
+from tolmach.action_log import log_action
 
 
 @login_required
@@ -39,21 +32,17 @@ def projects_ajax(request, proj_type, object_id=""):
 
     user_projects_list = []
     if proj_type == 'my':
-        logger.info(log_prefix(request))
         user_projects_list = Project.objects.filter(manager=user, status=Project.READY).prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'thirdparty':
-        logger.info(log_prefix(request))
         user_memberships = ProjectMember.objects.filter(user=user)
         user_projects_list = [x.project for x in user_memberships if x.project.status == Project.READY]
         user_projects_list.sort(key=lambda x: x.last_modified, reverse=True)
     elif proj_type == 'public':
-        logger.info(log_prefix(request))
         if not request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(is_private=False, status=Project.READY).prefetch_related('organization').order_by('-last_modified')
         else:
             user_projects_list = Project.objects.filter(status=Project.READY).prefetch_related('organization').order_by('-last_modified')
     elif proj_type == 'dashboard':
-        logger.info(log_prefix(request))
         recent_text_ids = TextEntry.objects.values_list('text_id').filter(author=request.user).distinct()
         recent_project_ids = list(Text.objects.values_list('project_id', flat=True)
                                   .filter(id__in=recent_text_ids,
@@ -72,9 +61,7 @@ def projects_ajax(request, proj_type, object_id=""):
         try:
             target_user = User.objects.get(username=object_id)
         except User.DoesNotExist:
-            logger.info(log_prefix(request))
             raise Http404("Poll does not exist")
-        logger.info(log_prefix(request))
         if request.user == user or request.user.is_staff == 1:
             user_projects_list = Project.objects.filter(manager=target_user,
                                                         status=Project.READY).order_by('-last_modified')
@@ -87,7 +74,6 @@ def projects_ajax(request, proj_type, object_id=""):
             org = Organization.objects.get(slug=object_id)
         except Organization.DoesNotExist:
             raise Http404(_('Sorry, no such project here!'))
-        logger.info(log_prefix(request))
         user_projects_list = Project.objects.filter(organization=org, status=Project.READY).order_by('-last_modified')
     else:
         raise Http404("Poll does not exist")
@@ -150,11 +136,11 @@ def project_ajax(request):
             try:
                 project = Project.objects.get(id=post['id'])
             except Project.DoesNotExist:
-                logger.error(log_prefix(request) + f"updating details on not existing project:{post['id']}")
                 return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
 
             if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
-                logger.error(log_prefix(request) + f"updating details on project error: not_allowed")
+                log_action(request.user, 'project.update', status='denied', request=request,
+                           target='project:%s' % project.id)
                 return HttpResponse(json.dumps(_('You have to be a manager of project')),
                                     content_type="application/json",
                                     status=400)
@@ -162,26 +148,24 @@ def project_ajax(request):
                 project.name = post['name']
             if 'description' in post:
                 project.description = post['description']
-            logger.info(log_prefix(request) + f"updating details on project:{post['id']}")
             project.save()
+            log_action(request.user, 'project.update', status='success', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(project.id), content_type="application/json")
         else:
             pass  # TODO move creation of project here
     if request.method == 'DELETE':
         if 'id' not in request.GET:
-            logger.error(log_prefix(request) + f"deleting not existing project:None")
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         try:
             project = Project.objects.get(id=request.GET['id'])
         except Project.DoesNotExist:
-            logger.error(log_prefix(request) + f"deleting not existing project:{request.GET['id']}")
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         if not project.is_user_manager(request.user):
-            logger.error(log_prefix(request) + f"deleting not allowed project:{request.GET['id']}")
+            log_action(request.user, 'project.delete', status='denied', request=request,
+                       target='project:%s' % request.GET['id'])
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-
-        logger.info(log_prefix(request) + f"deleting project:{request.GET['id']}")
 
         # Помечаем все тексты внутри проекта на будущее фоновое удаление
         for text in Text.objects.filter(project=project):
@@ -191,6 +175,8 @@ def project_ajax(request):
         # А потом и сам проект
         project.status = Project.DELETED
         project.save()
+        log_action(request.user, 'project.delete', status='success', request=request,
+                   target='project:%s' % request.GET['id'])
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -200,27 +186,32 @@ def create_project_ajax(request):
     if request.method == 'POST':
         post = json.loads(request.body)
         if 'name' not in post or not post['name']:
-            logger.error(log_prefix(request) + f"creating project error: empty_name")
+            log_action(request.user, 'project.create', status='failed', request=request,
+                       detail={'reason': 'empty_name'})
             return HttpResponse(json.dumps(_('Project name cannot be empty')),
                                 content_type="application/json",
                                 status=400)
         name = post['name']
         if 'description' not in post or not post['description']:
-            logger.error(log_prefix(request) + f"creating project error: empty_description")
+            log_action(request.user, 'project.create', status='failed', request=request,
+                       detail={'reason': 'empty_description'})
             return HttpResponse(json.dumps(_('Project description cannot be empty')),
                                 content_type="application/json",
                                 status=400)
         description = post['description']
         if 'type' not in post:
-            logger.error(log_prefix(request) + f"creating project error: empty_type")
+            log_action(request.user, 'project.create', status='failed', request=request,
+                       detail={'reason': 'empty_type'})
             return HttpResponse(json.dumps(_('Project type is not set')), content_type="application/json", status=400)
         access = post['type']
         if 'source_lang' not in post:
-            logger.error(log_prefix(request) + f"creating project error: empty_sourcelang")
+            log_action(request.user, 'project.create', status='failed', request=request,
+                       detail={'reason': 'empty_source_lang'})
             return HttpResponse(json.dumps(_('Source language is not set')), content_type="application/json", status=400)
         source_lang_id = post['source_lang']
         if 'target_lang' not in post:
-            logger.error(log_prefix(request) + f"creating project error: empty_targetlang")
+            log_action(request.user, 'project.create', status='failed', request=request,
+                       detail={'reason': 'empty_target_lang'})
             return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
         target_lang_id = post['target_lang']
         with transaction.atomic():
@@ -236,21 +227,21 @@ def create_project_ajax(request):
                         project.organization = project_org
                         project.manager = project_org.owner
                     else:
-                        logger.error(log_prefix(request) + f"creating project error: not_allowed_org")
+                        log_action(request.user, 'project.create', status='denied', request=request,
+                                   detail={'org_id': post['org_id'], 'reason': 'not_org_member'})
                         return HttpResponse(json.dumps(False), content_type="application/json", status=400)
                 except:
-                    logger.error(log_prefix(request) + f"creating project error: org_not_found")
                     pass
             project.save()
-            logger.info(log_prefix(request) + f"creating project success: {project.id}")
             project_translation = ProjectTranslation(project=project,
                                                      target_lang=Language.objects.get(id=target_lang_id))
             project_translation.save()
-            logger.info(log_prefix(request) + f"creating project translations success")
             if project.organization:
                 org_members = OrganizationMember.objects.filter(organization=project.organization)
                 for mem in org_members:
                     project.invite_user(mem.user)
+            log_action(request.user, 'project.create', status='success', request=request,
+                       target='project:%s' % project.id, detail={'name': name})
         return HttpResponse(json.dumps(project.id), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -272,6 +263,8 @@ def add_project_translation(request):
             return HttpResponse(json.dumps(_('Target language is not set')), content_type="application/json", status=400)
 
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            log_action(request.user, 'project.add_translation', status='denied', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json", status=400)
 
         target_lang_id = post['target_lang']
@@ -280,6 +273,8 @@ def add_project_translation(request):
         check_project_translation = ProjectTranslation.objects.filter(project=project,
                                                                       target_lang=target_lang)
         if check_project_translation:
+            log_action(request.user, 'project.add_translation', status='failed', request=request,
+                       target='project:%s' % project.id, detail={'reason': 'already_exists'})
             return HttpResponse(json.dumps(_('There is already such project translation')), content_type="application/json", status=400)
 
         with transaction.atomic():
@@ -318,6 +313,8 @@ def add_project_translation(request):
                     #                                      )
                     #     trans_meta.save()
 
+        log_action(request.user, 'project.add_translation', status='success', request=request,
+                   target='project:%s' % project.id, detail={'target_lang': target_lang.code_tmx})
         return HttpResponse(json.dumps({'project_id': project.id,
                                         'target_lang': project_translation.target_lang.code_tmx}),
                             content_type="application/json")
@@ -346,6 +343,8 @@ def get_users_ajax(request):
 @login_required
 def project_invite_code(request, project):
     if not project.is_user_manager(request.user) and not request.user.is_staff:
+        log_action(request.user, 'project.regenerate_invite_code', status='denied', request=request,
+                   target='project:%s' % project.id)
         return HttpResponse(json.dumps(_('You have to be a manager of the project')),
                             content_type="application/json",
                             status=400)
@@ -358,6 +357,8 @@ def project_invite_code(request, project):
         project.invite_link_code = random_string(15)
         project.save()
 
+        log_action(request.user, 'project.regenerate_invite_code', status='success', request=request,
+                   target='project:%s' % project.id)
         return HttpResponse(json.dumps({"project_invite_link_code": project.invite_link_code}),
                             content_type="application/json",
                             status=200)
@@ -380,6 +381,8 @@ def participant_ajax(request, project):
 
     if request.method == 'POST':
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            log_action(request.user, 'project.invite_user', status='denied', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = json.loads(request.body)
@@ -390,6 +393,8 @@ def participant_ajax(request, project):
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
         if user == project.manager:
+            log_action(request.user, 'project.invite_user', status='failed', request=request,
+                       target='user:%s' % user.id, detail={'reason': 'is_manager'})
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
 
@@ -416,12 +421,19 @@ def participant_ajax(request, project):
                 message=message
             )
             new_message.save()
+            log_action(request.user, 'project.invite_user', status='success', request=request,
+                       target='user:%s' % user.id, detail={'project_id': project.id})
         else:
             if 'status' in post:
                 if post['status'] in [ProjectMember.EDITOR, ProjectMember.TRANSLATOR, ProjectMember.SPECTATOR]:
                     user_in_project.status = post['status']
                     user_in_project.save()
+                    log_action(request.user, 'project.member_set_role', status='success', request=request,
+                               target='user:%s' % user.id,
+                               detail={'project_id': project.id, 'status': post['status']})
                 else:
+                    log_action(request.user, 'project.member_set_role', status='failed', request=request,
+                               target='user:%s' % user.id, detail={'reason': 'bad_status'})
                     return HttpResponse(json.dumps(_('Wrong membership status, sorry')), content_type="application/json",
                                 status=400)
             else:
@@ -442,8 +454,12 @@ def participant_ajax(request, project):
         # check for cases when user leaves the project
         if (request.user.id != int(request.GET['user'])) and \
             (not project.is_user_manager(request.user) and not project.is_user_editor(request.user)):
+            log_action(request.user, 'project.remove_member', status='denied', request=request,
+                       target='user:%s' % user.id, detail={'project_id': project.id})
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
         if user == project.manager:
+            log_action(request.user, 'project.remove_member', status='failed', request=request,
+                       target='user:%s' % user.id, detail={'reason': 'is_manager'})
             return HttpResponse(json.dumps(_('This user is a manager of project')), content_type="application/json",
                                 status=400)
 
@@ -452,6 +468,8 @@ def participant_ajax(request, project):
         except:
             user_in_project = None
         if not user_in_project:
+            log_action(request.user, 'project.remove_member', status='failed', request=request,
+                       target='user:%s' % user.id, detail={'reason': 'not_member'})
             return HttpResponse(json.dumps(_('User is not a member of project')),
                                 content_type="application/json",
                                 status=400)
@@ -468,6 +486,9 @@ def participant_ajax(request, project):
                 message=message
             )
             new_message.save()
+
+        log_action(request.user, 'project.remove_member', status='success', request=request,
+                   target='user:%s' % user.id, detail={'project_id': project.id})
 
         result = {
             'id': user.id
@@ -493,6 +514,8 @@ def text_ajax(request, project):
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'POST':
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            log_action(request.user, 'text.update', status='denied', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         post = request.POST or json.loads(request.body)
@@ -509,6 +532,7 @@ def text_ajax(request, project):
             text.options = json.dumps(text_options)
 
             text.save()
+            action = 'text.update'
         else:
             source_lang = project.source_lang
             target_lang = post["project_target_lang"]
@@ -605,14 +629,19 @@ def text_ajax(request, project):
 
             if the_page["Error"] == 0:
                 text = Text.objects.get(id=the_page["Text"])
+                action = 'text.create'
                 if file_type == "text/plain":
                     from tolmach import tasks
                     tasks.generate_preexport_entries_for_new_document(str(text.id))
             else:
                 if file_path:
                     os.remove(file_path)
+                log_action(request.user, 'text.create', status='failed', request=request,
+                           target='project:%s' % project.id, detail={'reason': 'convert_error'})
                 return HttpResponse(json.dumps(the_page["Text"]), content_type="application/json", status=400)
 
+        log_action(request.user, action, status='success', request=request,
+                   target='text:%s' % text.id, detail={'project_id': project.id})
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code_tmx=post['project_target_lang']))
         result = text_to_json(text, translation)
         return HttpResponse(json.dumps(result), content_type="application/json")
@@ -624,12 +653,16 @@ def text_ajax(request, project):
         except Text.DoesNotExist:
             return HttpResponse(json.dumps(_('Text not found')), content_type="application/json", status=400)
         if not project.is_user_manager(request.user):
+            log_action(request.user, 'text.delete', status='denied', request=request,
+                       target='text:%s' % request.GET['text'])
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
 
         # Помечаем текст на будущее фоновое удаление
         text.status = Text.DELETED
         text.save()
+        log_action(request.user, 'text.delete', status='success', request=request,
+                   target='text:%s' % text.id)
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -640,9 +673,13 @@ def update_text(request, text):
         if 'file' in request.FILES:
             file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.DOCUMENT_FILE_SIZE)
             if upload_error:
+                log_action(request.user, 'text.update_body', status='failed', request=request,
+                           target='text:%s' % text.id, detail={'reason': 'upload_error'})
                 return HttpResponse(json.dumps(upload_error), content_type="application/json",
                         status=400)
             if not file_type == text.document_format:
+                log_action(request.user, 'text.update_body', status='failed', request=request,
+                           target='text:%s' % text.id, detail={'reason': 'format_mismatch'})
                 return HttpResponse(json.dumps('Document format mismatch'), content_type="application/json", status=400)
             else:
                 # достаём тесктовые данные из нового документа
@@ -661,7 +698,11 @@ def update_text(request, text):
                 }
                 update_text = json.loads(utils.chtec_request('http://127.0.0.1:8080/update', update_data))
 
+        log_action(request.user, 'text.update_body', status='success', request=request,
+                   target='text:%s' % text.id)
         return HttpResponse(json.dumps(True), content_type="application/json")
+    log_action(request.user, 'text.update_body', status='denied', request=request,
+               target='text:%s' % text.id)
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
 
@@ -736,9 +777,13 @@ def glossary_ajax(request, project):
     if request.method == 'POST':
         post = request.POST or json.loads(request.body)
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            log_action(request.user, 'glossary.update', status='denied', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
         if 'name' not in post and 'text' not in post:
+            log_action(request.user, 'glossary.update', status='failed', request=request,
+                       target='project:%s' % project.id, detail={'reason': 'no_name'})
             return HttpResponse(json.dumps(_('Glossary name is not set')), content_type="application/json",
                                 status=400)
         glossary_name = post.get('name', "")
@@ -767,6 +812,7 @@ def glossary_ajax(request, project):
             except Glossary.DoesNotExist:
                 return HttpResponse(json.dumps(_('Glossary not found')), content_type="application/json", status=400)
             GlossaryEntry.objects.filter(glossary=glossary).delete()
+            glossary_action = 'glossary.import'
         elif 'text' in post:
             glossary, created = Glossary.objects.get_or_create(name=project.name + " - default",
                                                       owner=project.manager)
@@ -781,6 +827,7 @@ def glossary_ajax(request, project):
                     return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json",
                                         status=400)
                 project_translation.glossaries_list.add(Glossary.objects.get(id=glossary.id))
+            glossary_action = 'glossary.import'
         else:
             glossary = Glossary(name=glossary_name,
                                 owner=project.manager)
@@ -793,6 +840,7 @@ def glossary_ajax(request, project):
             except:
                 return HttpResponse(json.dumps(_('Project translation not found')), content_type="application/json", status=400)
             project_translation.glossaries_list.add(Glossary.objects.get(id=glossary.id))
+            glossary_action = 'glossary.create'
         for pair in pairs_array:
             try:
                 test = pair[0]
@@ -805,6 +853,8 @@ def glossary_ajax(request, project):
                                            source_entry=pair[0][:256],
                                            target_entry=pair[1][:256])
             glossary_entry.save()
+        log_action(request.user, glossary_action, status='success', request=request,
+                   target='glossary:%s' % glossary.id, detail={'project_id': project.id})
         result = {
             'id': glossary.id,
             'name': glossary.name
@@ -818,9 +868,14 @@ def glossary_ajax(request, project):
         except Glossary.DoesNotExist:
             return HttpResponse(json.dumps(_('Glossary not found')), content_type="application/json", status=400)
         if not glossary.owner == request.user:
+            log_action(request.user, 'glossary.delete', status='denied', request=request,
+                       target='glossary:%s' % request.GET['glossary'])
             return HttpResponse(json.dumps(_('It\'s not your glossary')), content_type="application/json", status=400)
 
+        glossary_id = glossary.id
         glossary.delete()
+        log_action(request.user, 'glossary.delete', status='success', request=request,
+                   target='glossary:%s' % glossary_id)
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -876,6 +931,8 @@ def tmx_ajax(request, project):
         except Project.DoesNotExist:
             return HttpResponse(json.dumps(_('Project not found')), content_type="application/json", status=400)
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
+            log_action(request.user, 'tmx.import', status='denied', request=request,
+                       target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
 
@@ -895,17 +952,23 @@ def tmx_ajax(request, project):
         file_name, file_path, file_type, upload_error = utils.upload_file(request.FILES['file'], settings.TM_FILE_SIZE)
 
         if upload_error:
+            log_action(request.user, 'tmx.import', status='failed', request=request,
+                       target='project:%s' % project.id, detail={'reason': 'upload_error'})
             return HttpResponse(json.dumps(upload_error), content_type="application/json",
                     status=400)
 
         if file_type not in ['application/xml', 'application/octet-stream']:
             os.remove(file_path)
+            log_action(request.user, 'tmx.import', status='failed', request=request,
+                       target='project:%s' % project.id, detail={'reason': 'wrong_file_type'})
             return HttpResponse(json.dumps(_('Wrong file type')), content_type="application/json",
                                 status=400)
 
         parse_result = utils.parse_tmx(file_path, tmdb_name, project, target_lang, request)
         if not parse_result['error'] == 0:
             os.remove(file_path)
+            log_action(request.user, 'tmx.import', status='failed', request=request,
+                       target='project:%s' % project.id, detail={'reason': 'parse_error'})
             return HttpResponse(json.dumps(parse_result['message'],
                                          content_type="application/json",
                                          status=parse_result['error']
@@ -913,6 +976,8 @@ def tmx_ajax(request, project):
                                 )
         result = parse_result['result']
 
+        log_action(request.user, 'tmx.import', status='success', request=request,
+                   target='project:%s' % project.id, detail={'name': tmdb_name})
         return HttpResponse(json.dumps(result), content_type="application/json")
     if request.method == 'DELETE':
         if 'tmx' not in request.GET:
@@ -922,6 +987,8 @@ def tmx_ajax(request, project):
         except TMDatabase.DoesNotExist:
             return HttpResponse(json.dumps(_('TMX not found')), content_type="application/json", status=400)
         if not tmx.owner == request.user:
+            log_action(request.user, 'tmx.delete', status='denied', request=request,
+                       target='tmx:%s' % request.GET['tmx'])
             return HttpResponse(json.dumps(_('It\'s not your TMX')), content_type="application/json", status=400)
 
         text_translation_meta_all = TextTranslationMeta.objects.filter(meta_type="tmdb_to_write")
@@ -931,7 +998,10 @@ def tmx_ajax(request, project):
                 tmdbs_to_write.remove(str(tmx.id))
             translation_meta.meta_data = ",".join(tmdbs_to_write)
             translation_meta.save()
+        tmx_id = tmx.id
         tmx.delete()
+        log_action(request.user, 'tmx.delete', status='success', request=request,
+                   target='tmx:%s' % tmx_id)
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -1063,6 +1133,8 @@ def entry_ajax(request, action, text):
             # TODO not use decorator in this case
             text = entry.text
             if not text.is_user_allowed_to_read(user):
+                log_action(user, 'entry.vote', status='denied', request=request,
+                           target='entry:%s' % entry.id)
                 return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             voters = entry.voters.split(',') if not entry.voters == '' else []
             if vote and not str(user.id) in voters:
@@ -1070,11 +1142,15 @@ def entry_ajax(request, action, text):
                 entry.vote = len(voters)
                 entry.voters = ','.join(voters)
                 entry.save()
+                log_action(user, 'entry.vote', status='success', request=request,
+                           target='entry:%s' % entry.id, detail={'vote': True})
             elif not vote and str(user.id) in voters:
                 voters.remove(str(user.id))
                 entry.vote = len(voters)
                 entry.voters = ','.join(voters)
                 entry.save()
+                log_action(user, 'entry.vote', status='success', request=request,
+                           target='entry:%s' % entry.id, detail={'vote': False})
 
     return HttpResponse(json.dumps(result, ensure_ascii=False), content_type="application/json")
 
@@ -1143,6 +1219,8 @@ def entry_deleted_ajax(request):
             # переписываем старую историю к новому энтрику:
             TextEntry.history.filter(id=post['id']).update(id=test.id)
 
+            log_action(request.user, 'entry.restore', status='success', request=request,
+                       detail={'entry_id': post['id']})
             return HttpResponse(json.dumps(f"It's okay, id is: {post['id']}"))
         else:
             return HttpResponse(json.dumps("Sorry, this translation is not deleted"))
@@ -1177,6 +1255,8 @@ def translate_entry_ajax(request):
         return HttpResponse(json.dumps(_('Translation not found')), content_type="application/json", status=400)
 
     if not text.is_user_allowed_to_write(request.user):
+        log_action(request.user, 'entry.translate', status='denied', request=request,
+                   target='entry:%s' % entry_id, detail={'reason': 'not_allowed_to_write'})
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
     else:
         if 'translation_id' in post:
@@ -1186,6 +1266,8 @@ def translate_entry_ajax(request):
             except TextEntry.DoesNotExist:
                 return HttpResponse(json.dumps(_('Not found')), content_type="application/json", status=400)
             if not project.is_user_editor(request.user) and not project.is_user_manager(request.user) and not entry_translation.author == request.user:
+                log_action(request.user, 'entry.translate', status='denied', request=request,
+                           target='entry:%s' % entry_id, detail={'reason': 'not_author_or_editor'})
                 return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
             # strip is for elimination garbage newlines from wild browsers
             entry_translation.body = post['text'].strip()
@@ -1252,16 +1334,6 @@ def translate_entry_ajax(request):
         with transaction.atomic():
             entry_translation.is_approved = set_approved
             entry_translation.save()
-            log_data = {
-                'id': entry_translation.id,
-                'status': 'success',
-                'target_body': entry_translation.body,
-                'source_body': entry_translation.parent_entry.body,
-                'document_id': entry_translation.text.id,
-                'source_lang': entry_translation.text.source_lang.code_tmx,
-                'target_lang': entry_translation.translation.target_lang.code_tmx
-            }
-            logger.info(log_prefix(request) + f"'{action_type} segment translation' {json.dumps(log_data)}")
             counter, created = EntryStats.objects.get_or_create(user=request.user,
                                                                 date=timezone.now().strftime("%Y%m%d"),
                                                                 project=project,
@@ -1295,6 +1367,9 @@ def translate_entry_ajax(request):
 
         translation_array = translation_to_json(entry_translation)
         translation_array['isVoted'] = entry_translation.is_voted(request.user)
+        log_action(request.user, 'entry.translate', status='success', request=request,
+                   target='entry:%s' % entry_translation.id,
+                   detail={'action_type': action_type, 'text_id': text.id})
         return HttpResponse(json.dumps(translation_array), content_type="application/json")
 
 
@@ -1328,6 +1403,8 @@ def remove_entry_ajax(request):
     if (not project.is_user_manager(curr_user)) and \
             (not project.is_user_editor(curr_user)) and \
             (not entry_translation.author == curr_user):
+        log_action(request.user, 'entry.remove', status='denied', request=request,
+                   target='entry:%s' % translation_id, detail={'text_id': text.id})
         return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=403)
 
     entry_translation_to_delete = {
@@ -1336,6 +1413,8 @@ def remove_entry_ajax(request):
         'translation': translation_to_json(entry_translation)
     }
     entry_translation.delete()
+    log_action(request.user, 'entry.remove', status='success', request=request,
+               target='entry:%s' % translation_id, detail={'text_id': text.id})
 
     translation_counts, translation_progress = entry_translation.translation.get_progress(no_cache=True)
     entry_translation.translation.websocket_group.send({'text': json.dumps(
@@ -1386,8 +1465,12 @@ def disable_entry_ajax(request):
                     'user': request.user.id
                 }
             )})
+        log_action(request.user, 'entry.disable', status='success', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
     else:
+        log_action(request.user, 'entry.disable', status='denied', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
@@ -1428,8 +1511,12 @@ def enable_entry_ajax(request):
                     'user': request.user.id
                 }
             )})
+        log_action(request.user, 'entry.enable', status='success', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(entry.is_disabled), content_type="application/json")
     else:
+        log_action(request.user, 'entry.enable', status='denied', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
@@ -1450,8 +1537,12 @@ def approve_entry_ajax(request):
     text = entry.text
     if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
         saved_entry = approve_entry(entry, request)
+        log_action(request.user, 'entry.approve', status='success', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(saved_entry.is_approved), content_type="application/json")
     else:
+        log_action(request.user, 'entry.approve', status='denied', request=request,
+                   target='entry:%s' % entry.id)
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
@@ -1490,8 +1581,12 @@ def approve_all_entries_by_user_ajax(request, text):
             TextEntry.objects.filter(~Q(parent_entry__in=approved_parent_entries),
                                      translation=text_translation, author=user, is_approved=False).update(is_approved=True)
             ws_send_entry_status("approve", user_entries, None)
+        log_action(request.user, 'entry.approve_all', status='success', request=request,
+                   target='text:%s' % text.id, detail={'user_id': user.id})
         return HttpResponse(json.dumps(True), content_type="application/json")
     else:
+        log_action(request.user, 'entry.approve_all', status='denied', request=request,
+                   target='text:%s' % text.id)
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
@@ -1511,8 +1606,12 @@ def disapprove_entry_ajax(request):
         text = entry.text
         if text.project.is_user_manager(request.user) or text.project.is_user_editor(request.user) or request.user.is_staff:
             saved_entry = disapprove_entry(entry, request)
+            log_action(request.user, 'entry.disapprove', status='success', request=request,
+                       target='entry:%s' % entry.id)
             return HttpResponse(json.dumps(saved_entry.is_approved), content_type="application/json")
         else:
+            log_action(request.user, 'entry.disapprove', status='denied', request=request,
+                       target='entry:%s' % entry.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')),
                                 content_type="application/json",
                                 status=400)
@@ -1545,8 +1644,12 @@ def disapprove_all_entries_by_user_ajax(request, text):
         if user_entries:
             TextEntry.objects.filter(translation=text_translation, author=user, is_approved=True).update(is_approved=False)
             ws_send_entry_status("disapprove", user_entries, None)
+        log_action(request.user, 'entry.disapprove_all', status='success', request=request,
+                   target='text:%s' % text.id, detail={'user_id': user.id})
         return HttpResponse(json.dumps(True), content_type="application/json")
     else:
+        log_action(request.user, 'entry.disapprove_all', status='denied', request=request,
+                   target='text:%s' % text.id)
         return HttpResponse(json.dumps(_('You have to be a manager of project')),
                             content_type="application/json",
                             status=400)
@@ -1619,21 +1722,16 @@ def yandex_translate_ajax(request):
         if response.status_code == 200:
             translated_body = response.json()['translations'][0]['text']
         else:
+            log_action(request.user, 'entry.yandex_translate', status='failed', request=request,
+                       detail={'reason': 'provider_error', 'status_code': response.status_code})
             return HttpResponse(json.dumps(response.text), content_type="application/json", status=response.status_code)
 
         str_to_return = translated_body
 
         for key, value in match_dict.items():
             str_to_return = re.sub(' ?ᐛ%s ?' % key, value, str_to_return)
-        log_data = {
-            'provider': 'yandex',
-            'status': 'success',
-            'source_body': post['entry_body'],
-            'target_body': translated_body,
-            'source_lang': post['lang_pair'].split("-")[0],
-            'target_lang': post['lang_pair'].split("-")[1]
-        }
-        logger.info(log_prefix(request) + f"'segment machine translation' {json.dumps(log_data)}")
+        log_action(request.user, 'entry.yandex_translate', status='success', request=request,
+                   detail={'lang_pair': post['lang_pair']})
 
         return HttpResponse(json.dumps(utils.escape_html(str_to_return)), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
@@ -1645,6 +1743,8 @@ def update_tmdb_percentage(request):
         post = json.loads(request.body)
 
         if 'tmPercentage' not in post:
+            log_action(request.user, 'user.tm_percentage_update', status='failed', request=request,
+                       detail={'reason': 'missing_percentage'})
             return HttpResponse(json.dumps(_('Percentage is not set')), content_type="application/json", status=400)
         new_percentage = int(post['tmPercentage'])
         if new_percentage > 100:
@@ -1656,6 +1756,8 @@ def update_tmdb_percentage(request):
         usermeta.tm_percentage = new_percentage
         usermeta.save()
 
+        log_action(request.user, 'user.tm_percentage_update', status='success', request=request,
+                   detail={'tm_percentage': new_percentage})
         return HttpResponse(json.dumps({'updated': True}))
 
 
@@ -1818,10 +1920,11 @@ def message_ajax(request, all=False):
             return HttpResponse(json.dumps('Message was not found'), content_type="application/json", status=400)
         message.was_read = True
         message.save()
+        log_action(request.user, 'message.mark_read', status='success', request=request,
+                   detail={'message_id': message.id})
         return HttpResponse(json.dumps(True), content_type="application/json")
 
     if request.method == 'GET':
-        logger.info(log_prefix(request))
         ########
         #
         #  Updating user online status
@@ -1866,6 +1969,8 @@ def user_ajax(request):
             meta = UserMeta.objects.get(user=request.user)
             meta.avatar = "avatar/%s" % filename
             meta.save()
+            log_action(request.user, 'user.avatar_update', status='success', request=request,
+                       detail={'avatar': meta.avatar})
             return HttpResponse(json.dumps(True), content_type="application/json")
         else:
             usermeta = UserMeta.objects.get(user=request.user)
@@ -1884,12 +1989,16 @@ def user_ajax(request):
             try:
                 request.user.save()
             except IntegrityError:
+                log_action(request.user, 'user.profile_update', status='failed', request=request,
+                           detail={'reason': 'duplicate_username'})
                 return HttpResponse(json.dumps("This username is already used, try find another one"), content_type="application/json")
 
             if 'website' in post:
                 usermeta.website = post['website']
 
             usermeta.save()
+
+            log_action(request.user, 'user.profile_update', status='success', request=request)
 
             result = {
                 'email': request.user.email,

@@ -9,6 +9,7 @@ from entries.models import Language
 from tolmach.decorators import accept_organization
 from tolmach.utils import org_user_to_json
 from tolmach import tasks
+from tolmach.action_log import log_action
 from django.shortcuts import get_object_or_404
 
 import json
@@ -26,6 +27,8 @@ def organization_ajax(request):
                 return HttpResponse(json.dumps(_('Organization not found')), content_type="application/json", status=400)
 
             if not org.is_user_owner(request.user) and not org.is_user_admin(request.user):
+                log_action(request.user, 'org.update', status='denied', request=request,
+                           target='org:%s' % org.id)
                 return HttpResponse(json.dumps(_('You have to be an owner of organization')),
                                     content_type="application/json",
                                     status=400)
@@ -34,10 +37,14 @@ def organization_ajax(request):
             if 'description' in post:
                 org.description = post['description']
             org.save()
+            log_action(request.user, 'org.update', status='success', request=request,
+                       target='org:%s' % org.id)
             return HttpResponse(json.dumps(org.slug), content_type="application/json")
         else:
             # creating new organization
             if 'name' not in post or not post['name']:
+                log_action(request.user, 'org.create', status='failed', request=request,
+                           detail={'reason': 'no_name'})
                 return HttpResponse(json.dumps(_('Project name cannot be empty')),
                                     content_type="application/json",
                                     status=400)
@@ -45,6 +52,8 @@ def organization_ajax(request):
             org = Organization(name=name,
                               owner=request.user)
             org.save()
+            log_action(request.user, 'org.create', status='success', request=request,
+                       target='org:%s' % org.id, detail={'name': name})
             return HttpResponse(json.dumps(org.slug), content_type="application/json")
     if request.method == 'DELETE':
         if 'id' not in request.GET:
@@ -54,10 +63,15 @@ def organization_ajax(request):
         except Organization.DoesNotExist:
             return HttpResponse(json.dumps(_('Organization not found')), content_type="application/json", status=400)
         if not org.is_user_owner(request.user):
+            log_action(request.user, 'org.delete', status='denied', request=request,
+                       target='org:%s' % org.id)
             return HttpResponse(json.dumps(_('You have to be an owner of organization')), content_type="application/json",
                                 status=400)
 
+        org_id = org.id
         org.delete()
+        log_action(request.user, 'org.delete', status='success', request=request,
+                   detail={'org_id': org_id})
         return HttpResponse(json.dumps(True), content_type="application/json")
     return HttpResponse(json.dumps(False), content_type="application/json", status=400)
 
@@ -75,6 +89,8 @@ def organization_members_ajax(request, org):
         post = json.loads(request.body)
 
         if not org.is_user_owner(request.user) and not org.is_user_admin(request.user):
+            log_action(request.user, 'org.invite_user', status='denied', request=request,
+                       target='org:%s' % org.id)
             return HttpResponse(json.dumps(_('You have to be an owner of organization')),
                                 content_type="application/json",
                                 status=400)
@@ -85,11 +101,15 @@ def organization_members_ajax(request, org):
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
         if user == org.owner:
+            log_action(request.user, 'org.invite_user', status='failed', request=request,
+                       target='user:%s' % user.id, detail={'reason': 'is_owner'})
             return HttpResponse(json.dumps(_('This user is an owner of organization')), content_type="application/json",
                                 status=400)
 
         if not org.is_user_member(user):
             org.invite_user(user)
+            log_action(request.user, 'org.invite_user', status='success', request=request,
+                       target='user:%s' % user.id, detail={'org_id': org.id})
 
             # from django.utils import timezone
             # message = '{"type": "invite", "project": "%s", "project_id": %s}' % (project.name, project.id)
@@ -106,7 +126,12 @@ def organization_members_ajax(request, org):
                 member = OrganizationMember.objects.get(organization=org, user=user)
                 member.is_admin = bool(post['is_admin'])
                 member.save()
+                log_action(request.user, 'org.member_set_admin', status='success', request=request,
+                           target='user:%s' % user.id,
+                           detail={'org_id': org.id, 'is_admin': bool(post['is_admin'])})
             else:
+                log_action(request.user, 'org.invite_user', status='failed', request=request,
+                           target='user:%s' % user.id, detail={'reason': 'already_member'})
                 return HttpResponse(json.dumps(_('User is already a member of project')), content_type="application/json",
                                 status=400)
 
@@ -121,12 +146,18 @@ def organization_members_ajax(request, org):
         except User.DoesNotExist:
             return HttpResponse(json.dumps(_('User not found')), content_type="application/json", status=400)
         if not org.is_user_owner(request.user) and not org.is_user_admin(request.user):
+            log_action(request.user, 'org.remove_member', status='denied', request=request,
+                       target='user:%s' % user.id, detail={'org_id': org.id})
             return HttpResponse(json.dumps(_('Not allowed')), content_type="application/json", status=400)
         if user == org.owner:
+            log_action(request.user, 'org.remove_member', status='failed', request=request,
+                       target='user:%s' % user.id, detail={'reason': 'is_owner'})
             return HttpResponse(json.dumps(_('This user is an owner of organization')), content_type="application/json",
                                 status=400)
 
         org.remove_user(user)
+        log_action(request.user, 'org.remove_member', status='success', request=request,
+                   target='user:%s' % user.id, detail={'org_id': org.id})
         #
         # from django.utils import timezone
         # message = '{"type": "uninvite", "project": "%s", "project_id": %s}' % (project.name, project.id)
@@ -150,6 +181,8 @@ def organization_members_ajax(request, org):
 @accept_organization
 def organization_invite_code_ajax(request, org):
     if not org.is_user_owner(request.user) and not request.user.is_staff:
+        log_action(request.user, 'org.regenerate_invite_code', status='denied', request=request,
+                   target='org:%s' % org.id)
         return HttpResponse(json.dumps(_('You have to be a manager of the organization')),
                             content_type="application/json",
                             status=400)
@@ -162,6 +195,8 @@ def organization_invite_code_ajax(request, org):
         org.invite_link_code = random_string(15)
         org.save()
 
+        log_action(request.user, 'org.regenerate_invite_code', status='success', request=request,
+                   target='org:%s' % org.id)
         return HttpResponse(json.dumps({"org_invite_link_code": org.invite_link_code}),
                             content_type="application/json",
                             status=200)
@@ -399,6 +434,8 @@ def update_email_from_banner_ajax(request):
         email = request.POST.get('email', '').strip()
         
         if not email:
+            log_action(request.user, 'user.email_update_request', status='failed', request=request,
+                       detail={'reason': 'no_email'})
             return HttpResponse(
                 json.dumps({'error': 'Email is required'}),
                 content_type="application/json",
@@ -407,6 +444,8 @@ def update_email_from_banner_ajax(request):
         
         # Basic email validation
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+            log_action(request.user, 'user.email_update_request', status='failed', request=request,
+                       detail={'reason': 'invalid_email'})
             return HttpResponse(
                 json.dumps({'error': 'Invalid email format'}),
                 content_type="application/json",
@@ -439,6 +478,8 @@ def update_email_from_banner_ajax(request):
         user_meta.save()
         request.user.save()
         
+        log_action(request.user, 'user.email_update_request', status='success', request=request,
+                   detail={'email_changed': email_changed, 'needs_confirmation': not user_meta.email_approved})
         return HttpResponse(
             json.dumps({
                 'success': True, 
@@ -524,12 +565,16 @@ def validate_email_confirmation_token_ajax(request, token):
         # Check token expiration (e.g., 24 hours)
         token_age = timezone.now() - user_meta.email_approve_token_request_time
         if token_age.total_seconds() > 24 * 60 * 60:  # 24 hours
+            log_action(user_meta.user, 'user.email_confirm', status='failed', request=request,
+                       detail={'reason': 'token_expired'})
             return render(request, 'tolmach/email_confirm_expired.html', {
                 'error': 'Confirmation link has expired. Please request a new one.'
             })
         
         # Check if email matches
         if not user_meta.user.email or not user_meta.user.email.strip():
+            log_action(user_meta.user, 'user.email_confirm', status='failed', request=request,
+                       detail={'reason': 'no_email'})
             return render(request, 'tolmach/email_confirm_error.html', {
                 'error': 'No email associated with this confirmation link.'
             })
@@ -538,6 +583,8 @@ def validate_email_confirmation_token_ajax(request, token):
         user_meta.email_approved = True
         user_meta.email_appove_token = ''
         user_meta.save()
+
+        log_action(user_meta.user, 'user.email_confirm', status='success', request=request)
         
         return render(request, 'tolmach/email_confirm_success.html', {
             'email': request.user.email,
@@ -545,10 +592,14 @@ def validate_email_confirmation_token_ajax(request, token):
         })
         
     except UserMeta.DoesNotExist:
+        log_action(None, 'user.email_confirm', status='failed', request=request,
+                   detail={'reason': 'bad_token'})
         return render(request, 'tolmach/email_confirm_error.html', {
             'error': 'Invalid confirmation link. Please check the link or request a new one.'
         })
     except Exception as e:
+        log_action(None, 'user.email_confirm', status='error', request=request,
+                   detail={'reason': str(e)})
         return render(request, 'tolmach/email_confirm_error.html', {
             'error': f'Error confirming email: {str(e)}'
         })
@@ -574,6 +625,8 @@ def request_email_confirmation_token_ajax(request):
         
         # Check if user has an email to confirm
         if not request.user.email or not request.user.email.strip():
+            log_action(request.user, 'user.email_confirmation_resend', status='failed', request=request,
+                       detail={'reason': 'no_email'})
             return HttpResponse(
                 json.dumps({'error': 'No email to confirm'}),
                 content_type="application/json",
@@ -582,6 +635,8 @@ def request_email_confirmation_token_ajax(request):
         
         # Check if email is already approved
         if user_meta.email_approved:
+            log_action(request.user, 'user.email_confirmation_resend', status='failed', request=request,
+                       detail={'reason': 'already_approved'})
             return HttpResponse(
                 json.dumps({'error': 'Email is already confirmed'}),
                 content_type="application/json",
@@ -605,6 +660,8 @@ def request_email_confirmation_token_ajax(request):
                         dynamic_data_dict=json.dumps(dynamic_data_dict),
                         user_email=request.user.email,
                         template='multilang-welcome')
+
+        log_action(request.user, 'user.email_confirmation_resend', status='success', request=request)
         
         return HttpResponse(
             json.dumps({'success': True, 'message': 'Confirmation email has been sent.'}),
