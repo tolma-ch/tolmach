@@ -279,6 +279,12 @@ LOGGING = {
             'format': '{levelname} {message}',
             'style': '{',
         },
+        'json_audit': {
+            '()': 'tolmach.action_log.JsonFormatter',
+            'extra_fields': ('request_id', 'user_id', 'username', 'action',
+                             'status', 'target', 'detail', 'method', 'path',
+                             'ip', 'duration_ms'),
+        },
     },
     'filters': {
         'require_debug_false': {
@@ -296,7 +302,7 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'app': {
-            'formatter': 'verbose',
+            'formatter': 'json_audit',
             'class': 'logging.FileHandler',
             'filename': '/var/log/tolma.ch/app.log',
         },
@@ -316,6 +322,11 @@ LOGGING = {
             'propagate': True,
         },
         'translations': {
+            'level': 'INFO',
+            'handlers': ['app'],
+            'propagate': False,
+        },
+        'audit': {
             'level': 'INFO',
             'handlers': ['app'],
             'propagate': False,

@@ -10,6 +10,7 @@ from stats.models import DictStats
 from entries.models import Language
 from translations.models import Text, ProjectTranslation, GlossaryEntry
 from translations.utils import cleanse_glossary_entries
+from tolmach.action_log import log_action
 
 
 @login_required
@@ -72,6 +73,9 @@ def dict_search(request):
 
         counter.action_count = counter.action_count + 1
         counter.save()
+
+        log_action(request.user, 'dict.search', status='success', request=request,
+                   detail={'word': word})
 
         return HttpResponse(json.dumps(return_data, ensure_ascii=False).encode('utf8'), content_type="application/json")
     else:

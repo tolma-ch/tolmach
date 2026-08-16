@@ -2,7 +2,7 @@
 
 import json
 import re
-from django.contrib.auth import logout
+from django.contrib.auth import logout as auth_logout
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponse, Http404
@@ -17,6 +17,7 @@ from entries.models import Language
 from tolmach.models import UserMeta, Organization, OrganizationMember
 from stats.models import PairStats
 from tolmach import utils as tolmach_utils
+from tolmach.action_log import log_action
 from tolmach.utils import USERNAME_RE, ensure_valid_username
 
 
@@ -302,6 +303,8 @@ def invite_urls(request, invite_type, invite_id):
     if request.user.is_authenticated:
         redirect_path = invite_user(request.user, invite_id, invite_type)
 
+        log_action(request.user, 'invite.accept', status='success', request=request,
+                   target='%s:%s' % (invite_type, invite_id))
         response = redirect(redirect_path)
         return response
     else:
@@ -384,6 +387,7 @@ def invite_urls_og_image(request, invite_type, invite_id):
     return response
 
 def post_social_auth(request):
+    log_action(request.user, 'user.social_login', status='success', request=request)
     if request.COOKIES.get('project_invite_code', False):
         response = redirect(reverse('invitation_url', kwargs={'invite_type': 'project', 'invite_id': request.COOKIES.get('project_invite_code', False)}))
         response.delete_cookie('project_invite_code')
@@ -428,6 +432,8 @@ def register(request):
     org_invite_code = request.COOKIES.get('org_invite_code', False)
 
     if not username or not USERNAME_RE.match(username):
+        log_action(None, 'user.register', status='failed', request=request,
+                   detail={'reason': 'bad_username'})
         answer = {
             'status': '1',
             'message': _('Username can only contain letters, numbers, dots, underscores, and hyphens'),
@@ -436,6 +442,8 @@ def register(request):
         return HttpResponse(json.dumps(answer), content_type='application/json', status=400)
 
     if not email or not EMAIL_RE.match(email):
+        log_action(None, 'user.register', status='failed', request=request,
+                   detail={'reason': 'bad_email'})
         answer = {
             'status': '1',
             'message': _('Please provide a valid email address'),
@@ -456,6 +464,8 @@ def register(request):
         # return HttpResponseRedirect("/")
         # Redirect to a success page.
     except:
+        log_action(None, 'user.register', status='error', request=request,
+                   detail={'username': username, 'reason': 'unhandled_exception'})
         status = "1"
         message = _("Some wrong")
 
@@ -469,6 +479,8 @@ def register(request):
     if status != "0":
         response_status = 400
     else:
+        log_action(None, 'user.register', status='success', request=request,
+                   detail={'username': username, 'email': email})
         from tolmach import tasks
         dynamic_data_dict = {"<username>": username}
         tasks.email_send(message_type='register',
@@ -507,13 +519,18 @@ def login_user(request):
             if org_invite_code:
                 redirect_path = tolmach_utils.invite_user(user, org_invite_code, "org")
 
+            log_action(user, 'user.login', status='success', request=request)
             status = "0"
             message = 'ok'
         else:
+            log_action(None, 'user.login', status='denied', request=request,
+                       detail={'username': username, 'reason': 'inactive_account'})
             status = "1"
             message = 'User is not active'
             # Return a 'disabled account' error message
     else:
+        log_action(None, 'user.login', status='failed', request=request,
+                   detail={'username': username, 'reason': 'wrong_credentials'})
         status = "2"
         message = 'Wrong username or password'
         # Return an 'invalid login' error message.
@@ -555,6 +572,8 @@ def reset_password_approve(request):
     try:
         user = User.objects.get(username=username)
     except:
+        log_action(None, 'user.password_reset_request', status='failed', request=request,
+                   detail={'username': username, 'reason': 'user_not_found'})
         some_data_to_dump['status'] = 1
         some_data_to_dump['message'] = "User not found"
         answer = json.dumps(some_data_to_dump)
@@ -562,6 +581,8 @@ def reset_password_approve(request):
         return HttpResponse(answer, content_type="application/json", status=response_status)
 
     if user.email == "":
+        log_action(None, 'user.password_reset_request', status='failed', request=request,
+                   detail={'username': username, 'reason': 'no_email'})
         some_data_to_dump['status'] = 1
         some_data_to_dump['message'] = "User not found"
         answer = json.dumps(some_data_to_dump)
@@ -586,6 +607,9 @@ def reset_password_approve(request):
                      user_email=user.email,
                      template='multilang-welcome')
 
+    log_action(None, 'user.password_reset_request', status='success', request=request,
+               target='user:%s' % user.id, detail={'username': username})
+
     answer = json.dumps(some_data_to_dump)
     response_status = 200
     return HttpResponse(answer, content_type="application/json", status=response_status)
@@ -605,6 +629,8 @@ def accept_password(request):
     try:
         token = request.POST['token']
     except:
+        log_action(None, 'user.password_reset_accept', status='failed', request=request,
+                   detail={'reason': 'no_token'})
         result = {
             'status': 1,
             'message': "No token provided",
@@ -614,6 +640,8 @@ def accept_password(request):
     try:
         meta = UserMeta.objects.get(password_reset_token=token)
     except:
+        log_action(None, 'user.password_reset_accept', status='failed', request=request,
+                   detail={'reason': 'wrong_token'})
         result = {
             'status': 1,
             'message': "Wrong token",
@@ -631,6 +659,9 @@ def accept_password(request):
     user = authenticate(username=user.username, password=new_pass)
     login(request, user)
 
+    log_action(user, 'user.password_reset_accept', status='success', request=request,
+               target='user:%s' % user.id)
+
     result = {
         'status': 0,
         'message': _("New password saved. Please wait for the sign in."),
@@ -639,7 +670,8 @@ def accept_password(request):
 
 
 def logout(request):
-    logout(request)
+    log_action(request.user, 'user.logout', status='success', request=request)
+    auth_logout(request)
     return HttpResponseRedirect("/")
 
 def new_landing(request):
