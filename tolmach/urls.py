@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'%s' % PATH, include('social_django.urls',
         namespace='social')),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^rest/', include('api.urls')),
+    
     url(r'^blog/', include("blog.urls")),
     url(r'^markdownx/', include('markdownx.urls')),
 
