@@ -23,14 +23,12 @@ class UserMeta(models.Model):
     Model containing all the additional meta-information to describe user.
 
     :param OneToOneField user: User, who's meta it is
-    :param EmailField email: User's email
     :param URLField website: User's website
     :param TextField member_of: List of ids of projects user is participating in, comma-separated
     :param TextField invited_to: List of ids of projects user was invited to, comma-separated
     :param TextField requested_to: List of ids of projects user requested access to, comma-separated
     """
     user = models.OneToOneField('auth.User', on_delete=models.deletion.CASCADE)
-    email = models.EmailField()
     website = models.URLField()
     avatar = models.ImageField(upload_to='avatar/', default=None)
     last_online = models.DateTimeField(default=timezone.now)
@@ -45,7 +43,7 @@ class UserMeta(models.Model):
 
     email_approved = models.BooleanField(default=False)
     email_appove_token = models.TextField(default="")
-    email_approve_token_request_time = models.DateTimeField(default=timezone.now())
+    email_approve_token_request_time = models.DateTimeField(default=timezone.now)
 
 class Messages(models.Model):
     """

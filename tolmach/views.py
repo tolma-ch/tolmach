@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render, redirect, reverse
 from django.contrib.auth.models import User
 from django.db.models import Sum, Q
+from django.db import IntegrityError
 
 from translations.models import Project, Text, TextTranslation, TextEntry
 from entries.models import Language
@@ -463,6 +464,11 @@ def register(request):
         login(request, user)
         # return HttpResponseRedirect("/")
         # Redirect to a success page.
+    except IntegrityError:
+        log_action(None, 'user.register', status='failed', request=request,
+                   detail={'username': username, 'email': email, 'reason': 'duplicate_email_or_username'})
+        status = "1"
+        message = _("This username or email is already registered")
     except:
         log_action(None, 'user.register', status='error', request=request,
                    detail={'username': username, 'reason': 'unhandled_exception'})
@@ -580,7 +586,7 @@ def reset_password_approve(request):
         response_status = 400
         return HttpResponse(answer, content_type="application/json", status=response_status)
 
-    if user.email == "":
+    if not user.email:
         log_action(None, 'user.password_reset_request', status='failed', request=request,
                    detail={'username': username, 'reason': 'no_email'})
         some_data_to_dump['status'] = 1
