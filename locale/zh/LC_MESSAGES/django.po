@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 23:35+0300\n"
+"POT-Creation-Date: 2026-08-29 23:40+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Blog post does not exist"
 msgstr ""
 
-#: dicts/views.py:157
+#: dicts/views.py:161
 #, fuzzy
 #| msgid "All glossaries"
 msgid "Project glossaries"
@@ -217,8 +217,8 @@ msgstr "支持"
 
 #: templates/main/base-logged-in.html:15
 #: templates/main/partial/navbar-loggedin.html:6
-#: templates/tolmach/organization.html:9 tolmach/views.py:125
-#: tolmach/views.py:128 tolmach/views.py:130
+#: templates/tolmach/organization.html:9 tolmach/views.py:126
+#: tolmach/views.py:129 tolmach/views.py:131
 msgid "Settings"
 msgstr "设置"
 
@@ -774,8 +774,8 @@ msgstr "创建项目"
 msgid "There're no projects here at the moment."
 msgstr ""
 
-#: templates/tolmach/organization.html:8 tolmach/views.py:251
-#: tolmach/views.py:283
+#: templates/tolmach/organization.html:8 tolmach/views.py:252
+#: tolmach/views.py:284
 msgid "Members"
 msgstr ""
 
@@ -979,7 +979,7 @@ msgstr ""
 msgid "Username is required field"
 msgstr ""
 
-#: templates/tolmach/partial/landing_javascript.html:187 tolmach/views.py:434
+#: templates/tolmach/partial/landing_javascript.html:187 tolmach/views.py:441
 msgid ""
 "Username can only contain letters, numbers, dots, underscores, and hyphens"
 msgstr ""
@@ -988,7 +988,7 @@ msgstr ""
 msgid "Email is required field"
 msgstr ""
 
-#: templates/tolmach/partial/landing_javascript.html:195 tolmach/views.py:442
+#: templates/tolmach/partial/landing_javascript.html:195 tolmach/views.py:451
 msgid "Please provide a valid email address"
 msgstr ""
 
@@ -1052,12 +1052,12 @@ msgstr "邀请你加入项目"
 msgid "Create"
 msgstr "新建"
 
-#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:148
+#: templates/tolmach/partial/organization_members.html:18 tolmach/views.py:149
 msgid "owner"
 msgstr ""
 
 #: templates/tolmach/partial/organization_members.html:25
-#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:150
+#: templates/tolmach/partial/organization_members.html:29 tolmach/views.py:151
 msgid "admin"
 msgstr ""
 
@@ -1101,24 +1101,26 @@ msgid "Log in using password:"
 msgstr "密码登录"
 
 #: templates/tolmach/partial/register_modal.html:31
-#: templates/tolmach/partial/register_modal.html:71
-msgid "Username"
+#: templates/tolmach/partial/register_modal.html:124
+#, fuzzy
+#| msgid "Username"
+msgid "Username or email"
 msgstr "注册名"
 
 #: templates/tolmach/partial/register_modal.html:38
-#: templates/tolmach/partial/register_modal.html:85
-#: templates/tolmach/partial/register_modal.html:147
+#: templates/tolmach/partial/register_modal.html:86
+#: templates/tolmach/partial/register_modal.html:148
 msgid "Password"
 msgstr "密码"
 
 #: templates/tolmach/partial/register_modal.html:50
-#: templates/tolmach/partial/register_modal.html:104
+#: templates/tolmach/partial/register_modal.html:105
 msgid "Forgot your password?"
 msgstr "忘记密码?"
 
 #: templates/tolmach/partial/register_modal.html:53
 #: templates/tolmach/partial/register_modal.html:61
-#: templates/tolmach/partial/register_modal.html:110
+#: templates/tolmach/partial/register_modal.html:111
 msgid "Sign up"
 msgstr "立即注册"
 
@@ -1130,40 +1132,40 @@ msgstr "登录"
 msgid "Only letters, numbers, dots, underscores, and hyphens"
 msgstr ""
 
-#: templates/tolmach/partial/register_modal.html:78
+#: templates/tolmach/partial/register_modal.html:71
+msgid "Username"
+msgstr "注册名"
+
+#: templates/tolmach/partial/register_modal.html:79
 #: templates/tolmach/partial/settings/profile-tab.html:21
 #: templates/tolmach/partial/settings/profile-tab.html:25
 msgid "Email"
 msgstr "邮箱"
 
-#: templates/tolmach/partial/register_modal.html:92
-#: templates/tolmach/partial/register_modal.html:154
+#: templates/tolmach/partial/register_modal.html:93
+#: templates/tolmach/partial/register_modal.html:155
 msgid "Password confirmation"
 msgstr "确认密码"
 
-#: templates/tolmach/partial/register_modal.html:107
-#: templates/tolmach/partial/register_modal.html:128
+#: templates/tolmach/partial/register_modal.html:108
+#: templates/tolmach/partial/register_modal.html:129
 msgid "Authorization"
 msgstr "登录"
 
-#: templates/tolmach/partial/register_modal.html:115
-#: templates/tolmach/partial/register_modal.html:134
+#: templates/tolmach/partial/register_modal.html:116
+#: templates/tolmach/partial/register_modal.html:135
 msgid "Reset password"
 msgstr "找回密码"
 
-#: templates/tolmach/partial/register_modal.html:123
-msgid "username"
-msgstr "注册名"
-
-#: templates/tolmach/partial/register_modal.html:131
+#: templates/tolmach/partial/register_modal.html:132
 msgid "Registration"
 msgstr "注册"
 
-#: templates/tolmach/partial/register_modal.html:139
+#: templates/tolmach/partial/register_modal.html:140
 msgid "Type new password:"
 msgstr "录入新密码"
 
-#: templates/tolmach/partial/register_modal.html:157
+#: templates/tolmach/partial/register_modal.html:158
 msgid "Submit"
 msgstr "提交"
 
@@ -1242,9 +1244,9 @@ msgstr "统计"
 msgid "Total"
 msgstr "总计"
 
-#: templates/tolmach/profile.html:8 tolmach/views.py:178 tolmach/views.py:180
-#: tolmach/views.py:215 tolmach/views.py:217 tolmach/views.py:251
-#: tolmach/views.py:253 tolmach/views.py:283 tolmach/views.py:285
+#: templates/tolmach/profile.html:8 tolmach/views.py:179 tolmach/views.py:181
+#: tolmach/views.py:216 tolmach/views.py:218 tolmach/views.py:252
+#: tolmach/views.py:254 tolmach/views.py:284 tolmach/views.py:286
 #, fuzzy
 #| msgid "Translation"
 msgid "Organizations"
@@ -1920,8 +1922,8 @@ msgstr[1] "Tolma.ch她已满%(years_count)d岁!"
 msgid "Organization id is not set"
 msgstr "文案ID未设置"
 
-#: tolmach/decorators.py:20 tolmach/views_ajax.py:26 tolmach/views_ajax.py:51
-#: tolmach/views_ajax.py:55
+#: tolmach/decorators.py:20 tolmach/views_ajax.py:27 tolmach/views_ajax.py:60
+#: tolmach/views_ajax.py:64
 #, fuzzy
 #| msgid "Translation not found"
 msgid "Organization not found"
@@ -1931,79 +1933,83 @@ msgstr "未找到翻译"
 msgid "Access denied"
 msgstr "禁止访问 (403)"
 
-#: tolmach/views.py:152
+#: tolmach/views.py:153
 msgid "member"
 msgstr ""
 
-#: tolmach/views.py:194 tolmach/views.py:232 tolmach/views.py:267
+#: tolmach/views.py:195 tolmach/views.py:233 tolmach/views.py:268
 #: translations/decorators.py:63 translations/views.py:99
 #: translations/views.py:276 translations/views.py:278
 #: translations/views.py:297 translations/views.py:299
-#: translations/views_ajax.py:90
+#: translations/views_ajax.py:76
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: tolmach/views.py:461
+#: tolmach/views.py:472
+msgid "This username or email is already registered"
+msgstr ""
+
+#: tolmach/views.py:477
 msgid "Some wrong"
 msgstr ""
 
-#: tolmach/views.py:547
+#: tolmach/views.py:584
 msgid "Password was reseted. Further instructions were sent to your email."
 msgstr ""
 
-#: tolmach/views.py:637
+#: tolmach/views.py:688
 msgid "New password saved. Please wait for the sign in."
 msgstr ""
 
-#: tolmach/views_ajax.py:29 tolmach/views_ajax.py:57 tolmach/views_ajax.py:78
+#: tolmach/views_ajax.py:32 tolmach/views_ajax.py:68 tolmach/views_ajax.py:94
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be an owner of organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:41 translations/views_ajax.py:205
+#: tolmach/views_ajax.py:48 translations/views_ajax.py:191
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Project name cannot be empty"
 msgstr "项目类型未设置"
 
-#: tolmach/views_ajax.py:82 tolmach/views_ajax.py:118
-#: translations/views_ajax.py:388 translations/views_ajax.py:437
+#: tolmach/views_ajax.py:98 tolmach/views_ajax.py:143
+#: translations/views_ajax.py:390 translations/views_ajax.py:448
 msgid "User id is not set"
 msgstr "用户ID未设置"
 
-#: tolmach/views_ajax.py:86 tolmach/views_ajax.py:122
-#: translations/views_ajax.py:392 translations/views_ajax.py:441
+#: tolmach/views_ajax.py:102 tolmach/views_ajax.py:147
+#: translations/views_ajax.py:394 translations/views_ajax.py:452
 msgid "User not found"
 msgstr "未找到用户"
 
-#: tolmach/views_ajax.py:88 tolmach/views_ajax.py:126
+#: tolmach/views_ajax.py:106 tolmach/views_ajax.py:155
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "This user is an owner of organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:110 translations/views_ajax.py:429
+#: tolmach/views_ajax.py:135 translations/views_ajax.py:440
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "User is already a member of project"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:124 translations/decorators.py:23
-#: translations/views_ajax.py:446 translations/views_ajax.py:723
-#: translations/views_ajax.py:859 translations/views_ajax.py:1067
-#: translations/views_ajax.py:1181 translations/views_ajax.py:1190
-#: translations/views_ajax.py:1332
+#: tolmach/views_ajax.py:151 translations/decorators.py:23
+#: translations/views_ajax.py:459 translations/views_ajax.py:763
+#: translations/views_ajax.py:913 translations/views_ajax.py:1138
+#: translations/views_ajax.py:1260 translations/views_ajax.py:1271
+#: translations/views_ajax.py:1408
 msgid "Not allowed"
 msgstr "不允许"
 
-#: tolmach/views_ajax.py:153
+#: tolmach/views_ajax.py:186
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be a manager of the organization"
 msgstr "该用户不是项目成员"
 
-#: tolmach/views_ajax.py:384
+#: tolmach/views_ajax.py:419
 #, python-brace-format
 msgid ""
 "Sorry, we could not reach the url. Error '{err_msg}'. If everything is "
@@ -2022,19 +2028,19 @@ msgid "text id is not set"
 msgstr "文案ID未设置"
 
 #: translations/decorators.py:21 translations/decorators.py:41
-#: translations/views_ajax.py:505 translations/views_ajax.py:626
+#: translations/views_ajax.py:527 translations/views_ajax.py:654
 msgid "Text not found"
 msgstr "未找到"
 
-#: translations/decorators.py:43 translations/views_ajax.py:874
+#: translations/decorators.py:43 translations/views_ajax.py:928
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Project id is not set"
 msgstr "项目类型未设置"
 
-#: translations/decorators.py:49 translations/views_ajax.py:155
-#: translations/views_ajax.py:174 translations/views_ajax.py:179
-#: translations/views_ajax.py:271 translations/views_ajax.py:878
+#: translations/decorators.py:49 translations/views_ajax.py:139
+#: translations/views_ajax.py:159 translations/views_ajax.py:163
+#: translations/views_ajax.py:261 translations/views_ajax.py:932
 msgid "Project not found"
 msgstr "项目找不到"
 
@@ -2095,54 +2101,54 @@ msgstr ""
 msgid "Readability check"
 msgstr ""
 
-#: translations/views_ajax.py:159 translations/views_ajax.py:182
-#: translations/views_ajax.py:276 translations/views_ajax.py:384
-#: translations/views_ajax.py:497 translations/views_ajax.py:628
-#: translations/views_ajax.py:740 translations/views_ajax.py:880
-#: translations/views_ajax.py:1392 translations/views_ajax.py:1434
-#: translations/views_ajax.py:1456 translations/views_ajax.py:1496
-#: translations/views_ajax.py:1517 translations/views_ajax.py:1551
+#: translations/views_ajax.py:144 translations/views_ajax.py:167
+#: translations/views_ajax.py:268 translations/views_ajax.py:386
+#: translations/views_ajax.py:519 translations/views_ajax.py:658
+#: translations/views_ajax.py:782 translations/views_ajax.py:936
+#: translations/views_ajax.py:1474 translations/views_ajax.py:1520
+#: translations/views_ajax.py:1546 translations/views_ajax.py:1590
+#: translations/views_ajax.py:1615 translations/views_ajax.py:1653
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be a manager of project"
 msgstr "该用户不是项目成员"
 
-#: translations/views_ajax.py:211
+#: translations/views_ajax.py:198
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Project description cannot be empty"
 msgstr "项目类型未设置"
 
-#: translations/views_ajax.py:217
+#: translations/views_ajax.py:205
 msgid "Project type is not set"
 msgstr "项目类型未设置"
 
-#: translations/views_ajax.py:221
+#: translations/views_ajax.py:210
 #, fuzzy
 #| msgid "This source language is not supported yet"
 msgid "Source language is not set"
 msgstr "该原语言暂时未支持"
 
-#: translations/views_ajax.py:225 translations/views_ajax.py:273
-#: translations/views_ajax.py:948
+#: translations/views_ajax.py:215 translations/views_ajax.py:263
+#: translations/views_ajax.py:1017
 #, fuzzy
 #| msgid "This source language is not supported yet"
 msgid "Target language is not set"
 msgstr "该原语言暂时未支持"
 
-#: translations/views_ajax.py:264
+#: translations/views_ajax.py:254
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Project is not set"
 msgstr "项目类型未设置"
 
-#: translations/views_ajax.py:284
+#: translations/views_ajax.py:278
 #, fuzzy
 #| msgid "Add project translation"
 msgid "There is already such project translation"
 msgstr "添上项目翻译"
 
-#: translations/views_ajax.py:350
+#: translations/views_ajax.py:348
 #, fuzzy
 #| msgid "User is not a member of project"
 msgid "You have to be a manager of the project"
@@ -2154,151 +2160,154 @@ msgstr "该用户不是项目成员"
 msgid "You have to be a member of the project"
 msgstr "该用户不是项目成员"
 
-#: translations/views_ajax.py:394 translations/views_ajax.py:448
+#: translations/views_ajax.py:398 translations/views_ajax.py:463
 msgid "This user is a manager of project"
 msgstr "该用户是项目管理员 这个用户有管理员的项目"
 
-#: translations/views_ajax.py:426
+#: translations/views_ajax.py:437
 msgid "Wrong membership status, sorry"
 msgstr ""
 
-#: translations/views_ajax.py:456
+#: translations/views_ajax.py:473
 msgid "User is not a member of project"
 msgstr "该用户不是项目成员"
 
-#: translations/views_ajax.py:546 translations/views_ajax.py:755
-#: translations/views_ajax.py:904
+#: translations/views_ajax.py:569 translations/views_ajax.py:799
+#: translations/views_ajax.py:964
 msgid "Wrong file type"
 msgstr "无支持文件类型"
 
-#: translations/views_ajax.py:622
+#: translations/views_ajax.py:650
 #, fuzzy
 #| msgid "text id is not set"
 msgid "Text id is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:701 translations/views_ajax.py:769
-#: translations/views_ajax.py:820
+#: translations/views_ajax.py:741 translations/views_ajax.py:813
+#: translations/views_ajax.py:869
 msgid "Glossary not found"
 msgstr "词汇库找不到"
 
-#: translations/views_ajax.py:743
+#: translations/views_ajax.py:787
 msgid "Glossary name is not set"
 msgstr "词汇库名称未设定"
 
-#: translations/views_ajax.py:761
+#: translations/views_ajax.py:805
 msgid "Please, send file or input data manually"
 msgstr ""
 
-#: translations/views_ajax.py:782 translations/views_ajax.py:795
+#: translations/views_ajax.py:827 translations/views_ajax.py:841
 #, fuzzy
 #| msgid "Translation not found"
 msgid "Project translation not found"
 msgstr "未找到翻译"
 
-#: translations/views_ajax.py:816
+#: translations/views_ajax.py:865
 msgid "Glossary id is not set"
 msgstr "词汇库ID未设置"
 
-#: translations/views_ajax.py:822
+#: translations/views_ajax.py:873
 msgid "It's not your glossary"
 msgstr "该词汇库不属于你"
 
-#: translations/views_ajax.py:837
+#: translations/views_ajax.py:891
 msgid "TMDatabase not found"
 msgstr "TMX找不到"
 
-#: translations/views_ajax.py:884
+#: translations/views_ajax.py:940
 msgid "TMX name is not set"
 msgstr "TMX名称未设置"
 
-#: translations/views_ajax.py:890
+#: translations/views_ajax.py:946
 #, fuzzy
 #| msgid "This source language is not supported yet"
 msgid "Target lang is not specified"
 msgstr "该原语言暂时未支持"
 
-#: translations/views_ajax.py:894
+#: translations/views_ajax.py:950
 #, fuzzy
 #| msgid "TMX name is not set"
 msgid "TMX file is not passed"
 msgstr "TMX名称未设置"
 
-#: translations/views_ajax.py:920
+#: translations/views_ajax.py:984
 #, fuzzy
 #| msgid "TMX name is not set"
 msgid "TMX id is not set"
 msgstr "TMX名称未设置"
 
-#: translations/views_ajax.py:924
+#: translations/views_ajax.py:988
 msgid "TMX not found"
 msgstr "TMX未找到"
 
-#: translations/views_ajax.py:926
+#: translations/views_ajax.py:992
 #, fuzzy
 #| msgid "It's not your glossary"
 msgid "It's not your TMX"
 msgstr "该词汇库不属于你"
 
-#: translations/views_ajax.py:1088 translations/views_ajax.py:1111
+#: translations/views_ajax.py:1163 translations/views_ajax.py:1186
 #, fuzzy
 #| msgid "text id is not set"
 msgid "Entry id is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1133 translations/views_ajax.py:1158
-#: translations/views_ajax.py:1360 translations/views_ajax.py:1402
-#: translations/views_ajax.py:1445 translations/views_ajax.py:1506
-#: translations/views_ajax.py:1669
+#: translations/views_ajax.py:1208 translations/views_ajax.py:1235
+#: translations/views_ajax.py:1438 translations/views_ajax.py:1484
+#: translations/views_ajax.py:1531 translations/views_ajax.py:1600
+#: translations/views_ajax.py:1770
 msgid "Id is not set"
 msgstr "ID未设置"
 
-#: translations/views_ajax.py:1163 translations/views_ajax.py:1188
-#: translations/views_ajax.py:1313 translations/views_ajax.py:1327
-#: translations/views_ajax.py:1511 translations/views_ajax.py:1674
+#: translations/views_ajax.py:1240 translations/views_ajax.py:1267
+#: translations/views_ajax.py:1387 translations/views_ajax.py:1401
+#: translations/views_ajax.py:1605 translations/views_ajax.py:1775
 msgid "Not found"
 msgstr "未找到"
 
-#: translations/views_ajax.py:1171
+#: translations/views_ajax.py:1248
 msgid "Language not found"
 msgstr "语言未找到"
 
-#: translations/views_ajax.py:1178
+#: translations/views_ajax.py:1255
 msgid "Translation not found"
 msgstr "未找到翻译"
 
-#: translations/views_ajax.py:1230
+#: translations/views_ajax.py:1311
 #, fuzzy
 #| msgid "text id is not set"
 msgid "Entry translation text is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1308
+#: translations/views_ajax.py:1382
 #, fuzzy
 #| msgid "text id is not set"
 msgid "entry is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1320
+#: translations/views_ajax.py:1394
 #, fuzzy
 #| msgid "text id is not set"
 msgid "translation is not set"
 msgstr "文案ID未设置"
 
-#: translations/views_ajax.py:1649
+#: translations/views_ajax.py:1748
 #, fuzzy
 #| msgid "Project type is not set"
 msgid "Percentage is not set"
 msgstr "项目类型未设置"
 
-#: translations/views_ajax.py:1705
+#: translations/views_ajax.py:1806
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 
-#: translations/views_ajax.py:1913
+#: translations/views_ajax.py:2022
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:1929 translations/views_ajax.py:1933
+#: translations/views_ajax.py:2038 translations/views_ajax.py:2042
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
+
+#~ msgid "username"
+#~ msgstr "注册名"

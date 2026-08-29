@@ -1982,16 +1982,17 @@ def user_ajax(request):
             if 'username' in post:
                 request.user.username = post['username']
             if 'email' in post:
-                if post['email'] != request.user.email:
+                email = post['email'].strip()
+                if email != request.user.email:
                     usermeta.email_approved = False
 
-                request.user.email = post['email']
+                request.user.email = email or None
             try:
                 request.user.save()
             except IntegrityError:
                 log_action(request.user, 'user.profile_update', status='failed', request=request,
-                           detail={'reason': 'duplicate_username'})
-                return HttpResponse(json.dumps("This username is already used, try find another one"), content_type="application/json")
+                           detail={'reason': 'duplicate_username_or_email'})
+                return HttpResponse(json.dumps("This username or email is already used, try find another one"), content_type="application/json")
 
             if 'website' in post:
                 usermeta.website = post['website']
