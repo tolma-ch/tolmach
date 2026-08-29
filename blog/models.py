@@ -33,7 +33,17 @@ class Post(models.Model):
 
     def clean_content_text(self):
         import re
-        return re.sub(r'<(/)?.+?( /)?>', '', self.formatted_markdown())
+        return re.sub(r'<(/)?.+?( /)?>', '', self.formatted_markdown()).strip()
+
+    def first_image(self):
+        import re
+        match = re.search(r'!\[[^\]]*\]\(\s*([^)\s]+)', self.content)
+        if match:
+            return match.group(1)
+        match = re.search(r'<img[^>]*src="([^"]+)"', self.formatted_markdown())
+        if match:
+            return match.group(1)
+        return None
 
     def __str__(self):
         return self.title

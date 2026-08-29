@@ -30,20 +30,28 @@
 
 
         {% if social_preview_tags %}
-        <meta property="og:type" content="website">
+        <meta property="og:type" content="{% if social_preview_tags.type %}{{ social_preview_tags.type }}{% else %}website{% endif %}">
         <meta property="og:site_name" content="Tolma.ch">
         <meta property="og:title" content="{{ social_preview_tags.title }}">
         <meta property="og:description" content="{{ social_preview_tags.description }}">
         <meta property="og:url" content="{{ base_domain }}{{ request.path }}">
         <meta property="og:locale" content="ru_RU">
-    {#    <meta property="og:image" content="{{ base_domain }}{% static 'img/opengraph.png' %}">#}
-    {#    <meta property="og:image:width" content="968">#}
-    {#    <meta property="og:image:height" content="504">#}
+        {% if social_preview_tags.image %}
+        <meta property="og:image" content="{{ social_preview_tags.image }}">
+        {% else %}
+        <meta property="og:image" content="{{ base_domain }}{% static 'img/opengraph.png' %}">
+        <meta property="og:image:width" content="968">
+        <meta property="og:image:height" content="504">
+        {% endif %}
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ social_preview_tags.title }}">
         <meta name="twitter:description" content="{{ social_preview_tags.description }}">
+        {% if social_preview_tags.image %}
+        <meta name="twitter:image:src" content="{{ social_preview_tags.image }}">
+        {% else %}
         <meta name="twitter:image:src" content="{{ base_domain }}{% static 'img/opengraph.png' %}">
+        {% endif %}
         <meta name="twitter:url" content="{{ base_domain }}">
         <meta name="twitter:domain" content="tolma.ch">
         <meta name="twitter:site" content="@">

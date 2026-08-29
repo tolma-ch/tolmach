@@ -129,9 +129,19 @@ def post(request, blog_lang, date, slug):
     p.clean_content = p.clean_content_text()
     p.url = reverse_url('post', kwargs={'blog_lang': l.code, 'date': date, 'slug': slug})
 
+    image = p.first_image()
+    if image and not image.startswith('http'):
+        method = "https" if request.is_secure() else "http"
+        image = method + "://" + request.get_host() + image
+
     context = {
         'post': p,
-        'social_preview_tags': {'title': p.title, 'description' : p.content},
+        'social_preview_tags': {
+            'title': p.title,
+            'description': p.clean_content,
+            'image': image,
+            'type': 'article',
+        },
         'page_title': f"{p.title} / {_('Blog')} / Tolma.ch",
         'breadcrumbs': [
             {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
