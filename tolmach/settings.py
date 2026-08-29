@@ -205,6 +205,7 @@ INSTALLED_APPS = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'tolmach.backends.UsernameOrEmailBackend',
     'django.contrib.auth.backends.ModelBackend',
     # 'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.facebook.FacebookOAuth2',

@@ -388,7 +388,8 @@ def invite_urls_og_image(request, invite_type, invite_id):
     return response
 
 def post_social_auth(request):
-    log_action(request.user, 'user.social_login', status='success', request=request)
+    log_action(request.user, 'user.social_login', status='success', request=request,
+               detail={'provider': request.session.get('social_auth_last_login_backend', '')})
     if request.COOKIES.get('project_invite_code', False):
         response = redirect(reverse('invitation_url', kwargs={'invite_type': 'project', 'invite_id': request.COOKIES.get('project_invite_code', False)}))
         response.delete_cookie('project_invite_code')
@@ -501,6 +502,17 @@ def register(request):
     return response
 
 
+def _login_method(identifier, user=None):
+    """Best-effort guess whether a login attempt used an email or a username."""
+    identifier = (identifier or '').strip()
+    if user is not None:
+        if user.email and identifier.lower() == user.email.lower():
+            return 'email'
+        return 'username'
+    # No matched user: fall back to a heuristic (usernames cannot contain '@').
+    return 'email' if '@' in identifier else 'username'
+
+
 def login_user(request):
     if request.method == "GET":
         raise Http404()
@@ -525,18 +537,21 @@ def login_user(request):
             if org_invite_code:
                 redirect_path = tolmach_utils.invite_user(user, org_invite_code, "org")
 
-            log_action(user, 'user.login', status='success', request=request)
+            log_action(user, 'user.login', status='success', request=request,
+                       detail={'method': _login_method(username, user)})
             status = "0"
             message = 'ok'
         else:
             log_action(None, 'user.login', status='denied', request=request,
-                       detail={'username': username, 'reason': 'inactive_account'})
+                       detail={'username': username, 'reason': 'inactive_account',
+                               'method': _login_method(username, user)})
             status = "1"
             message = 'User is not active'
             # Return a 'disabled account' error message
     else:
         log_action(None, 'user.login', status='failed', request=request,
-                   detail={'username': username, 'reason': 'wrong_credentials'})
+                   detail={'username': username, 'reason': 'wrong_credentials',
+                           'method': _login_method(username)})
         status = "2"
         message = 'Wrong username or password'
         # Return an 'invalid login' error message.
@@ -576,7 +591,7 @@ def reset_password_approve(request):
     username = request.POST.get('username', False)
 
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(Q(username=username) | Q(email=username))
     except:
         log_action(None, 'user.password_reset_request', status='failed', request=request,
                    detail={'username': username, 'reason': 'user_not_found'})
