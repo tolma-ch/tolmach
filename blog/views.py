@@ -4,6 +4,7 @@ from django.urls import reverse as reverse_url
 from django.http import Http404
 from entries.models import Language
 from .models import Post
+from .og_image import build_og_image
 
 
 def main(request, blog_lang, is_rss=False):
@@ -129,9 +130,26 @@ def post(request, blog_lang, date, slug):
     p.clean_content = p.clean_content_text()
     p.url = reverse_url('post', kwargs={'blog_lang': l.code, 'date': date, 'slug': slug})
 
+    first_image = p.first_image()
+    og_image = build_og_image(first_image) if first_image else None
+    image = og_image if og_image else first_image
+    if image and not image.startswith('http'):
+        method = "https" if request.is_secure() else "http"
+        image = method + "://" + request.get_host() + image
+
+    social_preview_tags = {
+        'title': p.title,
+        'description': p.clean_content,
+        'image': image,
+        'type': 'article',
+    }
+    if og_image:
+        social_preview_tags['image_width'] = 1200
+        social_preview_tags['image_height'] = 630
+
     context = {
         'post': p,
-        'social_preview_tags': {'title': p.title, 'description' : p.content},
+        'social_preview_tags': social_preview_tags,
         'page_title': f"{p.title} / {_('Blog')} / Tolma.ch",
         'breadcrumbs': [
             {'title': _("Blog"), 'url': reverse_url('blog', kwargs={'blog_lang': l.code}), 'type': ''},
