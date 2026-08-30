@@ -8,7 +8,7 @@ from PIL import Image
 
 OG_WIDTH = 1200
 OG_HEIGHT = 630
-MARGIN = 0.10
+MARGIN = 0.05
 BACKGROUND = (16, 182, 106)
 
 

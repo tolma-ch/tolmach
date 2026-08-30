@@ -33,7 +33,7 @@
         <meta property="og:type" content="{% if social_preview_tags.type %}{{ social_preview_tags.type }}{% else %}website{% endif %}">
         <meta property="og:site_name" content="Tolma.ch">
         <meta property="og:title" content="{{ social_preview_tags.title }}">
-        <meta property="og:description" content="{{ social_preview_tags.description }}">
+        <meta property="og:description" content="{{ social_preview_tags.description|truncatechars:200 }}">
         <meta property="og:url" content="{{ base_domain }}{{ request.path }}">
         <meta property="og:locale" content="ru_RU">
         {% if social_preview_tags.image %}
@@ -50,7 +50,7 @@
 
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ social_preview_tags.title }}">
-        <meta name="twitter:description" content="{{ social_preview_tags.description }}">
+        <meta name="twitter:description" content="{{ social_preview_tags.description|truncatechars:200 }}">
         {% if social_preview_tags.image %}
         <meta name="twitter:image:src" content="{{ social_preview_tags.image }}">
         {% else %}
