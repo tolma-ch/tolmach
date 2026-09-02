@@ -2,20 +2,26 @@
   "name": "tolmach",
   "version": "0.0.0",
   "description": "http://tolma.ch/",
+  "scripts": {
+    "fetch-vendors": "node scripts/fetch-vendors.js",
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "angular": "1.5.5",
+    "angular-dragdrop": "1.0.13",
+    "angular-local-storage": "0.5.2",
+    "bootstrap": "3.3.6",
+    "font-awesome": "4.6.3",
+    "handsontable": "0.31.0",
+    "jquery": "2.1.4",
+    "less": "2.7.1",
+    "ng-file-upload": "4.2.4",
+    "plotly.js": "1.41.0"
+  },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-connect": "~0.8.0",
-    "grunt-contrib-cssmin": "^0.14.0",
-    "grunt-contrib-jshint": "^0.11.3",
-    "grunt-contrib-less": "^1.1.0",
-    "grunt-contrib-stylus": "^0.22.0",
-    "grunt-contrib-uglify": "~0.5.0",
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt-exec": "^3.0.0",
-    "grunt-include-source": "^0.7.1",
-    "grunt-string-replace": "1.3.1"
+    "clean-css": "3.4.28",
+    "stylus": "0.52.4",
+    "uglify-js": "2.8.29"
   },
   "repository": {
     "type": "git",

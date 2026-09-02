@@ -16,8 +16,6 @@ RUN /bin/bash -c 'ARCH=`uname -m` && \
        echo "Unknown arch, wont install sdcv"; \
     fi' && ln -s /lib/x86_64-linux-gnu/libreadline.so.8 /lib/x86_64-linux-gnu/libreadline.so.6
     
-RUN npm install -g inherits coffee-script grunt grunt-cli
-
 RUN mkdir /var/www /var/log/tolma.ch
 
 RUN echo user=root >>  /etc/supervisor/supervisord.conf
@@ -31,7 +29,7 @@ COPY . /var/www/tolma.ch
 
 ENV HOME=/var/www
 WORKDIR /var/www/tolma.ch
-RUN npm install && grunt
+RUN npm install && npm run fetch-vendors && npm run build
 RUN django-admin compilemessages
 
 EXPOSE 7000

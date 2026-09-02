@@ -25,3 +25,29 @@ uwsgi.ini
 
 /node_modules
 /*.sql
+
+# Vendored JS/CSS assets fetched and compiled at build time
+# (see scripts/fetch-vendors.js and scripts/build.js; run `npm run fetch-vendors && npm run build`)
+tolmach/static/assets/angular/
+tolmach/static/assets/angular-bootstrap/
+tolmach/static/assets/angular-bootstrap-toggle/
+tolmach/static/assets/angular-contenteditable/
+tolmach/static/assets/angular-dragdrop/
+tolmach/static/assets/angular-elastic/
+tolmach/static/assets/angular-image-crop/
+tolmach/static/assets/angular-img-cropper/
+tolmach/static/assets/angular-local-storage/
+tolmach/static/assets/angular-ui-select/
+tolmach/static/assets/bootstrap/
+tolmach/static/assets/font-awesome/
+tolmach/static/assets/handsontable/
+tolmach/static/assets/jquery/
+tolmach/static/assets/less/
+tolmach/static/assets/ng-file-upload/
+tolmach/static/assets/ngDraggable/
+tolmach/static/assets/plotly/
+tolmach/static/js/bootstrap.min.js
+tolmach/static/js/jquery-2.0.3.min.js
+tolmach/static/js/reconnecting-websocket.min.js
+tolmach/static/js/screenfull.js
+tmp/
