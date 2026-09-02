@@ -1,0 +1,40 @@
+// Dark-mode overrides for Bootstrap components.
+//
+// These rules used to live inside the vendored `bootstrap/less/*` sources and
+// were lost when the library started being pulled in (pristine) from
+// node_modules at build time. They are intentionally kept in the app's own
+// LESS so library updates never nuke the dark theme.
+//
+// `tolmach.less` is compiled BEFORE Bootstrap's own CSS and this file is
+// appended AFTER it (see scripts/build.js concat order), so these
+// declarations win the cascade in dark mode.
+
+@media (prefers-color-scheme: dark) {
+  a {
+    color: #fee188;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-menu {
+    background-color: #3b3f42;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-group-addon {
+    background-color: #262727;
+    border: 1px solid #262727;
+    color: #b4b9bb;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-content {
+    background-color: black;
+  }
+
+  .modal-body {
+    background-color: #303335;
+  }
+}

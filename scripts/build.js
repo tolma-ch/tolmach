@@ -122,6 +122,7 @@ function run() {
   steps.push(compileLess('tolmach/static/less/landing.less', 'tolmach/static/dist/landing.css'));
   steps.push(compileLess('tolmach/static/less/new_landing.less', 'tolmach/static/dist/new_landing.css'));
   steps.push(compileLess('tolmach/static/less/tolmach.less', 'tmp/tolmach.css'));
+  steps.push(compileLess('tolmach/static/less/tolmach-dark-bootstrap.less', 'tmp/tolmach-dark-bootstrap.css'));
 
   Promise.all(steps).then(function () {
     console.log('less compiled');
@@ -129,7 +130,8 @@ function run() {
     var concatCss =
       read('tmp/tolmach.css') +
       read('tolmach/static/assets/bootstrap/dist/css/bootstrap.css') +
-      read('tolmach/static/assets/handsontable/dist/handsontable.full.css');
+      read('tolmach/static/assets/handsontable/dist/handsontable.full.css') +
+      read('tmp/tolmach-dark-bootstrap.css');
     write('tolmach/static/dist/tolmach.css', concatCss);
     console.log('concat css done');
 
