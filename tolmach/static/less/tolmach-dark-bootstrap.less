@@ -7,10 +7,26 @@
 //
 // `tolmach.less` is compiled BEFORE Bootstrap's own CSS and this file is
 // appended AFTER it (see scripts/build.js concat order), so these
-// declarations win the cascade in dark mode.
+// declarations win the cascade.
+
+// Links keep their color on hover (Bootstrap would otherwise force #23527c).
+// The old vendored scaffold.less had this commented out; these match the base
+// link color per scheme.
+a:hover,
+a:focus {
+  color: #337ab7;
+  text-decoration: underline;
+}
 
 @media (prefers-color-scheme: dark) {
   a {
+    color: #fee188;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  a:hover,
+  a:focus {
     color: #fee188;
   }
 }
