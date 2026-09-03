@@ -105,10 +105,10 @@ var MANIFEST = [
   },
   {
     dest: 'tolmach/static/js/jquery-2.0.3.min.js',
-    sha256: 'a57b5242b9a9adc4c1ef846c365147b89c472b9cd770face331efcb965346b25',
+    sha256: 'b13cb5989e08fcb02314209d101e1102f3d299109bdc253b62aa1da21c9e38ba',
     urls: [
-      'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js',
-      'https://cdn.jsdelivr.net/npm/jquery@2.0.3/dist/jquery.min.js'
+      'https://code.jquery.com/jquery-2.0.3.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js'
     ]
   },
   {
