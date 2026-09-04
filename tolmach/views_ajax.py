@@ -452,7 +452,16 @@ def update_email_from_banner_ajax(request):
                 status=400
             )
         
-        # try:
+        # Reject if the email already belongs to another user
+        if User.objects.exclude(pk=request.user.pk).filter(email=email).exists():
+            log_action(request.user, 'user.email_update_request', status='failed', request=request,
+                       detail={'reason': 'email_in_use'})
+            return HttpResponse(
+                json.dumps({'error': 'This email is already in use by another account'}),
+                content_type="application/json",
+                status=400
+            )
+
         # Get or create UserMeta for the current user with default values
         user_meta, created = UserMeta.objects.get_or_create(user=request.user)
 

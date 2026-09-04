@@ -1980,19 +1980,30 @@ def user_ajax(request):
             if 'lastName' in post:
                 request.user.last_name = post['lastName']
             if 'username' in post:
-                request.user.username = post['username']
+                username = post['username'].strip()
+                if username and User.objects.exclude(pk=request.user.pk).filter(username__iexact=username).exists():
+                    log_action(request.user, 'user.profile_update', status='failed', request=request,
+                               detail={'reason': 'duplicate_username'})
+                    return HttpResponse(json.dumps("This username is already used, try find another one"),
+                                        content_type="application/json", status=400)
+                request.user.username = username
             if 'email' in post:
-                email = post['email'].strip()
+                email = post['email'].strip() or None
+                if email and User.objects.exclude(pk=request.user.pk).filter(email__iexact=email).exists():
+                    log_action(request.user, 'user.profile_update', status='failed', request=request,
+                               detail={'reason': 'duplicate_email'})
+                    return HttpResponse(json.dumps("This email is already used, try find another one"),
+                                        content_type="application/json", status=400)
                 if email != request.user.email:
                     usermeta.email_approved = False
 
-                request.user.email = email or None
+                request.user.email = email
             try:
                 request.user.save()
             except IntegrityError:
                 log_action(request.user, 'user.profile_update', status='failed', request=request,
                            detail={'reason': 'duplicate_username_or_email'})
-                return HttpResponse(json.dumps("This username or email is already used, try find another one"), content_type="application/json")
+                return HttpResponse(json.dumps("This username or email is already used, try find another one"), content_type="application/json", status=400)
 
             if 'website' in post:
                 usermeta.website = post['website']
