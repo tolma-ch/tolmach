@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-29 23:40+0300\n"
+"POT-Creation-Date: 2026-09-04 13:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,16 +14,16 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: blog/views.py:106 blog/views.py:109 blog/views.py:137
+#: blog/views.py:107 blog/views.py:110 blog/views.py:155
 #: templates/main/base-logged-in.html:14 templates/main/partial/footer.html:9
 msgid "Blog"
 msgstr "Блог"
 
-#: blog/views.py:106
+#: blog/views.py:107
 msgid "Tolma.ch news and tips & tricks"
 msgstr "Tolma.ch - новости и полезные советы"
 
-#: blog/views.py:127
+#: blog/views.py:128
 msgid "Blog post does not exist"
 msgstr "Публикация не обнаружена"
 
@@ -233,17 +233,17 @@ msgstr "Домой"
 msgid "Search"
 msgstr "Найти"
 
-#: templates/main/base.html:138 templates/main/base.html:150
+#: templates/main/base.html:150 templates/main/base.html:162
 msgid "Close"
 msgstr "Закрыть"
 
-#: templates/main/base.html:141 templates/main/base.html:153
+#: templates/main/base.html:153 templates/main/base.html:165
 #: templates/translations/partial/add_text_modal.html:136
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "Далее"
 
-#: templates/main/base.html:179
+#: templates/main/base.html:191
 msgid "No results"
 msgstr "Нет результатов"
 
@@ -1007,7 +1007,9 @@ msgstr "Необходимо указать логин"
 #: templates/tolmach/partial/landing_javascript.html:187 tolmach/views.py:441
 msgid ""
 "Username can only contain letters, numbers, dots, underscores, and hyphens"
-msgstr "Имя пользователя может содержать только латинские буквы, цифры, точку, тире и подчёркивание"
+msgstr ""
+"Имя пользователя может содержать только латинские буквы, цифры, точку, тире "
+"и подчёркивание"
 
 #: templates/tolmach/partial/landing_javascript.html:191
 msgid "Email is required field"
@@ -1914,6 +1916,10 @@ msgid ""
 "it as a file."
 msgstr ""
 
+#: tolmach/views_ajax.py:460
+msgid "This email is already in use by another account"
+msgstr ""
+
 #: translations/apps.py:7
 msgid "translations"
 msgstr "переводы"
@@ -2161,11 +2167,23 @@ msgstr "Проект не указан"
 msgid "TMDB unavaliable at the moment"
 msgstr "Сервер Баз Памяти в данный момент не доступен"
 
-#: translations/views_ajax.py:2022
+#: translations/views_ajax.py:1987
+msgid "This username is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:1995
+msgid "This email is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:2006
+msgid "This username or email is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:2033
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:2038 translations/views_ajax.py:2042
+#: translations/views_ajax.py:2049 translations/views_ajax.py:2053
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
 

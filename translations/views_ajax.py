@@ -1984,7 +1984,7 @@ def user_ajax(request):
                 if username and User.objects.exclude(pk=request.user.pk).filter(username__iexact=username).exists():
                     log_action(request.user, 'user.profile_update', status='failed', request=request,
                                detail={'reason': 'duplicate_username'})
-                    return HttpResponse(json.dumps("This username is already used, try find another one"),
+                    return HttpResponse(json.dumps(_("This username is already used, try find another one")),
                                         content_type="application/json", status=400)
                 request.user.username = username
             if 'email' in post:
@@ -1992,7 +1992,7 @@ def user_ajax(request):
                 if email and User.objects.exclude(pk=request.user.pk).filter(email__iexact=email).exists():
                     log_action(request.user, 'user.profile_update', status='failed', request=request,
                                detail={'reason': 'duplicate_email'})
-                    return HttpResponse(json.dumps("This email is already used, try find another one"),
+                    return HttpResponse(json.dumps(_("This email is already used, try find another one")),
                                         content_type="application/json", status=400)
                 if email != request.user.email:
                     usermeta.email_approved = False
@@ -2003,7 +2003,7 @@ def user_ajax(request):
             except IntegrityError:
                 log_action(request.user, 'user.profile_update', status='failed', request=request,
                            detail={'reason': 'duplicate_username_or_email'})
-                return HttpResponse(json.dumps("This username or email is already used, try find another one"), content_type="application/json", status=400)
+                return HttpResponse(json.dumps(_("This username or email is already used, try find another one")), content_type="application/json", status=400)
 
             if 'website' in post:
                 usermeta.website = post['website']

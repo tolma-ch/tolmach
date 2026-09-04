@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-29 23:40+0300\n"
+"POT-Creation-Date: 2026-09-04 13:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,16 +13,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: blog/views.py:106 blog/views.py:109 blog/views.py:137
+#: blog/views.py:107 blog/views.py:110 blog/views.py:155
 #: templates/main/base-logged-in.html:14 templates/main/partial/footer.html:9
 msgid "Blog"
 msgstr "博客"
 
-#: blog/views.py:106
+#: blog/views.py:107
 msgid "Tolma.ch news and tips & tricks"
 msgstr ""
 
-#: blog/views.py:127
+#: blog/views.py:128
 msgid "Blog post does not exist"
 msgstr ""
 
@@ -230,17 +230,17 @@ msgstr "首页"
 msgid "Search"
 msgstr "搜索"
 
-#: templates/main/base.html:138 templates/main/base.html:150
+#: templates/main/base.html:150 templates/main/base.html:162
 msgid "Close"
 msgstr "关闭"
 
-#: templates/main/base.html:141 templates/main/base.html:153
+#: templates/main/base.html:153 templates/main/base.html:165
 #: templates/translations/partial/add_text_modal.html:136
 #: templates/translations/partial/select_text_ranges_modal.html:37
 msgid "Next"
 msgstr "下一个"
 
-#: templates/main/base.html:179
+#: templates/main/base.html:191
 msgid "No results"
 msgstr "没有结果"
 
@@ -2017,6 +2017,10 @@ msgid ""
 "it as a file."
 msgstr ""
 
+#: tolmach/views_ajax.py:460
+msgid "This email is already in use by another account"
+msgstr ""
+
 #: translations/apps.py:7
 #, fuzzy
 #| msgid "Translation"
@@ -2301,11 +2305,23 @@ msgstr "项目类型未设置"
 msgid "TMDB unavaliable at the moment"
 msgstr ""
 
-#: translations/views_ajax.py:2022
+#: translations/views_ajax.py:1987
+msgid "This username is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:1995
+msgid "This email is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:2006
+msgid "This username or email is already used, try find another one"
+msgstr ""
+
+#: translations/views_ajax.py:2033
 msgid "Request should contain JSON-formatted data"
 msgstr ""
 
-#: translations/views_ajax.py:2038 translations/views_ajax.py:2042
+#: translations/views_ajax.py:2049 translations/views_ajax.py:2053
 msgid "Something went wrong with the Languagetool server"
 msgstr ""
 
