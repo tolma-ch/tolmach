@@ -228,28 +228,58 @@
                     scrollRightEntry(entry.idInText);
                 },
                 scrollLeftEntry = function (id) {
-                    setTimeout(function () {
-                        var $container = $('#translations-container'),
-                            $elem = $('#entry-' + id),
+                    var attempts = 0,
+                        maxAttempts = 15,
+                        doScroll = function () {
+                            var $container = $('#translations-container'),
+                                $elem = $('#entry-' + id),
+                                cTop = $container.offset()['top'],
+                                eTop = $elem.offset()['top'],
+                                containerShift;
+                            // element/layout may not be ready yet (e.g. client-side less
+                            // compilation on dev), so retry until we can measure it
+                            if (!$container.length || !$elem.length || !eTop) {
+                                if (attempts < maxAttempts) {
+                                    attempts++;
+                                    setTimeout(doScroll, 80);
+                                }
+                                return;
+                            }
                             // -100 is some space between header panel and the top position of the currently active entry
                             // it helps keep the context of the previous entry without additional scrolling
-                            containerShift = $container.scrollTop() + $elem.offset()['top'] - $container.offset()['top'] - 100;
-                        $container.stop().animate({
-                            scrollTop: containerShift
-                        }, 500);
-                    }, 100);
+                            containerShift = $container.scrollTop() + eTop - cTop - 100;
+                            $container.stop().animate({
+                                scrollTop: containerShift
+                            }, 500);
+                        };
+                    setTimeout(doScroll, 100);
                 },
                 scrollRightEntry = function (id) {
-                    setTimeout(function () {
-                        var $resContainer = $('#result-container'),
-                            $resElem = $('#res-entry-' + id),
-                            // -100 is some space between header panel and the top position of the currently active entry
+                    var attempts = 0,
+                        maxAttempts = 15,
+                        doScroll = function () {
+                            var $resContainer = $('#result-container'),
+                                $resElem = $('#res-entry-' + id),
+                                cTop = $resContainer.offset()['top'],
+                                eTop = $resElem.offset()['top'],
+                                resShift;
+                            // element/layout may not be ready yet (e.g. client-side less
+                            // compilation on dev), so retry until we can measure it
+                            if (!$resContainer.length || !$resElem.length || !eTop) {
+                                if (attempts < maxAttempts) {
+                                    attempts++;
+                                    setTimeout(doScroll, 80);
+                                }
+                                return;
+                            }
+                            // -100px is some space between header panel and the top position of the currently active entry
                             // it helps keep the context of the previous entry without additional scrolling
-                            resShift = $resContainer.scrollTop() + $resElem.offset()['top'] - $resContainer.offset()['top'] - 100;
-                        $resContainer.stop().animate({
-                            scrollTop: resShift
-                        }, 500);
-                    }, 100);
+                            resShift = $resContainer.scrollTop() + eTop - cTop - 100;
+                            $resContainer.stop().animate({
+                                scrollTop: resShift
+                            }, 500);
+                        };
+                    setTimeout(doScroll, 100);
                 },
                 entrySetEditingStatus = function (entry, status) {
                     if ($scope.ws_active) {
