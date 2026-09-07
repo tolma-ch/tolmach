@@ -20,7 +20,6 @@
   },
   "devDependencies": {
     "clean-css": "3.4.28",
-    "stylus": "0.52.4",
     "uglify-js": "2.8.29"
   },
   "repository": {

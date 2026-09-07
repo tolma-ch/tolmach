@@ -1,0 +1,59 @@
+@import "all/blocks/mixins";
+@import "all/blocks/footer";
+@import "all/blocks/main";
+@import "all/blocks/elements";
+@import "all/blocks/navbar";
+@import "all/blocks/projects";
+@import "all/blocks/sidebar";
+@import "all/blocks/variables";
+
+.pointer {
+  cursor: pointer;
+}
+
+.help {
+  &__fadeout-block {
+    position: absolute;
+    background: #000;
+    opacity: .8;
+    z-index: 10000;
+  }
+  &__transparent-block {
+    position: absolute;
+    z-index: 10000;
+  }
+  &__text-block {
+    position: absolute;
+    color: white;
+    font-size: 20px;
+    font-weight: 100;
+    text-align: right;
+    padding: 10px 40px 40px 10px;
+    background: right bottom url("/static/img/help_arr.png") no-repeat;
+  }
+  &__text-block-inner {
+    position: absolute;
+    color: white;
+    font-size: 20px;
+    font-weight: 100;
+    text-align: left;
+    padding: 10px 20px;
+    top: 0;
+    background: rgba(0,0,0,.7);
+  }
+  &__btns {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+  &__btns-iiner {
+
+  }
+  &__btn {
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 10px 20px;
+  }
+}

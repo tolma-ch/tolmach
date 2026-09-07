@@ -123,6 +123,7 @@ function run() {
   steps.push(compileLess('tolmach/static/less/new_landing.less', 'tolmach/static/dist/new_landing.css'));
   steps.push(compileLess('tolmach/static/less/tolmach.less', 'tmp/tolmach.css'));
   steps.push(compileLess('tolmach/static/less/tolmach-dark-bootstrap.less', 'tmp/tolmach-dark-bootstrap.css'));
+  steps.push(compileLess('tolmach/static/less/all.less', 'tolmach/static/dist/all.css'));
 
   Promise.all(steps).then(function () {
     console.log('less compiled');
@@ -145,49 +146,41 @@ function run() {
     write('tolmach/static/dist/tolmach.min.css', min.styles);
     console.log('cssmin done');
 
-    // stylus
-    var stylus = require('stylus');
-    stylus.render(read('stylus/all.styl'), { filename: path.join(ROOT, 'stylus/all.styl'), compress: true }, function (err, css) {
-      if (err) { console.error(err); process.exit(1); }
-      write('tolmach/static/dist/all.css', css);
-      console.log('stylus done');
+    // clean tmp
+    rmrf('tmp');
 
-      // clean tmp
-      rmrf('tmp');
+    // concat js
+    var glob = [];
+    function addJs(dir) {
+      if (!fs.existsSync(path.join(ROOT, dir))) return;
+      fs.readdirSync(path.join(ROOT, dir)).forEach(function (name) {
+        var p = dir + '/' + name;
+        if (fs.statSync(path.join(ROOT, p)).isDirectory()) addJs(p);
+        else if (/\.js$/.test(name)) glob.push(p);
+      });
+    }
+    addJs('tolmach/static/app');
+    // grunt used ['*.js', '**/*.js'] -> this recursive walk covers both
+    var js = glob.map(function (p) { return read(p); }).join(';');
+    write('tolmach/static/dist/app.js', js);
+    console.log('concat js done (' + glob.length + ' files)');
 
-      // concat js
-      var glob = [];
-      function addJs(dir) {
-        if (!fs.existsSync(path.join(ROOT, dir))) return;
-        fs.readdirSync(path.join(ROOT, dir)).forEach(function (name) {
-          var p = dir + '/' + name;
-          if (fs.statSync(path.join(ROOT, p)).isDirectory()) addJs(p);
-          else if (/\.js$/.test(name)) glob.push(p);
-        });
-      }
-      addJs('tolmach/static/app');
-      // grunt used ['*.js', '**/*.js'] -> this recursive walk covers both
-      var js = glob.map(function (p) { return read(p); }).join(';');
-      write('tolmach/static/dist/app.js', js);
-      console.log('concat js done (' + glob.length + ' files)');
+    // uglify
+    var uglify = require('uglify-js');
+    var result = uglify.minify(js, { fromString: true, mangle: false });
+    if (result.error) { console.error(result.error); process.exit(1); }
+    write('tolmach/static/dist/app.min.js', result.code);
+    console.log('uglify done');
 
-      // uglify
-      var uglify = require('uglify-js');
-      var result = uglify.minify(js, { fromString: true, mangle: false });
-      if (result.error) { console.error(result.error); process.exit(1); }
-      write('tolmach/static/dist/app.min.js', result.code);
-      console.log('uglify done');
+    // string-replace: cache-bust front_version
+    var baseHtml = path.join(ROOT, 'templates/main/base.html');
+    var html = fs.readFileSync(baseHtml, 'utf8');
+    var rand = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    html = html.replace(/with front_version=".+?"/g, 'with front_version="' + rand + '"');
+    fs.writeFileSync(baseHtml, html);
+    console.log('string-replace done');
 
-      // string-replace: cache-bust front_version
-      var baseHtml = path.join(ROOT, 'templates/main/base.html');
-      var html = fs.readFileSync(baseHtml, 'utf8');
-      var rand = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      html = html.replace(/with front_version=".+?"/g, 'with front_version="' + rand + '"');
-      fs.writeFileSync(baseHtml, html);
-      console.log('string-replace done');
-
-      console.log('== build complete ==');
-    });
+    console.log('== build complete ==');
   }).catch(function (e) {
     console.error('build failed:', e);
     process.exit(1);

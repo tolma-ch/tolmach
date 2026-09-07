@@ -1,0 +1,144 @@
+.user-sidebar {
+  padding-top: 30px;
+  @media (max-width: 768px) {
+    padding-top: 5px;
+    display: none;
+  }
+
+  &__info {
+    margin: 10px 0;
+    padding: 10px 0;
+    border-bottom: 1px solid @grayBorder;
+  }
+
+  &__photo {
+    margin: 0 0 10px 0;
+  }
+
+  &__img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  &__nickname {
+    color: #b5b5b5;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  &__username {
+    color: #438eb9;
+    font-size: 24px;
+    line-height: 1.1em;
+  }
+
+  &__location {
+    color: #575756;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  &__socials {
+    margin: 13px 0;
+    height: 24px;
+  }
+
+  &__social-icon {
+    background: url('/static/images/footer/social.png') no-repeat;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+
+    &_vk {
+      background-position: 0 0;
+
+      &:hover {
+        background-position: 0 -24px;
+      }
+    }
+
+    &_gp {
+      background-position: -24px 0;
+
+      &:hover {
+        background-position: -24px -24px;
+      }
+    }
+
+    &_tw {
+      background-position: -48px 0;
+
+      &:hover {
+        background-position: -48px -24px;
+      }
+    }
+
+    &_fb {
+      background-position: -72px 0;
+
+      &:hover {
+        background-position: -72px -24px;
+      }
+    }
+  }
+
+  &__questions {
+    height: 50px;
+    line-height: 40px;
+    background-color: #179cde;
+    color: white;
+    font-size: 16px;
+    margin-top: 20px;
+    padding: 4px 4px 4px 4px;
+    @media (prefers-color-scheme: dark) {
+      background-color: #818c92;
+    }
+
+    img {
+      max-width: 34px;
+      margin-left: 15%;
+    }
+  }
+
+  &__profile {
+    margin-top: 15px;
+
+    &-edit {
+      color: @grayText;
+
+      .icon-gear:before {
+        padding-right: 4px;
+      }
+
+      &:hover {
+        color: @grayText;
+
+        .icon-gear:before {
+          text-decoration: none;
+        }
+      }
+    }
+
+    &-line {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 18px;
+
+      &-title {
+        color: @grayText;
+      }
+
+      &-data {
+        color: #000;
+
+        a&:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
