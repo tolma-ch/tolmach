@@ -104,30 +104,30 @@
 //
 //		& > .open > a
 //			background transparent !important
-//			text-shadow 0 0 3px rgba(255,255,255,0.8) !important
+//		text-shadow 0 0 3px rgba(255,255,255,0.8) !important
 //
 //		&__user
 //			line-height 48px
-//			min-width 55px
+//		min-width 55px
 //
-//			& > a
-//				display inline-block
-//				height auto
-//				vertical-align middle
+//		& > a
+//			display inline-block
+//			height auto
+//			vertical-align middle
 //
 //
-//			&-photo
-//				width 40px
-//				height 40px
-//				border-radius 50%
-//				border 1px solid #fff
-//				display block
-//				position absolute
-//				top 5px
-//				left 10px
+//		&-photo
+//			width 40px
+//			height 40px
+//			border-radius 50%
+//			border 1px solid #fff
+//			display block
+//			position absolute
+//			top 5px
+//			left 10px
 //
-//			&-info
-//				margin-left 40px
+//		&-info
+//			margin-left 40px
 //
 //	&-fixed
 //		&-top,
@@ -135,38 +135,48 @@
 //			position fixed
 
 
-.breadcrumbs2
-	margin 0
-	padding: 18px 0 0;
-	@media (max-width: 600px)
-		display none
-	&__item
-		color white
-		display: inline-block
-		a
-			color white
-		&:before
-			content " "
-			display block
-			float left
-			height 24px
-			width 6px
-			margin: -2px 8px;
-			background url('/static/img/arr-breadcrumbs.png') no-repeat
-		&__text
-			display inline-block
-			white-space nowrap
-			overflow hidden
-			text-overflow ellipsis
-			-o-text-overflow ellipsis
-			@media (min-width: 1200px)
-				max-width 200px
-			@media (min-width: 992px) and (max-width: 1199px)
-				max-width 200px
-			@media (max-width: 991px)
-				max-width 100px
+.breadcrumbs2 {
+  margin: 0;
+  padding: 18px 0 0;
+  @media (max-width: 600px) {
+    display: none;
+  }
+  &__item {
+    color: white;
+    display: inline-block;
+    a {
+      color: white;
+    }
+    &:before {
+      content: " ";
+      display: block;
+      float: left;
+      height: 24px;
+      width: 6px;
+      margin: -2px 8px;
+      background: url('/static/img/arr-breadcrumbs.png') no-repeat;
+    }
+    &__text {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+      @media (min-width: 1200px) {
+        max-width: 200px;
+      }
+      @media (min-width: 992px) and (max-width: 1199px) {
+        max-width: 200px;
+      }
+      @media (max-width: 991px) {
+        max-width: 100px;
+      }
+    }
+  }
 
-	&__btn
-		display: inline-block;
-		margin: 0 10px;
-		color: white;
+  &__btn {
+    display: inline-block;
+    margin: 0 10px;
+    color: white;
+  }
+}
