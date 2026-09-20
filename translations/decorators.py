@@ -9,7 +9,10 @@ from translations.models import Text, Project
 def accept_text(func):
     def decorator(request, *args, **kwargs):
         if request.method == 'POST':
-            params = request.POST or json.loads(request.body)
+            if request.content_type == 'application/json':
+                params = json.loads(request.body)
+            else:
+                params = request.POST
         else:
             params = request.GET
 
@@ -29,7 +32,10 @@ def accept_text(func):
 def accept_project(func):
     def decorator(request, *args, **kwargs):
         if request.method == 'POST':
-            params = request.POST or json.loads(request.body)
+            if request.content_type == 'application/json':
+                params = json.loads(request.body)
+            else:
+                params = request.POST
         else:
             params = request.GET
         if 'project' not in params:
