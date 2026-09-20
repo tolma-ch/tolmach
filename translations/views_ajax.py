@@ -518,7 +518,10 @@ def text_ajax(request, project):
                        target='project:%s' % project.id)
             return HttpResponse(json.dumps(_('You have to be a manager of project')), content_type="application/json",
                                 status=400)
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
 
         if 'id' in post:
             try:
@@ -709,7 +712,10 @@ def update_text(request, text):
 @accept_text
 @login_required
 def get_translation_progress(request, text):
-    post = request.POST or json.loads(request.body)
+    if request.content_type == 'application/json':
+        post = json.loads(request.body)
+    else:
+        post = request.POST
     try:
         translation = TextTranslation.objects.get(text=text, target_lang=Language.objects.get(code_tmx=post['target_lang']))
     except TextTranslation.DoesNotExist:
@@ -775,7 +781,10 @@ def glossary_ajax(request, project):
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
         if not project.is_user_manager(request.user) and not project.is_user_editor(request.user):
             log_action(request.user, 'glossary.update', status='denied', request=request,
                        target='project:%s' % project.id)
@@ -923,7 +932,10 @@ def tmx_ajax(request, project):
             return HttpResponse(json.dumps(result), content_type="application/json")
 
     if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
         if 'project' not in post:
             return HttpResponse(json.dumps(_('Project id is not set')), content_type="application/json", status=400)
         try:
@@ -1124,7 +1136,10 @@ def entry_ajax(request, action, text):
             'total_pages': total_pages
         }
     elif request.method == 'POST':
-        params = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            params = json.loads(request.body)
+        else:
+            params = request.POST
         if action == 'vote':
             user = request.user
             vote = params['vote']
@@ -1862,7 +1877,10 @@ def tmdb_search(request):
 @login_required
 def dict_search(request):
     if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
         try:
             from urllib2 import urlopen
             from urllib import urlencode
@@ -1911,7 +1929,10 @@ def dict_search(request):
 @login_required
 def message_ajax(request, all=False):
     if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
         if 'id' not in post:
             return HttpResponse(json.dumps('Message Id is missed'), content_type="application/json", status=400)
         try:

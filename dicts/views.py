@@ -16,7 +16,10 @@ from tolmach.action_log import log_action
 @login_required
 def dict_search(request):
     if request.method == 'POST':
-        post = request.POST or json.loads(request.body)
+        if request.content_type == 'application/json':
+            post = json.loads(request.body)
+        else:
+            post = request.POST
         from urllib.error import HTTPError, URLError
         from urllib.parse import urlencode
         from urllib.request import urlopen
