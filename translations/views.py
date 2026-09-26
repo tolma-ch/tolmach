@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 import json
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ngettext, ugettext as _
+from django.utils.translation import ngettext, gettext as _
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger

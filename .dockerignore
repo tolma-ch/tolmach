@@ -1,0 +1,30 @@
+# Version control / CI metadata (not needed inside the image)
+.git
+.gitignore
+.github
+.drone.yml
+
+# JS dependencies are installed inside the image via `npm ci`
+node_modules
+
+# Python bytecode / caches
+**/__pycache__
+**/*.pyc
+**/*.pyo
+
+# Generated translation binaries (recompiled by `django-admin compilemessages`)
+**/*.mo
+**/*.pot
+
+# Local / runtime junk
+*.log
+.reload
+.env
+tmp
+.idea
+.vscode
+*.code-workspace
+
+# collectstatic output and user uploads (mounted as volumes at runtime)
+/static/
+/media/

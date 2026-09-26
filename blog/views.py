@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.urls import reverse as reverse_url
 from django.http import Http404

@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.db import transaction, IntegrityError
 from django.db.models import Q, F
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.conf import settings
@@ -1020,7 +1020,7 @@ def tmx_ajax(request, project):
 
 @login_required
 @accept_text
-def entry_ajax(request, action, text):
+def entry_ajax(request, action=None, text=None):
     result = []
     if request.method == 'GET':
         try:

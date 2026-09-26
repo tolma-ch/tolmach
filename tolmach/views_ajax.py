@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models import Q

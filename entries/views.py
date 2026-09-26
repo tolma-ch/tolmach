@@ -1,5 +1,5 @@
 # Create your views here.
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from entries.models import Language
 
 
