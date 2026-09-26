@@ -1,0 +1,204 @@
+name: Build & publish image to Yandex Container Registry
+
+# Manual only. Run it from the Actions tab ("Run workflow"); you pick the
+# branch to build from in the UI and type the version/tag to publish.
+#
+# Besides pushing the image it can create a git tag and/or a GitHub release
+# for it. Both are OFF by default; enable them with the "create_tag" and
+# "create_release" inputs. Creating a release implies creating its tag.
+#
+# NB: a tag pushed with the built-in GITHUB_TOKEN does NOT trigger other
+# workflows (GitHub prevents recursive runs). If another workflow must react to
+# the new tag, push it with a PAT instead (see the "Create and push git tag"
+# step).
+#
+# Repository setting: Settings -> Actions -> General -> Workflow permissions
+# must allow "Read and write permissions" for the tag push to succeed.
+#
+# Required repository secrets:
+#   YC_REGISTRY_USERNAME  - registry username
+#   YC_REGISTRY_PASSWORD  - registry password/token
+#
+# Yandex Container Registry accepts one of these username/password pairs:
+#   iam      + IAM token (short-lived, ~12h)
+#   oauth    + OAuth token (long-lived, good for CI)
+#   json_key + contents of a service-account authorized key (JSON)
+# So e.g. YC_REGISTRY_USERNAME=oauth, YC_REGISTRY_PASSWORD=<OAuth token>.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version / image tag to publish (e.g. 1.4.0)"
+        required: true
+        type: string
+      latest:
+        description: "Also tag this build as :latest"
+        required: false
+        type: boolean
+        default: false
+      create_tag:
+        description: "Create a git tag in the repository"
+        required: false
+        type: boolean
+        default: false
+      create_release:
+        description: "Create a GitHub release (also creates the tag)"
+        required: false
+        type: boolean
+        default: false
+      tag_name:
+        description: "Git tag name (defaults to the version input, e.g. v1.4.0)"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+# Yandex Container Registry coordinates.
+# Full image name: <REGISTRY>/<REGISTRY_ID>/<IMAGE_NAME>
+env:
+  REGISTRY: cr.yandex
+  REGISTRY_ID: crpdhfr4qpstt1phnd25
+  IMAGE_NAME: tolmach-web
+
+concurrency:
+  group: publish-${{ github.ref }}-${{ github.event.inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and push
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image tags
+        id: meta
+        env:
+          VERSION: ${{ inputs.version }}
+          LATEST: ${{ inputs.latest }}
+        run: |
+          set -euo pipefail
+          image="${REGISTRY}/${REGISTRY_ID}/${IMAGE_NAME}"
+          version="${VERSION}"
+          if [ -z "${version}" ]; then
+            echo "::error::The 'version' input is empty."
+            exit 1
+          fi
+          {
+            echo "image=${image}"
+            echo "version=${version}"
+            echo "tags<<EOF"
+            echo "${image}:${version}"
+            if [ "${LATEST}" = "true" ]; then
+              echo "${image}:latest"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          if [ "${LATEST}" = "true" ]; then
+            echo "Will publish: ${image}:${version} and ${image}:latest"
+          else
+            echo "Will publish: ${image}:${version}"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Yandex Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.YC_REGISTRY_USERNAME }}
+          password: ${{ secrets.YC_REGISTRY_PASSWORD }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+          # Registry cache is stored under a dedicated :buildcache tag.
+          # ignore-error keeps the first run (no cache yet) from failing.
+          cache-from: type=registry,ref=${{ steps.meta.outputs.image }}:buildcache,ignore-error=true
+          cache-to: type=registry,ref=${{ steps.meta.outputs.image }}:buildcache,mode=max
+          # Keep a plain single-platform image; no provenance/SBOM manifest list.
+          provenance: false
+          sbom: false
+
+      - name: Create and push git tag
+        id: tag
+        if: ${{ inputs.create_tag || inputs.create_release }}
+        env:
+          TAG_NAME: ${{ inputs.tag_name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        run: |
+          set -euo pipefail
+          tag="${TAG_NAME:-$VERSION}"
+          sha="$(git rev-parse HEAD)"
+
+          # Lightweight tag, same as the existing tags in this repository.
+          existing="$(git ls-remote origin "refs/tags/${tag}*" | awk -v r="refs/tags/${tag}" '$2 == r { print $1 }')"
+          if [ -n "${existing}" ]; then
+            if [ "${existing}" = "${sha}" ]; then
+              echo "Tag ${tag} already exists and points to ${sha}; nothing to do."
+            else
+              echo "::error::Tag ${tag} already exists and points to ${existing}, not ${sha}. Refusing to move it."
+              exit 1
+            fi
+          else
+            git tag "${tag}"
+            git push origin "refs/tags/${tag}"
+            echo "Created and pushed tag ${tag} -> ${sha}"
+          fi
+
+          echo "name=${tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        id: release
+        if: ${{ inputs.create_release }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.name }}
+          VERSION: ${{ steps.meta.outputs.version }}
+          IMAGE: ${{ steps.meta.outputs.image }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          set -euo pipefail
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; nothing to do."
+          else
+            notes="$(printf 'Published image:\n\n- `%s:%s`\n- digest: `%s`\n' "${IMAGE}" "${VERSION}" "${DIGEST}")"
+            gh release create "${TAG}" --title "${TAG}" --verify-tag --notes "${notes}"
+            echo "Created release ${TAG}"
+          fi
+          echo "url=$(gh release view "${TAG}" --json url -q .url)" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        run: |
+          {
+            echo "### Published image"
+            echo ""
+            echo "- \`${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.version }}\`"
+            if [ "${{ inputs.latest }}" = "true" ]; then
+              echo "- \`${{ steps.meta.outputs.image }}:latest\`"
+            fi
+            echo "- digest: \`${{ steps.build.outputs.digest }}\`"
+            if [ -n "${{ steps.tag.outputs.name }}" ]; then
+              echo "- git tag: \`${{ steps.tag.outputs.name }}\`"
+            fi
+            if [ -n "${{ steps.release.outputs.url }}" ]; then
+              echo "- release: ${{ steps.release.outputs.url }}"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
