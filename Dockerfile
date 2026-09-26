@@ -39,7 +39,7 @@ COPY .build/supervisor_include.conf /etc/supervisor/conf.d/tolmach.conf
 COPY .build/tolmach.ini /etc/tolmach.ini
 COPY .build/mime.types /etc/mime.types
 COPY ./requirements.txt /requirements.txt
-RUN pip3 install --no-cache-dir -r /requirements.txt && python -m nltk.downloader -d /usr/share/nltk_data punkt
+RUN pip3 install --no-cache-dir -r /requirements.txt && python -m nltk.downloader -d /usr/share/nltk_data punkt punkt_tab
 
 ENV HOME=/var/www
 WORKDIR /var/www/tolma.ch
