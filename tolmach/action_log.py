@@ -63,7 +63,7 @@ def _username(user):
 def _level_for(status):
     if status == 'error':
         return logging.ERROR
-    elif status in ('failed', 'denied'):
+    elif status in ('warning', 'failed', 'denied'):
         return logging.WARNING
     return logging.INFO
 
@@ -77,7 +77,8 @@ def log_action(user, action, status='success', request=None, detail=None,
         log_action(request.user, 'project.create', status='success',
                    request=request, target='project:42', detail={'lang': 'ru'})
 
-    ``status`` is one of ``success``, ``failed``, ``denied``, ``error``.
+    ``status`` is one of ``success``, ``warning``, ``failed``, ``denied``,
+    ``error`` (``warning``/``failed``/``denied`` log at WARNING level).
     ``start_time`` is optional and, when given, adds ``duration_ms``.
     """
     duration_ms = None

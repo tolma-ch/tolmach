@@ -242,6 +242,7 @@ SOCIAL_AUTH_PROVIDERS = [
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
+    'tolmach.pipeline.normalize_email',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
