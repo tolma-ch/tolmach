@@ -3,7 +3,7 @@
 import json
 import re
 from django.contrib.auth import logout as auth_logout
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect, HttpResponse, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -92,7 +92,7 @@ def user_page(request, username):
 
 
 @login_required
-def settings_page(request, sett_type):
+def settings_page(request, sett_type=None):
     print("SETTINGS:", sett_type)
     if not sett_type:
         return HttpResponseRedirect('/settings/profile/')
