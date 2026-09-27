@@ -596,8 +596,8 @@ def validate_email_confirmation_token_ajax(request, token):
         log_action(user_meta.user, 'user.email_confirm', status='success', request=request)
         
         return render(request, 'tolmach/email_confirm_success.html', {
-            'email': request.user.email,
-            'username': request.user.username
+            'email': user_meta.user.email,
+            'username': user_meta.user.username
         })
         
     except UserMeta.DoesNotExist:
