@@ -2,10 +2,9 @@
 
 import json, sys
 from background_task import background
-import logging, time
+import logging
 
 logger = logging.getLogger()
-logging.Formatter.converter = time.gmtime
 logger.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)

@@ -13,6 +13,12 @@ class JsonFormatter(logging.Formatter):
     caller passed them via the ``extra`` argument of a logging call.
     """
 
+    # Timestamps follow the process timezone: Django sets ``TZ`` from
+    # ``settings.TIME_ZONE`` and calls ``tzset()``, so audit entries match the
+    # uwsgi request log.  Set explicitly so a global
+    # ``logging.Formatter.converter`` override cannot silently push them to UTC.
+    converter = time.localtime
+
     def __init__(self, fmt=None, datefmt=None, extra_fields=None):
         super(JsonFormatter, self).__init__(fmt, datefmt)
         self.extra_fields = extra_fields or ()
