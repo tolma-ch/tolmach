@@ -2001,7 +2001,7 @@ def user_ajax(request):
             if 'lastName' in post:
                 request.user.last_name = post['lastName']
             if 'username' in post:
-                username = post['username'].strip()
+                username = (post['username'] or '').strip()
                 if username and User.objects.exclude(pk=request.user.pk).filter(username__iexact=username).exists():
                     log_action(request.user, 'user.profile_update', status='failed', request=request,
                                detail={'reason': 'duplicate_username'})
@@ -2009,7 +2009,7 @@ def user_ajax(request):
                                         content_type="application/json", status=400)
                 request.user.username = username
             if 'email' in post:
-                email = post['email'].strip() or None
+                email = (post['email'] or '').strip() or None
                 if email and User.objects.exclude(pk=request.user.pk).filter(email__iexact=email).exists():
                     log_action(request.user, 'user.profile_update', status='failed', request=request,
                                detail={'reason': 'duplicate_email'})
