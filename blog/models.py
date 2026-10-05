@@ -24,7 +24,7 @@ class Post(models.Model):
     slug = AutoSlugField(populate_from='title')
     date = models.DateTimeField(default=timezone.now)
     content = MarkdownxField()
-    language = models.ForeignKey(Language, on_delete=None)
+    language = models.ForeignKey(Language, on_delete=models.DO_NOTHING)
     categories = models.ManyToManyField(Category, blank=True)
     published = models.BooleanField()
 

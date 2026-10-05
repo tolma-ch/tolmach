@@ -1,6 +1,6 @@
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}
-{% load staticfiles %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en" ng-app="tolmachApp">
     <head>
@@ -92,7 +92,7 @@
         <script type="text/javascript">
             window['getHost'] = "{{request.get_host }}";
             window['isHttps'] = {{request.is_secure|lower }};
-            window['baseDomain'] = "{% ifequal request.is_secure|lower true %}https{% else %}http{% endifequal %}://{{request.get_host }}";
+            window['baseDomain'] = "{% if request.is_secure %}https{% else %}http{% endif %}://{{request.get_host }}";
         </script>
 
         {% if base_domain == 'https://tolma.ch' %}
