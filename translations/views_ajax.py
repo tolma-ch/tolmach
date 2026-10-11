@@ -1686,6 +1686,24 @@ def glossary_filter_entry_ajax(request):
         return HttpResponse(json.dumps(post), content_type="application/json")
 
 
+# Yandex Cloud machine translation. Yandex normally answers in well under a
+# second, so a short (connect, read) timeout keeps a stalled provider from
+# occupying a uwsgi worker until the reverse proxy gives up with a 504.
+YA_TRANSLATE_URL = 'https://translate.api.cloud.yandex.net/translate/v2/translate'
+YA_TRANSLATE_TIMEOUT = (3, 10)
+
+
+def _ya_translate_failure(request, reason, http_status, message, audit_status='error', detail=None):
+    """Record a failed machine-translation call and return a sanitized error.
+
+    The provider's own response body is never forwarded to the client (it can
+    contain internals); it is only summarised in the audit log.
+    """
+    log_action(request.user, 'entry.yandex_translate', status=audit_status, request=request,
+               detail=dict(detail or {}, reason=reason))
+    return HttpResponse(json.dumps(message), content_type="application/json", status=http_status)
+
+
 @login_required
 def yandex_translate_ajax(request):
     if request.method == 'POST':
@@ -1731,15 +1749,32 @@ def yandex_translate_ajax(request):
             'Authorization': f'Api-Key {api_key}',
         }
         # print(headers)
-        response = requests.post('https://translate.api.cloud.yandex.net/translate/v2/translate', headers=headers,
-                                 data=data)
+        try:
+            response = requests.post(YA_TRANSLATE_URL, headers=headers, data=data,
+                                     timeout=YA_TRANSLATE_TIMEOUT)
+        except requests.exceptions.Timeout:
+            return _ya_translate_failure(
+                request, 'provider_timeout', 504,
+                _('The translation service did not respond in time. Please try again.'))
+        except requests.exceptions.RequestException as exc:
+            return _ya_translate_failure(
+                request, 'provider_unreachable', 502,
+                _('The translation service is temporarily unavailable. Please try again later.'),
+                detail={'error': type(exc).__name__})
 
-        if response.status_code == 200:
+        if response.status_code != 200:
+            return _ya_translate_failure(
+                request, 'provider_error', 502,
+                _('The translation service returned an error. Please try again later.'),
+                audit_status='failed', detail={'status_code': response.status_code})
+
+        try:
             translated_body = response.json()['translations'][0]['text']
-        else:
-            log_action(request.user, 'entry.yandex_translate', status='failed', request=request,
-                       detail={'reason': 'provider_error', 'status_code': response.status_code})
-            return HttpResponse(json.dumps(response.text), content_type="application/json", status=response.status_code)
+        except (ValueError, KeyError, IndexError, TypeError):
+            return _ya_translate_failure(
+                request, 'bad_provider_response', 502,
+                _('The translation service returned an unexpected response. Please try again later.'),
+                audit_status='failed')
 
         str_to_return = translated_body
 
