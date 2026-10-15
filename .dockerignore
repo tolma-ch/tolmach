@@ -7,6 +7,14 @@
 # JS dependencies are installed inside the image via `npm ci`
 node_modules
 
+# Generated frontend assets (built in the Dockerfile `assets` stage)
+tolmach/static/assets/
+tolmach/static/dist/
+tolmach/static/js/bootstrap.min.js
+tolmach/static/js/jquery-2.0.3.min.js
+tolmach/static/js/reconnecting-websocket.min.js
+tolmach/static/js/screenfull.js
+
 # Python bytecode / caches
 **/__pycache__
 **/*.pyc
