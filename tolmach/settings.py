@@ -1,7 +1,6 @@
 # Django settings for tolmach project.
 
 import os, slugify
-import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -179,7 +178,6 @@ ROOT_URLCONF = 'tolmach.urls'
 WSGI_APPLICATION = 'tolmach.wsgi.application'
 
 INSTALLED_APPS = (
-    'raven.contrib.django.raven_compat',
     #'south',
     'tolmach',
     'translations',
@@ -257,21 +255,6 @@ SOCIAL_AUTH_PIPELINE = (
 
     'tolmach.pipeline.update_user_social_data',
 )
-
-SENTRY_URL = os.environ.get('SENTRY_URL', '')
-
-try:
-    # `.git` is excluded from the Docker build context, so this can fail there.
-    RAVEN_RELEASE = raven.fetch_git_sha(BASE_DIR)
-except Exception:
-    RAVEN_RELEASE = None
-
-RAVEN_CONFIG = {
-    'dsn': SENTRY_URL,
-    # If you are using git, you can also automatically configure the
-    # release based on the git info.
-    'release': RAVEN_RELEASE,
-}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

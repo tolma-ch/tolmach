@@ -230,11 +230,7 @@ def update_text():
     return json.dumps({'Result': utils.update_text(text_id, user_id, data, file_name, document_format)})
 
 
-sent_app = app()
-sent_app.catchall = False
-from raven import Client
-from raven.contrib.bottle import Sentry
-client = Client(os.environ.get('CHTEC_SENTRY_URL', ''))
-sent_app = Sentry(sent_app, client)
+bottle_app = app()
+bottle_app.catchall = False
 
-run(host=HOST, port=8080, server="gunicorn", workers=10, debug=True, app=sent_app, timeout=WORKER_TIMEOUT)
+run(host=HOST, port=8080, server="gunicorn", workers=10, debug=True, app=bottle_app, timeout=WORKER_TIMEOUT)
