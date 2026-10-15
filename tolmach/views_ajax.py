@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -596,8 +596,8 @@ def validate_email_confirmation_token_ajax(request, token):
         log_action(user_meta.user, 'user.email_confirm', status='success', request=request)
         
         return render(request, 'tolmach/email_confirm_success.html', {
-            'email': request.user.email,
-            'username': request.user.username
+            'email': user_meta.user.email,
+            'username': user_meta.user.username
         })
         
     except UserMeta.DoesNotExist:

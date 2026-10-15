@@ -21,6 +21,19 @@ def validate_username_from_social(strategy, details, *args, **kwargs):
         details['username'] = ensure_valid_username(username)
 
 
+def normalize_email(details, *args, **kwargs):
+    """Store a missing social email as NULL instead of an empty string.
+
+    Some providers (VK in particular) return no email at all when the user
+    has none or when the app was not granted the `email` scope; the backend
+    then hands back `""`.  Empty strings collide with the
+    `auth_user_email_uniq` index, while MySQL treats NULLs as distinct, so
+    several accounts without an email can coexist (see migration 0023).
+    """
+    email = (details.get('email') or '').strip()
+    details['email'] = email or None
+
+
 def update_user_social_data(strategy, *args, **kwargs):
     """Set the name and avatar for a user only if is new.
     """

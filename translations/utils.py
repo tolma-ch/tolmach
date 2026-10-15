@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import re
 import os
 import json
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q

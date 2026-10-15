@@ -13,6 +13,12 @@ class JsonFormatter(logging.Formatter):
     caller passed them via the ``extra`` argument of a logging call.
     """
 
+    # Timestamps follow the process timezone: Django sets ``TZ`` from
+    # ``settings.TIME_ZONE`` and calls ``tzset()``, so audit entries match the
+    # uwsgi request log.  Set explicitly so a global
+    # ``logging.Formatter.converter`` override cannot silently push them to UTC.
+    converter = time.localtime
+
     def __init__(self, fmt=None, datefmt=None, extra_fields=None):
         super(JsonFormatter, self).__init__(fmt, datefmt)
         self.extra_fields = extra_fields or ()
@@ -63,7 +69,7 @@ def _username(user):
 def _level_for(status):
     if status == 'error':
         return logging.ERROR
-    elif status in ('failed', 'denied'):
+    elif status in ('warning', 'failed', 'denied'):
         return logging.WARNING
     return logging.INFO
 
@@ -77,7 +83,8 @@ def log_action(user, action, status='success', request=None, detail=None,
         log_action(request.user, 'project.create', status='success',
                    request=request, target='project:42', detail={'lang': 'ru'})
 
-    ``status`` is one of ``success``, ``failed``, ``denied``, ``error``.
+    ``status`` is one of ``success``, ``warning``, ``failed``, ``denied``,
+    ``error`` (``warning``/``failed``/``denied`` log at WARNING level).
     ``start_time`` is optional and, when given, adds ``duration_ms``.
     """
     duration_ms = None

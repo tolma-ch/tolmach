@@ -23,6 +23,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='post',
             name='language',
-            field=models.ForeignKey(on_delete=None, to='entries.Language'),
+            field=models.ForeignKey(on_delete=models.DO_NOTHING, to='entries.Language'),
         ),
     ]

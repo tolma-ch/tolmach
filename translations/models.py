@@ -5,9 +5,27 @@ from django.db import models
 import math, json, re
 from simple_history.models import HistoricalRecords
 
-from channels import Group
-
 from entries.models import Language
+
+
+class WebsocketGroup:
+    """Compatibility shim for the old Channels 1 ``Group`` API.
+
+    The codebase calls ``translation.websocket_group.send({...})`` from plain
+    (sync) Django code. With Channels 2+ that maps onto ``group_send`` through
+    the configured channel layer.
+    """
+
+    def __init__(self, name):
+        self.name = name
+
+    def send(self, message):
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
+        payload = dict(message)
+        payload.setdefault("type", "translation.message")
+        async_to_sync(get_channel_layer().group_send)(self.name, payload)
 
 
 def random_string(length=30):
@@ -455,12 +473,17 @@ class TextTranslation(models.Model):
             return translated_chars, translated_chars_without_spaces, users_translated
 
     @property
+    def websocket_group_name(self):
+        """Name of the channel-layer group used to broadcast translation edits."""
+        return "text-translation-%d" % self.id
+
+    @property
     def websocket_group(self):
         """
-        Returns the Channels Group that sockets should subscribe to to get sent
-        messages as they are generated.
+        Returns the group sockets should subscribe to to get sent messages as
+        they are generated.
         """
-        return Group("text-translation-%d" % self.id)
+        return WebsocketGroup(self.websocket_group_name)
 
 
 class TextTranslationMeta(models.Model):

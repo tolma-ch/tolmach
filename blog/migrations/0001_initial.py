@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('content', markdownx.models.MarkdownxField()),
                 ('published', models.BooleanField()),
                 ('categories', models.ManyToManyField(blank=True, to='blog.Category')),
-                ('language', models.ForeignKey(default=None, on_delete=None, to='entries.Language')),
+                ('language', models.ForeignKey(default=None, on_delete=models.DO_NOTHING, to='entries.Language')),
             ],
         ),
     ]

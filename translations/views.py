@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 import json
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ngettext, ugettext as _
+from django.utils.translation import ngettext, gettext as _
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -604,7 +604,7 @@ def export_glossary(request, glossary_id):
 
     from openpyxl import Workbook
     from openpyxl.styles import Alignment
-    from openpyxl.worksheet.write_only import WriteOnlyCell
+    from openpyxl.cell import WriteOnlyCell
 
     wb = Workbook(write_only=True)
     ws = wb.create_sheet()

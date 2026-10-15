@@ -391,8 +391,12 @@
                         entry.yaMachines = [{
                             text: data
                         }];
-                    }).error(function (a) {
-                        //console.error(a);
+                    }).error(function (data, status) {
+                        // Machine translation is only a helper: calm down to an
+                        // empty list instead of leaving the user waiting, and
+                        // keep the (sanitized) reason in the console.
+                        entry.yaMachines = [];
+                        console.warn('Machine translation unavailable (' + status + ')', data);
                     });
                 },
                 getTmdbVariants = function (entry) {

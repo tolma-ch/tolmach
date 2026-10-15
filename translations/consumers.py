@@ -1,73 +1,100 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-from __future__ import print_function
 import json
-from channels.channel import Group
-from channels.auth import channel_session_user_from_http, channel_session_user
 
-from translations.models import TextTranslation, Text, Project, TextTranslationUserPosition
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+
 from entries.models import Language
+from translations.models import Text, TextTranslation, TextTranslationUserPosition
 
 
-@channel_session_user_from_http
-def ws_text_translation_connect(message, text_id, target_lang):
-    message.reply_channel.send({"accept": True})
-    # чекаем, что парню можно в этот текст и транслейшон
-    # и если да, то получаем группу нужного транслейшона и подключаем чувака туда
+class WsTextTranslationConsumer(AsyncWebsocketConsumer):
+    """Realtime translation editing over WebSocket (Channels 2+).
 
-    try:
-        text = Text.objects.get(id=text_id)
-    except Text.DoesNotExist:
-        message.reply_channel.send({"close": True})
-    if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
-        message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code_tmx=target_lang)
-    translation = TextTranslation.objects.get(text=text, target_lang=lang)
+    Replaces the old three Channels 1 handlers
+    (``ws_text_translation_connect`` / ``_message`` / ``_disconnect``).
+    """
 
-    translation.websocket_group.add(message.reply_channel)
+    async def connect(self):
+        self.text_id = self.scope["url_route"]["kwargs"]["text_id"]
+        self.target_lang = self.scope["url_route"]["kwargs"]["target_lang"]
+        self.group_name = None
 
-@channel_session_user
-def ws_text_translation_message(message, text_id, target_lang):
-    try:
-        text = Text.objects.get(id=text_id)
-    except Text.DoesNotExist:
-        message.reply_channel.send({"close": True})
-    if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
-        message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code_tmx=target_lang)
-    translation = TextTranslation.objects.get(text=text, target_lang=lang)
-    if 'current_edit_start' in message.content['text'] or 'current_edit_stop' in message.content['text']:
-        translation.websocket_group.send({'text': json.dumps(
-            json.loads(message.content['text'])['text']
-        )})
+        user = self.scope["user"]
+        if not user.is_authenticated:
+            await self.close()
+            return
 
-        if 'current_edit_start' in message.content['text']:
-            pos, created = TextTranslationUserPosition.objects.get_or_create(
-                user=message.user,
-                translation=translation
-            )
+        translation = await self._get_translation(user)
+        if translation is None:
+            await self.close()
+            return
 
-            pos.page = json.loads(message.content['text'])['text']['page']
-            pos.fragment = json.loads(message.content['text'])['text']['fragment']
-            pos.save()
+        self.group_name = translation.websocket_group_name
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
 
+    async def disconnect(self, close_code):
+        if not self.group_name:
+            return
+        user = self.scope["user"]
+        await self.channel_layer.group_send(self.group_name, {
+            "type": "translation.message",
+            "text": json.dumps({
+                "current_edit_start": 0,
+                "user": user.id,
+            }),
+        })
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
-@channel_session_user
-def ws_text_translation_disconnect(message, text_id, target_lang):
-    try:
-        text = Text.objects.get(id=text_id)
-    except Text.DoesNotExist:
-        message.reply_channel.send({"close": True})
-    if not text.is_user_allowed_to_read(message.user) and not message.user.is_staff:
-        message.reply_channel.send({"close": True})
-    lang = Language.objects.get(code_tmx=target_lang)
-    translation = TextTranslation.objects.get(text=text, target_lang=lang)
+    async def receive(self, text_data=None, bytes_data=None):
+        if text_data is None:
+            return
+        user = self.scope["user"]
+        if not user.is_authenticated:
+            return
 
-    translation.websocket_group.send({'text': json.dumps(
-        {
-            'current_edit_start': 0,
-            'user': message.user.id
-        }
-    )})
-    translation.websocket_group.discard(message.reply_channel)
+        translation = await self._get_translation(user)
+        if translation is None:
+            await self.close()
+            return
+
+        if "current_edit_start" not in text_data and "current_edit_stop" not in text_data:
+            return
+
+        payload = json.loads(text_data)["text"]
+        await self.channel_layer.group_send(self.group_name, {
+            "type": "translation.message",
+            "text": json.dumps(payload),
+        })
+
+        if "current_edit_start" in text_data:
+            await self._save_position(user, translation, payload)
+
+    async def translation_message(self, event):
+        await self.send(text_data=event["text"])
+
+    @database_sync_to_async
+    def _get_translation(self, user):
+        try:
+            text = Text.objects.get(id=self.text_id)
+        except (Text.DoesNotExist, ValueError, TypeError):
+            return None
+        if not text.is_user_allowed_to_read(user) and not user.is_staff:
+            return None
+        try:
+            lang = Language.objects.get(code_tmx=self.target_lang)
+            return TextTranslation.objects.get(text=text, target_lang=lang)
+        except (Language.DoesNotExist, TextTranslation.DoesNotExist):
+            return None
+
+    @database_sync_to_async
+    def _save_position(self, user, translation, payload):
+        pos, created = TextTranslationUserPosition.objects.get_or_create(
+            user=user,
+            translation=translation,
+        )
+        pos.page = payload["page"]
+        pos.fragment = payload["fragment"]
+        pos.save()

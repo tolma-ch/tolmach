@@ -1,7 +1,6 @@
 # Django settings for tolmach project.
 
 import os, slugify
-import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -57,7 +56,7 @@ DOMAIN = os.environ.get("DOMAIN", "tolma.ch")
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [DOMAIN]
-WS_HOST = ("wss" if PORT == 443 else "ws") + f"://{DOMAIN}"
+WS_HOST = os.environ.get("WS_HOST") or (("wss" if PORT == 443 else "ws") + f"://{DOMAIN}")
 SERVER_EMAIL = f'noreply@email.{DOMAIN}'
 
 LOGOUT_REDIRECT_URL = "/"
@@ -94,6 +93,9 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
+
+# Keep the historical integer AutoField primary keys (silences models.W042).
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
@@ -176,7 +178,6 @@ ROOT_URLCONF = 'tolmach.urls'
 WSGI_APPLICATION = 'tolmach.wsgi.application'
 
 INSTALLED_APPS = (
-    'raven.contrib.django.raven_compat',
     #'south',
     'tolmach',
     'translations',
@@ -239,6 +240,7 @@ SOCIAL_AUTH_PROVIDERS = [
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
+    'tolmach.pipeline.normalize_email',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
     'social_core.pipeline.social_auth.social_user',
@@ -253,16 +255,6 @@ SOCIAL_AUTH_PIPELINE = (
 
     'tolmach.pipeline.update_user_social_data',
 )
-
-SENTRY_URL = os.environ.get('SENTRY_URL', '')
-
-RAVEN_CONFIG = {
-    'dsn': SENTRY_URL,
-    # If you are using git, you can also automatically configure the
-    # release based on the git info.
-    'release': raven.fetch_git_sha(BASE_DIR),
-    #'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
-}
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -369,17 +361,17 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
 # Channel layer definitions
-# http://channels.readthedocs.org/en/latest/deploying.html#setting-up-a-channel-backend
+# https://channels.readthedocs.io/en/latest/topics/channel_layers.html
 CHANNEL_LAYERS = {
     "default": {
-        # This example app uses the Redis channel layer implementation asgi_redis
-        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [(redis_host, 6379)],
         },
-       "ROUTING": "tolmach.routing.channel_routing", # We will create it in a moment
     },
 }
+
+ASGI_APPLICATION = "tolmach.asgi.application"
 
 
 from django.urls import reverse_lazy
