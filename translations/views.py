@@ -604,7 +604,7 @@ def export_glossary(request, glossary_id):
 
     from openpyxl import Workbook
     from openpyxl.styles import Alignment
-    from openpyxl.worksheet.write_only import WriteOnlyCell
+    from openpyxl.cell import WriteOnlyCell
 
     wb = Workbook(write_only=True)
     ws = wb.create_sheet()

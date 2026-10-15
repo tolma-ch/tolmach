@@ -179,7 +179,7 @@ def uni_export(text_id, target_lang, export_id, export_pairs=False, export_as_po
 def export_text_pairs_xlsx(text, text_translation):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment
-    from openpyxl.worksheet.write_only import WriteOnlyCell
+    from openpyxl.cell import WriteOnlyCell
 
     wb = Workbook(write_only=True)
     ws = wb.create_sheet()
