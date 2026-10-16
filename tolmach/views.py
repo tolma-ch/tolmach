@@ -361,8 +361,8 @@ def invite_urls_og_image(request, invite_type, invite_id):
         ),
         max_line_length
     ).upper()
-    # w, h = font.getsize(text)
-    w, h = draw.multiline_textsize(text, project_name_font)
+    bbox = draw.multiline_textbbox((0, 0), text, font=project_name_font)
+    w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
     outline = 30
 
     # drawing project name
@@ -374,7 +374,8 @@ def invite_urls_og_image(request, invite_type, invite_id):
 
     owner_x = x
     owner_y = y + h + outline + 14
-    owner_w, owner_h = draw.multiline_textsize(project_owner_text, project_owner_font)
+    owner_bbox = draw.multiline_textbbox((0, 0), project_owner_text, font=project_owner_font)
+    owner_w, owner_h = owner_bbox[2] - owner_bbox[0], owner_bbox[3] - owner_bbox[1]
     # drawing owner name
     draw.rectangle((owner_x, owner_y, owner_x + owner_w + outline, owner_y + owner_h + outline),
                    fill=(0, 0, 0, 138))
