@@ -2037,7 +2037,12 @@ def user_ajax(request):
                 request.user.last_name = post['lastName']
             if 'username' in post:
                 username = (post['username'] or '').strip()
-                if username and User.objects.exclude(pk=request.user.pk).filter(username__iexact=username).exists():
+                if not username:
+                    log_action(request.user, 'user.profile_update', status='failed', request=request,
+                               detail={'reason': 'empty_username'})
+                    return HttpResponse(json.dumps(_("Username cannot be empty")),
+                                        content_type="application/json", status=400)
+                if User.objects.exclude(pk=request.user.pk).filter(username__iexact=username).exists():
                     log_action(request.user, 'user.profile_update', status='failed', request=request,
                                detail={'reason': 'duplicate_username'})
                     return HttpResponse(json.dumps(_("This username is already used, try find another one")),
