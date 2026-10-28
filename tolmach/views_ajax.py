@@ -291,8 +291,10 @@ def global_search_ajax(request):
 
 
 import re
+import socket
 # from urllib.request import urlopen
 import urllib.request, urllib.error
+from urllib.parse import urlsplit
 from bs4 import BeautifulSoup
 
 class OpenGraph(dict):
@@ -330,7 +332,7 @@ class OpenGraph(dict):
         """
         """
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36","X-Requested-With": "XMLHttpRequest"})
-        raw = urllib.request.urlopen(req)
+        raw = urllib.request.urlopen(req, timeout=10)
         html = raw.read()
         return self.parser(html)
 
@@ -409,18 +411,90 @@ class OpenGraph(dict):
 
 @login_required
 def get_url_og_meta(request):
-    if request.method == 'POST':
-        post = json.loads(request.body)
-        try:
-            ogp = OpenGraph(post["url"])
-        except urllib.error.HTTPError as exception:
-            err_msg = f"{exception.code}: {exception.reason}"
-            return HttpResponse(
-                _(f"Sorry, we could not reach the url. Error '{err_msg}'. If everything is working fine on your side, please save the page to your computer and upload it as a file."),
-                status=exception.code
-            )
+    if request.method != 'POST':
+        return HttpResponse(status=405)
 
-        return HttpResponse(ogp.to_json(), content_type="application/json")
+    try:
+        post = json.loads(request.body)
+    except ValueError:
+        log_action(request.user, 'entry.og_fetch', status='failed', request=request,
+                   detail={'reason': 'invalid_request'})
+        return HttpResponse(
+            _("Sorry, we could not read the request. Please try again."),
+            content_type="text/plain",
+            status=400
+        )
+
+    value = post.get('url') if isinstance(post, dict) else None
+    raw_url = value.strip() if isinstance(value, str) else ''
+    if not raw_url:
+        log_action(request.user, 'entry.og_fetch', status='failed', request=request,
+                   detail={'url': value, 'reason': 'missing_url'})
+        return HttpResponse(
+            _("Sorry, no url was provided. Please paste a link to the page."),
+            content_type="text/plain",
+            status=400
+        )
+
+    # The client-side check allows scheme-less urls (e.g. "example.com/page"),
+    # but urllib.request requires a scheme; without one it raises ValueError
+    # ("unknown url type"). Default such urls to http, and reject any other
+    # scheme so we never fetch file://, ftp:// etc.
+    fetch_url = raw_url
+
+    def _log_failed(reason, **extra):
+        # Always record exactly what the user submitted ("url"), plus the
+        # normalized url we actually fetched ("fetch_url") when it differs.
+        detail = {'url': raw_url, 'reason': reason}
+        if fetch_url != raw_url:
+            detail['fetch_url'] = fetch_url
+        detail.update(extra)
+        log_action(request.user, 'entry.og_fetch', status='failed',
+                   request=request, detail=detail)
+
+    scheme = urlsplit(raw_url).scheme
+    if not scheme:
+        fetch_url = 'http://' + raw_url
+    elif scheme not in ('http', 'https'):
+        _log_failed('unsupported_scheme', scheme=scheme)
+        return HttpResponse(
+            _("Sorry, only http:// and https:// links are supported."),
+            content_type="text/plain",
+            status=400
+        )
+
+    try:
+        ogp = OpenGraph(fetch_url)
+    except urllib.error.HTTPError as exception:
+        _log_failed('http_error', error=exception.code)
+        err_msg = f"{exception.code}: {exception.reason}"
+        return HttpResponse(
+            _(f"Sorry, we could not reach the url. Error '{err_msg}'. If everything is working fine on your side, please save the page to your computer and upload it as a file."),
+            status=exception.code
+        )
+    except (urllib.error.URLError, OSError, ValueError) as exception:
+        reason = getattr(exception, 'reason', exception)
+        if isinstance(reason, socket.timeout):
+            error_reason = 'timeout'
+        elif isinstance(reason, socket.gaierror):
+            error_reason = 'dns_error'
+        elif isinstance(exception, ValueError):
+            error_reason = 'unknown_url_type'
+        else:
+            error_reason = str(reason)
+        _log_failed(error_reason, error=type(exception).__name__)
+        return HttpResponse(
+            _("Sorry, we could not reach the url. Please check the link and try again. If everything is working fine on your side, please save the page to your computer and upload it as a file."),
+            content_type="text/plain",
+            status=400
+        )
+
+    detail = {'url': raw_url}
+    if fetch_url != raw_url:
+        detail['fetch_url'] = fetch_url
+    log_action(request.user, 'entry.og_fetch', status='success', request=request,
+               detail=detail)
+    return HttpResponse(ogp.to_json(), content_type="application/json")
 
 
 @login_required
