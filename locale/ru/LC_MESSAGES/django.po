@@ -1851,9 +1851,28 @@ msgstr "участник"
 msgid "Sorry, no such project here!"
 msgstr "Простите, проект не найден"
 
-#: tolmach/views.py:472
-msgid "This username or email is already registered"
+#: tolmach/views.py:430
+msgid ""
+"This username is already taken. Usernames are case-insensitive, so please "
+"choose another one."
 msgstr ""
+"Это имя пользователя уже занято. Имена пользователей не различают регистр, "
+"поэтому выберите другое."
+
+#: tolmach/views.py:436
+msgid ""
+"This email is already registered. Try logging in or resetting your password."
+msgstr ""
+"Этот адрес электронной почты уже зарегистрирован. Попробуйте войти или "
+"сбросить пароль."
+
+#: tolmach/views.py:452
+msgid ""
+"Registration failed because this username or email is already in use. Try "
+"logging in, or choose a different username."
+msgstr ""
+"Регистрация не удалась: это имя пользователя или адрес электронной почты уже "
+"используются. Войдите или выберите другое имя пользователя."
 
 #: tolmach/views.py:477
 #, fuzzy

@@ -1945,8 +1945,21 @@ msgstr ""
 msgid "Sorry, no such project here!"
 msgstr ""
 
-#: tolmach/views.py:472
-msgid "This username or email is already registered"
+#: tolmach/views.py:430
+msgid ""
+"This username is already taken. Usernames are case-insensitive, so please "
+"choose another one."
+msgstr ""
+
+#: tolmach/views.py:436
+msgid ""
+"This email is already registered. Try logging in or resetting your password."
+msgstr ""
+
+#: tolmach/views.py:452
+msgid ""
+"Registration failed because this username or email is already in use. Try "
+"logging in, or choose a different username."
 msgstr ""
 
 #: tolmach/views.py:477
