@@ -418,6 +418,27 @@ def handler500(request):
 EMAIL_RE = re.compile(r'^[^@]+@[^@]+\.[^@]+$')
 
 
+def _register_conflict(username, email):
+    """Return ``(message, reason)`` if the username/email is taken, else None.
+
+    Usernames and emails are compared case-insensitively by the database, so
+    ``Aleksandr`` conflicts with an existing ``aleksandr``.
+    """
+    if username and User.objects.filter(username__iexact=username).exists():
+        return (
+            _("This username is already taken. Usernames are case-insensitive, "
+              "so please choose another one."),
+            'duplicate_username',
+        )
+    if email and User.objects.filter(email__iexact=email).exists():
+        return (
+            _("This email is already registered. Try logging in or resetting "
+              "your password."),
+            'duplicate_email',
+        )
+    return None, None
+
+
 def register(request):
     if request.method == "GET":
         raise Http404()
@@ -454,6 +475,17 @@ def register(request):
         }
         return HttpResponse(json.dumps(answer), content_type='application/json', status=400)
 
+    message, reason = _register_conflict(username, email)
+    if message:
+        log_action(None, 'user.register', status='failed', request=request,
+                   detail={'username': username, 'email': email, 'reason': reason})
+        answer = {
+            'status': '1',
+            'message': message,
+            'redirect': '',
+        }
+        return HttpResponse(json.dumps(answer), content_type='application/json', status=400)
+
     try:
         new_user = User.objects.create_user(username, email, password)
         user = authenticate(username=username, password=password)
@@ -467,10 +499,21 @@ def register(request):
         # return HttpResponseRedirect("/")
         # Redirect to a success page.
     except IntegrityError:
+        # A concurrent request may have taken the username/email after the
+        # pre-check above, so resolve the conflict again before answering.
+        message, reason = _register_conflict(username, email)
+        if not message:
+            # The conflicting row is gone already (or the collision is not on
+            # username/email), so we cannot name the field. Keep the answer
+            # actionable instead of just saying that something is taken.
+            message = _(
+                "Registration failed because this username or email is already "
+                "in use. Try logging in, or choose a different username."
+            )
+            reason = 'duplicate_email_or_username'
         log_action(None, 'user.register', status='failed', request=request,
-                   detail={'username': username, 'email': email, 'reason': 'duplicate_email_or_username'})
+                   detail={'username': username, 'email': email, 'reason': reason})
         status = "1"
-        message = _("This username or email is already registered")
     except:
         log_action(None, 'user.register', status='error', request=request,
                    detail={'username': username, 'reason': 'unhandled_exception'})
