@@ -2,7 +2,6 @@
 .git
 .gitignore
 .github
-.drone.yml
 
 # JS dependencies are installed inside the image via `npm ci`
 node_modules
