@@ -22,29 +22,29 @@ from entries.models import Language
 RU_U = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ…“”«»()'\" "
 RU_L = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя…«»“”()'\" "
 
-EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\-.…“”«»()'\" "
-EN_L = "abcdefghijklmnopqrstuvwxyz\-.…“”«»()'\" "
+EN_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\\-.…“”«»()'\" "
+EN_L = "abcdefghijklmnopqrstuvwxyz\\-.…“”«»()'\" "
 EN_IGN = "(?!Mr|mr|Mrs|mrs|Ms|ms|Dr|dr|Jr|jr|Sr|sr)"
 
 # http://german.about.com/od/pronunciation/a/The-German-Alphabet.htm
-DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\-…“”«»()'\" "
-DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\-…“”«»()'\" "
+DE_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜẞ\\-…“”«»()'\" "
+DE_L = "abcdefghijklmnopqrstuvwxyzäöüß\\-…“”«»()'\" "
 
 # http://french.about.com/od/pronunciation/a/accents.htm
-FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\-…“”«»\\(\\)'\" "
-FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\-…“”«»\\(\\)'\" "
+FR_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÉÀÈÙÂÊÎÔÛËÏÜÇ1234567890\\-…“”«»\\(\\)'\" "
+FR_L = "abcdefghijklmnopqrstuvwxyzéàèùâêîôûëïüç1234567890\\-…“”«»\\(\\)'\" "
 
 # http://spanish.about.com/cs/forbeginners/a/beg_alphabet.htm
 # http://www.donquijote.org/culture/spain/languages/spanish-accents
-ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\-…“”«»()'\" "
-ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\-…“”«»()'\" "
+ES_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚÑ\\-…“”«»()'\" "
+ES_L = "abcdefghijklmnopqrstuvwxyzáéíóúñ\\-…“”«»()'\" "
 
 # http://italian.about.com/od/pronunciation/fl/italian-accent-marks.htm
-IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\-…“”«»()'\" "
-IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\-…“”«»()'\" "
+IT_U = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÉÌÍÎÒÓÙÚ\\-…“”«»()'\" "
+IT_L = "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú\\-…“”«»()'\" "
 
-TR_U = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZQWX\-…“”«»()'\" "
-TR_L = "abcçdefgğhıijklmnoöprsştuüvyzqwx\-…“”«»()'\" "
+TR_U = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZQWX\\-…“”«»()'\" "
+TR_L = "abcçdefgğhıijklmnoöprsştuüvyzqwx\\-…“”«»()'\" "
 
 KOR = "[가-힣]"
 
@@ -169,7 +169,7 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1, MARK_ONL
                     # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как
                     # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                     # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                    sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % escape_brackets(i.strip("　     ")) + "(?!</span>)"
+                    sent_to_mark = "(?!<span data-entry=\"\\d+\">)%s" % escape_brackets(i.strip("　     ")) + "(?!</span>)"
                     # print(sent_to_mark)
                     marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                     num_in_text += 1
@@ -183,7 +183,7 @@ def split_text(line_to_translate, lang='en', pattern="", num_in_text=1, MARK_ONL
                 # чтобы не ломался re.sub далее, ищем это предложение в marked_text (изначально он выглядит как
                 # оригинальный), находим это предложение, проверяя при этом, что оно ещё не обёрнуто нашими тегами
                 # оборачиваем, пихаем в текст, радуемся. Замена происходит только для первого встречного.
-                sent_to_mark = "(?!<span data-entry=\"\d+\">)%s" % escape_brackets(new_line.strip("　     ")) + "(?!</span>)"
+                sent_to_mark = "(?!<span data-entry=\"\\d+\">)%s" % escape_brackets(new_line.strip("　     ")) + "(?!</span>)"
                 # print(sent_to_mark)
                 marked_text = re.sub(sent_to_mark, repl_in_text, marked_text, 1)
                 num_in_text += 1
@@ -235,7 +235,7 @@ def populate_tags(line):
                 last_cross_pos += len(split_tag) - len(SPLIT_ITEM)
 
     # убираем из строки бесполезные теги без содержимого и возвращаем строку
-    return re.sub("<tag i='\d+?'></tag>", '', line)
+    return re.sub("<tag i='\\d+?'></tag>", '', line)
 
 def make_sure_mysql_usable():
     from django.db import connection, connections
@@ -257,10 +257,10 @@ def get_plural_examples(p):
     oldrule = None
     while oldrule != rule:
         oldrule = rule
-        rule = re.sub('(.*)\?(.*):(.*)', r'(\1) and (\2) or (\3)', oldrule)
+        rule = re.sub('(.*)\\?(.*):(.*)', r'(\1) and (\2) or (\3)', oldrule)
 
     rule = re.sub('&&', 'and', rule)
-    rule = re.sub('\|\|', 'or', rule)
+    rule = re.sub('\\|\\|', 'or', rule)
     rule = re.sub(' 0 ', ' "0" ', rule)
 
     num_dict = {}

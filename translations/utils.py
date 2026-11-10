@@ -81,10 +81,10 @@ def get_plural_examples(p):
     oldrule = None
     while oldrule != rule:
         oldrule = rule
-        rule = re.sub('(.*)\?(.*):(.*)', r'(\1) and (\2) or (\3)', oldrule)
+        rule = re.sub('(.*)\\?(.*):(.*)', r'(\1) and (\2) or (\3)', oldrule)
 
     rule = re.sub('&&', 'and', rule)
-    rule = re.sub('\|\|', 'or', rule)
+    rule = re.sub('\\|\\|', 'or', rule)
     rule = re.sub(' 0 ', ' "0" ', rule)
 
     num_dict = {}
@@ -256,7 +256,7 @@ def glossary_to_entry(entry_body, glossary_list, language):
                     if entry_word_to_compare == glossary_term_to_compare:
                         # исключаем из поиска уже помеченные слова, чтобы не сломать верстку при нахождении во
                         # фрагменте нескольких одинаковых глосс
-                        word_to_look_for = f'(?!data-glossary-word=".*?">){escape_brackets(word)}(?!<\/span>)'
+                        word_to_look_for = f'(?!data-glossary-word=".*?">){escape_brackets(word)}(?!<\\/span>)'
                         body_to_return = re.sub(word_to_look_for,
                                                 highlight_word(target_entry),
                                                 body_to_return,

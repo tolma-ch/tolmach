@@ -204,7 +204,7 @@ def export_text_pairs_xlsx(text, text_translation):
     ws.append(["Source: " + source_lang, "Translation: " + target_lang])
     for entry in entries:
         entry_translation = entries_translations_dict.get(entry.id, False) if not entry.is_disabled else False
-        source_text = re.sub("<\/?tag.*?>", "", unescape_html(entry.body))
+        source_text = re.sub("<\\/?tag.*?>", "", unescape_html(entry.body))
 
         # special welcome to Bumblebee Transformer and his Exclusive Studio
         source_text = re.sub('[%s]' % "".join([chr(x) for x in range(0,32)]), "", source_text)

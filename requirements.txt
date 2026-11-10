@@ -36,6 +36,10 @@ progress==1.6.1
 
 
 # chtec reqs
+# Replaces the vendored chtec/bottle.py, which was an unpatched 2014 snapshot of
+# bottle 0.12.5 (its top-level `import imp` breaks on Python 3.12). 0.13.4 is the
+# current release and still supports Python 3.8+.
+bottle==0.13.4
 # 25.9.1 is the newest release with a prebuilt cp39 wheel; 26.7.0 is sdist-only
 # and 26.9.0 requires Python >=3.10.
 gevent==25.9.1

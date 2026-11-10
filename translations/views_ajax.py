@@ -1730,10 +1730,10 @@ def yandex_translate_ajax(request):
             match = re.search('<[^<]+?>', string1)
             num_in_text += 1
 
-        all_result = re.findall("(%(\(\S+\))?([ -+#0\.\*]+)?[dfsux])", string1)
+        all_result = re.findall("(%(\\(\\S+\\))?([ -+#0\\.\\*]+)?[dfsux])", string1)
         for i in all_result:
             string = " ᐛ%d " % num_in_text
-            string1 = re.sub("(%(\(\S+\))?([ -+#0\.\*]+)?[dfsux])", string, string1, 1)
+            string1 = re.sub("(%(\\(\\S+\\))?([ -+#0\\.\\*]+)?[dfsux])", string, string1, 1)
             match_dict[num_in_text] = i[0]
             num_in_text += 1
 
