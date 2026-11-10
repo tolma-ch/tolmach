@@ -1,9 +1,0 @@
-gevent==1.2.2
-greenlet
-srt
-polib
-openpyxl==2.5.12
-python-docx
-future
-raven
-gunicorn
