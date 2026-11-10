@@ -169,7 +169,6 @@ MIDDLEWARE = (
     'social_django.middleware.SocialAuthExceptionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'tolmach.urls'
@@ -178,7 +177,6 @@ ROOT_URLCONF = 'tolmach.urls'
 WSGI_APPLICATION = 'tolmach.wsgi.application'
 
 INSTALLED_APPS = (
-    #'south',
     'tolmach',
     'translations',
     'entries',
@@ -197,12 +195,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'background_task',
-    # 'ddtrace.contrib.django',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    # 'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = (
