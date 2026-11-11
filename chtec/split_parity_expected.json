@@ -1,0 +1,673 @@
+{
+ "from_plain_text": {
+  "de/default/0": {
+   "entries": [
+    "Die groß-zusammen gesetzten Wörter enden hier.",
+    "Anschließend kommt der Zweitsatz mit ÄÖÜ und ßẞ!"
+   ],
+   "marked_text": "<span data-entry=\"1\">Die groß-zusammen gesetzten Wörter enden hier.</span> <span data-entry=\"2\">Anschließend kommt der Zweitsatz mit ÄÖÜ und ßẞ!</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "de/default/1": {
+   "entries": [
+    "Er sagte «Nein» und ging.",
+    "Das ist ein Satz mit (Klammer) und 1234567890."
+   ],
+   "marked_text": "<span data-entry=\"1\">Er sagte «Nein» und ging.</span> <span data-entry=\"2\">Das ist ein Satz mit (Klammer) und 1234567890.</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "de/line/0": {
+   "entries": [
+    "Die groß-zusammen gesetzten Wörter enden hier. Anschließend kommt der Zweitsatz mit ÄÖÜ und ßẞ!"
+   ],
+   "marked_text": "<span data-entry=\"1\">Die groß-zusammen gesetzten Wörter enden hier. Anschließend kommt der Zweitsatz mit ÄÖÜ und ßẞ!</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "de/line/1": {
+   "entries": [
+    "Er sagte «Nein» und ging. Das ist ein Satz mit (Klammer) und 1234567890."
+   ],
+   "marked_text": "<span data-entry=\"1\">Er sagte «Nein» und ging. Das ist ein Satz mit (Klammer) und 1234567890.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "en/default/0": {
+   "entries": [
+    "The well-known, long-hyphenated author said stop.",
+    "This is the second sentence with an a-b dash and 1234 numbers.",
+    "Mr.",
+    "Brown did not split here.",
+    "Is this the third one?",
+    "Yes it is!"
+   ],
+   "marked_text": "<span data-entry=\"1\">The well-known, long-hyphenated author said stop.</span> <span data-entry=\"2\">This is the second sentence with an a-b dash and 1234 numbers.</span> <span data-entry=\"3\">Mr.</span> <span data-entry=\"4\">Brown did not split here.</span> <span data-entry=\"5\">Is this the third one?</span> <span data-entry=\"6\">Yes it is!</span>",
+   "nums": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "paragraphs": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  "en/default/1": {
+   "entries": [
+    "He said \"quoted words with - hyphen - inside\" and left.",
+    "Another sentence follows [with square brackets] right now."
+   ],
+   "marked_text": "<span data-entry=\"1\">He said \"quoted words with - hyphen - inside\" and left.</span> <span data-entry=\"2\">Another sentence follows [with square brackets] right now.</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "en/default/2": {
+   "entries": [
+    "Ellipsis… in the middle of a sentence is not a border.",
+    "Ends here."
+   ],
+   "marked_text": "<span data-entry=\"1\">Ellipsis… in the middle of a sentence is not a border.</span> <span data-entry=\"2\">Ends here.</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "en/default/3": {
+   "entries": [
+    "First paragraph, first sentence.",
+    "First paragraph, second sentence.",
+    "Second paragraph stands alone here.",
+    "Fourth paragraph after a blank line.",
+    "It has two sentences.",
+    "Sixth paragraph is on line 7 after two blank lines."
+   ],
+   "marked_text": "<span data-entry=\"1\">First paragraph, first sentence.</span> <span data-entry=\"2\">First paragraph, second sentence.</span>\n<span data-entry=\"3\">Second paragraph stands alone here.</span>\n\n<span data-entry=\"4\">Fourth paragraph after a blank line.</span> <span data-entry=\"5\">It has two sentences.</span>\n\n\n<span data-entry=\"6\">Sixth paragraph is on line 7 after two blank lines.</span>",
+   "nums": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "paragraphs": [
+    1,
+    1,
+    2,
+    4,
+    4,
+    7
+   ]
+  },
+  "en/line/0": {
+   "entries": [
+    "The well-known, long-hyphenated author said stop. This is the second sentence with an a-b dash and 1234 numbers. Mr. Brown did not split here. Is this the third one? Yes it is!"
+   ],
+   "marked_text": "<span data-entry=\"1\">The well-known, long-hyphenated author said stop. This is the second sentence with an a-b dash and 1234 numbers. Mr. Brown did not split here. Is this the third one? Yes it is!</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "en/line/1": {
+   "entries": [
+    "He said \"quoted words with - hyphen - inside\" and left. Another sentence follows [with square brackets] right now."
+   ],
+   "marked_text": "<span data-entry=\"1\">He said \"quoted words with - hyphen - inside\" and left. Another sentence follows [with square brackets] right now.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "en/line/2": {
+   "entries": [
+    "Ellipsis… in the middle of a sentence is not a border. Ends here."
+   ],
+   "marked_text": "<span data-entry=\"1\">Ellipsis… in the middle of a sentence is not a border. Ends here.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "en/line/3": {
+   "entries": [
+    "First paragraph, first sentence. First paragraph, second sentence.",
+    "Second paragraph stands alone here.",
+    "Fourth paragraph after a blank line. It has two sentences.",
+    "Sixth paragraph is on line 7 after two blank lines."
+   ],
+   "marked_text": "<span data-entry=\"1\">First paragraph, first sentence. First paragraph, second sentence.</span>\n<span data-entry=\"2\">Second paragraph stands alone here.</span>\n\n<span data-entry=\"3\">Fourth paragraph after a blank line. It has two sentences.</span>\n\n\n<span data-entry=\"4\">Sixth paragraph is on line 7 after two blank lines.</span>",
+   "nums": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "paragraphs": [
+    1,
+    2,
+    4,
+    7
+   ]
+  },
+  "es/default/0": {
+   "entries": [
+    "¿Qué tal está todo?",
+    "Muy-bien gracias señor.",
+    "Otra frase con ñÑ y áéíóú termina aquí."
+   ],
+   "marked_text": "<span data-entry=\"1\">¿Qué tal está todo?</span> <span data-entry=\"2\">Muy-bien gracias señor.</span> <span data-entry=\"3\">Otra frase con ñÑ y áéíóú termina aquí.</span>",
+   "nums": [
+    1,
+    2,
+    3
+   ],
+   "paragraphs": [
+    1,
+    1,
+    1
+   ]
+  },
+  "es/line/0": {
+   "entries": [
+    "¿Qué tal está todo? Muy-bien gracias señor. Otra frase con ñÑ y áéíóú termina aquí."
+   ],
+   "marked_text": "<span data-entry=\"1\">¿Qué tal está todo? Muy-bien gracias señor. Otra frase con ñÑ y áéíóú termina aquí.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "fr/default/0": {
+   "entries": [
+    "Très-bien fait n'est-ce pas.",
+    "Voilà la deuxième phrase avec (des parenthèses) et 1234567890 !"
+   ],
+   "marked_text": "<span data-entry=\"1\">Très-bien fait n'est-ce pas.</span> <span data-entry=\"2\">Voilà la deuxième phrase avec (des parenthèses) et 1234567890 !</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "fr/default/1": {
+   "entries": [
+    "ÉÀÈÙ ÂÊÎÔÛ ËÏÜ Ç sont dans la classe.",
+    "Troisième phrase finit ici."
+   ],
+   "marked_text": "<span data-entry=\"1\">ÉÀÈÙ ÂÊÎÔÛ ËÏÜ Ç sont dans la classe.</span> <span data-entry=\"2\">Troisième phrase finit ici.</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "fr/line/0": {
+   "entries": [
+    "Très-bien fait n'est-ce pas. Voilà la deuxième phrase avec (des parenthèses) et 1234567890 !"
+   ],
+   "marked_text": "<span data-entry=\"1\">Très-bien fait n'est-ce pas. Voilà la deuxième phrase avec (des parenthèses) et 1234567890 !</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "fr/line/1": {
+   "entries": [
+    "ÉÀÈÙ ÂÊÎÔÛ ËÏÜ Ç sont dans la classe. Troisième phrase finit ici."
+   ],
+   "marked_text": "<span data-entry=\"1\">ÉÀÈÙ ÂÊÎÔÛ ËÏÜ Ç sont dans la classe. Troisième phrase finit ici.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "it/default/0": {
+   "entries": [
+    "Com'è bello questo.",
+    "Secondo periodo con àèéìíîòóùú e parentesi (qui)."
+   ],
+   "marked_text": "<span data-entry=\"1\">Com'è bello questo.</span> <span data-entry=\"2\">Secondo periodo con àèéìíîòóùú e parentesi (qui).</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "it/line/0": {
+   "entries": [
+    "Com'è bello questo. Secondo periodo con àèéìíîòóùú e parentesi (qui)."
+   ],
+   "marked_text": "<span data-entry=\"1\">Com'è bello questo. Secondo periodo con àèéìíîòóùú e parentesi (qui).</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ja/default/0": {
+   "entries": [
+    "これは第一文。",
+    "これは第二文。"
+   ],
+   "marked_text": "<span data-entry=\"1\">これは第一文。</span><span data-entry=\"2\">これは第二文。</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "ja/line/0": {
+   "entries": [
+    "これは第一文。これは第二文。"
+   ],
+   "marked_text": "<span data-entry=\"1\">これは第一文。これは第二文。</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ko/default/0": {
+   "entries": [
+    "이것은 첫 문장.",
+    "이것은 두 번째 문장!",
+    "이것은 세째?"
+   ],
+   "marked_text": "<span data-entry=\"1\">이것은 첫 문장.</span> <span data-entry=\"2\">이것은 두 번째 문장!</span> <span data-entry=\"3\">이것은 세째?</span>",
+   "nums": [
+    1,
+    2,
+    3
+   ],
+   "paragraphs": [
+    1,
+    1,
+    1
+   ]
+  },
+  "ko/line/0": {
+   "entries": [
+    "이것은 첫 문장. 이것은 두 번째 문장! 이것은 세째?"
+   ],
+   "marked_text": "<span data-entry=\"1\">이것은 첫 문장. 이것은 두 번째 문장! 이것은 세째?</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ru/default/0": {
+   "entries": [
+    "Это предложение с дефисом-тире внутри.",
+    "Второе предложение начинается заглавной буквы.",
+    "Мистер Браун не должен разбиться."
+   ],
+   "marked_text": "<span data-entry=\"1\">Это предложение с дефисом-тире внутри.</span> <span data-entry=\"2\">Второе предложение начинается заглавной буквы.</span> <span data-entry=\"3\">Мистер Браун не должен разбиться.</span>",
+   "nums": [
+    1,
+    2,
+    3
+   ],
+   "paragraphs": [
+    1,
+    1,
+    1
+   ]
+  },
+  "ru/default/1": {
+   "entries": [
+    "Третье со скобками (важными) и цифрами 1234567890! Четвёртое — с тире."
+   ],
+   "marked_text": "<span data-entry=\"1\">Третье со скобками (важными) и цифрами 1234567890! Четвёртое — с тире.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ru/default/2": {
+   "entries": [
+    "Первый абзац закончился точкой.",
+    "Внутри он ещё и продолжается!",
+    "Второй абзац покороче.",
+    "Третий абзац после CRLF."
+   ],
+   "marked_text": "<span data-entry=\"1\">Первый абзац закончился точкой.</span> <span data-entry=\"2\">Внутри он ещё и продолжается!</span>\n<span data-entry=\"3\">Второй абзац покороче.</span>\n<span data-entry=\"4\">Третий абзац после CRLF.</span>",
+   "nums": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "paragraphs": [
+    1,
+    1,
+    2,
+    3
+   ]
+  },
+  "ru/line/0": {
+   "entries": [
+    "Это предложение с дефисом-тире внутри. Второе предложение начинается заглавной буквы. Мистер Браун не должен разбиться."
+   ],
+   "marked_text": "<span data-entry=\"1\">Это предложение с дефисом-тире внутри. Второе предложение начинается заглавной буквы. Мистер Браун не должен разбиться.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ru/line/1": {
+   "entries": [
+    "Третье со скобками (важными) и цифрами 1234567890! Четвёртое — с тире."
+   ],
+   "marked_text": "<span data-entry=\"1\">Третье со скобками (важными) и цифрами 1234567890! Четвёртое — с тире.</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "ru/line/2": {
+   "entries": [
+    "Первый абзац закончился точкой. Внутри он ещё и продолжается!",
+    "Второй абзац покороче.",
+    "Третий абзац после CRLF."
+   ],
+   "marked_text": "<span data-entry=\"1\">Первый абзац закончился точкой. Внутри он ещё и продолжается!</span>\n<span data-entry=\"2\">Второй абзац покороче.</span>\n<span data-entry=\"3\">Третий абзац после CRLF.</span>",
+   "nums": [
+    1,
+    2,
+    3
+   ],
+   "paragraphs": [
+    1,
+    2,
+    3
+   ]
+  },
+  "tr/default/0": {
+   "entries": [
+    "Çok güzel iş-şu burada bitiyor.",
+    "İkinci cümle İĞÜÖŞÇ ile biter mi?"
+   ],
+   "marked_text": "<span data-entry=\"1\">Çok güzel iş-şu burada bitiyor.</span> <span data-entry=\"2\">İkinci cümle İĞÜÖŞÇ ile biter mi?</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "tr/line/0": {
+   "entries": [
+    "Çok güzel iş-şu burada bitiyor. İkinci cümle İĞÜÖŞÇ ile biter mi?"
+   ],
+   "marked_text": "<span data-entry=\"1\">Çok güzel iş-şu burada bitiyor. İkinci cümle İĞÜÖŞÇ ile biter mi?</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  },
+  "zh/default/0": {
+   "entries": [
+    "这是第一句？",
+    "这是第二句！这是第三句。"
+   ],
+   "marked_text": "<span data-entry=\"1\">这是第一句？</span><span data-entry=\"2\">这是第二句！这是第三句。</span>",
+   "nums": [
+    1,
+    2
+   ],
+   "paragraphs": [
+    1,
+    1
+   ]
+  },
+  "zh/line/0": {
+   "entries": [
+    "这是第一句？这是第二句！这是第三句。"
+   ],
+   "marked_text": "<span data-entry=\"1\">这是第一句？这是第二句！这是第三句。</span>",
+   "nums": [
+    1
+   ],
+   "paragraphs": [
+    1
+   ]
+  }
+ },
+ "plural_examples": {
+  "0": {
+   "0": [
+    1
+   ],
+   "1": [
+    0,
+    2,
+    3,
+    4
+   ]
+  },
+  "1": {
+   "0": [
+    1,
+    21,
+    31,
+    41
+   ],
+   "1": [
+    2,
+    3,
+    4,
+    22
+   ],
+   "2": [
+    0,
+    5,
+    6,
+    7
+   ]
+  },
+  "2": {
+   "0": [
+    0,
+    1
+   ],
+   "1": [
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  "3": {
+   "0": [
+    0,
+    1,
+    2,
+    3
+   ]
+  },
+  "4": {
+   "0": [
+    1,
+    21,
+    31,
+    41
+   ],
+   "1": [
+    0,
+    2,
+    3,
+    4
+   ]
+  }
+ },
+ "populate_tags": {
+  "0": "plain line without tags",
+  "1": "<tag i='text'></tag>empty tag should disappear</tag>",
+  "2": "<tag i='text'>kept</tag> and <tag i='terms'></tag> and <tag i='text'>kept2</tag>",
+  "3": "nested <tag i='text'>a<tag i='terms'>b</tag>c</tag> tail"
+ },
+ "python": "3.9.25",
+ "split_text_mark_only": {
+  "de": [
+   "Die groß-zusammen gesetzten Wörter enden hier.† Anschließend kommt der Zweitsatz mit ÄÖÜ und ßẞ!",
+   "Er sagte «Nein» und ging.† Das ist ein Satz mit (Klammer) und 1234567890."
+  ],
+  "en": [
+   "The well-known, long-hyphenated author said stop.† This is the second sentence with an a-b dash and 1234 numbers.† Mr.† Brown did not split here.† Is this the third one?† Yes it is!",
+   "He said \"quoted words with - hyphen - inside\" and left.† Another sentence follows [with square brackets] right now.",
+   "Ellipsis… in the middle of a sentence is not a border.† Ends here.",
+   "First paragraph, first sentence.† First paragraph, second sentence."
+  ],
+  "es": [
+   "¿Qué tal está todo?† Muy-bien gracias señor.† Otra frase con ñÑ y áéíóú termina aquí."
+  ],
+  "fr": [
+   "Très-bien fait n'est-ce pas.† Voilà la deuxième phrase avec (des parenthèses) et 1234567890 !",
+   "ÉÀÈÙ ÂÊÎÔÛ ËÏÜ Ç sont dans la classe.† Troisième phrase finit ici."
+  ],
+  "it": [
+   "Com'è bello questo.† Secondo periodo con àèéìíîòóùú e parentesi (qui)."
+  ],
+  "ja": [
+   "これは第一文。†これは第二文。†"
+  ],
+  "ko": [
+   "이것은 첫 문장. †이것은 두 번째 문장! †이것은 세째?†"
+  ],
+  "ru": [
+   "Это предложение с дефисом-тире внутри.† Второе предложение начинается заглавной буквы.† Мистер Браун не должен разбиться.",
+   "Третье со скобками (важными) и цифрами 1234567890! Четвёртое — с тире.",
+   "Первый абзац закончился точкой.† Внутри он ещё и продолжается!"
+  ],
+  "tr": [
+   "Çok güzel iş-şu burada bitiyor.† İkinci cümle İĞÜÖŞÇ ile biter mi?"
+  ],
+  "zh": [
+   "这是第一句？†这是第二句！这是第三句。†"
+  ]
+ },
+ "split_text_multiline": {
+  "en/0": {
+   "continued": {
+    "entries": [
+     "First paragraph, first sentence.",
+     "First paragraph, second sentence.",
+     "Second paragraph stands alone here.",
+     "Fourth paragraph after a blank line.",
+     "It has two sentences.",
+     "Sixth paragraph is on line 7 after two blank lines."
+    ],
+    "marked_text": "<span data-entry=\"100\">First paragraph, first sentence.</span> <span data-entry=\"101\">First paragraph, second sentence.</span>\n<span data-entry=\"102\">Second paragraph stands alone here.</span>\n\n<span data-entry=\"103\">Fourth paragraph after a blank line.</span> <span data-entry=\"104\">It has two sentences.</span>\n\n\n<span data-entry=\"105\">Sixth paragraph is on line 7 after two blank lines.</span>",
+    "num": 106
+   },
+   "entries": [
+    "First paragraph, first sentence.",
+    "First paragraph, second sentence.",
+    "Second paragraph stands alone here.",
+    "Fourth paragraph after a blank line.",
+    "It has two sentences.",
+    "Sixth paragraph is on line 7 after two blank lines."
+   ],
+   "marked_text": "<span data-entry=\"1\">First paragraph, first sentence.</span> <span data-entry=\"2\">First paragraph, second sentence.</span>\n<span data-entry=\"3\">Second paragraph stands alone here.</span>\n\n<span data-entry=\"4\">Fourth paragraph after a blank line.</span> <span data-entry=\"5\">It has two sentences.</span>\n\n\n<span data-entry=\"6\">Sixth paragraph is on line 7 after two blank lines.</span>",
+   "num": 7
+  },
+  "ru/0": {
+   "continued": {
+    "entries": [
+     "Первый абзац закончился точкой.",
+     "Внутри он ещё и продолжается!",
+     "Второй абзац покороче.",
+     "Третий абзац после CRLF."
+    ],
+    "marked_text": "<span data-entry=\"100\">Первый абзац закончился точкой.</span> <span data-entry=\"101\">Внутри он ещё и продолжается!</span>\n<span data-entry=\"102\">Второй абзац покороче.</span>\r\n<span data-entry=\"103\">Третий абзац после CRLF.</span>",
+    "num": 104
+   },
+   "entries": [
+    "Первый абзац закончился точкой.",
+    "Внутри он ещё и продолжается!",
+    "Второй абзац покороче.",
+    "Третий абзац после CRLF."
+   ],
+   "marked_text": "<span data-entry=\"1\">Первый абзац закончился точкой.</span> <span data-entry=\"2\">Внутри он ещё и продолжается!</span>\n<span data-entry=\"3\">Второй абзац покороче.</span>\r\n<span data-entry=\"4\">Третий абзац после CRLF.</span>",
+   "num": 5
+  }
+ }
+}
